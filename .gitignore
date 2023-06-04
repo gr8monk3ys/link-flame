@@ -1,0 +1,48 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+node_modules
+.pnp
+.pnp.js
+
+# testing
+coverage
+playwright-report/
+test-results/
+.playwright-cli/
+
+# next.js
+.next/
+out/
+build
+
+# TypeScript incremental build artifacts
+*.tsbuildinfo
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# local env files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# turbo
+.turbo
+
+.contentlayer
+.env
+
+# local databases (should never be committed)
+prisma/dev.db
+
+# Local agent/tooling settings
+.claude/settings.local.json
