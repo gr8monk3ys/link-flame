@@ -6,29 +6,20 @@ export const siteConfig = {
     "A place to know where all good products come from",
   mainNav: [
     {
-      title: "Home",
-      href: "/",
+      title: "Top Picks",
+      href: "/top-picks",
     },
     {
-      title: "Product Review",
-      href: "/productReview",
-    },
-    {
-      title: "Blog",
-      href: "/blog",
+      title: "Guides and Tips",
+      href: "/guides-and-tips",
     },
     {
       title: "About Us",
-      href: "/aboutUs",
-    },
-    {
-      title: "Authentication",
-      href: "/authentication",
+      href: "/about-us",
     },
   ],
   links: {
-    twitter: "https://twitter.com/gr8monk3ys",
-    github: "https://github.com/gr8monk3ys",
+    github: "https://github.com/gr8monk3ys/LinkFlame",
     docs: "https://ui.shadcn.com",
   },
 }
