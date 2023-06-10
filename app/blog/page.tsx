@@ -9,10 +9,8 @@ export default function IndexPage() {
       <div className="flex max-w-[980px] flex-col items-start gap-2">
         <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
           Welcome to LinkFlame, <br className="hidden sm:inline" />
-        </h1>
-        <h2 className="text-2xl font-bold leading-tight tracking-tighter md:text-3xl">
           Your Trustworthy site for all reviews product related.
-        </h2>
+        </h1>
         <p className="max-w-[700px] text-lg text-muted-foreground">
           At LinkFlame, we believe in making online shopping a breeze. We're
           dedicated to providing you with trusted, in-depth product reviews, and
