@@ -39,14 +39,14 @@ export default function IndexPage() {
           GitHub
         </Link>
       </div>
-      <div className="flex-col items-start gap-2">
-        <p className="max-w-[900px] text-lg text-muted-foreground">
+      <div className="">
+        <p className="max-w-[80%] text-lg text-muted-foreground">
           We work tirelessly to ensure that you are presented with the most
           recent, highest-rated, and popular products in a wide variety of
           categories. Our smartly designed site and user-friendly navigation
           system ensure you spend less time searching and more time shopping.
         </p>
-        <p className="max-w-[900px] text-lg text-muted-foreground">
+        <p className="max-w-[80%] text-lg text-muted-foreground">
           Free, user-friendly, and always updated - experience the new era of
           online shopping with [Your Company Name]. Your satisfaction is our
           reward.
