@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.1.0",
+    "@mdx-js/react": "^2.3.0",
     "@radix-ui/react-aspect-ratio": "^1.0.3",
     "@radix-ui/react-avatar": "^1.0.3",
     "@radix-ui/react-label": "^2.0.2",
@@ -26,6 +27,7 @@
     "lucide": "^0.233.0",
     "lucide-react": "0.105.0-alpha.4",
     "next": "^13.4.4",
+    "next-mdx-remote": "^4.4.1",
     "next-themes": "^0.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

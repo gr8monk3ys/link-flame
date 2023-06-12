@@ -1,11 +1,20 @@
 import Link from "next/link"
-
-import { siteConfig } from "@/config/site"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { siteConfig } from "@/config/site";
 import { buttonVariants } from "@/components/ui/button"
+import Image from "next/image";
 
 export default function IndexPage() {
   return (
     <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
+      <div className="relative h-72 md:h-96">
+        <Image
+          src="/../public/images/cover.png" // Replace with the actual cover image URL
+          alt="Cover Image"
+          layout="fill"
+          objectFit="cover"
+        />
+      </div>
       <div className="flex max-w-[980px] flex-col items-start gap-2">
         <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
           Welcome to LinkFlame, <br className="hidden sm:inline" />
@@ -51,6 +60,25 @@ export default function IndexPage() {
           online shopping with [Your Company Name]. Your satisfaction is our
           reward.
         </p>
+      </div>
+      <div className="grid grid-cols-2 gap-4 mt-8">
+        {/* Additional Images */}
+        <div>
+          <Image
+            src="/path/to/image1.jpg" // Replace with the actual image URL
+            alt="Image 1"
+            width={500}
+            height={300}
+          />
+        </div>
+        <div>
+          <Image
+            src="/path/to/image2.jpg" // Replace with the actual image URL
+            alt="Image 2"
+            width={500}
+            height={300}
+          />
+        </div>
       </div>
     </section>
   )
