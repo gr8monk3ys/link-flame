@@ -1,0 +1,1239 @@
+openapi: 3.0.3
+info:
+  title: Link Flame API
+  description: |
+    REST API for Link Flame - an eco-friendly living blog and e-commerce platform.
+
+    ## Authentication
+    Most endpoints require authentication via NextAuth.js session cookies.
+    Protected endpoints return 401 Unauthorized if not authenticated.
+
+    ## Rate Limiting
+    - Standard endpoints: 10 requests per 10 seconds
+    - Sensitive endpoints (auth, checkout): 5 requests per minute
+    - Rate limit headers are included in responses
+
+    ## CSRF Protection
+    State-changing endpoints (POST, PATCH, DELETE) require a valid CSRF token.
+    Get a token from GET /api/csrf and include it in the X-CSRF-Token header.
+  version: 1.0.0
+  contact:
+    name: Link Flame Support
+    url: https://linkflame.com/contact
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3000/api
+    description: Development server
+  - url: https://linkflame.com/api
+    description: Production server
+
+tags:
+  - name: Authentication
+    description: User authentication endpoints
+  - name: Products
+    description: Product catalog operations
+  - name: Cart
+    description: Shopping cart management
+  - name: Checkout
+    description: Order checkout process
+  - name: Orders
+    description: Order management
+  - name: Blog
+    description: Blog posts and content
+  - name: Account
+    description: User account management
+  - name: Saved Items
+    description: Wishlist/saved items
+  - name: Reviews
+    description: Product reviews
+
+paths:
+  /auth/signup:
+    post:
+      tags:
+        - Authentication
+      summary: Create a new user account
+      description: Register a new user with email and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - name
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                password:
+                  type: string
+                  minLength: 6
+                  maxLength: 100
+                  example: securePassword123
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+                  example: John Doe
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '409':
+          description: Email already exists
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /products:
+    get:
+      tags:
+        - Products
+      summary: List all products
+      description: Retrieve products with optional filtering and pagination
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Search term for title/description
+        - name: category
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          description: Filter by category
+        - name: minPrice
+          in: query
+          schema:
+            type: number
+          description: Minimum price filter
+        - name: maxPrice
+          in: query
+          schema:
+            type: number
+          description: Maximum price filter
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+          description: Page number
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            default: 12
+            maximum: 100
+          description: Items per page
+      responses:
+        '200':
+          description: Products list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  products:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  pageSize:
+                    type: integer
+                  totalPages:
+                    type: integer
+
+  /products/{id}:
+    get:
+      tags:
+        - Products
+      summary: Get product details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Product details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDetail'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /products/{id}/reviews:
+    get:
+      tags:
+        - Reviews
+      summary: Get product reviews
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Product reviews
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reviews:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Review'
+                  averageRating:
+                    type: number
+                  totalReviews:
+                    type: integer
+    post:
+      tags:
+        - Reviews
+      summary: Add a product review
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - rating
+              properties:
+                rating:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                comment:
+                  type: string
+                  maxLength: 1000
+      responses:
+        '201':
+          description: Review created
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: User has already reviewed this product
+
+  /products/categories:
+    get:
+      tags:
+        - Products
+      summary: Get all product categories
+      responses:
+        '200':
+          description: Categories list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+
+  /cart:
+    get:
+      tags:
+        - Cart
+      summary: Get cart items
+      description: Returns cart items for authenticated user or guest session
+      responses:
+        '200':
+          description: Cart items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CartItem'
+    post:
+      tags:
+        - Cart
+      summary: Add item to cart
+      security:
+        - sessionAuth: []
+        - csrfToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - productId
+              properties:
+                productId:
+                  type: string
+                variantId:
+                  type: string
+                  nullable: true
+                quantity:
+                  type: integer
+                  default: 1
+                  minimum: 1
+                  maximum: 999
+      responses:
+        '200':
+          description: Item added
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          $ref: '#/components/responses/CsrfError'
+        '404':
+          description: Product or variant not found
+    patch:
+      tags:
+        - Cart
+      summary: Update cart item quantity
+      security:
+        - sessionAuth: []
+        - csrfToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - productId
+                - quantity
+              properties:
+                productId:
+                  type: string
+                variantId:
+                  type: string
+                  nullable: true
+                quantity:
+                  type: integer
+                  minimum: 0
+                  maximum: 999
+      responses:
+        '200':
+          description: Quantity updated
+        '403':
+          $ref: '#/components/responses/CsrfError'
+    delete:
+      tags:
+        - Cart
+      summary: Remove item from cart
+      security:
+        - sessionAuth: []
+        - csrfToken: []
+      parameters:
+        - name: productId
+          in: query
+          schema:
+            type: string
+        - name: variantId
+          in: query
+          schema:
+            type: string
+        - name: cartItemId
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Item removed
+        '403':
+          $ref: '#/components/responses/CsrfError'
+
+  /checkout:
+    post:
+      tags:
+        - Checkout
+      summary: Create checkout session
+      description: Creates a Stripe checkout session for the current cart
+      security:
+        - sessionAuth: []
+        - csrfToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - firstName
+                - lastName
+                - address
+                - city
+                - state
+                - zipCode
+              properties:
+                email:
+                  type: string
+                  format: email
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                address:
+                  type: string
+                city:
+                  type: string
+                state:
+                  type: string
+                zipCode:
+                  type: string
+                  pattern: '^\d{5}(-\d{4})?$'
+      responses:
+        '200':
+          description: Checkout session created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessionUrl:
+                    type: string
+                    format: uri
+                  sessionId:
+                    type: string
+        '400':
+          description: Cart is empty or validation error
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/CsrfError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /orders:
+    get:
+      tags:
+        - Orders
+      summary: List user orders
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, paid, cancelled]
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Orders list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Order'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /orders/{id}:
+    get:
+      tags:
+        - Orders
+      summary: Get order details
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Order details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDetail'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /account/profile:
+    get:
+      tags:
+        - Account
+      summary: Get user profile
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    patch:
+      tags:
+        - Account
+      summary: Update user profile
+      security:
+        - sessionAuth: []
+        - csrfToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+                email:
+                  type: string
+                  format: email
+      responses:
+        '200':
+          description: Profile updated
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/CsrfError'
+        '409':
+          description: Email already in use
+
+  /account/password:
+    patch:
+      tags:
+        - Account
+      summary: Change password
+      security:
+        - sessionAuth: []
+        - csrfToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - currentPassword
+                - newPassword
+                - confirmPassword
+              properties:
+                currentPassword:
+                  type: string
+                newPassword:
+                  type: string
+                  minLength: 6
+                  maxLength: 100
+                confirmPassword:
+                  type: string
+      responses:
+        '200':
+          description: Password changed
+        '400':
+          description: Passwords don't match or current password incorrect
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /account/delete:
+    delete:
+      tags:
+        - Account
+      summary: Delete account (GDPR)
+      description: Permanently deletes the user account and anonymizes order history
+      security:
+        - sessionAuth: []
+        - csrfToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - password
+                - confirmation
+              properties:
+                password:
+                  type: string
+                confirmation:
+                  type: string
+                  enum: ["DELETE MY ACCOUNT"]
+      responses:
+        '200':
+          description: Account deleted
+        '400':
+          description: Invalid password or confirmation
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /blog/posts:
+    get:
+      tags:
+        - Blog
+      summary: List blog posts
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: tag
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Blog posts list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  posts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BlogPost'
+
+  /blog/search:
+    get:
+      tags:
+        - Blog
+      summary: Search blog posts
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Search query
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: tag
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  posts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BlogPost'
+                  total:
+                    type: integer
+
+  /saved-items:
+    get:
+      tags:
+        - Saved Items
+      summary: Get saved items
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: Saved items list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  description: Product ID
+    post:
+      tags:
+        - Saved Items
+      summary: Add item to saved items
+      security:
+        - sessionAuth: []
+        - csrfToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - productId
+              properties:
+                productId:
+                  type: string
+      responses:
+        '200':
+          description: Item saved
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/CsrfError'
+    delete:
+      tags:
+        - Saved Items
+      summary: Remove saved item
+      security:
+        - sessionAuth: []
+        - csrfToken: []
+      parameters:
+        - name: productId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Item removed
+        '403':
+          $ref: '#/components/responses/CsrfError'
+
+  /csrf:
+    get:
+      summary: Get CSRF token
+      description: Returns a CSRF token for use in state-changing requests
+      responses:
+        '200':
+          description: CSRF token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  csrfToken:
+                    type: string
+
+  /contact:
+    post:
+      summary: Submit contact form
+      security:
+        - csrfToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - message
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+                email:
+                  type: string
+                  format: email
+                subject:
+                  type: string
+                  maxLength: 200
+                message:
+                  type: string
+                  minLength: 10
+                  maxLength: 2000
+      responses:
+        '200':
+          description: Message sent
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /newsletter:
+    post:
+      summary: Subscribe to newsletter
+      security:
+        - csrfToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        '200':
+          description: Subscribed successfully
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '409':
+          description: Email already subscribed
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+components:
+  securitySchemes:
+    sessionAuth:
+      type: apiKey
+      in: cookie
+      name: next-auth.session-token
+      description: NextAuth session cookie
+    csrfToken:
+      type: apiKey
+      in: header
+      name: X-CSRF-Token
+      description: CSRF token from /api/csrf
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+          enum: [USER, EDITOR, ADMIN]
+        createdAt:
+          type: string
+          format: date-time
+
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        name:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        price:
+          type: number
+        salePrice:
+          type: number
+          nullable: true
+        image:
+          type: string
+        category:
+          type: string
+        inventory:
+          type: integer
+        hasVariants:
+          type: boolean
+        reviews:
+          type: array
+          items:
+            type: object
+            properties:
+              rating:
+                type: integer
+
+    ProductDetail:
+      allOf:
+        - $ref: '#/components/schemas/Product'
+        - type: object
+          properties:
+            variants:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProductVariant'
+
+    ProductVariant:
+      type: object
+      properties:
+        id:
+          type: string
+        sku:
+          type: string
+          nullable: true
+        size:
+          type: string
+          nullable: true
+        color:
+          type: string
+          nullable: true
+        colorCode:
+          type: string
+          nullable: true
+        material:
+          type: string
+          nullable: true
+        price:
+          type: number
+          nullable: true
+        salePrice:
+          type: number
+          nullable: true
+        image:
+          type: string
+          nullable: true
+        inventory:
+          type: integer
+        isDefault:
+          type: boolean
+
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+
+    CartItem:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Product ID
+        cartItemId:
+          type: string
+          description: Unique cart item ID
+        title:
+          type: string
+        price:
+          type: number
+        image:
+          type: string
+        quantity:
+          type: integer
+        variantId:
+          type: string
+          nullable: true
+        variant:
+          $ref: '#/components/schemas/CartItemVariant'
+
+    CartItemVariant:
+      type: object
+      nullable: true
+      properties:
+        id:
+          type: string
+        sku:
+          type: string
+          nullable: true
+        size:
+          type: string
+          nullable: true
+        color:
+          type: string
+          nullable: true
+        colorCode:
+          type: string
+          nullable: true
+        material:
+          type: string
+          nullable: true
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+        amount:
+          type: number
+        status:
+          type: string
+          enum: [pending, paid, cancelled]
+        shippingStatus:
+          type: string
+          nullable: true
+        itemCount:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+
+    OrderDetail:
+      allOf:
+        - $ref: '#/components/schemas/Order'
+        - type: object
+          properties:
+            customerEmail:
+              type: string
+              nullable: true
+            customerName:
+              type: string
+              nullable: true
+            shippingAddress:
+              type: string
+              nullable: true
+            trackingNumber:
+              type: string
+              nullable: true
+            shippingCarrier:
+              type: string
+              nullable: true
+            shippingProgress:
+              type: array
+              items:
+                type: object
+                properties:
+                  key:
+                    type: string
+                  label:
+                    type: string
+                  completed:
+                    type: boolean
+                  current:
+                    type: boolean
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/OrderItem'
+
+    OrderItem:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        price:
+          type: number
+        quantity:
+          type: integer
+        variantSize:
+          type: string
+          nullable: true
+        variantColor:
+          type: string
+          nullable: true
+        variantMaterial:
+          type: string
+          nullable: true
+        product:
+          type: object
+          properties:
+            id:
+              type: string
+            image:
+              type: string
+
+    Review:
+      type: object
+      properties:
+        id:
+          type: string
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        comment:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        user:
+          type: object
+          properties:
+            name:
+              type: string
+
+    BlogPost:
+      type: object
+      properties:
+        id:
+          type: string
+        slug:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        image:
+          type: string
+          nullable: true
+        category:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        publishedAt:
+          type: string
+          format: date-time
+        author:
+          type: object
+          properties:
+            name:
+              type: string
+            avatar:
+              type: string
+              nullable: true
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        total:
+          type: integer
+        totalPages:
+          type: integer
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        code:
+          type: string
+        details:
+          type: object
+
+  responses:
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Validation failed
+              code:
+                type: string
+                example: VALIDATION_ERROR
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                    message:
+                      type: string
+
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Please sign in to access this resource
+              code:
+                type: string
+                example: UNAUTHORIZED
+
+    CsrfError:
+      description: Invalid CSRF token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Invalid or missing CSRF token
+              code:
+                type: string
+                example: CSRF_VALIDATION_FAILED
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Resource not found
+              code:
+                type: string
+                example: NOT_FOUND
+
+    RateLimitError:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Too many requests
+              code:
+                type: string
+                example: RATE_LIMIT_EXCEEDED
+              retryAfter:
+                type: integer
+                description: Seconds until rate limit resets
