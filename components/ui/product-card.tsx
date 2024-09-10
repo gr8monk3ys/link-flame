@@ -1,0 +1,218 @@
+"use client"
+
+import { memo } from "react"
+import Image from "next/image"
+import { AspectRatio } from "@/components/ui/aspect-ratio"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
+import { buttonVariants } from "@/components/ui/button"
+import { StarRating } from "@/components/ui/star-rating"
+import { useCart } from "@/lib/providers/CartProvider";
+import { toast } from "sonner";
+import { SustainabilityTags } from "@/components/sustainability/PlasticFreeTag";
+import { ValueBadgeList } from "@/components/filters/ValueBadge";
+
+// Stock status thresholds
+const LOW_STOCK_THRESHOLD = 5;
+
+function getStockBadge(inventory: number): { label: string; variant: "default" | "secondary" | "destructive" | "outline" } | null {
+  if (inventory <= 0) {
+    return { label: 'Out of Stock', variant: 'destructive' };
+  }
+  if (inventory <= LOW_STOCK_THRESHOLD) {
+    return { label: `Only ${inventory} left`, variant: 'secondary' };
+  }
+  return null; // No badge for normal stock
+}
+
+export type TopPickProduct = {
+  id: string
+  title: string
+  description: string
+  image: string
+  url: string
+}
+
+export type ProductValue = {
+  id: string
+  name: string
+  slug: string
+  iconName?: string | null
+}
+
+export type ProductWithRelations = {
+  id: string
+  title: string
+  description: string | null
+  price: number
+  salePrice: number | null
+  image: string
+  category: string
+  inventory: number
+  reviews: Array<{ rating: number }>
+  // Sustainability fields
+  isPlasticFree?: boolean
+  isVegan?: boolean
+  isCrueltyFree?: boolean
+  isOrganicCertified?: boolean
+  carbonFootprintGrams?: number | null
+  // Shop by Values
+  values?: ProductValue[]
+}
+
+interface TopPickProductCardProps {
+  variant: "topPick"
+  product: TopPickProduct
+}
+
+interface AdminProductCardProps {
+  variant: "admin"
+  product: ProductWithRelations
+}
+
+type ProductCardProps = TopPickProductCardProps | AdminProductCardProps
+
+const ProductCard = memo(function ProductCard(props: ProductCardProps) {
+  const { addItemToCart } = useCart()
+  if (props.variant === "admin") {
+    const { product } = props
+    const stockBadge = getStockBadge(product.inventory ?? 0);
+    const isOutOfStock = (product.inventory ?? 0) <= 0;
+
+    const handleAddToCart = () => {
+      if (isOutOfStock) {
+        toast.error("This product is out of stock");
+        return;
+      }
+      addItemToCart({
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        image: product.image,
+        quantity: 1,
+      });
+    };
+
+    return (
+      <Card key={product.id}>
+        <CardHeader className="relative">
+          <AspectRatio ratio={1}>
+            <Image
+              src={product.image}
+              alt={product.title}
+              fill
+              className="rounded-md object-cover"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            />
+          </AspectRatio>
+          {stockBadge && (
+            <Badge
+              variant={stockBadge.variant}
+              className="absolute right-2 top-2"
+            >
+              {stockBadge.label}
+            </Badge>
+          )}
+        </CardHeader>
+        <CardContent>
+          <CardTitle>{product.title}</CardTitle>
+          {product.description && (
+            <CardDescription>{product.description}</CardDescription>
+          )}
+          <div className="mt-2 space-y-2">
+            <div className="flex flex-col">
+              <span>${product.price.toFixed(2)}</span>
+            </div>
+            {product.reviews.length > 0 && (
+              <div className="flex items-center gap-2">
+                <StarRating rating={product.reviews.reduce((acc: number, review: {rating: number}) => acc + review.rating, 0) / product.reviews.length} />
+                <span className="text-sm text-muted-foreground">
+                  ({product.reviews.length} reviews)
+                </span>
+              </div>
+            )}
+            {/* Sustainability badges */}
+            <SustainabilityTags
+              isPlasticFree={product.isPlasticFree}
+              isVegan={product.isVegan}
+              isCrueltyFree={product.isCrueltyFree}
+              isOrganicCertified={product.isOrganicCertified}
+              size="sm"
+              maxTags={2}
+            />
+            {/* Shop by Values badges */}
+            {product.values && product.values.length > 0 && (
+              <ValueBadgeList
+                values={product.values}
+                maxDisplay={3}
+                size="sm"
+              />
+            )}
+          </div>
+          <button
+            className={buttonVariants({
+              variant: isOutOfStock ? "secondary" : "default",
+              className: `w-full mt-4 ${isOutOfStock ? "cursor-not-allowed opacity-50" : ""}`,
+            })}
+            onClick={handleAddToCart}
+            disabled={isOutOfStock}
+          >
+            {isOutOfStock ? "Out of Stock" : "Add to Cart"}
+          </button>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  // TopPick variant
+  const { product } = props
+  return (
+    <Card key={product.id}>
+      <CardHeader>
+        <AspectRatio ratio={1}>
+          <Image
+            src={product.image}
+            alt={product.title}
+            fill
+            className="rounded-md object-cover"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          />
+        </AspectRatio>
+      </CardHeader>
+      <CardContent>
+        <CardTitle>{product.title}</CardTitle>
+        <CardDescription>{product.description}</CardDescription>
+      </CardContent>
+      <CardFooter>
+        <a
+          href={product.url}
+          className={buttonVariants({
+            variant: "outline",
+            className: "w-full",
+          })}
+        >
+          View Details
+        </a>
+        <button
+          className={buttonVariants({
+            variant: "default",
+            className: "w-full",
+          })}
+          onClick={() => addItemToCart({
+            id: product.id,
+            title: product.title,
+            price: 0, // TopPick doesn't have price, may need to fetch
+            image: product.image,
+            quantity: 1,
+          })}
+        >
+          Add to Cart
+        </button>
+      </CardFooter>
+    </Card>
+  )
+})
+
+ProductCard.displayName = 'ProductCard'
+
+export default ProductCard
