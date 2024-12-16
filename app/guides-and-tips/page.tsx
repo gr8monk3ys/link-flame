@@ -42,7 +42,7 @@ export default function GuidesAndTipsPage() {
 
       {categories.map(category => (
         <div key={category.id}>
-          <h2 className="text-2xl font-bold mt-4">{category.title}</h2>
+          <h2 className="mt-4 text-2xl font-bold">{category.title}</h2>
           <ul>
             {category.blogs.map(blog => (
               <li key={blog.id}>
