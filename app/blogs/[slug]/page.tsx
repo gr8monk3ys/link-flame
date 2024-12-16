@@ -1,36 +1,32 @@
-import fs from 'fs';
-import path from 'path';
-import { MDXRemote } from 'next-mdx-remote';
-import { serialize } from 'next-mdx-remote/serialize';
+import { MDXRemote } from 'next-mdx-remote/rsc'
+import { getMDXPost, getAllMDXPosts } from '@/lib/blog'
+import { notFound } from 'next/navigation'
 
-// Function to get all blog post slugs
 export async function generateStaticParams() {
-  const postsDirectory = path.join(process.cwd(), 'app/blogs/[slug]');
-  const filenames = fs.readdirSync(postsDirectory);
-
-  return filenames
-    .filter(filename => filename.endsWith('.mdx'))
-    .map((filename) => ({
-      slug: filename.replace(/\.mdx$/, ''),
-    }));
-}
-
-// Function to get blog post content
-async function getBlogPost(slug: string) {
-  const filePath = path.join(process.cwd(), 'app/blogs/[slug]', `${slug}.mdx`);
-  const fileContents = fs.readFileSync(filePath, 'utf8');
-  const source = await serialize(fileContents);
-  return source;
+  const posts = await getAllMDXPosts()
+  return posts.map(post => ({
+    slug: post.slug
+  }))
 }
 
 export default async function BlogPost({ params }: { params: { slug: string } }) {
-  const source = await getBlogPost(params.slug);
+  const post = await getMDXPost(params.slug)
   
+  if (!post) {
+    notFound()
+  }
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <article className="prose lg:prose-xl">
-        <MDXRemote {...source} />
-      </article>
-    </div>
-  );
+    <article className="prose lg:prose-xl mx-auto py-8 px-4">
+      <h1>{post.title}</h1>
+      <div className="flex items-center gap-4 text-gray-500 mb-8">
+        <time dateTime={post.publishedAt.toISOString()}>
+          {post.publishedAt.toLocaleDateString()}
+        </time>
+        <span>•</span>
+        <span>{post.readingTime}</span>
+      </div>
+      {post.content && <MDXRemote source={post.content} />}
+    </article>
+  )
 }

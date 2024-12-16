@@ -1,27 +1,49 @@
+"use client"
+
 import Link from "next/link"
 import { getAllPosts } from "@/lib/blog"
+import { useEffect, useState } from "react"
 
 export function TagCloud() {
-  // Get all unique tags and their counts
-  const tags = getAllPosts().reduce((acc, post) => {
-    post.tags.forEach((tag) => {
-      const normalizedTag = tag.toLowerCase()
-      acc[normalizedTag] = (acc[normalizedTag] || 0) + 1
-    })
-    return acc
-  }, {} as Record<string, number>)
+  const [tags, setTags] = useState<Array<{ tag: string; count: number }>>([])
 
-  // Convert to array and sort by count
-  const sortedTags = Object.entries(tags)
-    .sort(([, a], [, b]) => b - a)
-    .map(([tag, count]) => ({ tag, count }))
+  useEffect(() => {
+    async function fetchTags() {
+      try {
+        const posts = await getAllPosts()
+        const tagCounts = posts.reduce((acc, post) => {
+          post.tags.forEach((tag) => {
+            const normalizedTag = tag.toLowerCase()
+            acc[normalizedTag] = (acc[normalizedTag] || 0) + 1
+          })
+          return acc
+        }, {} as Record<string, number>)
+
+        // Convert to array and sort by count
+        const sortedTags = Object.entries(tagCounts)
+          .sort(([, a], [, b]) => b - a)
+          .map(([tag, count]) => ({ tag, count }))
+
+        setTags(sortedTags)
+      } catch (error) {
+        console.error('Error fetching tags:', error)
+        setTags([])
+      }
+    }
+
+    fetchTags()
+  }, [])
+
+  if (tags.length === 0) {
+    return null
+  }
 
   return (
     <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
       <div className="p-6">
         <h3 className="mb-4 font-semibold">Popular Topics</h3>
         <div className="flex flex-wrap gap-2">
-          {sortedTags.map(({ tag, count }) => (
+          {tags.map(({ tag, count }) => (
             <Link
               key={tag}
               href={`/blogs/tags/${tag}`}

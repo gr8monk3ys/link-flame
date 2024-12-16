@@ -1,32 +1,32 @@
-import { getPostsByTag, getAllPosts } from "@/lib/blog"
+import { getPostsByCategory, getAllPosts } from "@/lib/blog"
 import { BlogCard } from "@/components/blog-card"
 import { TagCloud } from "@/components/tag-cloud"
 import { NewsletterSignup } from "@/components/newsletter-signup"
 
-interface TagPageProps {
+interface CategoryPageProps {
   params: {
-    tag: string
+    category: string
   }
 }
 
-export default async function TagPage({ params }: TagPageProps) {
-  const { tag } = params
-  const decodedTag = decodeURIComponent(tag)
-  const posts = await getPostsByTag(decodedTag)
+export default async function CategoryPage({ params }: CategoryPageProps) {
+  const { category } = params
+  const decodedCategory = decodeURIComponent(category)
+  const posts = await getPostsByCategory(decodedCategory)
 
   return (
     <div className="container py-10">
       <div className="mb-8 flex max-w-[980px] flex-col items-start gap-2">
         <div className="flex items-center gap-2">
           <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
-            #{decodedTag}
+            {decodedCategory}
           </h1>
           <span className="text-lg text-muted-foreground">
             ({posts.length} {posts.length === 1 ? "article" : "articles"})
           </span>
         </div>
         <p className="max-w-[700px] text-lg text-muted-foreground">
-          Browse our collection of articles about {decodedTag}.
+          Browse our collection of articles about {decodedCategory}.
         </p>
       </div>
 
@@ -42,7 +42,7 @@ export default async function TagPage({ params }: TagPageProps) {
           ) : (
             <div className="py-12 text-center">
               <p className="text-muted-foreground">
-                No articles found for this tag. Check out our other topics below.
+                No articles found in this category. Check out our other topics below.
               </p>
             </div>
           )}
@@ -60,11 +60,11 @@ export default async function TagPage({ params }: TagPageProps) {
   )
 }
 
-// Generate static params for all tags
+// Generate static params for all categories
 export async function generateStaticParams() {
   const posts = await getAllPosts()
-  const tags = new Set(posts.flatMap(post => post.tags))
-  return Array.from(tags).map(tag => ({
-    tag: encodeURIComponent(tag.toLowerCase())
+  const categories = new Set(posts.map(post => post.category))
+  return Array.from(categories).map(category => ({
+    category: encodeURIComponent(category.toLowerCase())
   }))
 }

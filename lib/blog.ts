@@ -1,3 +1,7 @@
+import path from 'path'
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+
 export interface Author {
   name: string
   image: string
@@ -15,83 +19,74 @@ export interface BlogPost {
   tags: string[]
   readingTime: string
   featured?: boolean
+  content?: string
 }
 
-// This would typically come from a CMS or database
-// For now, we'll hardcode some sample posts
-export const blogPosts: BlogPost[] = [
-  {
-    slug: "ultimate-guide-to-composting",
-    title: "The Ultimate Guide to Home Composting: Turn Kitchen Waste into Garden Gold",
-    description: "Learn everything you need to know about starting and maintaining a successful home composting system. From choosing the right bin to troubleshooting common issues, this comprehensive guide has you covered.",
-    coverImage: "/images/blogs/composting-guide-hero.jpg",
-    publishedAt: new Date("2024-01-15"),
-    author: {
-      name: "Sarah Green",
-      image: "/images/team/sarah.jpg",
-      bio: "Sarah is our resident sustainability expert with over a decade of experience in environmental science and organic gardening.",
-    },
-    category: "Green Home & Garden",
-    tags: ["Composting", "Zero Waste", "Gardening", "Sustainability", "DIY"],
-    readingTime: "8 min read",
-    featured: true,
-  },
-  {
-    slug: "sustainable-fashion-guide",
-    title: "A Complete Guide to Building a Sustainable Wardrobe",
-    description: "Discover how to build a wardrobe that's both stylish and sustainable. Learn about eco-friendly materials, ethical brands, and tips for extending the life of your clothes.",
-    coverImage: "/images/blogs/sustainable-fashion-hero.jpg",
-    publishedAt: new Date("2024-01-10"),
-    author: {
-      name: "Lisa Chen",
-      image: "/images/team/lisa.jpg",
-      bio: "Lisa is our fashion and lifestyle expert, passionate about making sustainable living stylish and accessible.",
-    },
-    category: "Eco Fashion & Beauty",
-    tags: ["Fashion", "Sustainability", "Ethical Shopping", "Minimalism"],
-    readingTime: "6 min read",
-  },
-  {
-    slug: "zero-waste-kitchen",
-    title: "10 Easy Steps to a Zero-Waste Kitchen",
-    description: "Transform your kitchen into a zero-waste zone with these practical tips and product recommendations. Reduce your environmental impact while saving money.",
-    coverImage: "/images/blogs/zero-waste-kitchen-hero.jpg",
-    publishedAt: new Date("2024-01-05"),
-    author: {
-      name: "Mike Rivers",
-      image: "/images/team/mike.jpg",
-      bio: "Mike specializes in finding and testing the best eco-friendly products for everyday use.",
-    },
-    category: "Zero Waste Living",
-    tags: ["Zero Waste", "Kitchen", "Sustainability", "DIY"],
-    readingTime: "5 min read",
-  },
-  // Add more sample posts as needed
-]
-
-export function getAllPosts(): BlogPost[] {
-  return blogPosts.sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime())
+// Function to read MDX files
+export async function getMDXPost(slug: string): Promise<BlogPost | null> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/blog?slug=${encodeURIComponent(slug)}`)
+    if (!response.ok) {
+      if (response.status === 404) return null
+      throw new Error('Failed to fetch blog post')
+    }
+    const post = await response.json()
+    return {
+      ...post,
+      publishedAt: new Date(post.publishedAt)
+    }
+  } catch (error) {
+    console.error(`Error fetching MDX post for slug ${slug}:`, error)
+    return null
+  }
 }
 
-export function getFeaturedPosts(): BlogPost[] {
-  return blogPosts.filter(post => post.featured)
+// Function to get all MDX posts
+export async function getAllMDXPosts(): Promise<BlogPost[]> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/blog`)
+    if (!response.ok) {
+      throw new Error('Failed to fetch blog posts')
+    }
+    const posts = await response.json()
+    return posts.map((post: any) => ({
+      ...post,
+      publishedAt: new Date(post.publishedAt)
+    }))
+  } catch (error) {
+    console.error('Error fetching MDX posts:', error)
+    return []
+  }
 }
 
-export function getPostsByCategory(category: string): BlogPost[] {
-  return blogPosts.filter(post => 
+export async function getAllPosts(): Promise<BlogPost[]> {
+  const posts = await getAllMDXPosts()
+  return posts.sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime())
+}
+
+export async function getFeaturedPosts(): Promise<BlogPost[]> {
+  const posts = await getAllMDXPosts()
+  return posts.filter(post => post.featured)
+}
+
+export async function getPostsByCategory(category: string): Promise<BlogPost[]> {
+  const posts = await getAllMDXPosts()
+  return posts.filter(post => 
     post.category.toLowerCase() === category.toLowerCase()
   ).sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime())
 }
 
-export function getPostsByTag(tag: string): BlogPost[] {
-  return blogPosts.filter(post => 
+export async function getPostsByTag(tag: string): Promise<BlogPost[]> {
+  const posts = await getAllMDXPosts()
+  return posts.filter(post => 
     post.tags.some(t => t.toLowerCase() === tag.toLowerCase())
   ).sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime())
 }
 
-export function searchPosts(query: string): BlogPost[] {
+export async function searchPosts(query: string): Promise<BlogPost[]> {
+  const posts = await getAllMDXPosts()
   const searchTerms = query.toLowerCase().split(" ")
-  return blogPosts.filter(post => {
+  return posts.filter(post => {
     const searchableText = `
       ${post.title} 
       ${post.description} 

@@ -1,0 +1,232 @@
+// This is your Prisma schema file
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User and Authentication
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          UserRole  @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+  Profile       Profile?
+  reviews       Review[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Profile {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  bio          String?
+  preferences  Json?    // Store user preferences as JSON
+  subscription SubscriptionTier @default(FREE)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Product-related models
+model Product {
+  id                String              @id @default(cuid())
+  name              String
+  slug              String              @unique
+  description       String
+  category          Category            @relation(fields: [categoryId], references: [id])
+  categoryId        String
+  manufacturer      Manufacturer        @relation(fields: [manufacturerId], references: [id])
+  manufacturerId    String
+  features          String[]
+  specifications    Json
+  sustainabilityScore SustainabilityScore?
+  price            Price?
+  certifications   CertificationOnProduct[]
+  pros             String[]
+  cons             String[]
+  reviews          Review[]
+  images           ProductImage[]
+  affiliateUrl     String?
+  sponsored        Boolean             @default(false)
+  featured         Boolean             @default(false)
+  ranking          Int?
+  comparisonNotes  String?
+  lastUpdated      DateTime            @updatedAt
+  createdAt        DateTime            @default(now())
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  parentId    String?
+  parent      Category? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+  products    Product[]
+}
+
+model Manufacturer {
+  id                    String    @id @default(cuid())
+  name                  String    @unique
+  sustainabilityCommitment String?
+  location              String?
+  website               String?
+  products              Product[]
+  certifications        CertificationOnManufacturer[]
+}
+
+model Certification {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String
+  icon        String
+  verificationUrl String?
+  products    CertificationOnProduct[]
+  manufacturers CertificationOnManufacturer[]
+}
+
+model CertificationOnProduct {
+  productId       String
+  certificationId String
+  dateObtained    DateTime @default(now())
+  expiryDate      DateTime?
+  product         Product      @relation(fields: [productId], references: [id])
+  certification   Certification @relation(fields: [certificationId], references: [id])
+
+  @@id([productId, certificationId])
+}
+
+model CertificationOnManufacturer {
+  manufacturerId  String
+  certificationId String
+  dateObtained    DateTime @default(now())
+  expiryDate      DateTime?
+  manufacturer    Manufacturer  @relation(fields: [manufacturerId], references: [id])
+  certification   Certification @relation(fields: [certificationId], references: [id])
+
+  @@id([manufacturerId, certificationId])
+}
+
+model SustainabilityScore {
+  id                  String  @id @default(cuid())
+  productId           String  @unique
+  overall             Float
+  carbonFootprint     Float
+  materialSourcing    Float
+  manufacturingProcess Float
+  packaging           Float
+  endOfLife          Float
+  socialImpact       Float
+  product            Product @relation(fields: [productId], references: [id])
+}
+
+model Price {
+  id          String  @id @default(cuid())
+  productId   String  @unique
+  amount      Float
+  currency    String
+  unit        String?
+  discountedFrom Float?
+  product     Product @relation(fields: [productId], references: [id])
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  productId String
+  url       String
+  alt       String?
+  isMain    Boolean @default(false)
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model Review {
+  id               String  @id @default(cuid())
+  productId        String
+  userId           String
+  rating           Float
+  title            String?
+  content          String
+  pros             String[]
+  cons             String[]
+  verifiedPurchase Boolean @default(false)
+  helpful          Int     @default(0)
+  notHelpful       Int     @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  product          Product @relation(fields: [productId], references: [id])
+  user             User    @relation(fields: [userId], references: [id])
+}
+
+// Analytics and Tracking
+model AffiliateClick {
+  id          String   @id @default(cuid())
+  productId   String
+  userId      String?
+  sessionId   String
+  clickedAt   DateTime @default(now())
+  converted   Boolean  @default(false)
+  revenue     Float?
+  source      String?
+  medium      String?
+  campaign    String?
+}
+
+model PageView {
+  id        String   @id @default(cuid())
+  path      String
+  userId    String?
+  sessionId String
+  viewedAt  DateTime @default(now())
+  duration  Int?     // in seconds
+  source    String?
+  medium    String?
+  campaign  String?
+}
+
+// Enums
+enum UserRole {
+  USER
+  EDITOR
+  ADMIN
+}
+
+enum SubscriptionTier {
+  FREE
+  PREMIUM
+  ENTERPRISE
+}

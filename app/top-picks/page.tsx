@@ -1,8 +1,8 @@
 import { siteConfig } from "@/config/site"
-import ProductCard from "@/components/ui/product-card"
+import ProductCard, { TopPickProduct } from "@/components/ui/product-card"
 
 // This is dummy data for demonstration purposes
-const products = [
+const products: TopPickProduct[] = [
   {
     id: '1',
     title: 'Product 1',
@@ -27,7 +27,7 @@ export default function TopPicksPage() {
       
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {products.map((product) => (
-          <ProductCard product={product} key={product.id} />
+          <ProductCard product={product} variant="topPick" key={product.id} />
         ))}
       </div>
     </section>

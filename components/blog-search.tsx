@@ -12,12 +12,18 @@ export function BlogSearch() {
   const [isSearching, setIsSearching] = useState(false)
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const timer = setTimeout(async () => {
       if (query.trim()) {
         setIsSearching(true)
-        const searchResults = searchPosts(query)
-        setResults(searchResults)
-        setIsSearching(false)
+        try {
+          const searchResults = await searchPosts(query)
+          setResults(searchResults)
+        } catch (error) {
+          console.error('Error searching posts:', error)
+          setResults([])
+        } finally {
+          setIsSearching(false)
+        }
       } else {
         setResults([])
       }

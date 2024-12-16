@@ -74,24 +74,24 @@ export function BlogPost({
             <div className="ml-auto flex items-center gap-2">
               <button
                 onClick={() => setIsLiked(!isLiked)}
-                className={buttonVariants({ variant: "ghost", size: "icon" })}
+                className={buttonVariants({ variant: "ghost", size: "sm" })}
               >
                 <Heart
                   className={`h-4 w-4 ${isLiked ? "fill-red-500 text-red-500" : ""}`}
                 />
               </button>
-              <button className={buttonVariants({ variant: "ghost", size: "icon" })}>
+              <button className={buttonVariants({ variant: "ghost", size: "sm" })}>
                 <MessageSquare className="h-4 w-4" />
               </button>
               <button
                 onClick={() => setIsSaved(!isSaved)}
-                className={buttonVariants({ variant: "ghost", size: "icon" })}
+                className={buttonVariants({ variant: "ghost", size: "sm" })}
               >
                 <Bookmark
                   className={`h-4 w-4 ${isSaved ? "fill-primary text-primary" : ""}`}
                 />
               </button>
-              <button className={buttonVariants({ variant: "ghost", size: "icon" })}>
+              <button className={buttonVariants({ variant: "ghost", size: "sm" })}>
                 <Share2 className="h-4 w-4" />
               </button>
             </div>
