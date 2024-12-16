@@ -1,3 +1,4 @@
+import Image from "next/image"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { buttonVariants } from "@/components/ui/button"
@@ -6,7 +7,12 @@ const ProductCard = ({ product }) => (
   <Card key={product.id}>
     <CardHeader>
       <AspectRatio ratio={1}>
-        <img src={product.image} alt={product.title} />
+        <Image 
+          src={product.image} 
+          alt={product.title}
+          fill
+          style={{ objectFit: "cover" }}
+        />
       </AspectRatio>
     </CardHeader>
     <CardContent>

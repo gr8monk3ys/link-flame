@@ -9,75 +9,85 @@ export default function IndexPage() {
     <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
       <div className="relative h-72 md:h-96">
         <Image
-          src="/../public/images/cover.png" // Replace with the actual cover image URL
-          alt="Cover Image"
+          src="/images/cover.png"
+          alt="Eco-friendly lifestyle cover image"
           layout="fill"
           objectFit="cover"
+          priority
         />
       </div>
       <div className="flex max-w-[980px] flex-col items-start gap-2">
         <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
-          Welcome to LinkFlame, <br className="hidden sm:inline" />
+          Welcome to LinkFlame <br className="hidden sm:inline" />
+          Your Guide to Sustainable Living
         </h1>
         <h2 className="text-2xl font-bold leading-tight tracking-tighter md:text-3xl">
-          Your Trustworthy site for all reviews product related.
+          Discover Eco-Friendly Products & Sustainable Lifestyle Tips
         </h2>
         <p className="max-w-[700px] text-lg text-muted-foreground">
-          At LinkFlame, we believe in making online shopping a breeze. We're
-          dedicated to providing you with trusted, in-depth product reviews, and
-          personalized product recommendations. Our platform is powered by
-          Amazon Associates, assuring you of a vast array of products to choose
-          from.
+          At LinkFlame, we&apos;re passionate about helping you make environmentally conscious choices. 
+          Explore our curated selection of sustainable products, expert guides, and practical tips for 
+          eco-friendly living. Join our community and be part of the solution for a greener future.
         </p>
       </div>
-      <div className="flex gap-4">
+
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <Card>
+          <CardHeader>
+            <CardTitle>Green Home & Garden</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>Discover sustainable solutions for your home and garden. From energy-efficient appliances to organic gardening tips.</p>
+            <Link href="/eco-living/green-home" className={buttonVariants({ variant: "link" })}>
+              Explore Green Living →
+            </Link>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Zero Waste Living</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>Learn practical ways to reduce waste and find eco-friendly alternatives to everyday products.</p>
+            <Link href="/eco-living/zero-waste" className={buttonVariants({ variant: "link" })}>
+              Start Your Journey →
+            </Link>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Sustainable Fashion</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>Find ethical fashion brands and learn about sustainable materials and production methods.</p>
+            <Link href="/eco-living/fashion-beauty" className={buttonVariants({ variant: "link" })}>
+              Shop Consciously →
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="flex flex-col gap-4 md:flex-row">
         <Link
-          href={siteConfig.links.docs}
-          target="_blank"
-          rel="noreferrer"
-          className={buttonVariants()}
+          href="/community/join"
+          className={buttonVariants({ size: "lg" })}
         >
-          Learn More
+          Join Our Community
         </Link>
         <Link
-          target="_blank"
-          rel="noreferrer"
-          href={siteConfig.links.github}
-          className={buttonVariants({ variant: "outline" })}
+          href="/guides-and-tips"
+          className={buttonVariants({ variant: "outline", size: "lg" })}
         >
-          GitHub
+          Explore Eco Guides
         </Link>
       </div>
-      <div className="">
-        <p className="max-w-[80%] text-lg text-muted-foreground">
-          We work tirelessly to ensure that you are presented with the most
-          recent, highest-rated, and popular products in a wide variety of
-          categories. Our smartly designed site and user-friendly navigation
-          system ensure you spend less time searching and more time shopping.
-        </p>
-        <p className="max-w-[80%] text-lg text-muted-foreground">
-          Free, user-friendly, and always updated - experience the new era of
-          online shopping with [Your Company Name]. Your satisfaction is our
-          reward.
-        </p>
-      </div>
-      <div className="grid grid-cols-2 gap-4 mt-8">
-        {/* Additional Images */}
-        <div>
-          <Image
-            src="/path/to/image1.jpg" // Replace with the actual image URL
-            alt="Image 1"
-            width={500}
-            height={300}
-          />
-        </div>
-        <div>
-          <Image
-            src="/path/to/image2.jpg" // Replace with the actual image URL
-            alt="Image 2"
-            width={500}
-            height={300}
-          />
+
+      <div className="mt-8">
+        <h3 className="mb-4 text-2xl font-bold">Latest from Our Blog</h3>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {/* Add blog post previews here */}
         </div>
       </div>
     </section>
