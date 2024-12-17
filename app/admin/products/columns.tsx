@@ -40,7 +40,7 @@ export const columns: ColumnDef<ProductWithRelations>[] = [
         <div>
           ${price.amount.toFixed(2)}
           {price.unit && (
-            <span className="text-muted-foreground text-sm">
+            <span className="text-sm text-muted-foreground">
               {" "}
               / {price.unit}
             </span>

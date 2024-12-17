@@ -90,7 +90,7 @@ const sampleProducts = [
 
 export default function SustainableAppliancesPage() {
   return (
-    <div className="container mx-auto py-8 space-y-8">
+    <div className="container mx-auto space-y-8 py-8">
       <div className="prose max-w-none">
         <h1>Best Eco-Friendly Home Appliances (2024)</h1>
         <p className="lead">
@@ -108,7 +108,7 @@ export default function SustainableAppliancesPage() {
         category="Sustainable Appliances"
       />
 
-      <div className="prose max-w-none mt-8">
+      <div className="prose mt-8 max-w-none">
         <h2>How We Rate Sustainable Appliances</h2>
         <p>
           Our comprehensive rating system considers multiple factors to determine

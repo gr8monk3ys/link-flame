@@ -150,7 +150,7 @@ export function ProductComparison({
                 </div>
               </TableCell>
               <TableCell>
-                <ul className="list-disc list-inside text-sm">
+                <ul className="list-inside list-disc text-sm">
                   {product.features.slice(0, 3).map((feature, index) => (
                     <li key={index}>{feature}</li>
                   ))}

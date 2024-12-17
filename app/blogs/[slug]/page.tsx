@@ -26,7 +26,7 @@ export default async function BlogPost({ params }: { params: { slug: string } })
         <span>•</span>
         <span>{post.readingTime}</span>
       </div>
-      {post.content && <MDXRemote source={post.content} />}
+      {/* {post.content && <MDXRemote source={post.content} />} */}
     </article>
   )
 }

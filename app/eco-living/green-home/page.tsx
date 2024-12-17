@@ -1,167 +1,185 @@
+import { Metadata } from "next"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { buttonVariants } from "@/components/ui/button"
-import { ProductDisplay } from "@/components/product-display"
+import { Button } from "@/components/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ProductGrid } from "@/components/product-grid"
+import { CarbonFootprintCalculator } from "@/components/carbon-footprint-calculator"
+import { EnergySavingsCalculator } from "@/components/energy-savings-calculator"
 import { NewsletterSignup } from "@/components/newsletter-signup"
 import Link from "next/link"
 
-const featuredProducts = [
-  {
-    id: 1,
-    title: "Smart LED Light Bulbs Pack",
-    description: "Energy-efficient smart bulbs with app control and scheduling features. Save up to 80% on energy costs.",
-    image: "/images/products/smart-bulbs.jpg",
-    url: "#",
-    price: "$29.99",
-    rating: 4.5,
-    features: [
-      "Voice control compatible with Alexa & Google Home",
-      "Schedule and automation features",
-      "Energy monitoring through app",
-      "16 million colors and scenes",
-    ],
-    pros: [
-      "80% less energy consumption",
-      "Long lifespan (25,000 hours)",
-      "Easy smartphone control",
-    ],
-    cons: [
-      "Requires WiFi connection",
-      "Higher upfront cost",
-    ],
-  },
-  {
-    id: 2,
-    title: "Countertop Compost Bin",
-    description: "Odor-free kitchen compost bin with charcoal filter. Perfect for collecting food scraps.",
-    image: "/images/products/compost-bin.jpg",
-    url: "#",
-    price: "$34.99",
-    rating: 4.8,
-    features: [
-      "1.3-gallon capacity",
-      "Charcoal filter system",
-      "Dishwasher-safe",
-      "Stainless steel construction",
-    ],
-    pros: [
-      "Completely odor-free",
-      "Attractive design",
-      "Easy to clean",
-    ],
-    cons: [
-      "Filters need regular replacement",
-      "Limited capacity",
-    ],
-  },
-  {
-    id: 3,
-    title: "Rain Water Collection System",
-    description: "Complete rain barrel system for garden irrigation. Includes filters and easy-connect spigot.",
-    image: "/images/products/rain-barrel.jpg",
-    url: "#",
-    price: "$89.99",
-    rating: 4.7,
-    features: [
-      "50-gallon capacity",
-      "Mosquito-proof mesh screen",
-      "Overflow protection",
-      "UV-resistant material",
-    ],
-    pros: [
-      "Reduces water bills",
-      "Eco-friendly irrigation",
-      "Easy installation",
-    ],
-    cons: [
-      "Requires space",
-      "Seasonal usefulness",
-    ],
-  },
-]
-
-const guides = [
-  {
-    title: "Starting Your Organic Garden",
-    description: "A complete guide to creating and maintaining an organic vegetable garden.",
-    href: "/guides/organic-gardening",
-  },
-  {
-    title: "Home Energy Efficiency",
-    description: "Tips and tricks to reduce your home's energy consumption and utility bills.",
-    href: "/guides/energy-efficiency",
-  },
-  {
-    title: "Natural Cleaning Solutions",
-    description: "DIY recipes for effective, eco-friendly household cleaners.",
-    href: "/guides/natural-cleaning",
-  },
-]
+export const metadata: Metadata = {
+  title: "Green Home & Garden | LinkFlame",
+  description: "Transform your home into an eco-friendly sanctuary with our comprehensive guides, calculators, and sustainable product recommendations.",
+}
 
 export default function GreenHomePage() {
   return (
-    <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
-      <div className="flex max-w-[980px] flex-col items-start gap-2">
+    <div className="container py-10">
+      <div className="mb-8 flex max-w-[980px] flex-col items-start gap-2">
         <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
           Green Home & Garden
         </h1>
         <p className="max-w-[700px] text-lg text-muted-foreground">
-          Transform your living space into an eco-friendly haven. Discover sustainable products
-          and practices that help reduce your environmental impact while creating a healthier home.
+          Make your home more sustainable with our eco-friendly guides, energy-saving tips, and carefully selected products.
         </p>
       </div>
 
-      {/* Featured Products Section */}
-      <div className="my-8">
-        <h2 className="mb-4 text-2xl font-bold">Top Eco-Friendly Products</h2>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {featuredProducts.map((product) => (
-            <ProductDisplay key={product.id} product={product} detailed />
-          ))}
-        </div>
+      {/* Quick Links */}
+      <div className="mb-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <Card className="p-6">
+          <CardHeader className="p-0">
+            <CardTitle className="text-lg">Energy Efficiency</CardTitle>
+          </CardHeader>
+          <CardContent className="mt-4 p-0">
+            <ul className="space-y-2">
+              <li>
+                <Link href="#energy-calculator" className="text-sm text-primary hover:underline">
+                  Calculate Energy Savings
+                </Link>
+              </li>
+              <li>
+                <Link href="/eco-living/green-home/solar" className="text-sm text-primary hover:underline">
+                  Solar Power Guide
+                </Link>
+              </li>
+              <li>
+                <Link href="/eco-living/green-home/insulation" className="text-sm text-primary hover:underline">
+                  Home Insulation Tips
+                </Link>
+              </li>
+            </ul>
+          </CardContent>
+        </Card>
+
+        <Card className="p-6">
+          <CardHeader className="p-0">
+            <CardTitle className="text-lg">Water Conservation</CardTitle>
+          </CardHeader>
+          <CardContent className="mt-4 p-0">
+            <ul className="space-y-2">
+              <li>
+                <Link href="/eco-living/green-home/water" className="text-sm text-primary hover:underline">
+                  Water-Saving Guide
+                </Link>
+              </li>
+              <li>
+                <Link href="/eco-living/green-home/rainwater" className="text-sm text-primary hover:underline">
+                  Rainwater Harvesting
+                </Link>
+              </li>
+              <li>
+                <Link href="/eco-living/green-home/greywater" className="text-sm text-primary hover:underline">
+                  Greywater Systems
+                </Link>
+              </li>
+            </ul>
+          </CardContent>
+        </Card>
+
+        <Card className="p-6">
+          <CardHeader className="p-0">
+            <CardTitle className="text-lg">Sustainable Garden</CardTitle>
+          </CardHeader>
+          <CardContent className="mt-4 p-0">
+            <ul className="space-y-2">
+              <li>
+                <Link href="/eco-living/green-home/composting" className="text-sm text-primary hover:underline">
+                  Composting Guide
+                </Link>
+              </li>
+              <li>
+                <Link href="/eco-living/green-home/native-plants" className="text-sm text-primary hover:underline">
+                  Native Plants Guide
+                </Link>
+              </li>
+              <li>
+                <Link href="/eco-living/green-home/permaculture" className="text-sm text-primary hover:underline">
+                  Permaculture Basics
+                </Link>
+              </li>
+            </ul>
+          </CardContent>
+        </Card>
+
+        <Card className="p-6">
+          <CardHeader className="p-0">
+            <CardTitle className="text-lg">Eco Products</CardTitle>
+          </CardHeader>
+          <CardContent className="mt-4 p-0">
+            <ul className="space-y-2">
+              <li>
+                <Link href="/eco-living/green-home/appliances" className="text-sm text-primary hover:underline">
+                  Energy-Efficient Appliances
+                </Link>
+              </li>
+              <li>
+                <Link href="/eco-living/green-home/cleaning" className="text-sm text-primary hover:underline">
+                  Natural Cleaning Products
+                </Link>
+              </li>
+              <li>
+                <Link href="/eco-living/green-home/furniture" className="text-sm text-primary hover:underline">
+                  Sustainable Furniture
+                </Link>
+              </li>
+            </ul>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Guides Section */}
-      <div className="my-8">
-        <h2 className="mb-4 text-2xl font-bold">Expert Guides</h2>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {guides.map((guide) => (
-            <Card key={guide.title}>
-              <CardHeader>
-                <CardTitle>{guide.title}</CardTitle>
-                <CardDescription>{guide.description}</CardDescription>
+      {/* Calculators Section */}
+      <div className="mb-10">
+        <h2 className="mb-6 text-2xl font-semibold">Sustainability Calculators</h2>
+        <Tabs defaultValue="carbon">
+          <TabsList className="mb-4">
+            <TabsTrigger value="carbon">Carbon Footprint</TabsTrigger>
+            <TabsTrigger value="energy">Energy Savings</TabsTrigger>
+          </TabsList>
+          <TabsContent value="carbon">
+            <Card className="p-6">
+              <CardHeader className="p-0">
+                <CardTitle>Calculate Your Carbon Footprint</CardTitle>
+                <CardDescription>
+                  Understand your household&apos;s environmental impact and get personalized recommendations.
+                </CardDescription>
               </CardHeader>
-              <CardContent>
-                <Link href={guide.href} className={buttonVariants({ variant: "link" })}>
-                  Read Guide →
-                </Link>
+              <CardContent className="mt-6 p-0">
+                <CarbonFootprintCalculator />
               </CardContent>
             </Card>
-          ))}
+          </TabsContent>
+          <TabsContent value="energy" id="energy-calculator">
+            <Card className="p-6">
+              <CardHeader className="p-0">
+                <CardTitle>Energy Savings Calculator</CardTitle>
+                <CardDescription>
+                  Calculate potential savings from energy-efficient upgrades and find the best investments for your home.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="mt-6 p-0">
+                <EnergySavingsCalculator />
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+
+      {/* Featured Products */}
+      <div className="mb-10">
+        <h2 className="mb-6 text-2xl font-semibold">Recommended Products</h2>
+        <ProductGrid category="green-home" limit={4} />
+        <div className="mt-4 text-center">
+          <Button asChild variant="outline">
+            <Link href="/top-picks?category=green-home">View All Products</Link>
+          </Button>
         </div>
       </div>
 
       {/* Newsletter Signup */}
-      <NewsletterSignup
-        title="Get Green Home Tips"
-        description="Subscribe for weekly eco-friendly home and garden tips, exclusive deals, and sustainable living inspiration."
-        className="my-8 w-full"
-      />
-
-      {/* Related Categories */}
-      <div className="my-8">
-        <h2 className="mb-4 text-2xl font-bold">Explore More Categories</h2>
-        <div className="flex gap-4">
-          <Link href="/eco-living/zero-waste" className={buttonVariants({ variant: "outline" })}>
-            Zero Waste Living
-          </Link>
-          <Link href="/eco-living/fashion-beauty" className={buttonVariants({ variant: "outline" })}>
-            Eco Fashion & Beauty
-          </Link>
-          <Link href="/guides-and-tips" className={buttonVariants({ variant: "outline" })}>
-            All Guides
-          </Link>
-        </div>
+      <div className="mb-10">
+        <NewsletterSignup />
       </div>
-    </section>
+    </div>
   )
 }

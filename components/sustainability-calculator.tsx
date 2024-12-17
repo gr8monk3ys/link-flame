@@ -94,7 +94,7 @@ export function SustainabilityCalculator() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-8">
+    <div className="mx-auto max-w-2xl space-y-8">
       <Card>
         <CardHeader>
           <CardTitle>Carbon Footprint Calculator</CardTitle>
@@ -180,7 +180,7 @@ export function SustainabilityCalculator() {
             />
           </div>
 
-          <Button onClick={calculateFootprint} className="w-full mt-4">
+          <Button onClick={calculateFootprint} className="mt-4 w-full">
             Calculate Footprint
           </Button>
         </CardContent>
@@ -206,7 +206,7 @@ export function SustainabilityCalculator() {
                 <h3 className="text-lg font-semibold">
                   Suggestions for Improvement:
                 </h3>
-                <ul className="list-disc list-inside space-y-2">
+                <ul className="list-inside list-disc space-y-2">
                   {results.suggestions.map((suggestion, index) => (
                     <li key={index}>{suggestion}</li>
                   ))}
