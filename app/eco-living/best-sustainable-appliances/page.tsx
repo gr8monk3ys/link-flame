@@ -2,6 +2,7 @@ import { Metadata } from "next"
 import { ProductComparison } from "@/components/product-comparison"
 import { SustainabilityCalculator } from "@/components/sustainability-calculator"
 import { Separator } from "@/components/ui/separator"
+import { ProductWithRelations } from "@/app/admin/products/columns"
 
 export const metadata: Metadata = {
   title: "Best Eco-Friendly Home Appliances 2024 | Link Flame",
@@ -10,28 +11,21 @@ export const metadata: Metadata = {
 }
 
 // In a real app, this would come from your database or CMS
-const sampleProducts = [
+const sampleProducts: ProductWithRelations[] = [
   {
     id: "1",
     name: "EcoWash Pro 3000",
     slug: "ecowash-pro-3000",
-    category: "Washing Machines",
-    manufacturer: {
-      name: "GreenTech Appliances",
-      sustainabilityCommitment:
-        "Carbon neutral manufacturing by 2025",
-      certifications: [
-        {
-          name: "Energy Star",
-          description: "Certified energy efficient",
-          icon: "/icons/energy-star.svg",
-        },
-      ],
-      location: "Germany",
-      website: "https://example.com",
+    description: "High-efficiency washing machine with eco-friendly features",
+    categoryId: "washing-machines",
+    manufacturerId: "greentech-appliances",
+    category: {
+      id: "washing-machines",
+      name: "Washing Machines",
+      slug: "washing-machines",
+      description: "Energy-efficient washing machines",
+      parentId: null
     },
-    description:
-      "High-efficiency washing machine with eco-friendly features",
     features: [
       "Uses 50% less water than standard machines",
       "A+++ energy rating",
@@ -43,7 +37,33 @@ const sampleProducts = [
       energyConsumption: "100kWh/year",
       waterConsumption: "9000L/year",
     },
+    pros: [
+      "Extremely energy efficient",
+      "Long lifespan",
+      "Smart features",
+    ],
+    cons: ["Premium price point", "Limited color options"],
+    affiliateUrl: "https://example.com/buy",
+    price: {
+      id: "price-1",
+      productId: "1",
+      amount: 899.99,
+      currency: "USD",
+      unit: null,
+      discountedFrom: null,
+    },
+    images: [
+      {
+        id: "img-1",
+        productId: "1",
+        url: "/images/products/ecowash-pro-3000.jpg",
+        alt: "EcoWash Pro 3000",
+        isMain: true
+      }
+    ],
     sustainabilityScore: {
+      id: "score-1",
+      productId: "1",
       overall: 9.2,
       carbonFootprint: 8.5,
       materialSourcing: 9.0,
@@ -52,38 +72,12 @@ const sampleProducts = [
       endOfLife: 9.5,
       socialImpact: 9.0,
     },
-    price: {
-      amount: 899.99,
-      currency: "USD",
-    },
-    certifications: [
-      {
-        name: "Energy Star",
-        description: "Certified energy efficient",
-        icon: "/icons/energy-star.svg",
-      },
-      {
-        name: "Carbon Trust",
-        description: "Carbon neutral product",
-        icon: "/icons/carbon-trust.svg",
-      },
-    ],
-    pros: [
-      "Extremely energy efficient",
-      "Long lifespan",
-      "Smart features",
-    ],
-    cons: ["Premium price point", "Limited color options"],
-    reviews: [],
-    images: {
-      main: "/images/products/ecowash-pro-3000.jpg",
-      gallery: [],
-    },
-    affiliateUrl: "https://example.com/buy",
+    comparisonNotes: "Best-in-class energy efficiency with smart features",
+    createdAt: new Date("2024-01-15"),
     sponsored: false,
     featured: true,
     ranking: 1,
-    lastUpdated: "2024-01-15",
+    lastUpdated: new Date("2024-01-15"),
   },
   // Add more sample products...
 ]
@@ -105,7 +99,6 @@ export default function SustainableAppliancesPage() {
 
       <ProductComparison
         products={sampleProducts}
-        category="Sustainable Appliances"
       />
 
       <div className="prose mt-8 max-w-none">

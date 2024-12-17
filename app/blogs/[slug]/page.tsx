@@ -17,9 +17,9 @@ export default async function BlogPost({ params }: { params: { slug: string } })
   }
 
   return (
-    <article className="prose lg:prose-xl mx-auto py-8 px-4">
+    <article className="prose lg:prose-xl mx-auto px-4 py-8">
       <h1>{post.title}</h1>
-      <div className="flex items-center gap-4 text-gray-500 mb-8">
+      <div className="mb-8 flex items-center gap-4 text-gray-500">
         <time dateTime={post.publishedAt.toISOString()}>
           {post.publishedAt.toLocaleDateString()}
         </time>

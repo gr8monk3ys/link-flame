@@ -1,139 +1,194 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Search } from "lucide-react"
+import { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { Card } from "./ui/card"
+import { Input } from "./ui/input"
+import { Button } from "./ui/button"
+import { Badge } from "./ui/badge"
+import { FadeIn, PopIn } from "./ui/animations"
 
 interface ChargingStation {
   id: string
   name: string
   address: string
-  connectorTypes: string[]
-  available: boolean
-  distance: number
+  coordinates: {
+    lat: number
+    lng: number
+  }
+  availablePoints: number
+  totalPoints: number
+  powerTypes: string[]
+  status: "available" | "busy" | "offline"
 }
 
-// Mock data for demonstration
-const mockStations: ChargingStation[] = [
-  {
-    id: "1",
-    name: "City Center Charging",
-    address: "123 Main St, Downtown",
-    connectorTypes: ["CCS", "CHAdeMO"],
-    available: true,
-    distance: 0.5
-  },
-  {
-    id: "2",
-    name: "Shopping Mall Station",
-    address: "456 Market Ave",
-    connectorTypes: ["Type 2", "CCS"],
-    available: true,
-    distance: 1.2
-  },
-  {
-    id: "3",
-    name: "Public Parking Charger",
-    address: "789 Park Road",
-    connectorTypes: ["Type 2"],
-    available: false,
-    distance: 2.1
-  }
-]
-
 export function ChargingStationMap() {
-  const [location, setLocation] = useState("")
-  const [stations, setStations] = useState<ChargingStation[]>([])
-  const [loading, setLoading] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [selectedStation, setSelectedStation] = useState<ChargingStation | null>(null)
+  const [mapLoaded, setMapLoaded] = useState(false)
 
-  const searchStations = async () => {
-    setLoading(true)
-    // In a real implementation, this would make an API call to a charging station service
-    // For now, we'll use mock data
-    setTimeout(() => {
-      setStations(mockStations)
-      setLoading(false)
-    }, 1000)
-  }
-
-  useEffect(() => {
-    // Get user's location on component mount
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLocation(`${position.coords.latitude}, ${position.coords.longitude}`)
-          searchStations()
-        },
-        (error) => {
-          console.error("Error getting location:", error)
-        }
-      )
+  const getStatusColor = (status: ChargingStation["status"]) => {
+    switch (status) {
+      case "available":
+        return "bg-green-500"
+      case "busy":
+        return "bg-yellow-500"
+      case "offline":
+        return "bg-red-500"
     }
-  }, [])
+  }
 
   return (
-    <div className="space-y-4">
-      <div className="flex gap-2">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="text"
-            placeholder="Enter location or postcode"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        <Button onClick={searchStations} disabled={loading}>
-          {loading ? "Searching..." : "Search"}
-        </Button>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {stations.map((station) => (
-          <Card key={station.id} className="p-4">
-            <div className="mb-2 flex items-center justify-between">
-              <h3 className="font-semibold">{station.name}</h3>
-              <span
-                className={`rounded-full px-2 py-1 text-xs ${
-                  station.available
-                    ? "bg-green-100 text-green-800"
-                    : "bg-red-100 text-red-800"
-                }`}
-              >
-                {station.available ? "Available" : "In Use"}
-              </span>
+    <div className="relative h-[600px]">
+      <FadeIn>
+        <div className="absolute inset-x-4 top-4 z-10">
+          <Card className="p-4">
+            <div className="flex gap-2">
+              <Input
+                placeholder="Search for charging stations..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="flex-1"
+              />
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Button>Search</Button>
+              </motion.div>
             </div>
-            <p className="mb-2 text-sm text-muted-foreground">{station.address}</p>
-            <div className="mb-2 flex flex-wrap gap-1">
-              {station.connectorTypes.map((type) => (
-                <span
-                  key={type}
-                  className="rounded-full bg-secondary px-2 py-1 text-xs"
-                >
-                  {type}
-                </span>
-              ))}
-            </div>
-            <p className="text-sm">
-              <span className="font-medium">{station.distance}</span> km away
-            </p>
           </Card>
-        ))}
-      </div>
+        </div>
+      </FadeIn>
 
-      {stations.length === 0 && !loading && (
-        <p className="text-center text-muted-foreground">
-          No charging stations found in this area. Try another location.
-        </p>
-      )}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="h-full w-full bg-gray-100"
+      >
+        {/* Map component would go here */}
+      </motion.div>
 
-      <div className="mt-4 text-center text-sm text-muted-foreground">
-        Note: In a production environment, this would integrate with real charging
-        station APIs and display an interactive map.
-      </div>
+      <AnimatePresence>
+        {selectedStation && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            className="absolute inset-x-4 bottom-4 z-10"
+          >
+            <Card className="p-4">
+              <div className="mb-4 flex items-start justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold">{selectedStation.name}</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedStation.address}
+                  </p>
+                </div>
+                <motion.button
+                  className="rounded-full p-1 hover:bg-gray-100"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setSelectedStation(null)}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
+                </motion.button>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <div
+                    className={`h-3 w-3 rounded-full ${getStatusColor(
+                      selectedStation.status
+                    )}`}
+                  />
+                  <span className="capitalize">{selectedStation.status}</span>
+                  <Badge variant="secondary" className="ml-auto">
+                    {selectedStation.availablePoints}/{selectedStation.totalPoints}{" "}
+                    Points Available
+                  </Badge>
+                </div>
+
+                <div>
+                  <h4 className="mb-2 text-sm font-medium">Charging Types</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedStation.powerTypes.map((type) => (
+                      <PopIn key={type}>
+                        <Badge variant="outline">{type}</Badge>
+                      </PopIn>
+                    ))}
+                  </div>
+                </div>
+
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Button className="w-full">Get Directions</Button>
+                </motion.div>
+              </div>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {mapLoaded && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="absolute bottom-4 right-4 z-10 space-x-2"
+          >
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className="rounded-full bg-white p-2 shadow-lg"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 2v20M2 12h20" />
+              </svg>
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className="rounded-full bg-white p-2 shadow-lg"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M5 12h14" />
+              </svg>
+            </motion.button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
