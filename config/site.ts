@@ -5,10 +5,6 @@ export const siteConfig = {
   description: "Your trusted source for eco-friendly living and sustainable product recommendations.",
   mainNav: [
     {
-      title: "Home",
-      href: "/",
-    },
-    {
       title: "About Us",
       href: "/about-us",
     },
