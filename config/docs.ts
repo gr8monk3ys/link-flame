@@ -31,8 +31,8 @@ export const docsConfig: DocsConfig = {
       href: "/guides-and-tips",
     },
     {
-      title: "Top Picks",
-      href: "/top-picks",
+      title: "Reviews",
+      href: "/reviews",
     },
     {
       title: "Blog",

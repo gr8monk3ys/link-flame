@@ -113,9 +113,9 @@ export function ProductComparison({ products = defaultProducts }: ProductCompari
         <div className="space-y-4">
           <div className="flex flex-wrap gap-4">
             {selectedProducts.map((product) => (
-              <Card key={product.id} className="flex-1 min-w-[250px]">
+              <Card key={product.id} className="min-w-[250px] flex-1">
                 <CardContent className="p-4">
-                  <div className="flex justify-between items-start">
+                  <div className="flex items-start justify-between">
                     <div>
                       <h3 className="font-semibold">{product.name}</h3>
                       <Badge variant="secondary" className="mt-1">
@@ -163,11 +163,11 @@ export function ProductComparison({ products = defaultProducts }: ProductCompari
                     className="mt-4 space-y-4"
                   >
                     {/* Features Comparison */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       {getCommonSpecs().map((spec) => (
                         <div
                           key={spec}
-                          className="glass-effect p-4 rounded-lg space-y-2"
+                          className="glass-effect space-y-2 rounded-lg p-4"
                         >
                           <h4 className="font-medium">{spec}</h4>
                           <div className="space-y-1">
@@ -195,22 +195,22 @@ export function ProductComparison({ products = defaultProducts }: ProductCompari
       )}
 
       {/* Product Selection */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {products
           .filter((p) => !selectedProducts.find((sp) => sp.id === p.id))
           .map((product) => (
             <motion.div
               key={product.id}
               layout
-              className="glass-effect p-4 rounded-lg hover-card-effect cursor-pointer"
+              className="glass-effect hover-card-effect cursor-pointer rounded-lg p-4"
               onClick={() => handleProductSelect(product)}
             >
-              <h3 className="font-semibold mb-2">{product.name}</h3>
+              <h3 className="mb-2 font-semibold">{product.name}</h3>
               <Badge variant="secondary" className="mb-4">
                 {product.energyRating}
               </Badge>
-              <p className="text-2xl font-bold mb-2">${product.price}</p>
-              <div className="flex items-center mb-4">
+              <p className="mb-2 text-2xl font-bold">${product.price}</p>
+              <div className="mb-4 flex items-center">
                 {"★".repeat(Math.floor(product.rating))}
                 {"☆".repeat(5 - Math.floor(product.rating))}
                 <span className="ml-2 text-sm text-muted-foreground">
@@ -221,7 +221,7 @@ export function ProductComparison({ products = defaultProducts }: ProductCompari
                 {product.features.map((feature, index) => (
                   <div key={index} className="flex items-center gap-2 text-sm">
                     <svg
-                      className="w-4 h-4 text-primary"
+                      className="h-4 w-4 text-primary"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"

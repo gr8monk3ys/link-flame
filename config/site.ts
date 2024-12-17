@@ -3,6 +3,7 @@ export type SiteConfig = typeof siteConfig
 export const siteConfig = {
   name: "LinkFlame",
   description: "Your trusted source for eco-friendly living and sustainable product recommendations.",
+  url: "https://linkflame.com",
   mainNav: [
     {
       title: "About Us",
@@ -33,8 +34,8 @@ export const siteConfig = {
       href: "/guides-and-tips",
     },
     {
-      title: "Top Picks",
-      href: "/top-picks",
+      title: "Reviews",
+      href: "/reviews",
     },
     {
       title: "Blog",

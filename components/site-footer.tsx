@@ -4,10 +4,15 @@ import Link from "next/link"
 import { Icons } from "@/components/icons"
 import { siteConfig } from "@/config/site"
 import { NewsletterSignup } from "@/components/newsletter-signup"
+import { cn } from "@/lib/utils"
 
-export function SiteFooter() {
+interface SiteFooterProps {
+  className?: string
+}
+
+export function SiteFooter({ className }: SiteFooterProps) {
   return (
-    <footer className="border-t bg-background">
+    <footer className={cn("border-t bg-background", className)}>
       <div className="container py-12 md:py-16 lg:py-20">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {/* Company Info */}

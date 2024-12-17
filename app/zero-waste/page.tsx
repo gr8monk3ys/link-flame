@@ -65,7 +65,7 @@ export default function ZeroWastePage() {
         <ProductGrid category="zero-waste" limit={4} />
         <div className="mt-4 text-center">
           <Button asChild variant="outline">
-            <Link href="/top-picks?category=zero-waste">View All Products</Link>
+            <Link href="/reviews?category=zero-waste">View All Products</Link>
           </Button>
         </div>
       </div>

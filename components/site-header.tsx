@@ -8,10 +8,15 @@ import { MainNav } from "@/components/main-nav"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
-export function SiteHeader() {
+interface SiteHeaderProps {
+  className?: string
+}
+
+export function SiteHeader({ className }: SiteHeaderProps) {
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background">
+    <header className={cn("sticky top-0 z-40 w-full border-b bg-background", className)}>
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
         <MainNav items={siteConfig.mainNav} />
         <div className="flex flex-1 items-center justify-end space-x-4">
