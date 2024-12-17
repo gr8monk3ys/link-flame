@@ -4,69 +4,48 @@
 
 @layer base {
   :root {
-    --background: 120, 20%, 95%; /* Very Light Green */
-    --foreground: 120, 40%, 20%; /* Dark Green */
-
-    --muted: 120, 10%, 70%; /* Muted Green */
-    --muted-foreground: 120, 40%, 30%; /* Dark Green */
-
-    --popover: 120, 20%, 95%; /* Very Light Green */
-    --popover-foreground: 120, 40%, 20%; /* Dark Green */
-
-    --border: 120, 30%, 50%; /* Medium Green */
-    --input: 120, 30%, 50%; /* Medium Green */
-
-    --card: 120, 20%, 95%; /* Very Light Green */
-    --card-foreground: 120, 40%, 20%; /* Dark Green */
-
-    --primary: 120, 40%, 50%; /* Bright Green */
-    --primary-foreground: 120, 20%, 80%; /* Light Green */
-
-    --secondary: 120, 30%, 60%; /* Secondary Green */
-    --secondary-foreground: 120, 20%, 80%; /* Light Green */
-
-    --accent: 120, 40%, 50%; /* Bright Green */
-    --accent-foreground: 120, 20%, 80%; /* Light Green */
-
-    --destructive: 0, 100%, 50%; /* Bright Red for contrast */
-    --destructive-foreground: 120, 40%, 50%; /* Bright Green */
-
-    --ring: 120, 30%, 50%; /* Medium Green */
-
-    --radius: 0.5rem;
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 142.1 76.2% 36.3%;
+    --primary-foreground: 355.7 100% 97.3%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 142.1 76.2% 36.3%;
+    --radius: 0.75rem;
   }
 
   .dark {
-    --background: 0, 0%, 10%; /* Black */
-    --foreground: 0, 0%, 80%; /* Light Gray */
-
-    --muted: 0, 0%, 30%; /* Dark Gray */
-    --muted-foreground: 0, 0%, 70%; /* Medium Gray */
-
-    --accent: 120, 40%, 50%; /* Bright Green */
-    --accent-foreground: 0, 0%, 80%; /* Light Gray */
-
-    --popover: 0, 0%, 10%; /* Black */
-    --popover-foreground: 0, 0%, 80%; /* Light Gray */
-
-    --border: 0, 0%, 30%; /* Dark Gray */
-    --input: 0, 0%, 30%; /* Dark Gray */
-
-    --card: 0, 0%, 10%; /* Black */
-    --card-foreground: 0, 0%, 80%; /* Light Gray */
-
-    --primary: 120, 40%, 50%; /* Bright Green */
-    --primary-foreground: 0, 0%, 80%; /* Light Gray */
-
-    --secondary: 120, 30%, 60%; /* Secondary Green */
-    --secondary-foreground: 0, 0%, 80%; /* Light Gray */
-
-    --destructive: 0, 63%, 31%; /* Dark Red */
-    --destructive-foreground: 120, 40%, 50%; /* Bright Green */
-
-    --ring: 0, 0%, 30%; /* Dark Gray */
-
-    --radius: 0.5rem;
+    --background: 20 14.3% 4.1%;
+    --foreground: 0 0% 95%;
+    --card: 24 9.8% 10%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 9%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 142.1 70.6% 45.3%;
+    --primary-foreground: 144.9 80.4% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 12 6.5% 15.1%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 85.7% 97.3%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 142.4 71.8% 29.2%;
   }
 }
 
@@ -76,6 +55,81 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
   }
+  h1 {
+    @apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;
+  }
+  h2 {
+    @apply scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0;
+  }
+  h3 {
+    @apply scroll-m-20 text-2xl font-semibold tracking-tight;
+  }
+  h4 {
+    @apply scroll-m-20 text-xl font-semibold tracking-tight;
+  }
+  p {
+    @apply leading-7 [&:not(:first-child)]:mt-6;
+  }
+  .container {
+    @apply mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl;
+  }
+}
+
+/* Modern Card Hover Effects */
+.hover-card-effect {
+  @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+}
+
+/* Smooth Transitions */
+.smooth-transition {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+/* Modern Button Styles */
+.modern-button {
+  @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-colors 
+  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50
+  hover:bg-primary/90 active:scale-95;
+}
+
+/* Glass Effect */
+.glass-effect {
+  @apply bg-background/80 backdrop-blur-sm border border-border/50;
+}
+
+/* Grid Layouts */
+.modern-grid {
+  @apply grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+}
+
+/* Section Spacing */
+.section-spacing {
+  @apply py-12 sm:py-16 lg:py-20;
+}
+
+/* Responsive Images */
+.responsive-image {
+  @apply object-cover w-full h-full rounded-lg;
+}
+
+/* Text Gradients */
+.text-gradient {
+  @apply bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent;
+}
+
+/* Animated Underline */
+.animated-underline {
+  @apply relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 
+  after:bg-primary after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100;
+}
+
+/* Card Grid Layout */
+.card-grid {
+  @apply grid gap-6 sm:grid-cols-2 lg:grid-cols-3;
+}
+
+/* Responsive Container */
+.responsive-container {
+  @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
 }

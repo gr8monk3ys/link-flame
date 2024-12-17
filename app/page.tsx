@@ -1,95 +1,157 @@
 import Link from "next/link"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { siteConfig } from "@/config/site";
-import { buttonVariants } from "@/components/ui/button"
-import Image from "next/image";
+import { Button } from "@/components/ui/button"
+import { ProductComparison } from "@/components/product-comparison"
+import { ChargingStationMap } from "@/components/charging-station-map"
 
 export default function IndexPage() {
   return (
-    <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
-      <div className="relative h-72 md:h-96">
-        <Image
-          src="/images/cover.png"
-          alt="Eco-friendly lifestyle cover image"
-          layout="fill"
-          objectFit="cover"
-          priority
-        />
-      </div>
-      <div className="flex max-w-[980px] flex-col items-start gap-2">
-        <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
-          Welcome to LinkFlame <br className="hidden sm:inline" />
-          Your Guide to Sustainable Living
+    <div className="space-y-20">
+      {/* Hero Section */}
+      <section className="section-spacing text-center">
+        <h1 className="text-gradient mb-6">
+          Empowering Sustainable Living
         </h1>
-        <h2 className="text-2xl font-bold leading-tight tracking-tighter md:text-3xl">
-          Discover Eco-Friendly Products & Sustainable Lifestyle Tips
-        </h2>
-        <p className="max-w-[700px] text-lg text-muted-foreground">
-          At LinkFlame, we&apos;re passionate about helping you make environmentally conscious choices. 
-          Explore our curated selection of sustainable products, expert guides, and practical tips for 
-          eco-friendly living. Join our community and be part of the solution for a greener future.
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          Discover eco-friendly solutions and make informed choices for a greener future.
+          Join us in creating a sustainable world, one choice at a time.
         </p>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardTitle>Green Home & Garden</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>Discover sustainable solutions for your home and garden. From energy-efficient appliances to organic gardening tips.</p>
-            <Link href="/eco-living/green-home" className={buttonVariants({ variant: "link" })}>
-              Explore Green Living →
-            </Link>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Zero Waste Living</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>Learn practical ways to reduce waste and find eco-friendly alternatives to everyday products.</p>
-            <Link href="/eco-living/zero-waste" className={buttonVariants({ variant: "link" })}>
-              Start Your Journey →
-            </Link>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Sustainable Fashion</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>Find ethical fashion brands and learn about sustainable materials and production methods.</p>
-            <Link href="/eco-living/fashion-beauty" className={buttonVariants({ variant: "link" })}>
-              Shop Consciously →
-            </Link>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="flex flex-col gap-4 md:flex-row">
-        <Link
-          href="/community/join"
-          className={buttonVariants({ size: "lg" })}
-        >
-          Join Our Community
-        </Link>
-        <Link
-          href="/guides-and-tips"
-          className={buttonVariants({ variant: "outline", size: "lg" })}
-        >
-          Explore Eco Guides
-        </Link>
-      </div>
-
-      <div className="mt-8">
-        <h3 className="mb-4 text-2xl font-bold">Latest from Our Blog</h3>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {/* Add blog post previews here */}
+        <div className="mt-10 flex justify-center gap-4">
+          <Link href="/eco-living">
+            <Button className="modern-button">Explore Eco Living</Button>
+          </Link>
+          <Link href="/blogs">
+            <Button variant="outline" className="modern-button">
+              Read Our Blog
+            </Button>
+          </Link>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* Features Grid */}
+      <section className="section-spacing">
+        <h2 className="text-center mb-12">Why Choose Sustainable Living?</h2>
+        <div className="modern-grid">
+          {features.map((feature, index) => (
+            <div
+              key={index}
+              className="glass-effect p-6 rounded-lg hover-card-effect"
+            >
+              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                {feature.icon}
+              </div>
+              <h3 className="font-semibold mb-2">{feature.title}</h3>
+              <p className="text-muted-foreground">{feature.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Product Comparison Section */}
+      <section className="section-spacing">
+        <h2 className="text-center mb-12">Compare Sustainable Products</h2>
+        <ProductComparison />
+      </section>
+
+      {/* Map Section */}
+      <section className="section-spacing">
+        <h2 className="text-center mb-12">Find Charging Stations Near You</h2>
+        <div className="glass-effect p-4 rounded-lg">
+          <ChargingStationMap />
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="section-spacing bg-primary/5 rounded-3xl">
+        <div className="text-center max-w-3xl mx-auto">
+          <h2 className="text-gradient mb-6">Ready to Make a Difference?</h2>
+          <p className="text-lg text-muted-foreground mb-8">
+            Join our community of eco-conscious individuals and start your journey
+            towards sustainable living today.
+          </p>
+          <Button className="modern-button" size="lg">
+            Get Started
+          </Button>
+        </div>
+      </section>
+    </div>
   )
 }
+
+const features = [
+  {
+    title: "Reduce Carbon Footprint",
+    description: "Make eco-conscious choices that help reduce your environmental impact.",
+    icon: (
+      <svg
+        className="w-6 h-6 text-primary"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M5 13l4 4L19 7"
+        />
+      </svg>
+    ),
+  },
+  {
+    title: "Save Energy & Money",
+    description: "Discover energy-efficient solutions that benefit both the planet and your wallet.",
+    icon: (
+      <svg
+        className="w-6 h-6 text-primary"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+    ),
+  },
+  {
+    title: "Smart Living",
+    description: "Integrate smart technologies for a more sustainable and convenient lifestyle.",
+    icon: (
+      <svg
+        className="w-6 h-6 text-primary"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+        />
+      </svg>
+    ),
+  },
+  {
+    title: "Community Impact",
+    description: "Be part of a growing community committed to environmental sustainability.",
+    icon: (
+      <svg
+        className="w-6 h-6 text-primary"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+        />
+      </svg>
+    ),
+  },
+]

@@ -82,62 +82,182 @@ const sampleProducts: ProductWithRelations[] = [
   // Add more sample products...
 ]
 
+const categories = [
+  {
+    title: "Kitchen Appliances",
+    description: "Energy-efficient appliances for your cooking needs",
+    icon: (
+      <svg
+        className="w-6 h-6 text-primary"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+        />
+      </svg>
+    ),
+    features: [
+      "Energy Star certified",
+      "Smart temperature control",
+      "Water-saving features",
+      "Long-lasting materials",
+    ],
+  },
+  {
+    title: "Laundry Solutions",
+    description: "Water and energy-efficient washing machines and dryers",
+    icon: (
+      <svg
+        className="w-6 h-6 text-primary"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+        />
+      </svg>
+    ),
+    features: [
+      "High efficiency models",
+      "Cold water washing",
+      "Quick wash cycles",
+      "Heat pump technology",
+    ],
+  },
+  {
+    title: "HVAC Systems",
+    description: "Smart heating and cooling solutions for your home",
+    icon: (
+      <svg
+        className="w-6 h-6 text-primary"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+        />
+      </svg>
+    ),
+    features: [
+      "Smart thermostats",
+      "Zone control",
+      "Air quality monitoring",
+      "Energy recovery",
+    ],
+  },
+]
+
+const buyingGuide = [
+  {
+    title: "Check Energy Ratings",
+    description:
+      "Look for Energy Star certification and compare annual energy consumption estimates between models.",
+  },
+  {
+    title: "Consider Lifecycle Costs",
+    description:
+      "Factor in both purchase price and estimated annual operating costs when comparing appliances.",
+  },
+  {
+    title: "Size Matters",
+    description:
+      "Choose appropriately sized appliances for your needs - oversized units waste energy and money.",
+  },
+  {
+    title: "Look for Smart Features",
+    description:
+      "Smart appliances can help optimize energy usage and provide better control over consumption.",
+  },
+]
+
 export default function SustainableAppliancesPage() {
   return (
-    <div className="container mx-auto space-y-8 py-8">
-      <div className="prose max-w-none">
-        <h1>Best Eco-Friendly Home Appliances (2024)</h1>
-        <p className="lead">
-          Looking to make your home more sustainable? Our comprehensive guide
-          compares the most energy-efficient and eco-friendly appliances
-          available today. We analyze everything from energy consumption to
-          manufacturing practices to help you make an informed decision.
+    <div className="space-y-16">
+      {/* Hero Section */}
+      <section className="section-spacing text-center">
+        <h1 className="text-gradient mb-6">
+          Best Sustainable Appliances
+        </h1>
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          Discover energy-efficient appliances that help reduce your carbon footprint
+          while saving you money on utility bills.
         </p>
-      </div>
+      </section>
 
-      <Separator className="my-8" />
+      {/* Categories Grid */}
+      <section className="section-spacing">
+        <h2 className="text-center mb-12">Popular Categories</h2>
+        <div className="card-grid">
+          {categories.map((category, index) => (
+            <div
+              key={index}
+              className="glass-effect p-6 rounded-lg hover-card-effect"
+            >
+              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                {category.icon}
+              </div>
+              <h3 className="font-semibold mb-2">{category.title}</h3>
+              <p className="text-muted-foreground mb-4">{category.description}</p>
+              <div className="space-y-2">
+                {category.features.map((feature, i) => (
+                  <div key={i} className="flex items-center gap-2 text-sm">
+                    <svg
+                      className="w-4 h-4 text-primary"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    {feature}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
-      <ProductComparison
-        products={sampleProducts}
-      />
+      {/* Product Comparison Section */}
+      <section className="section-spacing">
+        <h2 className="text-center mb-12">Compare Top Rated Appliances</h2>
+        <div className="glass-effect p-6 rounded-lg">
+          <ProductComparison products={sampleProducts} />
+        </div>
+      </section>
 
-      <div className="prose mt-8 max-w-none">
-        <h2>How We Rate Sustainable Appliances</h2>
-        <p>
-          Our comprehensive rating system considers multiple factors to determine
-          the true environmental impact of each appliance:
-        </p>
-        <ul>
-          <li>Energy efficiency and consumption</li>
-          <li>Water usage (where applicable)</li>
-          <li>Manufacturing processes and materials</li>
-          <li>Packaging and shipping impact</li>
-          <li>End-of-life recyclability</li>
-          <li>Third-party certifications</li>
-          <li>Company sustainability commitments</li>
-        </ul>
-      </div>
-
-      <Separator className="my-8" />
-
-      <div className="prose max-w-none">
-        <h2>Calculate Your Appliance&apos;s Environmental Impact</h2>
-        <p>
-          Use our calculator to estimate the environmental impact of your current
-          appliances and see how much you could save by switching to more
-          efficient models.
-        </p>
-      </div>
-
-      <SustainabilityCalculator />
-
-      <div className="mt-8 text-sm text-muted-foreground">
-        <p>
-          Disclaimer: Our recommendations are based on extensive research and
-          expert analysis. We may earn a commission through affiliate links at
-          no extra cost to you.
-        </p>
-      </div>
+      {/* Buying Guide */}
+      <section className="section-spacing bg-primary/5 rounded-3xl">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-center mb-8">Sustainable Appliance Buying Guide</h2>
+          <div className="space-y-6">
+            {buyingGuide.map((tip, index) => (
+              <div key={index} className="glass-effect p-6 rounded-lg">
+                <h3 className="font-semibold mb-2">{tip.title}</h3>
+                <p className="text-muted-foreground">{tip.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   )
 }
