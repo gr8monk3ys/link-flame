@@ -6,7 +6,9 @@ const nextConfig = {
     domains: ['images.unsplash.com', 'img.clerk.com'],
   },
   experimental: {
-    serverActions: true,
+    serverActions: {
+      allowedOrigins: ['localhost:3000'],
+    },
   },
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
 }

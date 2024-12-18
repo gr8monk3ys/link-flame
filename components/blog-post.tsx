@@ -56,7 +56,7 @@ export function BlogPost({
           <p className="text-xl text-muted-foreground">{description}</p>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <div className="relative h-10 w-10">
+              <div className="relative size-10">
                 <Image
                   src={author.image}
                   alt={author.name}
@@ -77,22 +77,22 @@ export function BlogPost({
                 className={buttonVariants({ variant: "ghost", size: "sm" })}
               >
                 <Heart
-                  className={`h-4 w-4 ${isLiked ? "fill-red-500 text-red-500" : ""}`}
+                  className={`size-4 ${isLiked ? "fill-red-500 text-red-500" : ""}`}
                 />
               </button>
               <button className={buttonVariants({ variant: "ghost", size: "sm" })}>
-                <MessageSquare className="h-4 w-4" />
+                <MessageSquare className="size-4" />
               </button>
               <button
                 onClick={() => setIsSaved(!isSaved)}
                 className={buttonVariants({ variant: "ghost", size: "sm" })}
               >
                 <Bookmark
-                  className={`h-4 w-4 ${isSaved ? "fill-primary text-primary" : ""}`}
+                  className={`size-4 ${isSaved ? "fill-primary text-primary" : ""}`}
                 />
               </button>
               <button className={buttonVariants({ variant: "ghost", size: "sm" })}>
-                <Share2 className="h-4 w-4" />
+                <Share2 className="size-4" />
               </button>
             </div>
           </div>
@@ -133,7 +133,7 @@ export function BlogPost({
       {/* Author Bio */}
       <Card className="mt-8 p-6">
         <div className="flex items-start gap-4">
-          <div className="relative h-16 w-16">
+          <div className="relative size-16">
             <Image
               src={author.image}
               alt={author.name}

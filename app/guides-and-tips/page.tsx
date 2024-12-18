@@ -71,11 +71,11 @@ export default function EcoLivingPage() {
               <Card className="h-full">
                 <CardHeader>
                   <div className={`mb-4 inline-flex rounded-lg p-2 ${category.bgColor}`}>
-                    <Icon className={`h-6 w-6 ${category.color}`} />
+                    <Icon className={`size-6 ${category.color}`} />
                   </div>
                   <CardTitle className="flex items-center justify-between">
                     {category.title}
-                    <ArrowRight className="h-5 w-5 text-muted-foreground" />
+                    <ArrowRight className="size-5 text-muted-foreground" />
                   </CardTitle>
                   <CardDescription>{category.description}</CardDescription>
                 </CardHeader>

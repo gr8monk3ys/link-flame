@@ -21,7 +21,7 @@ export default function JoinCommunityPage() {
             <ul className="space-y-4">
               <li className="flex items-start">
                 <svg
-                  className="mr-2 h-6 w-6 shrink-0 text-green-500"
+                  className="mr-2 size-6 shrink-0 text-green-500"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -37,7 +37,7 @@ export default function JoinCommunityPage() {
               </li>
               <li className="flex items-start">
                 <svg
-                  className="mr-2 h-6 w-6 shrink-0 text-green-500"
+                  className="mr-2 size-6 shrink-0 text-green-500"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -53,7 +53,7 @@ export default function JoinCommunityPage() {
               </li>
               <li className="flex items-start">
                 <svg
-                  className="mr-2 h-6 w-6 shrink-0 text-green-500"
+                  className="mr-2 size-6 shrink-0 text-green-500"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -69,7 +69,7 @@ export default function JoinCommunityPage() {
               </li>
               <li className="flex items-start">
                 <svg
-                  className="mr-2 h-6 w-6 shrink-0 text-green-500"
+                  className="mr-2 size-6 shrink-0 text-green-500"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"

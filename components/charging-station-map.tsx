@@ -61,7 +61,7 @@ export function ChargingStationMap() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="h-full w-full bg-gray-100"
+        className="size-full bg-gray-100"
       >
         {/* Map component would go here */}
       </motion.div>
@@ -107,7 +107,7 @@ export function ChargingStationMap() {
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <div
-                    className={`h-3 w-3 rounded-full ${getStatusColor(
+                    className={`size-3 rounded-full ${getStatusColor(
                       selectedStation.status
                     )}`}
                   />

@@ -21,7 +21,7 @@ export function StarRating({
           return (
             <Star
               key={i}
-              className="h-4 w-4 fill-primary text-primary"
+              className="size-4 fill-primary text-primary"
               aria-hidden="true"
             />
           )
@@ -29,7 +29,7 @@ export function StarRating({
           return (
             <StarHalf
               key={i}
-              className="h-4 w-4 fill-primary text-primary"
+              className="size-4 fill-primary text-primary"
               aria-hidden="true"
             />
           )
@@ -37,7 +37,7 @@ export function StarRating({
         return (
           <Star
             key={i}
-            className="h-4 w-4 text-muted-foreground"
+            className="size-4 text-muted-foreground"
             aria-hidden="true"
           />
         )

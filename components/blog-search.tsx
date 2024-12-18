@@ -35,7 +35,7 @@ export function BlogSearch() {
   return (
     <div className="w-full space-y-4">
       <div className="relative">
-        <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+        <Search className="absolute left-3 top-3 size-4 text-muted-foreground" />
         <Input
           type="search"
           placeholder="Search articles..."

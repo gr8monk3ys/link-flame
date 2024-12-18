@@ -1,5 +1,5 @@
 import "@/styles/globals.css"
-import { Metadata } from "next"
+import { Metadata, Viewport } from "next"
 import { siteConfig } from "@/config/site"
 import { fontSans } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
@@ -30,10 +30,6 @@ export function getMetadata(): Metadata {
       },
     ],
     creator: "Link Flame",
-    themeColor: [
-      { media: "(prefers-color-scheme: light)", color: "white" },
-      { media: "(prefers-color-scheme: dark)", color: "black" },
-    ],
     openGraph: {
       type: "website",
       locale: "en_US",
@@ -58,7 +54,17 @@ export function getMetadata(): Metadata {
   }
 }
 
+export function getViewport(): Viewport {
+  return {
+    themeColor: [
+      { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+      { media: '(prefers-color-scheme: dark)', color: '#000000' },
+    ],
+  }
+}
+
 export const metadata: Metadata = getMetadata()
+export const viewport: Viewport = getViewport()
 
 interface RootLayoutProps {
   children: React.ReactNode

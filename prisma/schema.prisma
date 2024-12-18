@@ -192,32 +192,6 @@ model Review {
   user             User    @relation(fields: [userId], references: [id])
 }
 
-// Analytics and Tracking
-model AffiliateClick {
-  id          String   @id @default(cuid())
-  productId   String
-  userId      String?
-  sessionId   String
-  clickedAt   DateTime @default(now())
-  converted   Boolean  @default(false)
-  revenue     Float?
-  source      String?
-  medium      String?
-  campaign    String?
-}
-
-model PageView {
-  id        String   @id @default(cuid())
-  path      String
-  userId    String?
-  sessionId String
-  viewedAt  DateTime @default(now())
-  duration  Int?     // in seconds
-  source    String?
-  medium    String?
-  campaign  String?
-}
-
 // Enums
 enum UserRole {
   USER

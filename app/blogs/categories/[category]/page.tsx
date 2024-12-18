@@ -2,14 +2,29 @@ import { getPostsByCategory, getAllPosts } from "@/lib/blog"
 import { BlogCard } from "@/components/blog-card"
 import { TagCloud } from "@/components/tag-cloud"
 import { NewsletterSignup } from "@/components/newsletter-signup"
+import { PageProps } from "@/types/next"
+import { Metadata } from "next"
 
-interface CategoryPageProps {
-  params: {
-    category: string
+export async function generateStaticParams() {
+  const posts = await getAllPosts()
+  const categories = [...new Set(posts.map(post => post.category))]
+  return categories.map(category => ({
+    category: encodeURIComponent(category)
+  }))
+}
+
+export async function generateMetadata({ 
+  params 
+}: { params: PageProps['params'] }): Promise<Metadata> {
+  const category = decodeURIComponent(params.category)
+  
+  return {
+    title: `${category} Category`,
+    description: `Browse articles in the ${category} category`
   }
 }
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
+export default async function CategoryPage({ params }: { params: PageProps['params'] }) {
   const { category } = params
   const decodedCategory = decodeURIComponent(category)
   const posts = await getPostsByCategory(decodedCategory)
@@ -49,22 +64,13 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         </div>
 
         {/* Sidebar */}
-        <div className="w-full lg:w-[300px]">
-          <div className="sticky top-8 space-y-8">
-            <TagCloud />
+        <div className="w-full lg:w-1/4">
+          <TagCloud />
+          <div className="mt-8">
             <NewsletterSignup />
           </div>
         </div>
       </div>
     </div>
   )
-}
-
-// Generate static params for all categories
-export async function generateStaticParams() {
-  const posts = await getAllPosts()
-  const categories = new Set(posts.map(post => post.category))
-  return Array.from(categories).map(category => ({
-    category: encodeURIComponent(category.toLowerCase())
-  }))
 }

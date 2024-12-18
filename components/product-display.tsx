@@ -39,7 +39,7 @@ export function ProductDisplay({
         {[...Array(5)].map((_, i) => (
           <Star
             key={i}
-            className={`h-4 w-4 ${
+            className={`size-4 ${
               i < Math.floor(rating) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
             }`}
           />
@@ -75,7 +75,7 @@ export function ProductDisplay({
               onClick={() => setShowDetails(!showDetails)}
               className={buttonVariants({ variant: "outline" })}
             >
-              <Info className="mr-2 h-4 w-4" />
+              <Info className="mr-2 size-4" />
               {showDetails ? "Hide Details" : "Show Details"}
             </button>
 

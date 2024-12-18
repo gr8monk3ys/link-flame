@@ -90,7 +90,7 @@ export default function AboutUsPage() {
           <CardContent className="pt-6">
             <div className="space-y-4">
               <div className="flex items-start gap-4">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border bg-muted">1</div>
+                <div className="flex size-8 shrink-0 items-center justify-center rounded-lg border bg-muted">1</div>
                 <div>
                   <h3 className="font-semibold">Research</h3>
                   <p className="text-muted-foreground">
@@ -100,7 +100,7 @@ export default function AboutUsPage() {
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border bg-muted">2</div>
+                <div className="flex size-8 shrink-0 items-center justify-center rounded-lg border bg-muted">2</div>
                 <div>
                   <h3 className="font-semibold">Testing</h3>
                   <p className="text-muted-foreground">
@@ -110,7 +110,7 @@ export default function AboutUsPage() {
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border bg-muted">3</div>
+                <div className="flex size-8 shrink-0 items-center justify-center rounded-lg border bg-muted">3</div>
                 <div>
                   <h3 className="font-semibold">Community Feedback</h3>
                   <p className="text-muted-foreground">
@@ -119,7 +119,7 @@ export default function AboutUsPage() {
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border bg-muted">4</div>
+                <div className="flex size-8 shrink-0 items-center justify-center rounded-lg border bg-muted">4</div>
                 <div>
                   <h3 className="font-semibold">Regular Updates</h3>
                   <p className="text-muted-foreground">

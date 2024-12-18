@@ -95,7 +95,7 @@ export default function FashionBeautyPage() {
               <ul className="space-y-2">
                 <li className="flex items-start space-x-2">
                   <svg
-                    className="h-6 w-6 shrink-0 text-green-500"
+                    className="size-6 shrink-0 text-green-500"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -111,7 +111,7 @@ export default function FashionBeautyPage() {
                 </li>
                 <li className="flex items-start space-x-2">
                   <svg
-                    className="h-6 w-6 shrink-0 text-green-500"
+                    className="size-6 shrink-0 text-green-500"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -127,7 +127,7 @@ export default function FashionBeautyPage() {
                 </li>
                 <li className="flex items-start space-x-2">
                   <svg
-                    className="h-6 w-6 shrink-0 text-green-500"
+                    className="size-6 shrink-0 text-green-500"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -149,7 +149,7 @@ export default function FashionBeautyPage() {
               <ul className="space-y-2">
                 <li className="flex items-start space-x-2">
                   <svg
-                    className="h-6 w-6 shrink-0 text-green-500"
+                    className="size-6 shrink-0 text-green-500"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -165,7 +165,7 @@ export default function FashionBeautyPage() {
                 </li>
                 <li className="flex items-start space-x-2">
                   <svg
-                    className="h-6 w-6 shrink-0 text-green-500"
+                    className="size-6 shrink-0 text-green-500"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -181,7 +181,7 @@ export default function FashionBeautyPage() {
                 </li>
                 <li className="flex items-start space-x-2">
                   <svg
-                    className="h-6 w-6 shrink-0 text-green-500"
+                    className="size-6 shrink-0 text-green-500"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"

@@ -80,7 +80,7 @@ const categories = [
     description: "Energy-efficient appliances for your cooking needs",
     icon: (
       <svg
-        className="h-6 w-6 text-primary"
+        className="size-6 text-primary"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -105,7 +105,7 @@ const categories = [
     description: "Water and energy-efficient washing machines and dryers",
     icon: (
       <svg
-        className="h-6 w-6 text-primary"
+        className="size-6 text-primary"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -130,7 +130,7 @@ const categories = [
     description: "Smart heating and cooling solutions for your home",
     icon: (
       <svg
-        className="h-6 w-6 text-primary"
+        className="size-6 text-primary"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -198,7 +198,7 @@ export default function SustainableAppliancesPage() {
               key={index}
               className="glass-effect hover-card-effect rounded-lg p-6"
             >
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+              <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-primary/10">
                 {category.icon}
               </div>
               <h3 className="mb-2 font-semibold">{category.title}</h3>
@@ -207,7 +207,7 @@ export default function SustainableAppliancesPage() {
                 {category.features.map((feature, i) => (
                   <div key={i} className="flex items-center gap-2 text-sm">
                     <svg
-                      className="h-4 w-4 text-primary"
+                      className="size-4 text-primary"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"

@@ -45,7 +45,7 @@ export function BlogCard({ post, featured = false }: BlogCardProps) {
           <p className="mb-4 line-clamp-2 text-muted-foreground">{description}</p>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <div className="relative h-8 w-8">
+              <div className="relative size-8">
                 <Image
                   src={author.image}
                   alt={author.name}

@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { nanoid } from "nanoid"
-import { trackPageView } from "./lib/analytics"
 
 export async function middleware(request: NextRequest) {
   // Get session ID from cookie or create new one
@@ -15,18 +14,6 @@ export async function middleware(request: NextRequest) {
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       maxAge: 60 * 60 * 24 * 30, // 30 days
-    })
-  }
-
-  // Track page view
-  if (request.method === "GET" && !request.nextUrl.pathname.startsWith("/api")) {
-    const searchParams = request.nextUrl.searchParams
-    await trackPageView({
-      path: request.nextUrl.pathname,
-      sessionId,
-      source: searchParams.get("utm_source") || undefined,
-      medium: searchParams.get("utm_medium") || undefined,
-      campaign: searchParams.get("utm_campaign") || undefined,
     })
   }
 

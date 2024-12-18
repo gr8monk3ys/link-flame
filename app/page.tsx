@@ -8,7 +8,7 @@ export default function IndexPage() {
   return (
     <div className="space-y-20">
       {/* Hero Section */}
-      <section className="relative section-spacing text-center">
+      <section className="section-spacing relative text-center">
         <div className="absolute inset-0 -z-10">
           <Image
             src="/images/leaves.jpg"
@@ -42,8 +42,8 @@ export default function IndexPage() {
       {/* Features Grid */}
       <section className="section-spacing">
         <h2 className="mb-12 text-center">Why Choose Sustainable Living?</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
             <Image
               src="/images/solar-panels.jpg"
               alt="Solar panels installation"
@@ -57,7 +57,7 @@ export default function IndexPage() {
                 key={index}
                 className="glass-effect hover-card-effect rounded-lg p-6"
               >
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-primary/10">
                   {feature.icon}
                 </div>
                 <h3 className="mb-2 font-semibold">{feature.title}</h3>
@@ -70,12 +70,12 @@ export default function IndexPage() {
 
       {/* Product Comparison Section */}
       <section className="section-spacing">
-        <div className="mb-12 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <div className="mb-12 grid grid-cols-1 items-center gap-8 md:grid-cols-2">
           <div>
             <h2 className="mb-4">Compare Sustainable Products</h2>
             <p className="text-muted-foreground">Find the most eco-friendly products that match your needs and values.</p>
           </div>
-          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
             <Image
               src="/images/soap-bars.jpg"
               alt="Sustainable products"
@@ -96,7 +96,7 @@ export default function IndexPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="section-spacing rounded-3xl bg-primary/5 relative overflow-hidden">
+      <section className="section-spacing relative overflow-hidden rounded-3xl bg-primary/5">
         <div className="absolute inset-0 -z-10">
           <Image
             src="/images/wall-hanger-plant.jpg"
@@ -126,7 +126,7 @@ const features = [
     description: "Make eco-conscious choices that help reduce your environmental impact.",
     icon: (
       <svg
-        className="h-6 w-6 text-primary"
+        className="size-6 text-primary"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -145,7 +145,7 @@ const features = [
     description: "Discover energy-efficient solutions that benefit both the planet and your wallet.",
     icon: (
       <svg
-        className="h-6 w-6 text-primary"
+        className="size-6 text-primary"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -164,7 +164,7 @@ const features = [
     description: "Integrate smart technologies for a more sustainable and convenient lifestyle.",
     icon: (
       <svg
-        className="h-6 w-6 text-primary"
+        className="size-6 text-primary"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -183,7 +183,7 @@ const features = [
     description: "Be part of a growing community committed to environmental sustainability.",
     icon: (
       <svg
-        className="h-6 w-6 text-primary"
+        className="size-6 text-primary"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"

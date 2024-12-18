@@ -2,14 +2,29 @@ import { getPostsByTag, getAllPosts } from "@/lib/blog"
 import { BlogCard } from "@/components/blog-card"
 import { TagCloud } from "@/components/tag-cloud"
 import { NewsletterSignup } from "@/components/newsletter-signup"
+import { PageProps } from "@/types/next"
+import { Metadata } from "next"
 
-interface TagPageProps {
-  params: {
-    tag: string
+export async function generateStaticParams() {
+  const posts = await getAllPosts()
+  const tags = [...new Set(posts.flatMap(post => post.tags))]
+  return tags.map(tag => ({
+    tag: encodeURIComponent(tag)
+  }))
+}
+
+export async function generateMetadata({ 
+  params 
+}: { params: PageProps['params'] }): Promise<Metadata> {
+  const tag = decodeURIComponent(params.tag)
+  
+  return {
+    title: `#${tag} Tag`,
+    description: `Browse articles tagged with ${tag}`
   }
 }
 
-export default async function TagPage({ params }: TagPageProps) {
+export default async function TagPage({ params }: { params: PageProps['params'] }) {
   const { tag } = params
   const decodedTag = decodeURIComponent(tag)
   const posts = await getPostsByTag(decodedTag)
@@ -58,13 +73,4 @@ export default async function TagPage({ params }: TagPageProps) {
       </div>
     </div>
   )
-}
-
-// Generate static params for all tags
-export async function generateStaticParams() {
-  const posts = await getAllPosts()
-  const tags = new Set(posts.flatMap(post => post.tags))
-  return Array.from(tags).map(tag => ({
-    tag: encodeURIComponent(tag.toLowerCase())
-  }))
 }

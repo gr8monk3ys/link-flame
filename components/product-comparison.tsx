@@ -221,7 +221,7 @@ export function ProductComparison({ products = defaultProducts }: ProductCompari
                 {product.features.map((feature, index) => (
                   <div key={index} className="flex items-center gap-2 text-sm">
                     <svg
-                      className="h-4 w-4 text-primary"
+                      className="size-4 text-primary"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"

@@ -1,4 +1,5 @@
-import { MDXRemote } from 'next-mdx-remote/rsc'
+import { Metadata } from 'next'
+import { PageProps } from '@/types/next'
 import { getMDXPost, getAllMDXPosts } from '@/lib/blog'
 import { notFound } from 'next/navigation'
 
@@ -9,7 +10,22 @@ export async function generateStaticParams() {
   }))
 }
 
-export default async function BlogPost({ params }: { params: { slug: string } }) {
+export async function generateMetadata({ 
+  params 
+}: { params: PageProps['params'] }): Promise<Metadata> {
+  const post = await getMDXPost(params.slug)
+  
+  if (!post) {
+    return {}
+  }
+
+  return {
+    title: post.title,
+    description: post.description
+  }
+}
+
+export default async function BlogPost({ params }: { params: PageProps['params'] }) {
   const post = await getMDXPost(params.slug)
   
   if (!post) {
