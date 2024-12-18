@@ -11,90 +11,57 @@ export const metadata: Metadata = {
 }
 
 // In a real app, this would come from your database or CMS
-const sampleProductsData: ProductWithRelations[] = [
+const sampleProductsData = [
   {
     id: "1",
     name: "EcoWash Pro 3000",
     slug: "ecowash-pro-3000",
-    description: "High-efficiency washing machine with eco-friendly features",
-    categoryId: "washing-machines",
+    description: "An energy-efficient washing machine with advanced eco features",
+    categoryId: "kitchen-appliances",
     manufacturerId: "greentech-appliances",
-    category: {
-      id: "washing-machines",
-      name: "Washing Machines",
-      slug: "washing-machines",
-      description: "Energy-efficient washing machines",
-      parentId: null
-    },
     features: [
-      "Uses 50% less water than standard machines",
-      "A+++ energy rating",
+      "Smart load detection",
+      "Eco wash cycle",
+      "Steam cleaning",
+      "WiFi connectivity"
     ],
-    specifications: {
-      dimensions: "85 x 60 x 60 cm",
-      capacity: "9kg",
-      energyRating: "A+++",
-      waterConsumption: "9L/cycle"
-    },
-    pros: [
-      "Extremely energy efficient",
-      "Low water consumption",
-      "Quiet operation"
-    ],
-    cons: [
-      "Higher initial cost",
-      "Longer wash cycles"
-    ],
-    affiliateUrl: "https://example.com/ecowash-pro-3000",
-    featured: false,
-    sponsored: false,
-    price: {
-      id: "price-1",
-      productId: "1",
-      amount: 799.99,
-      currency: "USD",
-      unit: null,
-      discountedFrom: null
-    },
-    images: [{
-      id: "img-1",
-      productId: "1",
-      url: "/images/products/washer1.jpg",
-      alt: "EcoWash Pro 3000",
-      isMain: true
-    }],
     sustainabilityScore: {
-      id: "score-1",
+      id: "eco-score-1",
       productId: "1",
       overall: 4.5,
-      carbonFootprint: 4.5,
+      carbonFootprint: 4.0,
       materialSourcing: 4.0,
       manufacturingProcess: 4.5,
       packaging: 4.0,
       endOfLife: 4.5,
       socialImpact: 4.0
     },
+    price: 799.99,
+    images: [{ url: "/images/products/washer1.jpg" }],
+    ranking: 1,
+    comparisonNotes: "Top-rated eco-friendly washing machine",
+    pros: ["Energy efficient", "Smart features"],
+    cons: ["Higher upfront cost"],
+    affiliateUrl: "https://example.com/ecowash-pro-3000",
     createdAt: new Date("2024-01-01"),
-    lastUpdated: new Date("2024-01-01"),
-    manufacturer: {
-      id: "greentech-appliances",
-      name: "GreenTech Appliances",
-      description: "Leading manufacturer of eco-friendly appliances",
-      website: "https://example.com/greentech"
-    }
+    lastUpdated: new Date("2024-01-01")
   },
   // Add more products as needed...
 ]
 
-// Transform the data to match the Product type
 const sampleProducts = sampleProductsData.map(product => ({
   id: product.id,
   name: product.name,
+  slug: product.slug,
+  description: product.description,
+  categoryId: product.categoryId,
+  manufacturerId: product.manufacturerId,
+  features: product.features,
+  sustainabilityScore: product.sustainabilityScore,
+  price: product.price,
   image: product.images?.[0]?.url || "/images/products/placeholder.jpg",
-  price: product.price?.amount || 0,
   rating: product.sustainabilityScore?.overall || 0,
   energyRating: "A+++",
-  features: product.features || [],
   specs: {
     carbonFootprint: product.sustainabilityScore?.carbonFootprint || 0,
     materialSourcing: product.sustainabilityScore?.materialSourcing || 0,
@@ -102,7 +69,9 @@ const sampleProducts = sampleProductsData.map(product => ({
     packaging: product.sustainabilityScore?.packaging || 0,
     endOfLife: product.sustainabilityScore?.endOfLife || 0,
     socialImpact: product.sustainabilityScore?.socialImpact || 0
-  }
+  },
+  ranking: product.ranking,
+  comparisonNotes: product.comparisonNotes
 }))
 
 const categories = [
