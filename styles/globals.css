@@ -76,60 +76,246 @@
   }
 }
 
-/* Modern Card Hover Effects */
+/* Enhanced Card Hover Effects */
 .hover-card-effect {
-  @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+  @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1 relative 
+  before:absolute before:inset-0 before:rounded-lg before:bg-gradient-to-r before:from-primary/10 before:to-primary/5 
+  before:opacity-0 before:transition-opacity hover:before:opacity-100;
 }
 
-/* Smooth Transitions */
+/* Advanced Smooth Transitions */
 .smooth-transition {
   @apply transition-all duration-300 ease-in-out;
 }
 
-/* Modern Button Styles */
+/* Enhanced Modern Button Styles */
 .modern-button {
-  @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-colors 
+  @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300
   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50
-  hover:bg-primary/90 active:scale-95;
+  hover:bg-primary/90 active:scale-95 hover:shadow-md relative overflow-hidden
+  before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent
+  before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-700;
 }
 
-/* Glass Effect */
+/* Enhanced Glass Effect */
 .glass-effect {
-  @apply bg-background/80 backdrop-blur-sm border border-border/50;
+  @apply bg-background/80 backdrop-blur-sm border border-border/50 shadow-sm
+  hover:shadow-md hover:bg-background/90 transition-all duration-300;
 }
 
-/* Grid Layouts */
+/* Advanced Grid Layouts */
 .modern-grid {
   @apply grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
 }
 
-/* Section Spacing */
+/* Enhanced Section Spacing */
 .section-spacing {
-  @apply py-12 sm:py-16 lg:py-20;
+  @apply py-12 sm:py-16 lg:py-20 relative overflow-hidden;
 }
 
-/* Responsive Images */
+/* Enhanced Responsive Images */
 .responsive-image {
-  @apply object-cover w-full h-full rounded-lg;
+  @apply object-cover w-full h-full rounded-lg transition-transform duration-300 hover:scale-105;
 }
 
-/* Text Gradients */
+/* Enhanced Text Gradients */
 .text-gradient {
-  @apply bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent;
+  @apply bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent
+  hover:from-primary/90 hover:to-primary/70 transition-all duration-300;
 }
 
-/* Animated Underline */
+/* Enhanced Animated Underline */
 .animated-underline {
   @apply relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 
-  after:bg-primary after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100;
+  after:bg-gradient-to-r after:from-primary after:to-primary/60 after:transition-transform after:duration-300 
+  hover:after:origin-bottom-left hover:after:scale-x-100;
 }
 
-/* Card Grid Layout */
-.card-grid {
-  @apply grid gap-6 sm:grid-cols-2 lg:grid-cols-3;
+/* New: Fade In Animation */
+.fade-in {
+  @apply animate-[fadeIn_0.5s_ease-in-out];
 }
 
-/* Responsive Container */
-.responsive-container {
-  @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+/* New: Slide Up Animation */
+.slide-up {
+  @apply animate-[slideUp_0.5s_ease-in-out];
+}
+
+/* New: Scale Animation */
+.scale-animation {
+  @apply animate-[scale_0.3s_ease-in-out];
+}
+
+/* New: Pulse Effect */
+.pulse-effect {
+  @apply animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite];
+}
+
+/* New: Shimmer Effect */
+.shimmer {
+  @apply relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full
+  before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent 
+  before:via-white/10 before:to-transparent;
+}
+
+/* New: Floating Animation */
+.floating {
+  @apply animate-[floating_3s_ease-in-out_infinite];
+}
+
+/* New: Highlight Effect */
+.highlight-effect {
+  @apply relative after:absolute after:bottom-0 after:left-0 after:h-1/2 after:w-full 
+  after:bg-primary/10 after:transition-transform after:duration-300 hover:after:scale-105;
+}
+
+/* New: Card Flip Effect */
+.card-flip-container {
+  @apply relative [perspective:1000px];
+}
+
+.card-flip {
+  @apply relative w-full h-full transition-transform duration-500 [transform-style:preserve-3d];
+}
+
+.card-flip:hover {
+  @apply [transform:rotateY(180deg)];
+}
+
+.card-flip-front,
+.card-flip-back {
+  @apply absolute w-full h-full [backface-visibility:hidden];
+}
+
+.card-flip-back {
+  @apply [transform:rotateY(180deg)];
+}
+
+/* New: Loading Spinner */
+.loading-spinner {
+  @apply animate-spin rounded-full border-4 border-primary/30 border-t-primary h-8 w-8;
+}
+
+/* New Keyframes */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes scale {
+  from { transform: scale(0.95); }
+  to { transform: scale(1); }
+}
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
+@keyframes floating {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+
+/* New: Custom Scrollbar */
+.custom-scrollbar {
+  @apply [scrollbar-width:thin];
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  @apply w-2;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-primary/50 rounded-full hover:bg-primary/70;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-background/50;
+}
+
+/* New: Focus Ring */
+.focus-ring {
+  @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
+  focus-visible:ring-offset-background transition-shadow duration-300;
+}
+
+/* New: Badge Styles */
+.badge {
+  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium
+  bg-primary/10 text-primary hover:bg-primary/20 transition-colors duration-300;
+}
+
+/* New: Tooltip */
+.tooltip {
+  @apply relative before:absolute before:bottom-full before:left-1/2 before:-translate-x-1/2 before:px-2 before:py-1
+  before:rounded before:bg-foreground before:text-background before:text-xs before:content-[attr(data-tooltip)]
+  before:opacity-0 before:transition-opacity hover:before:opacity-100 before:whitespace-nowrap;
+}
+
+/* New: Input Focus Effect */
+.input-focus-effect {
+  @apply transition-all duration-300 border-border focus:border-primary focus:ring-2 
+  focus:ring-primary/20 focus:outline-none;
+}
+
+/* New: Tag Cloud */
+.tag-cloud {
+  @apply inline-flex gap-2 flex-wrap;
+}
+
+.tag-cloud > * {
+  @apply rounded-full px-3 py-1 text-sm bg-primary/10 text-primary
+  hover:bg-primary/20 transition-colors duration-300;
+}
+
+/* New: Content Sections */
+.content-section {
+  @apply relative py-16 overflow-hidden;
+}
+
+.content-section::before {
+  @apply absolute inset-0 bg-gradient-to-b from-background/50 to-background
+  pointer-events-none content-[''];
+}
+
+/* New: Hero Section */
+.hero-section {
+  @apply relative min-h-[60vh] flex items-center justify-center overflow-hidden
+  bg-gradient-to-b from-primary/5 to-background;
+}
+
+/* New: Feature Grid */
+.feature-grid {
+  @apply grid gap-8 sm:grid-cols-2 lg:grid-cols-3;
+}
+
+.feature-item {
+  @apply p-6 rounded-xl bg-background/50 border border-border/50
+  hover:shadow-lg hover:border-primary/20 transition-all duration-300;
+}
+
+/* New: Testimonial Card */
+.testimonial-card {
+  @apply p-6 rounded-xl bg-background shadow-sm hover:shadow-md
+  transition-all duration-300 relative overflow-hidden;
+}
+
+.testimonial-card::before {
+  @apply absolute top-0 left-0 w-full h-1 bg-gradient-to-r
+  from-primary/50 to-primary content-[''];
+}
+
+/* New: Progress Bar */
+.progress-bar {
+  @apply h-2 rounded-full bg-primary/20 overflow-hidden;
+}
+
+.progress-bar-fill {
+  @apply h-full bg-primary transition-all duration-500 ease-out;
 }
