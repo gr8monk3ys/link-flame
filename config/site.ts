@@ -14,17 +14,17 @@ export const siteConfig = {
       items: [
         {
           title: "Green Home & Garden",
-          href: "/eco-living/green-home",
+          href: "/guides-and-tips/green-home",
           description: "Sustainable home solutions and eco-friendly gardening tips",
         },
         {
           title: "Fashion & Beauty",
-          href: "/eco-living/fashion-beauty",
+          href: "/guides-and-tips/fashion-beauty",
           description: "Sustainable fashion and natural beauty products",
         },
         {
           title: "Zero Waste",
-          href: "/eco-living/zero-waste",
+          href: "/guides-and-tips/zero-waste",
           description: "Tips and products for a zero-waste lifestyle",
         },
       ],

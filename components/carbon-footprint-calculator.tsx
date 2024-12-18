@@ -326,7 +326,7 @@ export function CarbonFootprintCalculator() {
             <ul className="space-y-2">
               {impact.breakdown.home > 4 && (
                 <li>
-                  <Link href="/eco-living/green-home" className="text-primary hover:underline">
+                  <Link href="/guides-and-tips/green-home" className="text-primary hover:underline">
                     → Explore home energy efficiency upgrades
                   </Link>
                 </li>

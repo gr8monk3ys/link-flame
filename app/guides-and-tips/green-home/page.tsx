@@ -39,12 +39,12 @@ export default function GreenHomePage() {
                 </Link>
               </li>
               <li>
-                <Link href="/eco-living/green-home/solar" className="text-sm text-primary hover:underline">
+                <Link href="/guides-and-tips/green-home/solar" className="text-sm text-primary hover:underline">
                   Solar Power Guide
                 </Link>
               </li>
               <li>
-                <Link href="/eco-living/green-home/insulation" className="text-sm text-primary hover:underline">
+                <Link href="/guides-and-tips/green-home/insulation" className="text-sm text-primary hover:underline">
                   Home Insulation Tips
                 </Link>
               </li>
@@ -59,17 +59,17 @@ export default function GreenHomePage() {
           <CardContent className="mt-4 p-0">
             <ul className="space-y-2">
               <li>
-                <Link href="/eco-living/green-home/water" className="text-sm text-primary hover:underline">
+                <Link href="/guides-and-tips/green-home/water" className="text-sm text-primary hover:underline">
                   Water-Saving Guide
                 </Link>
               </li>
               <li>
-                <Link href="/eco-living/green-home/rainwater" className="text-sm text-primary hover:underline">
+                <Link href="/guides-and-tips/green-home/rainwater" className="text-sm text-primary hover:underline">
                   Rainwater Harvesting
                 </Link>
               </li>
               <li>
-                <Link href="/eco-living/green-home/greywater" className="text-sm text-primary hover:underline">
+                <Link href="/guides-and-tips/green-home/greywater" className="text-sm text-primary hover:underline">
                   Greywater Systems
                 </Link>
               </li>
@@ -84,17 +84,17 @@ export default function GreenHomePage() {
           <CardContent className="mt-4 p-0">
             <ul className="space-y-2">
               <li>
-                <Link href="/eco-living/green-home/composting" className="text-sm text-primary hover:underline">
+                <Link href="/guides-and-tips/green-home/composting" className="text-sm text-primary hover:underline">
                   Composting Guide
                 </Link>
               </li>
               <li>
-                <Link href="/eco-living/green-home/native-plants" className="text-sm text-primary hover:underline">
+                <Link href="/guides-and-tips/green-home/native-plants" className="text-sm text-primary hover:underline">
                   Native Plants Guide
                 </Link>
               </li>
               <li>
-                <Link href="/eco-living/green-home/permaculture" className="text-sm text-primary hover:underline">
+                <Link href="/guides-and-tips/green-home/permaculture" className="text-sm text-primary hover:underline">
                   Permaculture Basics
                 </Link>
               </li>
@@ -109,17 +109,17 @@ export default function GreenHomePage() {
           <CardContent className="mt-4 p-0">
             <ul className="space-y-2">
               <li>
-                <Link href="/eco-living/green-home/appliances" className="text-sm text-primary hover:underline">
+                <Link href="/guides-and-tips/green-home/appliances" className="text-sm text-primary hover:underline">
                   Energy-Efficient Appliances
                 </Link>
               </li>
               <li>
-                <Link href="/eco-living/green-home/cleaning" className="text-sm text-primary hover:underline">
+                <Link href="/guides-and-tips/green-home/cleaning" className="text-sm text-primary hover:underline">
                   Natural Cleaning Products
                 </Link>
               </li>
               <li>
-                <Link href="/eco-living/green-home/furniture" className="text-sm text-primary hover:underline">
+                <Link href="/guides-and-tips/green-home/furniture" className="text-sm text-primary hover:underline">
                   Sustainable Furniture
                 </Link>
               </li>

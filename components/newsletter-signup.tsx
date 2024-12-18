@@ -11,7 +11,7 @@ interface NewsletterSignupProps {
 }
 
 export function NewsletterSignup({
-  title = "Get Eco-Living Tips",
+  title = "Get Eco friendly Tips",
   description = "Subscribe to our newsletter for weekly sustainable living tips, exclusive deals, and eco-friendly product recommendations.",
   className = "",
 }: NewsletterSignupProps) {

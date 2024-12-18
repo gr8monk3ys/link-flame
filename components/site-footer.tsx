@@ -117,7 +117,7 @@ export function SiteFooter({ className }: SiteFooterProps) {
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="/eco-living/green-home"
+                  href="/guides-and-tips/green-home"
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
                   Green Home & Garden
@@ -125,7 +125,7 @@ export function SiteFooter({ className }: SiteFooterProps) {
               </li>
               <li>
                 <Link
-                  href="/eco-living/fashion-beauty"
+                  href="/guides-and-tips/fashion-beauty"
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
                   Eco Fashion & Beauty
@@ -133,7 +133,7 @@ export function SiteFooter({ className }: SiteFooterProps) {
               </li>
               <li>
                 <Link
-                  href="/eco-living/zero-waste"
+                  href="/guides-and-tips/zero-waste"
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
                   Zero Waste Living
@@ -141,7 +141,7 @@ export function SiteFooter({ className }: SiteFooterProps) {
               </li>
               <li>
                 <Link
-                  href="/eco-living/sustainable-travel"
+                  href="/guides-and-tips/sustainable-travel"
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
                   Sustainable Travel
