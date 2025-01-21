@@ -40,7 +40,7 @@ Link Flame is built with a modern, scalable tech stack to ensure a seamless, enj
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/link-flame.git
+git clone https://github.com/gr8monk3ys/link-flame.git
 
 # Navigate into the project directory
 cd link-flame

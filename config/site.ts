@@ -64,7 +64,7 @@ export const siteConfig = {
   ],
   links: {
     twitter: "https://twitter.com/linkflame",
-    github: "https://github.com/yourusername/link-flame",
+    github: "https://github.com/gr8monk3ys/link-flame",
     docs: "/docs",
     instagram: "https://instagram.com/linkflame",
     pinterest: "https://pinterest.com/linkflame",
