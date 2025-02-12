@@ -4,8 +4,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 // User and Authentication
@@ -16,7 +16,7 @@ model User {
   emailVerified DateTime?
   image         String?
   password      String?
-  role          UserRole  @default(USER)
+  role          String    @default("USER") // Changed from enum to string
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   accounts      Account[]
@@ -31,12 +31,12 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -52,155 +52,33 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model Profile {
-  id           String   @id @default(cuid())
-  userId       String   @unique
-  bio          String?
-  preferences  Json?    // Store user preferences as JSON
-  subscription SubscriptionTier @default(FREE)
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-// Product-related models
 model Product {
-  id                String              @id @default(cuid())
-  name              String
-  slug              String              @unique
-  description       String
-  category          Category            @relation(fields: [categoryId], references: [id])
-  categoryId        String
-  manufacturer      Manufacturer        @relation(fields: [manufacturerId], references: [id])
-  manufacturerId    String
-  features          String[]
-  specifications    Json
-  sustainabilityScore SustainabilityScore?
-  price            Price?
-  certifications   CertificationOnProduct[]
-  pros             String[]
-  cons             String[]
-  reviews          Review[]
-  images           ProductImage[]
-  affiliateUrl     String?
-  sponsored        Boolean             @default(false)
-  featured         Boolean             @default(false)
-  ranking          Int?
-  comparisonNotes  String?
-  lastUpdated      DateTime            @updatedAt
-  createdAt        DateTime            @default(now())
-}
-
-model Category {
   id          String    @id @default(cuid())
-  name        String    @unique
-  slug        String    @unique
+  title       String
   description String?
-  parentId    String?
-  parent      Category? @relation("CategoryHierarchy", fields: [parentId], references: [id])
-  children    Category[] @relation("CategoryHierarchy")
-  products    Product[]
-}
-
-model Manufacturer {
-  id                    String    @id @default(cuid())
-  name                  String    @unique
-  sustainabilityCommitment String?
-  location              String?
-  website               String?
-  products              Product[]
-  certifications        CertificationOnManufacturer[]
-}
-
-model Certification {
-  id          String    @id @default(cuid())
-  name        String    @unique
-  description String
-  icon        String
-  verificationUrl String?
-  products    CertificationOnProduct[]
-  manufacturers CertificationOnManufacturer[]
-}
-
-model CertificationOnProduct {
-  productId       String
-  certificationId String
-  dateObtained    DateTime @default(now())
-  expiryDate      DateTime?
-  product         Product      @relation(fields: [productId], references: [id])
-  certification   Certification @relation(fields: [certificationId], references: [id])
-
-  @@id([productId, certificationId])
-}
-
-model CertificationOnManufacturer {
-  manufacturerId  String
-  certificationId String
-  dateObtained    DateTime @default(now())
-  expiryDate      DateTime?
-  manufacturer    Manufacturer  @relation(fields: [manufacturerId], references: [id])
-  certification   Certification @relation(fields: [certificationId], references: [id])
-
-  @@id([manufacturerId, certificationId])
-}
-
-model SustainabilityScore {
-  id                  String  @id @default(cuid())
-  productId           String  @unique
-  overall             Float
-  carbonFootprint     Float
-  materialSourcing    Float
-  manufacturingProcess Float
-  packaging           Float
-  endOfLife          Float
-  socialImpact       Float
-  product            Product @relation(fields: [productId], references: [id])
-}
-
-model Price {
-  id          String  @id @default(cuid())
-  productId   String  @unique
-  amount      Float
-  currency    String
-  unit        String?
-  discountedFrom Float?
-  product     Product @relation(fields: [productId], references: [id])
-}
-
-model ProductImage {
-  id        String  @id @default(cuid())
-  productId String
-  url       String
-  alt       String?
-  isMain    Boolean @default(false)
-  product   Product @relation(fields: [productId], references: [id])
+  price       Float
+  image       String
+  category    String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  reviews     Review[]
 }
 
 model Review {
-  id               String  @id @default(cuid())
-  productId        String
-  userId           String
-  rating           Float
-  title            String?
-  content          String
-  pros             String[]
-  cons             String[]
-  verifiedPurchase Boolean @default(false)
-  helpful          Int     @default(0)
-  notHelpful       Int     @default(0)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  product          Product @relation(fields: [productId], references: [id])
-  user             User    @relation(fields: [userId], references: [id])
+  id        String   @id @default(cuid())
+  rating    Int
+  comment   String?
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
-// Enums
-enum UserRole {
-  USER
-  EDITOR
-  ADMIN
-}
-
-enum SubscriptionTier {
-  FREE
-  PREMIUM
-  ENTERPRISE
+model Profile {
+  id     String @id @default(cuid())
+  bio    String?
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
