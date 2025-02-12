@@ -1,10 +1,10 @@
 import { Metadata } from 'next'
 import { PageProps } from '@/types/next'
-import { getMDXPost, getAllMDXPosts } from '@/lib/blog'
+import { getAllPosts, getPost } from '@/lib/blog'
 import { notFound } from 'next/navigation'
 
 export async function generateStaticParams() {
-  const posts = await getAllMDXPosts()
+  const posts = await getAllPosts()
   return posts.map(post => ({
     slug: post.slug
   }))
@@ -13,7 +13,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ 
   params 
 }: { params: PageProps['params'] }): Promise<Metadata> {
-  const post = await getMDXPost(params.slug)
+  const post = await getPost(params.slug)
   
   if (!post) {
     return {}
@@ -26,7 +26,7 @@ export async function generateMetadata({
 }
 
 export default async function BlogPost({ params }: { params: PageProps['params'] }) {
-  const post = await getMDXPost(params.slug)
+  const post = await getPost(params.slug)
   
   if (!post) {
     notFound()
@@ -39,10 +39,10 @@ export default async function BlogPost({ params }: { params: PageProps['params']
         <time dateTime={post.publishedAt.toISOString()}>
           {post.publishedAt.toLocaleDateString()}
         </time>
-        <span>•</span>
+        <span>·</span>
         <span>{post.readingTime}</span>
       </div>
-      {/* {post.content && <MDXRemote source={post.content} />} */}
+      <div dangerouslySetInnerHTML={{ __html: post.content || '' }} />
     </article>
   )
 }

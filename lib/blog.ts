@@ -1,60 +1,50 @@
-import { getAllMDXPosts, getMDXPost } from '@/app/api/blog/route'
+import { Author, BlogPost } from './types'
 
-export interface Author {
-  name: string
-  image: string
-  bio: string
-}
-
-export interface BlogPost {
-  slug: string
-  title: string
-  description: string
-  coverImage: string
-  publishedAt: Date
-  author: Author
-  category: string
-  tags: string[]
-  readingTime: string
-  featured?: boolean
-  content?: string
-}
-
-// Re-export the functions from the route
-export { getAllMDXPosts, getMDXPost }
-
-// Additional helper functions
+// Helper functions
 export async function getAllPosts(): Promise<BlogPost[]> {
-  const posts = await getAllMDXPosts()
-  return posts.sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime())
+  const response = await fetch('/api/blog/posts')
+  const posts = await response.json()
+  return posts.sort((a: BlogPost, b: BlogPost) => 
+    new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+  )
+}
+
+export async function getPost(slug: string): Promise<BlogPost> {
+  const response = await fetch(`/api/blog/post/${slug}`)
+  if (!response.ok) {
+    throw new Error(`Failed to fetch post: ${slug}`)
+  }
+  return response.json()
 }
 
 export async function getFeaturedPosts(): Promise<BlogPost[]> {
-  const posts = await getAllMDXPosts()
+  const posts = await getAllPosts()
   return posts.filter(post => post.featured)
 }
 
 export async function getPostsByCategory(category: string): Promise<BlogPost[]> {
-  const posts = await getAllMDXPosts()
+  const posts = await getAllPosts()
   return posts.filter(post => 
     post.category.toLowerCase() === category.toLowerCase()
-  ).sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime())
+  ).sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
 }
 
 export async function getPostsByTag(tag: string): Promise<BlogPost[]> {
-  const posts = await getAllMDXPosts()
+  const posts = await getAllPosts()
   return posts.filter(post => 
-    post.tags.some(t => t.toLowerCase() === tag.toLowerCase())
-  ).sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime())
+    post.tags.map(t => t.toLowerCase()).includes(tag.toLowerCase())
+  ).sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
 }
 
 export async function searchPosts(query: string): Promise<BlogPost[]> {
-  const posts = await getAllMDXPosts()
-  const lowercaseQuery = query.toLowerCase()
+  const posts = await getAllPosts()
+  const searchTerms = query.toLowerCase().split(' ')
+  
   return posts.filter(post => 
-    post.title.toLowerCase().includes(lowercaseQuery) ||
-    post.description.toLowerCase().includes(lowercaseQuery) ||
-    post.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery)) ||
-    post.category.toLowerCase().includes(lowercaseQuery)
-  ).sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime())
+    searchTerms.some(term => 
+      post.title.toLowerCase().includes(term) ||
+      post.description.toLowerCase().includes(term) ||
+      post.content?.toLowerCase().includes(term)
+    )
+  ).sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
 }

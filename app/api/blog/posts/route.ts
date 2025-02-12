@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server'
-import { getAllMDXPosts } from './utils'
+import { getAllMDXPosts } from '../utils'
+
+export const runtime = 'edge'
+export const dynamic = 'force-dynamic'
+export const revalidate = 3600
 
 export async function GET() {
   try {
@@ -13,6 +17,3 @@ export async function GET() {
     )
   }
 }
-
-// Revalidate every hour
-export const revalidate = 3600
