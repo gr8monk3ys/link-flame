@@ -5,8 +5,8 @@ import Image from 'next/image';
 interface Product {
   id: string;
   title: string;
-  price: number;
-  salePrice?: number;
+  price: { toString: () => string } | number;
+  salePrice?: { toString: () => string } | number;
   image: string;
   category: string;
   description?: string;
@@ -74,6 +74,14 @@ export default function ProductGrid({
     return new Date(date) > thirtyDaysAgo;
   };
 
+  const formatPrice = (price: { toString: () => string } | number) => {
+    if (typeof price === 'number') {
+      return price.toFixed(2);
+    }
+    // Handle Prisma Decimal
+    return Number(price.toString()).toFixed(2);
+  };
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -81,7 +89,7 @@ export default function ProductGrid({
           <div key={product.id} className="group relative">
             {/* Quick view button */}
             <button
-              className="absolute right-4 top-4 z-10 rounded-full bg-white p-2 shadow-md opacity-0 transition-opacity group-hover:opacity-100"
+              className="absolute right-4 top-4 z-10 rounded-full bg-white p-2 opacity-0 shadow-md transition-opacity group-hover:opacity-100"
               onClick={() => window.location.href = `/products/${product.id}`}
             >
               <svg className="size-5 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -90,14 +98,12 @@ export default function ProductGrid({
               </svg>
             </button>
 
-            {/* Wishlist button */}
+            {/* Add to cart button */}
             <button
-              className="absolute right-4 top-16 z-10 rounded-full bg-white p-2 shadow-md opacity-0 transition-opacity group-hover:opacity-100"
-              onClick={() => {/* TODO: Implement wishlist */}}
+              className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-full bg-indigo-600 px-4 py-2 text-sm font-semibold text-white opacity-0 shadow-md transition-opacity hover:bg-indigo-500 group-hover:opacity-100"
+              onClick={() => {/* TODO: Implement add to cart */}}
             >
-              <svg className="size-5 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
+              Add to Cart
             </button>
 
             {/* New badge */}
@@ -109,14 +115,25 @@ export default function ProductGrid({
               </div>
             )}
 
+            {/* Wishlist button */}
+            <button
+              className="absolute right-4 top-16 z-10 rounded-full bg-white p-2 opacity-0 shadow-md transition-opacity group-hover:opacity-100"
+              onClick={() => {/* TODO: Implement wishlist */}}
+            >
+              <svg className="size-5 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </button>
+
             <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100">
               <Image
                 src={product.image}
                 alt={product.title}
                 width={400}
                 height={400}
-                className="object-cover object-center transition-opacity group-hover:opacity-75"
+                className="size-full object-cover object-center transition-opacity group-hover:opacity-75"
                 priority={currentPage === 1}
+                unoptimized
               />
             </div>
             <div className="mt-4 space-y-2">
@@ -130,17 +147,17 @@ export default function ProductGrid({
                 <div className="text-sm font-medium">
                   {product.salePrice ? (
                     <div className="flex flex-col items-end">
-                      <span className="text-red-600">${product.salePrice.toFixed(2)}</span>
-                      <span className="text-gray-500 line-through">${product.price.toFixed(2)}</span>
+                      <span className="text-red-600">${formatPrice(product.salePrice)}</span>
+                      <span className="text-gray-500 line-through">${formatPrice(product.price)}</span>
                     </div>
                   ) : (
-                    <span className="text-gray-900">${product.price.toFixed(2)}</span>
+                    <span className="text-gray-900">${formatPrice(product.price)}</span>
                   )}
                 </div>
               </div>
               <p className="text-sm text-gray-500">{product.category}</p>
               {product.description && (
-                <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
+                <p className="line-clamp-2 text-sm text-gray-600">{product.description}</p>
               )}
               <div className="flex items-center space-x-2">
                 {getAverageRating(product.reviews) && (
@@ -257,7 +274,7 @@ export default function ProductGrid({
               >
                 <span className="sr-only">Last</span>
                 <svg className="size-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M4.293 15.707a1 1 0 001.414 0l5-5a1 1 0 000-1.414l-5-5a1 1 0 00-1.414 1.414L8.586 10l-4.293 4.293a1 1 0 000 1.414zm6 0a1 1 0 001.414 0l5-5a1 1 0 000-1.414l-5-5a1 1 0 00-1.414 1.414L14.586 10l-4.293 4.293a1 1 0 000 1.414z" clipRule="evenodd" />
+                  <path fillRule="evenodd" d="M4.293 15.707a1 1 0 010-1.414L8.586 10 4.293 5.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                 </svg>
               </button>
             </nav>

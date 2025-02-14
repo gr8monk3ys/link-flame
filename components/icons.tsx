@@ -19,7 +19,9 @@ import {
   MoreVertical,
   Pizza,
   Plus,
+  Search,
   Settings,
+  ShoppingCart,
   SunMedium,
   Trash,
   Twitter,
@@ -159,4 +161,6 @@ export const Icons = {
     </svg>
   ),
   instagram: Instagram,
+  search: Search,
+  cart: ShoppingCart,
 }
