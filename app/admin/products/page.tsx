@@ -15,12 +15,11 @@ export default async function ProductsPage() {
 
   const products = await prisma.product.findMany({
     include: {
-      category: true,
-      sustainabilityScore: true,
-      price: true,
-      manufacturer: true,
-      images: true,
+      reviews: true
     },
+    orderBy: {
+      createdAt: 'desc'
+    }
   })
 
   return (
@@ -32,9 +31,7 @@ export default async function ProductsPage() {
         </a>
       </div>
       <div className="mt-6">
-        {products.map((product) => (
-          <ProductCard product={product} variant="admin" key={product.id} />
-        ))}
+        <DataTable columns={columns} data={products} />
       </div>
     </div>
   )

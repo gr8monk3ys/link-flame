@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { PageProps } from '@/types/next'
 import { getAllPosts, getPost } from '@/lib/blog'
 import { notFound } from 'next/navigation'
+import { format, parseISO } from 'date-fns'
 
 export async function generateStaticParams() {
   const posts = await getAllPosts()
@@ -32,12 +33,16 @@ export default async function BlogPost({ params }: { params: PageProps['params']
     notFound()
   }
 
+  const publishedAt = typeof post.publishedAt === 'string' 
+    ? post.publishedAt 
+    : post.publishedAt.toISOString()
+
   return (
     <article className="prose lg:prose-xl mx-auto px-4 py-8">
       <h1>{post.title}</h1>
       <div className="mb-8 flex items-center gap-4 text-gray-500">
-        <time dateTime={post.publishedAt.toISOString()}>
-          {post.publishedAt.toLocaleDateString()}
+        <time dateTime={publishedAt}>
+          {format(typeof post.publishedAt === 'string' ? parseISO(post.publishedAt) : post.publishedAt, 'MMMM d, yyyy')}
         </time>
         <span>·</span>
         <span>{post.readingTime}</span>

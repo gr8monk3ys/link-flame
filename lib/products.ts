@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 
 export type ProductFilter = {
-  categories?: string[];
   priceRange?: {
     min?: number;
     max?: number;
@@ -10,73 +10,68 @@ export type ProductFilter = {
 };
 
 export async function getProducts(filters: ProductFilter = {}) {
-  const where = {
-    AND: [
-      filters.categories?.length 
-        ? { category: { in: filters.categories } }
-        : {},
-      filters.priceRange?.min !== undefined
-        ? { price: { gte: filters.priceRange.min } }
-        : {},
-      filters.priceRange?.max !== undefined
-        ? { price: { lte: filters.priceRange.max } }
-        : {},
-    ],
+  const whereConditions: Prisma.ProductWhereInput = {
+    ...(filters.priceRange?.min !== undefined
+      ? { price: { gte: filters.priceRange.min } }
+      : {}),
+    ...(filters.priceRange?.max !== undefined
+      ? { price: { lte: filters.priceRange.max } }
+      : {}),
   };
 
-  const orderBy = filters.sortBy 
-    ? filters.sortBy === 'newest'
-      ? { createdAt: 'desc' }
-      : { price: filters.sortBy === 'price_asc' ? 'asc' : 'desc' }
-    : { createdAt: 'desc' };
-
-  return prisma.product.findMany({
-    where,
-    orderBy,
+  const products = await prisma.product.findMany({
+    where: whereConditions,
     include: {
-      reviews: {
-        select: {
-          rating: true,
-        },
-      },
+      reviews: true,
+    },
+    orderBy: {
+      createdAt: 'desc',
     },
   });
+
+  return products;
 }
 
 export async function getProductCategories() {
   const categories = await prisma.product.groupBy({
-    by: ['category'],
+    by: ['id'],
     _count: {
-      category: true,
+      id: true,
+    },
+    orderBy: {
+      _count: {
+        id: 'desc',
+      },
     },
   });
 
-  return categories.map(cat => ({
-    id: cat.category,
-    label: cat.category,
-    count: cat._count.category,
+  return categories.map((cat) => ({
+    id: cat.id,
+    label: cat.id,
+    count: cat._count.id,
   }));
 }
 
 export async function getPriceRanges() {
   const products = await prisma.product.findMany({
     select: { price: true },
-    orderBy: { price: 'asc' },
+    orderBy: { price: Prisma.SortOrder.asc },
   });
 
   const ranges = [
-    { min: 0, max: 10, label: 'Under $10' },
-    { min: 10, max: 20, label: '$10 - $20' },
-    { min: 20, max: 30, label: '$20 - $30' },
-    { min: 30, max: null, label: 'Over $30' },
+    { min: 0, max: 50, label: 'Under $50' },
+    { min: 50, max: 100, label: '$50 - $100' },
+    { min: 100, max: 200, label: '$100 - $200' },
+    { min: 200, max: 500, label: '$200 - $500' },
+    { min: 500, max: null, label: '$500 and up' },
   ];
 
   return ranges.map(range => ({
-    id: `${range.min}-${range.max ?? 'max'}`,
-    label: range.label,
-    count: products.filter(p => 
-      p.price >= range.min && 
-      (range.max === null || p.price <= range.max)
-    ).length,
+    ...range,
+    count: products.filter(p => {
+      const price = p.price as unknown as Prisma.Decimal;
+      return price.greaterThanOrEqualTo(range.min) && 
+        (range.max === null || price.lessThanOrEqualTo(range.max));
+    }).length,
   }));
 }

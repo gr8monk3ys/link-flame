@@ -89,17 +89,14 @@ export default async function ProductPage({ params, searchParams }: Props) {
               </div>
             </div>
 
-            <div className="aspect-h-1 aspect-w-1 w-full">
-              <div className="relative h-[500px] overflow-hidden rounded-lg">
-                <Image
-                  src={product.image}
-                  alt={product.title}
-                  fill
-                  className="h-full w-full object-cover object-center"
-                  priority
-                  unoptimized
-                />
-              </div>
+            <div className="aspect-[3/2] overflow-hidden rounded-lg">
+              <Image
+                src={product.image}
+                alt={product.title}
+                className="size-full object-cover object-center"
+                width={400}
+                height={400}
+              />
             </div>
           </div>
 
@@ -121,18 +118,13 @@ export default async function ProductPage({ params, searchParams }: Props) {
                 <div className="flex items-center">
                   <div className="flex items-center">
                     {[0, 1, 2, 3, 4].map((rating) => (
-                      <StarIcon
-                        key={rating}
-                        className={classNames(
-                          averageRating > rating ? 'text-yellow-400' : 'text-gray-300',
-                          'h-5 w-5'
-                        )}
-                        aria-hidden="true"
-                      />
+                      <div key={rating} className="shrink-0">
+                        <StarIcon className="size-5" aria-hidden="true" />
+                      </div>
                     ))}
                   </div>
                   <p className="sr-only">{averageRating} out of 5 stars</p>
-                  <div className="ml-3 text-sm font-medium text-indigo-600 hover:text-indigo-500">
+                  <div className="ml-3 text-sm font-medium text-green-600 hover:text-green-500">
                     {product.reviews.length} reviews
                   </div>
                 </div>
@@ -151,7 +143,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
                   <h3 className="text-sm font-medium text-gray-900">Delivery</h3>
                   <button
                     type="button"
-                    className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                    className="text-sm font-medium text-green-600 hover:text-green-500"
                   >
                     Learn more
                   </button>
@@ -159,7 +151,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
 
                 <div>
                   <select
-                    className="mt-1 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="mt-1 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-green-600 sm:text-sm sm:leading-6"
                     defaultValue="monthly"
                   >
                     <option value="onetime">One-time purchase</option>
@@ -186,7 +178,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
               <div className="mt-10 flex">
                 <button
                   type="button"
-                  className="flex max-w-xs flex-1 items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full"
+                  className="flex max-w-xs flex-1 items-center justify-center rounded-md border border-transparent bg-green-600 px-8 py-3 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full"
                 >
                   Add to cart
                 </button>

@@ -6,8 +6,9 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { buttonVariants } from "@/components/ui/button"
 import { ProductWithRelations } from "@/app/admin/products/columns"
+import { StarRating } from "@/components/ui/star-rating"
 
-export interface TopPickProduct {
+export type TopPickProduct = {
   id: string
   title: string
   description: string
@@ -15,70 +16,82 @@ export interface TopPickProduct {
   url: string
 }
 
-interface ProductCardProps {
-  product: TopPickProduct | ProductWithRelations
-  variant?: "topPick" | "admin"
+interface TopPickProductCardProps {
+  variant: "topPick"
+  product: TopPickProduct
 }
 
-const ProductCard = ({ product, variant = "topPick" }: ProductCardProps) => {
-  if (variant === "admin") {
-    const adminProduct = product as ProductWithRelations
-    const mainImage = adminProduct.images?.[0]?.url // Get the first image URL if available
+interface AdminProductCardProps {
+  variant: "admin"
+  product: ProductWithRelations
+}
+
+type ProductCardProps = TopPickProductCardProps | AdminProductCardProps
+
+const ProductCard = (props: ProductCardProps) => {
+  if (props.variant === "admin") {
+    const { product } = props
     return (
-      <Card key={adminProduct.id}>
+      <Card key={product.id}>
         <CardHeader>
           <AspectRatio ratio={1}>
-            {mainImage && (
-              <Image
-                src={mainImage}
-                alt={adminProduct.name}
-                fill
-                className="rounded-md object-cover"
-              />
-            )}
+            <Image
+              src={product.image}
+              alt={product.title}
+              fill
+              className="rounded-md object-cover"
+            />
           </AspectRatio>
         </CardHeader>
         <CardContent>
-          <CardTitle>{adminProduct.name}</CardTitle>
-          <CardDescription>{adminProduct.description}</CardDescription>
-          {adminProduct.sustainabilityScore && (
-            <div className="mt-2">
-              <Badge variant="secondary">
-                Eco Score: {adminProduct.sustainabilityScore.overall}
-              </Badge>
-            </div>
+          <CardTitle>{product.title}</CardTitle>
+          {product.description && (
+            <CardDescription>{product.description}</CardDescription>
           )}
+          <div className="mt-2 space-y-2">
+            <div className="flex flex-col">
+              <span>${product.price.toFixed(2)}</span>
+            </div>
+            {product.reviews.length > 0 && (
+              <div className="flex items-center gap-2">
+                <StarRating rating={product.reviews.reduce((acc, review) => acc + review.rating, 0) / product.reviews.length} />
+                <span className="text-sm text-muted-foreground">
+                  ({product.reviews.length} reviews)
+                </span>
+              </div>
+            )}
+          </div>
         </CardContent>
-        {adminProduct.affiliateUrl && (
-          <CardFooter>
-            <a href={adminProduct.affiliateUrl} target="_blank" rel="noreferrer" className={buttonVariants()}>
-              View Details
-            </a>
-          </CardFooter>
-        )}
       </Card>
     )
   }
 
-  const topPickProduct = product as TopPickProduct
+  // TopPick variant
+  const { product } = props
   return (
-    <Card key={topPickProduct.id}>
+    <Card key={product.id}>
       <CardHeader>
         <AspectRatio ratio={1}>
           <Image
-            src={topPickProduct.image}
-            alt={topPickProduct.title}
+            src={product.image}
+            alt={product.title}
             fill
             className="rounded-md object-cover"
           />
         </AspectRatio>
       </CardHeader>
       <CardContent>
-        <CardTitle>{topPickProduct.title}</CardTitle>
-        <CardDescription>{topPickProduct.description}</CardDescription>
+        <CardTitle>{product.title}</CardTitle>
+        <CardDescription>{product.description}</CardDescription>
       </CardContent>
       <CardFooter>
-        <a href={topPickProduct.url} target="_blank" rel="noreferrer" className={buttonVariants()}>
+        <a
+          href={product.url}
+          className={buttonVariants({
+            variant: "outline",
+            className: "w-full",
+          })}
+        >
           View Details
         </a>
       </CardFooter>

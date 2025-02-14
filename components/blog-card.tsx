@@ -1,6 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
-import { format } from "date-fns"
+import { format, parseISO } from "date-fns"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import type { BlogPost } from "@/lib/blog"
 
@@ -11,6 +11,9 @@ interface BlogCardProps {
 
 export function BlogCard({ post, featured = false }: BlogCardProps) {
   const { slug, title, description, coverImage, publishedAt, author, category, tags, readingTime } = post
+  const formattedDate = typeof publishedAt === 'string' 
+    ? format(parseISO(publishedAt), "MMM d, yyyy")
+    : format(publishedAt, "MMM d, yyyy")
 
   return (
     <Card className={`overflow-hidden ${featured ? "md:grid md:grid-cols-2 md:gap-4" : ""}`}>
@@ -56,7 +59,11 @@ export function BlogCard({ post, featured = false }: BlogCardProps) {
               <div className="text-sm">
                 <div className="font-medium">{author.name}</div>
                 <div className="text-muted-foreground">
-                  {format(publishedAt, "MMM d, yyyy")} · {readingTime}
+                  <time dateTime={typeof publishedAt === 'string' ? publishedAt : publishedAt.toISOString()}>
+                    {formattedDate}
+                  </time>
+                  <span> · </span>
+                  <span>{readingTime}</span>
                 </div>
               </div>
             </div>

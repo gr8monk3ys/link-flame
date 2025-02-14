@@ -31,8 +31,8 @@ const categories = [
     description: "Ethical fashion choices and clean beauty products for conscious consumers.",
     icon: Shirt,
     href: "/guides-and-tips/fashion-beauty",
-    color: "text-purple-500",
-    bgColor: "bg-purple-500/10",
+    color: "text-green-500",
+    bgColor: "bg-green-500/10",
   },
   {
     title: "Zero Waste Living",

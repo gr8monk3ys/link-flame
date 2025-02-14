@@ -1,7 +1,7 @@
 export interface Author {
   name: string
   image: string
-  bio: string
+  role: string
 }
 
 export interface BlogPost {
@@ -9,7 +9,7 @@ export interface BlogPost {
   title: string
   description: string
   coverImage: string
-  publishedAt: Date
+  publishedAt: string | Date
   author: Author
   category: string
   tags: string[]

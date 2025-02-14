@@ -127,13 +127,10 @@ export async function POST(request: NextRequest) {
 
     const product = await prisma.product.create({
       data: {
-        title: body.title,
-        description: body.description,
-        price: body.price,
-        salePrice: body.salePrice,
-        image: body.image,
-        category: body.category,
-      },
+        ...body,
+        price: Number(body.price),
+        salePrice: Number(body.price) * 0.9,
+      } as unknown as any,
     });
 
     return NextResponse.json(product);

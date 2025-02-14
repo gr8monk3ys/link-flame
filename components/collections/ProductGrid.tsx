@@ -100,7 +100,7 @@ export default function ProductGrid({
 
             {/* Add to cart button */}
             <button
-              className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-full bg-indigo-600 px-4 py-2 text-sm font-semibold text-white opacity-0 shadow-md transition-opacity hover:bg-indigo-500 group-hover:opacity-100"
+              className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-full bg-green-600 px-4 py-2 text-sm font-semibold text-white opacity-0 shadow-md transition-opacity hover:bg-green-500 group-hover:opacity-100"
               onClick={() => {/* TODO: Implement add to cart */}}
             >
               Add to Cart
@@ -109,7 +109,7 @@ export default function ProductGrid({
             {/* New badge */}
             {isNewProduct(product.createdAt) && (
               <div className="absolute left-4 top-4 z-10">
-                <span className="inline-flex items-center rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-medium text-indigo-800">
+                <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
                   New
                 </span>
               </div>
@@ -247,7 +247,7 @@ export default function ProductGrid({
                       onClick={() => onPageChange(page)}
                       className={`relative inline-flex items-center p-2 text-sm font-semibold ${
                         page === currentPage
-                          ? 'z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
+                          ? 'z-10 bg-green-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600'
                           : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'
                       }`}
                     >

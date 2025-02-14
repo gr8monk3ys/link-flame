@@ -1,5 +1,6 @@
 import { siteConfig } from "@/config/site"
-import ProductCard, { TopPickProduct } from "@/components/ui/product-card"
+import ProductCard from "@/components/ui/product-card"
+import type { TopPickProduct } from "@/components/ui/product-card"
 
 // Sample products with actual images from our public directory
 const products: TopPickProduct[] = [
