@@ -46,23 +46,6 @@ export function SiteHeader({ className }: SiteHeaderProps) {
               <span className="absolute -right-2 -top-2 flex size-4 items-center justify-center rounded-full bg-green-600 text-[10px] font-medium text-white">0</span>
             </Link>
           </nav>
-          <Link
-            href="/search"
-            className="font-medium text-sm text-muted-foreground hover:text-primary transition-colors"
-          >
-            <Icons.search className="size-5" />
-          </Link>
-          <Link
-            href="/cart"
-            className="relative font-medium text-sm text-muted-foreground hover:text-primary transition-colors"
-          >
-            <Icons.cart className="size-5" />
-            {0 > 0 && (
-              <span className="absolute -right-2 -top-2 flex size-4 items-center justify-center rounded-full bg-green-600 text-[10px] font-medium text-white">
-                {0}
-              </span>
-            )}
-          </Link>
         </div>
       </div>
     </header>
