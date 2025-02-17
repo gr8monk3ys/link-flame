@@ -2,8 +2,13 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getCartItems } from "@/lib/cart";
+import type { CartItem } from "@/types/cart";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error("Missing STRIPE_SECRET_KEY");
+}
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2025-01-27.acacia",
 });
 
@@ -19,18 +24,20 @@ export async function POST() {
       return new NextResponse("Cart is empty", { status: 400 });
     }
 
-    const session = await stripe.checkout.sessions.create({
-      line_items: cartItems.map((item) => ({
-        price_data: {
-          currency: "usd",
-          product_data: {
-            name: item.name,
-            images: [item.image],
-          },
-          unit_amount: Math.round(item.price * 100), // Convert to cents
+    const lineItems = cartItems.map((item: CartItem) => ({
+      price_data: {
+        currency: "usd",
+        product_data: {
+          name: item.title,  
+          images: [item.image],
         },
-        quantity: item.quantity,
-      })),
+        unit_amount: Math.round(item.price * 100), 
+      },
+      quantity: item.quantity,
+    }));
+
+    const session = await stripe.checkout.sessions.create({
+      line_items: lineItems,
       mode: "payment",
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/cart?success=true`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/cart?canceled=true`,

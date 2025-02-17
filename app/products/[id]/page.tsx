@@ -80,7 +80,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
                         alt=""
                         width={200}
                         height={200}
-                        className="h-full w-full object-cover object-center"
+                        className="size-full object-cover object-center"
                         unoptimized
                       />
                     </span>
@@ -163,8 +163,8 @@ export default async function ProductPage({ params, searchParams }: Props) {
 
                 <div className="rounded-lg bg-gray-50 p-4">
                   <div className="flex items-start">
-                    <div className="flex-shrink-0">
-                      <InformationCircleIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                    <div className="shrink-0">
+                      <InformationCircleIcon className="size-5 text-gray-400" aria-hidden="true" />
                     </div>
                     <div className="ml-3">
                       <p className="text-sm text-gray-500">

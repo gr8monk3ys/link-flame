@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useCart } from "@/hooks/useCart";
 
 interface Product {
   id: string;
@@ -33,6 +34,8 @@ export default function ProductGrid({
   pageSize,
   onPageSizeChange
 }: ProductGridProps) {
+  const { addToCart } = useCart();
+
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -101,7 +104,7 @@ export default function ProductGrid({
             {/* Add to cart button */}
             <button
               className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-full bg-green-600 px-4 py-2 text-sm font-semibold text-white opacity-0 shadow-md transition-opacity hover:bg-green-500 group-hover:opacity-100"
-              onClick={() => {/* TODO: Implement add to cart */}}
+              onClick={() => addToCart(product.id)}
             >
               Add to Cart
             </button>

@@ -18,7 +18,7 @@ export function SiteHeader({ className }: SiteHeaderProps) {
             {/* Search */}
             <Link
               href="/search"
-              className="flex items-center font-medium text-sm text-muted-foreground hover:text-primary transition-colors"
+              className="flex items-center text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
             >
               <div className="flex items-center space-x-2">
                 <Icons.search className="size-5" />
@@ -29,7 +29,7 @@ export function SiteHeader({ className }: SiteHeaderProps) {
             {/* Account */}
             <Link
               href="/authentication"
-              className="text-sm font-medium transition-colors text-muted-foreground hover:text-primary"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
             >
               <div className="flex items-center space-x-2">
                 <Icons.user className="size-5" />

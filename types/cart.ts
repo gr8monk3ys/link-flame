@@ -1,18 +1,15 @@
 export interface CartItem {
   id: string;
-  name: string;
+  title: string;
   price: number;
-  image: string;
   quantity: number;
-  color?: string;
-  size?: string;
+  image: string;
 }
 
 export interface Cart {
-  userId: string;
   items: CartItem[];
-  subtotal: number;
-  tax: number;
-  shipping: number;
-  total: number;
+  addToCart: (productId: string, quantity?: number) => Promise<void>;
+  updateQuantity: (productId: string, quantity: number) => Promise<void>;
+  removeItem: (productId: string) => Promise<void>;
+  checkout: () => Promise<void>;
 }

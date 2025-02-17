@@ -1,5 +1,8 @@
 # 🌱 Link Flame - Eco-Friendly Living Blog
 
+![Link Flame Dashboard](./public/images/dashboard.png)
+
+
 Welcome to **Link Flame**, a vibrant and informative platform dedicated to helping you embrace a more sustainable lifestyle. Here, you’ll find engaging guides, expert tips, product recommendations, and community-driven insights—all curated with the goal of nurturing a greener, healthier planet.
 
 ## Why Link Flame?

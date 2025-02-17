@@ -1,47 +1,45 @@
-import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
-import { nanoid } from "nanoid"
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-export async function middleware(request: NextRequest) {
-  // Get session ID from cookie or create new one
-  let sessionId = request.cookies.get("session_id")?.value
-  const response = NextResponse.next()
+// Create a matcher for protected routes
+const isProtectedRoute = createRouteMatcher([
+  "/cart(.*)",
+  "/checkout(.*)",
+  "/admin(.*)",
+]);
 
-  if (!sessionId) {
-    sessionId = nanoid()
-    response.cookies.set("session_id", sessionId, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 30, // 30 days
-    })
+// Create a matcher for public routes
+const isPublicRoute = createRouteMatcher([
+  "/",
+  "/collections(.*)",
+  "/products/(.*)",
+  "/about-us",
+  "/faq",
+  "/api/webhook(.*)",
+  "/api/products(.*)",
+]);
+
+export default clerkMiddleware((auth, req: NextRequest) => {
+  if (!auth.userId && isProtectedRoute(req)) {
+    const signInUrl = new URL('/sign-in', req.url);
+    signInUrl.searchParams.set('redirect_url', req.url);
+    return NextResponse.redirect(signInUrl);
   }
+  return NextResponse.next();
+});
 
-  // Add security headers
-  const headers = response.headers
-  headers.set("X-DNS-Prefetch-Control", "on")
-  headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
-  headers.set("X-Frame-Options", "SAMEORIGIN")
-  headers.set("X-Content-Type-Options", "nosniff")
-  headers.set("Referrer-Policy", "strict-origin-when-cross-origin")
-  headers.set(
-    "Permissions-Policy",
-    "camera=(), microphone=(), geolocation=(), interest-cohort=()"
-  )
-
-  // Check admin routes
-  if (request.nextUrl.pathname.startsWith("/admin")) {
-    // Add your admin route protection logic here
-    // This is just a basic example - you should implement proper role-based access control
-    const session = request.cookies.get("next-auth.session-token")
-    if (!session) {
-      return NextResponse.redirect(new URL("/login", request.url))
-    }
-  }
-
-  return response
-}
-
+// Stop Middleware running on static files
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
-}
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder
+     */
+    "/((?!static|.*\\..*|_next|favicon.ico).*)",
+    "/(api|trpc)(.*)",
+  ],
+};

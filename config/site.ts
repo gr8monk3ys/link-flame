@@ -6,6 +6,10 @@ export const siteConfig = {
   url: "https://linkflame.com",
   mainNav: [
     {
+      title: "Shop",
+      href: "/collections",
+    },
+    {
       title: "About Us",
       href: "/about-us",
     },
