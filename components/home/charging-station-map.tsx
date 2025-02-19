@@ -2,11 +2,11 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Card } from "./ui/card"
-import { Input } from "./ui/input"
-import { Button } from "./ui/button"
-import { Badge } from "./ui/badge"
-import { FadeIn, PopIn } from "./ui/animations"
+import { Card } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { FadeIn, PopIn } from "@/components/ui/animations"
 
 interface ChargingStation {
   id: string
@@ -21,6 +21,39 @@ interface ChargingStation {
   powerTypes: string[]
   status: "available" | "busy" | "offline"
 }
+
+const chargingStations: ChargingStation[] = [
+  {
+    id: "1",
+    name: "Supercharger Station 1",
+    address: "123 Main St, Anytown USA",
+    coordinates: { lat: 34.0522, lng: -118.2437 },
+    availablePoints: 5,
+    totalPoints: 10,
+    powerTypes: ["Level 2", "DC Fast Charging"],
+    status: "available",
+  },
+  {
+    id: "2",
+    name: "EVgo Charging Station",
+    address: "456 Oak Ave, Anytown USA",
+    coordinates: { lat: 34.0522, lng: -118.2437 },
+    availablePoints: 2,
+    totalPoints: 4,
+    powerTypes: ["DC Fast Charging"],
+    status: "busy",
+  },
+  {
+    id: "3",
+    name: "ChargePoint Station",
+    address: "789 Pine Ln, Anytown USA",
+    coordinates: { lat: 34.0522, lng: -118.2437 },
+    availablePoints: 0,
+    totalPoints: 6,
+    powerTypes: ["Level 2"],
+    status: "offline",
+  },
+];
 
 export function ChargingStationMap() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -37,6 +70,10 @@ export function ChargingStationMap() {
         return "bg-red-500"
     }
   }
+
+  const filteredStations = chargingStations.filter((station) =>
+    station.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="relative h-[600px]">
@@ -61,9 +98,19 @@ export function ChargingStationMap() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="size-full bg-gray-100"
+        className="size-full overflow-y-scroll bg-gray-100"
       >
-        {/* Map component would go here */}
+        {filteredStations.map((station) => (
+          <motion.div
+            key={station.id}
+            className="cursor-pointer border-b border-gray-200 p-4 hover:bg-gray-50"
+            onClick={() => setSelectedStation(station)}
+            whileHover={{ backgroundColor: "#f0f0f0" }}
+          >
+            <h3 className="text-lg font-semibold">{station.name}</h3>
+            <p className="text-sm text-muted-foreground">{station.address}</p>
+          </motion.div>
+        ))}
       </motion.div>
 
       <AnimatePresence>

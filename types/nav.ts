@@ -3,4 +3,6 @@ export interface NavItem {
   href?: string
   disabled?: boolean
   external?: boolean
+  description?: string
+  items?: NavItem[]
 }

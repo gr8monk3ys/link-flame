@@ -1,6 +1,6 @@
 import { getAllPosts, getFeaturedPosts } from "@/lib/blog"
-import { BlogCard } from "@/components/blog-card"
-import { BlogSearch } from "@/components/blog-search"
+import { BlogCard } from "@/components/blogs/blog-card"
+import { BlogSearch } from "@/components/blogs/blog-search"
 
 export default async function BlogsPage() {
   const [featuredPosts, allPosts] = await Promise.all([

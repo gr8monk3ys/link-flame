@@ -1,9 +1,9 @@
 import { Metadata } from "next"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { TransportCalculator } from "@/components/transport-calculator"
-import { ProductGrid } from "@/components/product-grid"
-import { ChargingStationMap } from "@/components/charging-station-map"
+import { TransportCalculator } from "@/components/guides-and-tips/transport-calculator"
+import { ChargingStationMap } from "@/components/home/charging-station-map"
+import { ProductGrid } from "@/components/shared/product-grid"
 import Link from "next/link"
 
 export const metadata: Metadata = {

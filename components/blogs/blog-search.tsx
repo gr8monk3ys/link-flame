@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
-import { BlogCard } from "@/components/blog-card"
+import { BlogCard } from "@/components/blogs/blog-card"
 import { searchPosts, type BlogPost } from "@/lib/blog"
 
 export function BlogSearch() {

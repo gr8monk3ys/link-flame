@@ -1,7 +1,7 @@
 import { getPostsByCategory, getAllPosts } from "@/lib/blog"
-import { BlogCard } from "@/components/blog-card"
-import { TagCloud } from "@/components/tag-cloud"
-import { NewsletterSignup } from "@/components/newsletter-signup"
+import { BlogCard } from "@/components/blogs/blog-card"
+import { NewsletterSignup } from "@/components/shared/newsletter-signup"
+import { TagCloud } from "@/components/blogs/tag-cloud"
 import { PageProps } from "@/types/next"
 import { Metadata } from "next"
 

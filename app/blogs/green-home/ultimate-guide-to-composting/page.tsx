@@ -1,5 +1,5 @@
-import { BlogPost } from "@/components/blog-post"
-import { ProductDisplay } from "@/components/product-display"
+import { BlogPost } from "@/components/blogs/blog-post"
+import { ProductDisplay } from "@/components/blogs/product-display"
 
 const blogPost = {
   title: "The Ultimate Guide to Home Composting: Turn Kitchen Waste into Garden Gold",

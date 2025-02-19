@@ -5,7 +5,6 @@ import { AspectRatio } from "@/components/ui/aspect-ratio"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { buttonVariants } from "@/components/ui/button"
-import { ProductWithRelations } from "@/app/admin/products/columns"
 import { StarRating } from "@/components/ui/star-rating"
 
 export type TopPickProduct = {
@@ -23,7 +22,7 @@ interface TopPickProductCardProps {
 
 interface AdminProductCardProps {
   variant: "admin"
-  product: ProductWithRelations
+  product: any // ProductWithRelations
 }
 
 type ProductCardProps = TopPickProductCardProps | AdminProductCardProps
@@ -54,7 +53,7 @@ const ProductCard = (props: ProductCardProps) => {
             </div>
             {product.reviews.length > 0 && (
               <div className="flex items-center gap-2">
-                <StarRating rating={product.reviews.reduce((acc, review) => acc + review.rating, 0) / product.reviews.length} />
+                <StarRating rating={product.reviews.reduce((acc: number, review: {rating: number}) => acc + review.rating, 0) / product.reviews.length} />
                 <span className="text-sm text-muted-foreground">
                   ({product.reviews.length} reviews)
                 </span>

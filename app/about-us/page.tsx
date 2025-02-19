@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { NewsletterSignup } from "@/components/newsletter-signup"
+import { NewsletterSignup } from "@/components/shared/newsletter-signup"
 import { buttonVariants } from "@/components/ui/button"
 import Link from "next/link"
 import Image from "next/image"

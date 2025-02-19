@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { siteConfig } from "@/config/site"
-import { Icons } from "@/components/icons"
+import { Icons } from "@/components/shared/icons"
 import { MainNav } from "@/components/main-nav"
 import { cn } from "@/lib/utils"
 

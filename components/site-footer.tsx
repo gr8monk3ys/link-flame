@@ -1,9 +1,9 @@
 "use client"
 
 import Link from "next/link"
-import { Icons } from "@/components/icons"
+import { Icons } from "@/components/shared/icons"
 import { siteConfig } from "@/config/site"
-import { NewsletterSignup } from "@/components/newsletter-signup"
+import { NewsletterSignup } from "@/components/shared/newsletter-signup"
 import { cn } from "@/lib/utils"
 
 interface SiteFooterProps {

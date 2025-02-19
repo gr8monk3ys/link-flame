@@ -1,9 +1,9 @@
 import { Metadata } from "next"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { ZeroWasteCalculator } from "@/components/zero-waste-calculator"
-import { WasteReductionTips } from "@/components/waste-reduction-tips"
-import { ProductGrid } from "@/components/product-grid"
+import { ZeroWasteCalculator } from "@/components/zero-waste/zero-waste-calculator"
+import { WasteReductionTips } from "@/components/zero-waste/waste-reduction-tips"
+import { ProductGrid } from "@/components/shared/product-grid"
 import Link from "next/link"
 
 export const metadata: Metadata = {

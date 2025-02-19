@@ -1,5 +1,5 @@
-import { NewsletterSignup } from "@/components/newsletter-signup"
-import { TagCloud } from "@/components/tag-cloud"
+import { NewsletterSignup } from "@/components/shared/newsletter-signup"
+import { TagCloud } from "@/components/blogs/tag-cloud"
 
 export default function BlogLayout({
   children,

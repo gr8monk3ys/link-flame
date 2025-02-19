@@ -3,13 +3,14 @@ import { Metadata, Viewport } from "next"
 import { siteConfig } from "@/config/site"
 import { fontSans } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
-import { ThemeProvider } from "@/components/theme-provider"
-import { Analytics } from "@/components/analytics"
+import { ThemeProvider } from "@/components/layout/theme-provider"
+import { Analytics } from "@/components/layout/analytics"
+import { ClerkProvider } from "@clerk/nextjs";
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 
 export function getMetadata(): Metadata {
-  return {
+  const metadata: Metadata = {
     metadataBase: new URL(siteConfig.url),
     title: {
       default: siteConfig.name,
@@ -51,7 +52,8 @@ export function getMetadata(): Metadata {
       apple: "/apple-touch-icon.png",
     },
     manifest: `${siteConfig.url}/site.webmanifest`,
-  }
+  };
+  return metadata;
 }
 
 export function getViewport(): Viewport {
@@ -80,21 +82,23 @@ export default function RootLayout({ children }: RootLayoutProps) {
           fontSans.variable
         )}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem={true}
-          disableTransitionOnChange
-        >
-          <div className="relative flex min-h-screen flex-col">
-            <SiteHeader className="glass-effect fixed top-0 z-50 w-full" />
-            <main className="container mx-auto flex-1 px-4 pt-24 sm:px-6 lg:px-8">
-              {children}
-            </main>
-            <SiteFooter className="mt-auto" />
-          </div>
-          {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && <Analytics />}
-        </ThemeProvider>
+        <ClerkProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem={true}
+            disableTransitionOnChange
+          >
+            <div className="relative flex min-h-screen flex-col">
+              <SiteHeader className="glass-effect fixed top-0 z-50 w-full" />
+              <main className="container mx-auto flex-1 px-4 pt-24 sm:px-6 lg:px-8">
+                {children}
+              </main>
+              <SiteFooter className="mt-auto" />
+            </div>
+            {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && <Analytics />}
+          </ThemeProvider>
+        </ClerkProvider>
       </body>
     </html>
   )

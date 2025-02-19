@@ -98,6 +98,11 @@ model CartItem {
   @@index([productId])
 }
 
+model Category {
+  id   String @id @default(cuid())
+  name String
+}
+
 model Order {
   id              String   @id @default(cuid())
   userId          String

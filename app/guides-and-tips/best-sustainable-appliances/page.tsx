@@ -1,8 +1,7 @@
 import { Metadata } from "next"
-import { ProductComparison } from "@/components/product-comparison"
-import { SustainabilityCalculator } from "@/components/sustainability-calculator"
+import { ProductComparison } from "@/components/home/product-comparison"
+import { SustainabilityCalculator } from "@/components/guides-and-tips/sustainability-calculator"
 import { Separator } from "@/components/ui/separator"
-import { ProductWithRelations } from "@/app/admin/products/columns"
 
 export const metadata: Metadata = {
   title: "Best Eco-Friendly Home Appliances 2024 | Link Flame",
