@@ -11,6 +11,9 @@ const nextConfig = {
     },
   },
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
+  eslint: {
+    dirs: ['app', 'components', 'lib', 'types', 'hooks', 'config', 'styles', 'public'],
+  },
 }
 
 module.exports = withMDX(nextConfig)

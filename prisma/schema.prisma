@@ -60,6 +60,7 @@ model Product {
   description String?
   price       Float
   image       String
+  category    String     @default("Uncategorized")
   reviews     Review[]
   cartItems   CartItem[]
   createdAt   DateTime   @default(now())
@@ -99,16 +100,47 @@ model CartItem {
 }
 
 model Category {
-  id   String @id @default(cuid())
-  name String
+  id        String     @id @default(cuid())
+  name      String
+  blogPosts BlogPost[]
+}
+
+model BlogPost {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String?
+  content     String?
+  coverImage  String?
+  publishedAt DateTime @default(now())
+  authorId    String
+  categoryId  String?
+  tags        String?
+  featured    Boolean  @default(false)
+  readingTime String?
+
+  author     Author     @relation(fields: [authorId], references: [id])
+  category   Category?  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+}
+
+model Author {
+  id          String   @id @default(cuid())
+  name        String
+  image       String?
+  role        String?
+  blogPosts BlogPost[]
 }
 
 model Order {
   id              String   @id @default(cuid())
   userId          String
-  stripeSessionId String   @unique
+  stripeSessionId String?  @unique
   amount          Float
   status          String
+  shippingAddress String?
+  paymentMethod   String?
+  customerEmail   String?
+  customerName    String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 

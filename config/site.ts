@@ -1,9 +1,15 @@
 export type SiteConfig = typeof siteConfig
 
+// Determine the base URL based on the environment
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
+  || (process.env.NODE_ENV === 'development' 
+    ? 'http://localhost:3000' 
+    : 'https://linkflame.com')
+
 export const siteConfig = {
   name: "LinkFlame",
   description: "Your trusted source for eco-friendly living and sustainable product recommendations.",
-  url: "https://linkflame.com",
+  url: baseUrl,
   mainNav: [
     {
       title: "Shop",
