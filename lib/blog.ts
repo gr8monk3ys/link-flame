@@ -58,7 +58,12 @@ export async function getAllPosts(): Promise<BlogPost[]> {
   // In the browser, fetch from API
   const baseUrl = getBaseUrl()
   const response = await fetch(`${baseUrl}/api/blog/posts`, { next: { revalidate: 3600 } })
-  const posts = await response.json()
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch posts: ${response.status}`)
+  }
+  
+  const posts = await response.json() as BlogPost[]
   return posts.sort((a: BlogPost, b: BlogPost) => 
     new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
   )
