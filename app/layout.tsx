@@ -8,6 +8,7 @@ import { Analytics } from "@/components/layout/analytics"
 import { ClerkProvider } from "@clerk/nextjs";
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
+import { CartProvider } from "@/lib/providers/CartProvider"
 
 export function getMetadata(): Metadata {
   const metadata: Metadata = {
@@ -89,14 +90,16 @@ export default function RootLayout({ children }: RootLayoutProps) {
             enableSystem={true}
             disableTransitionOnChange
           >
-            <div className="relative flex min-h-screen flex-col">
-              <SiteHeader className="glass-effect fixed top-0 z-50 w-full" />
-              <main className="container mx-auto flex-1 px-4 pt-24 sm:px-6 lg:px-8">
-                {children}
-              </main>
-              <SiteFooter className="mt-auto" />
-            </div>
-            {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && <Analytics />}
+            <CartProvider>
+              <div className="relative flex min-h-screen flex-col">
+                <SiteHeader className="glass-effect fixed top-0 z-50 w-full" />
+                <main className="container mx-auto flex-1 px-4 pt-24 sm:px-6 lg:px-8">
+                  {children}
+                </main>
+                <SiteFooter className="mt-auto" />
+              </div>
+              {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && <Analytics />}
+            </CartProvider>
           </ThemeProvider>
         </ClerkProvider>
       </body>

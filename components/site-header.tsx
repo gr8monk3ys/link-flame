@@ -2,6 +2,7 @@ import Link from "next/link"
 import { siteConfig } from "@/config/site"
 import { Icons } from "@/components/shared/icons"
 import { MainNav } from "@/components/main-nav"
+import { CartLink } from "@/components/cart-link"
 import { cn } from "@/lib/utils"
 
 interface SiteHeaderProps {
@@ -38,13 +39,7 @@ export function SiteHeader({ className }: SiteHeaderProps) {
             </Link>
 
             {/* Cart */}
-            <Link
-              href="/cart"
-              className="relative flex items-center text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-            >
-              <Icons.cart className="size-5" />
-              <span className="absolute -right-2 -top-2 flex size-4 items-center justify-center rounded-full bg-green-600 text-[10px] font-medium text-white">0</span>
-            </Link>
+            <CartLink className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary" />
           </nav>
         </div>
       </div>
