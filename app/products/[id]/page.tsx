@@ -4,11 +4,11 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { StarIcon } from '@heroicons/react/20/solid';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
-import { prisma } from '@/lib/prisma';
 import { useState, useEffect } from 'react';
 import { useCart } from "@/hooks/useCart";
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
+import { useAuth } from "@clerk/nextjs";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
@@ -23,32 +23,41 @@ interface Product {
   reviews: { rating: number }[];
 }
 
-import { getProduct } from "@/lib/products";
-
-async function getProductData(id: string | string[] | undefined): Promise<{ product: Product | null; averageRating: number | null }> {
-  if (!id || Array.isArray(id)) {
-    return { product: null, averageRating: null };
-  }
-  try {
-    const product = await getProduct(id);
-    const averageRating = product.reviews.length
-      ? product.reviews.reduce((acc, review) => acc + review.rating, 0) / product.reviews.length
-      : null;
-    return { product, averageRating };
-  } catch (error) {
-    console.error("Failed to get product data", error);
-    return { product: null, averageRating: null };
-  }
+interface ProductData {
+  product: Product | null;
+  averageRating: number | null;
 }
 
 export default function ProductPage() {
-  const [productData, setProductData] = useState<{ product: Product | null; averageRating: number | null } | null>(null);
+  const [productData, setProductData] = useState<ProductData | null>(null);
   const { id } = useParams();
 
   useEffect(() => {
-    if (typeof id === 'string') {
-      getProductData(id).then(setProductData);
-    }
+    const getProductData = async (id: string | string[] | undefined) => {
+      if (!id || Array.isArray(id)) {
+        setProductData({ product: null, averageRating: null });
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/products/${id}`);
+
+        if (!res.ok) {
+          notFound();
+        }
+
+        const product = await res.json() as Product;
+        const averageRating = product.reviews.length
+          ? product.reviews.reduce((acc, review) => acc + review.rating, 0) / product.reviews.length
+          : null;
+        setProductData({ product, averageRating });
+      } catch (error) {
+        console.error("Failed to get product data", error);
+        setProductData({ product: null, averageRating: null });
+      }
+    };
+
+    getProductData(id);
   }, [id]);
 
   if (!productData) {
@@ -189,15 +198,16 @@ export default function ProductPage() {
 function AddToCartButton({ productId }: { productId: string | string[] | undefined }) {
   const { addToCart } = useCart();
   const [isLoading, setIsLoading] = useState(false);
+  const { userId } = useAuth();
 
   const handleAddToCart = async () => {
     setIsLoading(true);
     try {
-      if (typeof productId === 'string') {
-        await addToCart(productId);
+      if (typeof productId === 'string' && userId) {
+        await addToCart(userId, productId);
         toast.success("Product added to cart!");
       } else {
-        toast.error("Invalid product ID");
+        toast.error("Invalid product ID or user not logged in");
       }
     } catch (error) {
       console.error("Error adding product to cart:", error);

@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { buttonVariants } from "@/components/ui/button"
 import { StarRating } from "@/components/ui/star-rating"
+import { useCart } from "@/hooks/useCart";
+import { useAuth, SignedIn, SignedOut } from "@clerk/nextjs";
 
 export type TopPickProduct = {
   id: string
@@ -28,6 +30,8 @@ interface AdminProductCardProps {
 type ProductCardProps = TopPickProductCardProps | AdminProductCardProps
 
 const ProductCard = (props: ProductCardProps) => {
+  const { userId } = useAuth();
+  const { addToCart } = useCart()
   if (props.variant === "admin") {
     const { product } = props
     return (
@@ -60,6 +64,17 @@ const ProductCard = (props: ProductCardProps) => {
               </div>
             )}
           </div>
+          <SignedIn>
+            <button
+              className={buttonVariants({
+                variant: "default",
+                className: "w-full",
+              })}
+              onClick={() => userId && addToCart(userId, product.id)}
+            >
+              Add to Cart
+            </button>
+          </SignedIn>
         </CardContent>
       </Card>
     )
@@ -93,6 +108,17 @@ const ProductCard = (props: ProductCardProps) => {
         >
           View Details
         </a>
+        <SignedIn>
+          <button
+            className={buttonVariants({
+              variant: "default",
+              className: "w-full",
+            })}
+            onClick={() => userId && addToCart(userId, product.id)}
+          >
+            Add to Cart
+          </button>
+        </SignedIn>
       </CardFooter>
     </Card>
   )

@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useCart } from "@/hooks/useCart";
+import { useCart } from "@/lib/providers/CartProvider";
 
 interface Product {
   id: string;
@@ -34,7 +34,7 @@ export default function ProductGrid({
   pageSize,
   onPageSizeChange
 }: ProductGridProps) {
-  const { addToCart } = useCart();
+  const { addItemToCart } = useCart();
 
   if (isLoading) {
     return (
@@ -104,7 +104,25 @@ export default function ProductGrid({
             {/* Add to cart button */}
             <button
               className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-full bg-green-600 px-4 py-2 text-sm font-semibold text-white opacity-0 shadow-md transition-opacity hover:bg-green-500 group-hover:opacity-100"
-              onClick={() => addToCart(product.id)}
+              onClick={async () => {
+                try {
+                  const cartItem = {
+                    id: product.id,
+                    title: product.title,
+                    price: typeof product.price === 'number' 
+                      ? product.price 
+                      : Number(product.price.toString()),
+                    image: product.image,
+                    quantity: 1
+                  };
+                  
+                  await addItemToCart(cartItem);
+                  alert("Product added to cart!");
+                } catch (error) {
+                  console.error("Error adding to cart:", error);
+                  alert("Failed to add product to cart. Please try again.");
+                }
+              }}
             >
               Add to Cart
             </button>
