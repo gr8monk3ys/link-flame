@@ -1,13 +1,16 @@
 import { create } from "zustand";
 import { persist, type StateStorage } from "zustand/middleware";
 import type { Cart, CartItem } from "@/types/cart";
+import { useEffect } from "react";
 
 interface CartState extends Cart {
   items: CartItem[];
+  isLoading: boolean;
+  fetchCartItems: () => Promise<void>;
 }
 
 interface CartActions {
-  addToCart: (productId: string, quantity?: number) => Promise<void>;
+  addToCart: (userId: string, productId: string, quantity?: number) => Promise<void>;
   updateQuantity: (productId: string, quantity: number) => Promise<void>;
   removeItem: (productId: string) => Promise<void>;
   checkout: () => Promise<void>;
@@ -19,43 +22,36 @@ export const useCart = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
-      addToCart: async (productId: string, quantity: number = 1) => {
+      isLoading: false,
+      fetchCartItems: async () => {
+        try {
+          set({ isLoading: true });
+          const response = await fetch("/api/cart");
+          
+          if (response.ok) {
+            const items = await response.json();
+            set({ items });
+          } else {
+            console.error("Failed to fetch cart items");
+          }
+        } catch (error) {
+          console.error("[FETCH_CART_ERROR]", error);
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+      addToCart: async (userId: string, productId: string, quantity: number = 1) => {
         try {
           const response = await fetch("/api/cart", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ productId, quantity }),
+            body: JSON.stringify({ userId, productId, quantity }),
           });
 
           if (!response.ok) throw new Error("Failed to add item to cart");
 
-          // Fetch product details
-          const productResponse = await fetch(`/api/products/${productId}`);
-          if (!productResponse.ok) throw new Error("Failed to fetch product");
-          
-          const product = await productResponse.json();
-          const currentItems = get().items;
-          const existingItem = currentItems.find((item: CartItem) => item.id === productId);
-
-          if (existingItem) {
-            set({
-              items: currentItems.map((item: CartItem) =>
-                item.id === productId
-                  ? { ...item, quantity: item.quantity + quantity }
-                  : item
-              ),
-            });
-          } else {
-            set({
-              items: [...currentItems, {
-                id: product.id,
-                title: product.title,
-                price: product.price,
-                image: product.image,
-                quantity,
-              }],
-            });
-          }
+          // After successfully adding to the database, fetch the updated cart
+          await get().fetchCartItems();
         } catch (error) {
           console.error("[ADD_TO_CART_ERROR]", error);
           throw error;
@@ -71,12 +67,8 @@ export const useCart = create<CartStore>()(
 
           if (!response.ok) throw new Error("Failed to update cart");
 
-          const currentItems = get().items;
-          set({
-            items: currentItems.map((item: CartItem) =>
-              item.id === productId ? { ...item, quantity } : item
-            ),
-          });
+          // After successfully updating the database, fetch the updated cart
+          await get().fetchCartItems();
         } catch (error) {
           console.error("[UPDATE_CART_ERROR]", error);
           throw error;
@@ -90,10 +82,8 @@ export const useCart = create<CartStore>()(
 
           if (!response.ok) throw new Error("Failed to remove item");
 
-          const currentItems = get().items;
-          set({
-            items: currentItems.filter((item: CartItem) => item.id !== productId),
-          });
+          // After successfully removing from the database, fetch the updated cart
+          await get().fetchCartItems();
         } catch (error) {
           console.error("[REMOVE_ITEM_ERROR]", error);
           throw error;

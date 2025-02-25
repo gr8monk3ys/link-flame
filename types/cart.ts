@@ -8,7 +8,7 @@ export interface CartItem {
 
 export interface Cart {
   items: CartItem[];
-  addToCart: (productId: string, quantity?: number) => Promise<void>;
+  addToCart: (userId: string, productId: string, quantity?: number) => Promise<void>;
   updateQuantity: (productId: string, quantity: number) => Promise<void>;
   removeItem: (productId: string) => Promise<void>;
   checkout: () => Promise<void>;

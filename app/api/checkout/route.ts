@@ -1,63 +1,72 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
+import { auth } from "@clerk/nextjs/server";
+import { prisma } from "@/lib/prisma";
 
-import { getCartItems } from "@/lib/cart";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-01-27.acacia",
-});
-
-export async function POST(req: Request) {
-  const authData = await auth();
-  const userId = authData?.userId;
-
-  if (!userId) {
-    return new NextResponse("Unauthorized", { status: 403 });
-  }
-
-  const cartItems = await getCartItems(userId);
-
-  if (!cartItems || cartItems.length === 0) {
-    return new NextResponse("Cart is empty", { status: 400 });
-  }
-
+export async function POST(request: Request) {
   try {
-    const lineItems = cartItems.map((item) => ({
-      price_data: {
-        currency: "usd",
-        product_data: {
-          name: item.title,
-          images: [item.image],
+    const { userId } = await auth();
+    const data = await request.json();
+    console.log("Received checkout data:", data);
+
+    // Validate required fields
+    if (!data.email || !data.firstName || !data.lastName || !data.address) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    // Validate cart items
+    if (!data.items || !Array.isArray(data.items) || data.items.length === 0) {
+      return NextResponse.json(
+        { error: "Cart is empty" },
+        { status: 400 }
+      );
+    }
+
+    // Simulate payment processing
+    // In a real application, you would integrate with a payment gateway like Stripe
+    const paymentSuccessful = true;
+
+    if (paymentSuccessful) {
+      // Create order in database
+      const order = await prisma.order.create({
+        data: {
+          userId: userId || "guest-user",
+          status: "processing",
+          amount: data.total || 0,
+          shippingAddress: `${data.address}, ${data.city}, ${data.state} ${data.zipCode}`,
+          paymentMethod: data.paymentMethod,
+          customerEmail: data.email,
+          customerName: `${data.firstName} ${data.lastName}`,
         },
-        unit_amount: Math.round(item.price * 100),
-      },
-      quantity: item.quantity,
-    }));
+      });
 
-    const session = await stripe.checkout.sessions.create({
-      line_items: lineItems,
-      mode: "payment",
-      billing_address_collection: "required",
-      phone_number_collection: {
-        enabled: true,
-      },
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/cart?success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/cart?canceled=true`,
-      metadata: {
-        userId,
-      },
-    });
+      // Store order items
+      for (const item of data.items) {
+        await prisma.cartItem.deleteMany({
+          where: {
+            userId: userId || "guest-user",
+            productId: item.id,
+          },
+        });
+      }
 
-    return NextResponse.json({ url: session.url }, {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST",
-        "Access-Control-Allow-Headers": "Content-Type",
-      },
-    });
-  } catch (error: any) {
+      return NextResponse.json({ 
+        message: "Order created successfully",
+        orderId: order.id
+      });
+    } else {
+      return NextResponse.json(
+        { error: "Payment failed" },
+        { status: 400 }
+      );
+    }
+  } catch (error) {
     console.error("[CHECKOUT_POST]", error);
-    return new NextResponse(error.message || "Internal Server Error", { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

@@ -5,53 +5,42 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
-import { useCart } from "@/hooks/useCart";
+import { useCart } from "@/lib/providers/CartProvider";
 import { formatPrice } from "@/lib/utils";
-import { createCheckout, getProductVariant } from "@/lib/shopify";
 import type { CartItem } from "@/types/cart";
+import CheckoutForm from "@/components/checkout/checkout-form";
+import { LoadingShimmer } from "@/components/ui/loading-shimmer";
 
 export default function CartPage() {
   const router = useRouter();
-  const { items, removeItem } = useCart();
-  const [isLoading, setIsLoading] = useState(false);
+  const { 
+    cart, 
+    removeItem, 
+    updateQuantity, 
+    isLoading, 
+    cartTotal,
+    hasInitializedCart,
+    fetchCartItems
+  } = useCart();
+  
+  const items = cart.items || [];
 
-  const subtotal = items.reduce((total: number, item: CartItem) => {
-    return total + item.price * item.quantity;
-  }, 0);
-
-  const handleCheckout = async () => {
-    try {
-      setIsLoading(true);
-      
-      // Convert cart items to Shopify line items
-      const lineItems = await Promise.all(
-        items.map(async (item: CartItem) => {
-          const variantId = await getProductVariant(item.id);
-          return {
-            variantId,
-            quantity: item.quantity,
-          };
-        })
-      );
-
-      // Create checkout and get URL
-      const checkoutUrl = await createCheckout(lineItems);
-      
-      // Redirect to checkout
-      window.location.href = checkoutUrl;
-    } catch (error) {
-      console.error("[CHECKOUT_ERROR]", error);
-      // You might want to show an error toast here
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // Fetch cart items when the page loads
+  useEffect(() => {
+    fetchCartItems();
+  }, [fetchCartItems]);
 
   return (
     <SignedIn>
       <div className="container py-8">
         <h1 className="mb-8 text-3xl font-bold">Shopping Cart</h1>
-        {items.length === 0 ? (
+        
+        {isLoading && !hasInitializedCart ? (
+          <div className="space-y-4">
+            <LoadingShimmer />
+            <LoadingShimmer />
+          </div>
+        ) : items.length === 0 ? (
           <div className="flex h-[450px] w-full flex-col items-center justify-center space-y-4">
             <h2 className="text-2xl font-bold">Your cart is empty</h2>
             <Button onClick={() => router.push("/collections")}>
@@ -77,10 +66,24 @@ export default function CartPage() {
                     </div>
                     <div className="flex-1 space-y-1">
                       <h3 className="font-medium">{item.title}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Quantity: {item.quantity}
-                      </p>
-                      <p className="font-medium">{formatPrice(item.price)}</p>
+                      <div className="flex items-center space-x-2">
+                        <label htmlFor={`quantity-${item.id}`} className="text-sm font-medium">
+                          Quantity:
+                        </label>
+                        <input
+                          type="number"
+                          id={`quantity-${item.id}`}
+                          className="w-16 rounded-md border border-input bg-background px-2 py-1 text-sm"
+                          value={item.quantity}
+                          onChange={(e) => {
+                            const quantity = parseInt(e.target.value);
+                            if (quantity > 0) {
+                              updateQuantity(item.id, quantity);
+                            }
+                          }}
+                        />
+                      </div>
+                      <p className="font-medium">{formatPrice(item.price)} each</p>
                     </div>
                     <Button
                       variant="ghost"
@@ -114,7 +117,7 @@ export default function CartPage() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <span>Subtotal</span>
-                    <span className="font-medium">{formatPrice(subtotal)}</span>
+                    <span className="font-medium">{cartTotal.formatted}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span>Shipping</span>
@@ -123,13 +126,7 @@ export default function CartPage() {
                     </span>
                   </div>
                   <div className="border-t pt-4">
-                    <Button
-                      className="w-full"
-                      onClick={handleCheckout}
-                      disabled={isLoading}
-                    >
-                      {isLoading ? "Loading..." : "Proceed to Checkout"}
-                    </Button>
+                    <CheckoutForm />
                   </div>
                 </div>
               </div>
