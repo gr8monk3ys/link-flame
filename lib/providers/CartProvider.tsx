@@ -8,9 +8,12 @@ import React, {
   useReducer,
   useRef,
   useState,
+  useMemo,
 } from 'react'
 import { CartItem } from '@/types/cart'
 import { cartReducer } from './cartReducer'
+import { toast } from 'sonner'
+import { useDebouncedCallback } from 'use-debounce'
 
 export type CartContext = {
   cart: {
@@ -133,22 +136,32 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [])
 
-  // Every time the cart changes, save to local storage
-  useEffect(() => {
+  // Sync cart to local storage - only store IDs and quantities
+  const syncCartToLocalStorage = useCallback((currentCart: { items: CartItem[] }) => {
     if (!hasInitialized.current) return
 
-    // Flatten cart items for storage
-    const flattenedCart = {
-      ...cart,
-      items: cart?.items?.map(item => ({
-        id: item.id,
-        quantity: item.quantity,
-      })),
-    }
+    try {
+      // Only store minimal data in localStorage
+      const minimalCart = {
+        items: currentCart?.items?.map((item: CartItem) => ({
+          id: item.id,
+          quantity: item.quantity,
+        })) || [],
+      }
 
-    localStorage.setItem('cart', JSON.stringify(flattenedCart))
-    setHasInitialized(true)
-  }, [cart])
+      localStorage.setItem('cart', JSON.stringify(minimalCart))
+      setHasInitialized(true)
+      return true
+    } catch (error) {
+      console.error('Error syncing cart to local storage:', error)
+      return false
+    }
+  }, [])
+
+  // Every time the cart changes, save to local storage
+  useEffect(() => {
+    syncCartToLocalStorage(cart)
+  }, [cart, syncCartToLocalStorage])
 
   // Get user ID from Clerk or use a default
   const getUserId = async (): Promise<string> => {
@@ -165,8 +178,14 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     return 'guest-user'
   }
 
-  // Add item to cart
+  // Add item to cart with optimistic updates and error handling
   const addItemToCart = useCallback(async (item: CartItem) => {
+    // Optimistic update
+    dispatchCart({
+      type: 'ADD_ITEM',
+      payload: item,
+    })
+    
     setIsLoading(true)
     try {
       const userId = await getUserId()
@@ -181,22 +200,25 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         }),
       })
 
-      if (!response.ok) throw new Error('Failed to add item to cart')
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || 'Failed to add item to cart')
+      }
 
-      dispatchCart({
-        type: 'ADD_ITEM',
-        payload: item,
-      })
+      toast.success('Item added to cart')
     } catch (error) {
       console.error('[ADD_TO_CART_ERROR]', error)
+      toast.error(error instanceof Error ? error.message : 'Failed to add item to cart')
+      
+      // Revert optimistic update on error
+      await fetchCartItems()
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [fetchCartItems])
 
-  // Update quantity
-  const updateQuantity = useCallback(async (productId: string, quantity: number) => {
-    setIsLoading(true)
+  // Debounced API call for quantity updates
+  const updateQuantityApi = useDebouncedCallback(async (productId: string, quantity: number) => {
     try {
       const response = await fetch('/api/cart', {
         method: 'PATCH',
@@ -204,39 +226,71 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         body: JSON.stringify({ productId, quantity }),
       })
 
-      if (!response.ok) throw new Error('Failed to update cart')
-
-      dispatchCart({
-        type: 'UPDATE_QUANTITY',
-        payload: { id: productId, quantity },
-      })
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || 'Failed to update cart')
+      }
     } catch (error) {
       console.error('[UPDATE_CART_ERROR]', error)
+      toast.error(error instanceof Error ? error.message : 'Failed to update quantity')
+      
+      // Revert optimistic update on error
+      await fetchCartItems()
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, 500)
 
-  // Remove item from cart
+  // Update quantity with optimistic updates
+  const updateQuantity = useCallback(async (productId: string, quantity: number) => {
+    // Validate quantity
+    if (quantity < 1 || quantity > 99) {
+      toast.error('Quantity must be between 1 and 99')
+      return
+    }
+    
+    // Optimistic update
+    dispatchCart({
+      type: 'UPDATE_QUANTITY',
+      payload: { id: productId, quantity },
+    })
+    
+    setIsLoading(true)
+    
+    // Actual API update (debounced)
+    updateQuantityApi(productId, quantity)
+  }, [updateQuantityApi])
+
+  // Remove item from cart with optimistic updates
   const removeItem = useCallback(async (productId: string) => {
+    // Optimistic update
+    dispatchCart({
+      type: 'REMOVE_ITEM',
+      payload: { id: productId },
+    })
+    
     setIsLoading(true)
     try {
       const response = await fetch(`/api/cart?productId=${productId}`, {
         method: 'DELETE',
       })
 
-      if (!response.ok) throw new Error('Failed to remove item')
-
-      dispatchCart({
-        type: 'REMOVE_ITEM',
-        payload: { id: productId },
-      })
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || 'Failed to remove item')
+      }
+      
+      toast.success('Item removed from cart')
     } catch (error) {
       console.error('[REMOVE_ITEM_ERROR]', error)
+      toast.error(error instanceof Error ? error.message : 'Failed to remove item')
+      
+      // Revert optimistic update on error
+      await fetchCartItems()
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [fetchCartItems])
 
   // Clear cart
   const clearCart = useCallback(() => {
@@ -253,7 +307,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     [cart],
   )
 
-  // Calculate cart total
+  // Calculate cart total and derived values using useMemo
   useEffect(() => {
     if (!hasInitializedCart) return
 
@@ -269,11 +323,28 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       raw: newTotal,
     })
   }, [cart, hasInitializedCart])
+  
+  // Memoized cart items with additional derived data
+  const cartItems = useMemo(() => 
+    cart.items.map(item => ({
+      ...item,
+      totalPrice: item.price * item.quantity,
+      formattedPrice: (item.price).toLocaleString('en-US', {
+        style: 'currency',
+        currency: 'USD',
+      }),
+      formattedTotalPrice: (item.price * item.quantity).toLocaleString('en-US', {
+        style: 'currency',
+        currency: 'USD',
+      }),
+    })),
+    [cart.items]
+  )
 
   return (
     <Context.Provider
       value={{
-        cart,
+        cart: { ...cart, items: cartItems },
         addItemToCart,
         updateQuantity,
         removeItem,

@@ -16,8 +16,29 @@ export const siteConfig = {
       href: "/collections",
     },
     {
-      title: "About Us",
-      href: "/about-us",
+      title: "Company",
+      items: [
+        {
+          title: "About us",
+          href: "/about-us",
+          description: "Learn more about our story and values"
+        },
+        {
+          title: "Blog",
+          href: "/blogs",
+          description: "Read our latest eco-friendly news and insights"
+        },
+        {
+          title: "Guides & Tips",
+          href: "/guides-and-tips",
+      description: "Sustainable living tips and guides"
+        },
+        {
+          title: "FAQ",
+          href: "/faq",
+          description: "Frequently asked questions about eco-friendly products and services"
+        }
+      ],
     },
     {
       title: "Eco Living",
@@ -38,18 +59,6 @@ export const siteConfig = {
           description: "Tips and products for a zero-waste lifestyle",
         },
       ],
-    },
-    {
-      title: "Guides & Tips",
-      href: "/guides-and-tips",
-    },
-    {
-      title: "Reviews",
-      href: "/reviews",
-    },
-    {
-      title: "Blog",
-      href: "/blogs",
     },
     {
       title: "Community",
