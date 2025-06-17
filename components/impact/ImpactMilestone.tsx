@@ -1,0 +1,193 @@
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
+import { cn } from "@/lib/utils";
+import {
+  Droplet,
+  Leaf,
+  Recycle,
+  TreeDeciduous,
+  Trash2,
+  Wine,
+  LucideIcon,
+  PartyPopper,
+  X,
+} from "lucide-react";
+
+// Icon mapping for impact metrics
+const ICON_MAP: Record<string, LucideIcon> = {
+  bottle: Wine,
+  droplet: Droplet,
+  leaf: Leaf,
+  tree: TreeDeciduous,
+  recycle: Recycle,
+  trash: Trash2,
+};
+
+interface MilestoneData {
+  metricSlug: string;
+  metricName: string;
+  milestone: number;
+  unit: string;
+  iconName: string;
+}
+
+interface ImpactMilestoneProps {
+  milestone: MilestoneData;
+  onClose: () => void;
+  autoCloseMs?: number;
+}
+
+export function ImpactMilestone({
+  milestone,
+  onClose,
+  autoCloseMs = 8000,
+}: ImpactMilestoneProps) {
+  const [isVisible, setIsVisible] = useState(true);
+  const [isExiting, setIsExiting] = useState(false);
+
+  const Icon = ICON_MAP[milestone.iconName] || Leaf;
+
+  const handleClose = useCallback(() => {
+    setIsExiting(true);
+    setTimeout(() => {
+      setIsVisible(false);
+      onClose();
+    }, 300);
+  }, [onClose]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      handleClose();
+    }, autoCloseMs);
+
+    return () => clearTimeout(timer);
+  }, [autoCloseMs, handleClose]);
+
+  if (!isVisible) return null;
+
+  return (
+    <div
+      className={cn(
+        "fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm transition-opacity duration-300",
+        isExiting ? "opacity-0" : "opacity-100"
+      )}
+    >
+      <button
+        type="button"
+        aria-label="Dismiss milestone celebration"
+        onClick={handleClose}
+        className="absolute inset-0 z-0"
+      />
+      <div
+        className={cn(
+          "relative z-10 w-full max-w-md rounded-2xl bg-gradient-to-br from-green-50 to-emerald-100 p-8 shadow-2xl transition-all duration-300 dark:from-green-950 dark:to-emerald-900",
+          isExiting ? "scale-95 opacity-0" : "scale-100 opacity-100"
+        )}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="impact-milestone-title"
+      >
+        {/* Close button */}
+        <button
+          onClick={handleClose}
+          className="absolute right-4 top-4 text-muted-foreground transition-colors hover:text-foreground"
+          aria-label="Close"
+        >
+          <X className="size-5" />
+        </button>
+
+        {/* Celebration icon */}
+        <div className="mb-4 flex justify-center">
+          <div className="relative">
+            <PartyPopper className="size-16 animate-bounce text-yellow-500" />
+            <div className="absolute -right-2 -top-2">
+              <span className="text-2xl">🎉</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Milestone message */}
+        <h2
+          id="impact-milestone-title"
+          className="mb-2 text-center text-2xl font-bold text-green-800 dark:text-green-200"
+        >
+          Milestone Achieved!
+        </h2>
+
+        <p className="mb-6 text-center text-green-700 dark:text-green-300">
+          You&apos;ve reached an amazing goal!
+        </p>
+
+        {/* Metric display */}
+        <div className="rounded-xl bg-white/50 p-6 text-center dark:bg-black/20">
+          <div className="mb-3 flex justify-center">
+            <div className="flex size-16 items-center justify-center rounded-full bg-green-500/20">
+              <Icon className="size-8 text-green-600 dark:text-green-400" />
+            </div>
+          </div>
+
+          <div className="mb-1 text-4xl font-bold text-green-600 dark:text-green-400">
+            {milestone.milestone}
+          </div>
+          <div className="mb-2 text-lg text-muted-foreground">
+            {milestone.unit}
+          </div>
+          <div className="font-medium text-green-800 dark:text-green-200">
+            {milestone.metricName}
+          </div>
+        </div>
+
+        {/* Encouragement */}
+        <p className="mt-6 text-center text-sm text-muted-foreground">
+          Thank you for making a difference! Keep up the amazing work.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Hook to manage milestone celebrations
+ */
+export function useMilestoneNotifications() {
+  const [pendingMilestones, setPendingMilestones] = useState<MilestoneData[]>([]);
+  const [currentMilestone, setCurrentMilestone] = useState<MilestoneData | null>(null);
+
+  const addMilestones = useCallback((milestones: MilestoneData[]) => {
+    setPendingMilestones((prev) => [...prev, ...milestones]);
+  }, []);
+
+  const showNextMilestone = useCallback(() => {
+    setPendingMilestones((prev) => {
+      if (prev.length > 0) {
+        setCurrentMilestone(prev[0]);
+        return prev.slice(1);
+      } else {
+        setCurrentMilestone(null);
+        return prev;
+      }
+    });
+  }, []);
+
+  const dismissCurrent = useCallback(() => {
+    showNextMilestone();
+  }, [showNextMilestone]);
+
+  // Auto-show first milestone when added
+  useEffect(() => {
+    if (!currentMilestone && pendingMilestones.length > 0) {
+      const timer = setTimeout(() => {
+        showNextMilestone();
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [pendingMilestones, currentMilestone, showNextMilestone]);
+
+  return {
+    currentMilestone,
+    addMilestones,
+    dismissCurrent,
+    hasPendingMilestones: pendingMilestones.length > 0,
+  };
+}
