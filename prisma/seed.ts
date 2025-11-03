@@ -125,7 +125,219 @@ async function main() {
     });
   }
 
-  console.log('Database has been seeded with eco-friendly products. 🌱');
+  console.log('✓ Seeded products');
+
+  // Clear existing blog data
+  await prisma.blogPost.deleteMany();
+  await prisma.author.deleteMany();
+  await prisma.category.deleteMany();
+
+  // Create blog authors
+  const author1 = await prisma.author.create({
+    data: {
+      name: 'Team Link Flame',
+      image: '/images/team/default-avatar.jpg',
+      role: 'Editorial Team',
+    },
+  });
+
+  const author2 = await prisma.author.create({
+    data: {
+      name: 'Emma Green',
+      image: '/images/authors/emma.jpg',
+      role: 'Sustainability Expert',
+    },
+  });
+
+  // Create blog categories
+  const catUpdates = await prisma.category.create({
+    data: { name: 'Updates' },
+  });
+
+  const catGuides = await prisma.category.create({
+    data: { name: 'Guides' },
+  });
+
+  const catGreenHome = await prisma.category.create({
+    data: { name: 'Green Home' },
+  });
+
+  const catZeroWaste = await prisma.category.create({
+    data: { name: 'Zero Waste' },
+  });
+
+  // Create blog posts
+  await prisma.blogPost.create({
+    data: {
+      slug: 'welcome',
+      title: 'Welcome to Our Blog',
+      description: 'Learn about our latest updates and features',
+      coverImage: '/images/blogs/default-hero.jpg',
+      publishedAt: new Date(),
+      authorId: author1.id,
+      categoryId: catUpdates.id,
+      tags: 'welcome,news',
+      featured: true,
+      readingTime: '3 min read',
+      content: `# Welcome to Link Flame
+
+We're excited to launch our eco-friendly living platform! Here you'll find practical guides, product reviews, and tips for sustainable living.
+
+## What We Offer
+
+- In-depth sustainability guides
+- Honest product reviews
+- Community-driven insights
+- Expert advice from environmental professionals
+
+Stay tuned for more content coming soon!`,
+    },
+  });
+
+  await prisma.blogPost.create({
+    data: {
+      slug: 'getting-started',
+      title: 'Getting Started with Sustainable Living',
+      description: 'A beginner\'s guide to reducing your environmental impact',
+      coverImage: '/images/blogs/default-hero.jpg',
+      publishedAt: new Date(Date.now() - 86400000), // Yesterday
+      authorId: author2.id,
+      categoryId: catGuides.id,
+      tags: 'guide,tutorial,beginners',
+      featured: false,
+      readingTime: '5 min read',
+      content: `# Getting Started with Sustainable Living
+
+Making the switch to sustainable living doesn't have to be overwhelming. Here are simple steps you can take today:
+
+## 1. Start Small
+Begin with one area of your life. Maybe it's reducing plastic in your kitchen or switching to reusable shopping bags.
+
+## 2. Educate Yourself
+Learn about the environmental impact of your daily choices.
+
+## 3. Find Alternatives
+Research eco-friendly alternatives to products you use daily.
+
+## 4. Join the Community
+Connect with others on the same journey for support and ideas.
+
+Remember: Every small change makes a difference!`,
+    },
+  });
+
+  await prisma.blogPost.create({
+    data: {
+      slug: 'ultimate-guide-to-composting',
+      title: 'Ultimate Guide to Composting',
+      description: 'Learn everything you need to know about starting and maintaining a successful compost system',
+      coverImage: '/images/blog/composting.jpg',
+      publishedAt: new Date(Date.now() - 172800000), // 2 days ago
+      authorId: author2.id,
+      categoryId: catGreenHome.id,
+      tags: 'composting,gardening,zero-waste',
+      featured: true,
+      readingTime: '8 min read',
+      content: `# Ultimate Guide to Composting
+
+Composting is one of the most impactful ways to reduce waste and nourish your garden. This comprehensive guide will teach you everything you need to know.
+
+## Why Compost?
+
+- Reduces landfill waste by up to 30%
+- Creates nutrient-rich soil for your garden
+- Reduces methane emissions
+- Saves money on fertilizer
+
+## Getting Started
+
+### What You Need
+- A compost bin or designated area
+- Brown materials (carbon-rich)
+- Green materials (nitrogen-rich)
+- Water and air
+
+### The Perfect Mix
+Aim for a 3:1 ratio of brown to green materials.
+
+**Brown materials:** Dry leaves, newspaper, cardboard, wood chips
+**Green materials:** Food scraps, grass clippings, coffee grounds
+
+## Maintenance Tips
+
+1. Turn your compost weekly
+2. Keep it moist but not soggy
+3. Maintain proper airflow
+4. Monitor temperature
+
+## Troubleshooting
+
+**Too smelly?** Add more brown materials
+**Not breaking down?** Add more green materials and water
+**Attracting pests?** Bury food scraps deeper
+
+Ready to start? Your garden will thank you!`,
+    },
+  });
+
+  await prisma.blogPost.create({
+    data: {
+      slug: 'zero-waste-bathroom-swaps',
+      title: '10 Easy Swaps for a Zero-Waste Bathroom',
+      description: 'Simple switches to reduce waste in your daily bathroom routine',
+      coverImage: '/images/blog/bathroom.jpg',
+      publishedAt: new Date(Date.now() - 259200000), // 3 days ago
+      authorId: author2.id,
+      categoryId: catZeroWaste.id,
+      tags: 'zero-waste,bathroom,sustainable-living',
+      featured: false,
+      readingTime: '6 min read',
+      content: `# 10 Easy Swaps for a Zero-Waste Bathroom
+
+Your bathroom is one of the easiest places to start reducing waste. These simple swaps make a big difference!
+
+## The Swaps
+
+### 1. Bamboo Toothbrush
+Replace plastic toothbrushes with biodegradable bamboo alternatives.
+
+### 2. Bar Soap & Shampoo
+Ditch the plastic bottles for package-free bars.
+
+### 3. Reusable Cotton Rounds
+Switch from disposable cotton pads to washable rounds.
+
+### 4. Safety Razor
+Replace disposable razors with a durable safety razor.
+
+### 5. Refillable Containers
+Buy products in bulk and use refillable containers.
+
+### 6. Natural Loofah
+Replace plastic bath poufs with natural loofahs.
+
+### 7. Bamboo Cotton Swabs
+Choose bamboo cotton swabs over plastic ones.
+
+### 8. Solid Deodorant
+Use package-free deodorant bars or make your own.
+
+### 9. Menstrual Cup or Reusable Pads
+Consider reusable menstrual products.
+
+### 10. DIY Products
+Make your own toothpaste, deodorant, and cleaners.
+
+## The Impact
+
+By making these switches, the average person can eliminate hundreds of pieces of plastic waste per year!
+
+Start with one or two swaps and gradually transition your entire bathroom.`,
+    },
+  });
+
+  console.log('✓ Seeded blog posts');
+  console.log('Database has been seeded. 🌱');
 }
 
 main()
