@@ -7,7 +7,7 @@ import { Metadata } from "next"
 
 export async function generateStaticParams() {
   const posts = await getAllPosts()
-  const categories = [...new Set(posts.map(post => post.category))]
+  const categories = [...new Set(posts.map(post => post.category).filter((cat): cat is string => cat !== undefined))]
   return categories.map(category => ({
     category: encodeURIComponent(category)
   }))

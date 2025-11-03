@@ -3,6 +3,7 @@ import { PageProps } from '@/types/next'
 import { getAllPosts, getPost } from '@/lib/blog'
 import { notFound } from 'next/navigation'
 import { format, parseISO } from 'date-fns'
+import DOMPurify from 'isomorphic-dompurify'
 
 export async function generateStaticParams() {
   const posts = await getAllPosts()
@@ -33,9 +34,15 @@ export default async function BlogPost({ params }: { params: PageProps['params']
     notFound()
   }
 
-  const publishedAt = typeof post.publishedAt === 'string' 
-    ? post.publishedAt 
+  const publishedAt = typeof post.publishedAt === 'string'
+    ? post.publishedAt
     : post.publishedAt.toISOString()
+
+  // Sanitize HTML content to prevent XSS attacks
+  const sanitizedContent = DOMPurify.sanitize(post.content || '', {
+    ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'code', 'pre'],
+    ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class']
+  })
 
   return (
     <article className="prose lg:prose-xl mx-auto px-4 py-8">
@@ -47,7 +54,7 @@ export default async function BlogPost({ params }: { params: PageProps['params']
         <span>·</span>
         <span>{post.readingTime}</span>
       </div>
-      <div dangerouslySetInnerHTML={{ __html: post.content || '' }} />
+      <div dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
     </article>
   )
 }

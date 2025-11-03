@@ -9,7 +9,7 @@ export default async function BlogsPage() {
   ])
   
   // Get unique categories
-  const categories = Array.from(new Set(allPosts.map(post => post.category)))
+  const categories = Array.from(new Set(allPosts.map(post => post.category).filter((cat): cat is string => cat !== undefined)))
 
   return (
     <div className="container py-10">
@@ -42,6 +42,7 @@ export default async function BlogsPage() {
 
       {/* Posts by Category */}
       {categories.map((category) => {
+        if (!category) return null;
         const categoryPosts = allPosts.filter(post => post.category === category)
         return (
           <section key={category} className="my-12">
