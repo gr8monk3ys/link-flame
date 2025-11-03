@@ -1,11 +1,25 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getUserIdForCart } from "@/lib/session";
+import { checkRateLimit, getIdentifier } from "@/lib/rate-limit";
+import { z } from "zod";
+
+// Validation schemas
+const AddToCartSchema = z.object({
+  productId: z.string().min(1, "Product ID is required"),
+  quantity: z.number().int().positive("Quantity must be a positive integer").default(1),
+});
+
+const UpdateCartSchema = z.object({
+  productId: z.string().min(1, "Product ID is required"),
+  quantity: z.number().int().nonnegative("Quantity must be 0 or positive"),
+});
 
 export async function GET(req: Request) {
   try {
     const { userId } = await auth();
-    const userIdToUse = userId || "guest-user";
+    const userIdToUse = await getUserIdForCart(userId);
 
     const cartItems = await prisma.cartItem.findMany({
       where: {
@@ -34,15 +48,40 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const { userId: providedUserId, productId, quantity = 1 } = await req.json();
-    
-    // Get authenticated user ID or use provided ID as fallback
+    // Get authenticated user ID first for rate limiting
     const { userId: authUserId } = await auth();
-    const userIdToUse = authUserId || providedUserId || "guest-user";
-    
-    if (!productId) {
-      return new NextResponse("Product ID is required", { status: 400 });
+
+    // Apply rate limiting
+    const identifier = getIdentifier(req, authUserId);
+    const { success, reset } = await checkRateLimit(identifier);
+
+    if (!success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(Math.floor((reset - Date.now()) / 1000)),
+          },
+        }
+      );
     }
+
+    const body = await req.json();
+
+    // Validate input
+    const validation = AddToCartSchema.safeParse(body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: "Invalid input", details: validation.error.errors },
+        { status: 400 }
+      );
+    }
+
+    const { productId, quantity } = validation.data;
+
+    // Get user ID for cart operations
+    const userIdToUse = await getUserIdForCart(authUserId);
 
     const existingItem = await prisma.cartItem.findFirst({
       where: {
@@ -80,7 +119,7 @@ export async function POST(req: Request) {
 export async function DELETE(req: Request) {
   try {
     const { userId } = await auth();
-    const userIdToUse = userId || "guest-user";
+    const userIdToUse = await getUserIdForCart(userId);
 
     const url = new URL(req.url);
     const productId = url.searchParams.get("productId");
@@ -105,12 +144,20 @@ export async function DELETE(req: Request) {
 export async function PATCH(req: Request) {
   try {
     const { userId } = await auth();
-    const userIdToUse = userId || "guest-user";
+    const userIdToUse = await getUserIdForCart(userId);
 
-    const { productId, quantity } = await req.json();
-    if (!productId || typeof quantity !== "number") {
-      return new NextResponse("Invalid request", { status: 400 });
+    const body = await req.json();
+
+    // Validate input
+    const validation = UpdateCartSchema.safeParse(body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: "Invalid input", details: validation.error.errors },
+        { status: 400 }
+      );
     }
+
+    const { productId, quantity } = validation.data;
 
     if (quantity === 0) {
       await prisma.cartItem.deleteMany({

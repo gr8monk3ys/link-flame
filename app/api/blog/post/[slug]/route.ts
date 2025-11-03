@@ -1,46 +1,36 @@
 import { NextResponse } from 'next/server'
-import { BlogPost } from '@/lib/types'
+import { prisma } from '@/lib/prisma'
+import { BlogPost } from '@/types'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 3600
 
-// Mock data for development
-const mockPosts: BlogPost[] = [
-  {
-    slug: 'welcome',
-    title: 'Welcome to Our Blog',
-    description: 'Learn about our latest updates and features',
-    coverImage: '/images/blogs/default-hero.jpg',
-    publishedAt: new Date().toISOString(),
+// Helper to transform Prisma BlogPost to BlogPost type
+function transformPrismaPost(prismaPost: any): BlogPost {
+  return {
+    id: prismaPost.id,
+    slug: prismaPost.slug,
+    title: prismaPost.title,
+    description: prismaPost.description || '',
+    content: prismaPost.content || undefined,
+    coverImage: prismaPost.coverImage || '/images/blogs/default-hero.jpg',
+    publishedAt: prismaPost.publishedAt.toISOString(),
     author: {
-      name: 'Team Link Flame',
-      image: '/images/team/default-avatar.jpg',
-      role: 'Team'
+      id: prismaPost.author.id,
+      name: prismaPost.author.name,
+      image: prismaPost.author.image || '/images/team/default-avatar.jpg',
+      role: prismaPost.author.role || 'Contributor',
     },
-    content: '# Welcome\n\nThis is our first blog post.',
-    category: 'Updates',
-    tags: ['welcome', 'news'],
-    featured: true,
-    readingTime: '3 min read'
-  },
-  {
-    slug: 'getting-started',
-    title: 'Getting Started with Link Flame',
-    description: 'A guide to using our platform effectively',
-    coverImage: '/images/blogs/default-hero.jpg',
-    publishedAt: new Date(Date.now() - 86400000).toISOString(), // yesterday
-    author: {
-      name: 'Team Link Flame',
-      image: '/images/team/default-avatar.jpg',
-      role: 'Team'
-    },
-    content: '# Getting Started\n\nLearn how to use Link Flame.',
-    category: 'Guides',
-    tags: ['guide', 'tutorial'],
-    featured: false,
-    readingTime: '5 min read'
-  }
-]
+    authorId: prismaPost.authorId,
+    category: prismaPost.category?.name || 'Uncategorized',
+    categoryId: prismaPost.categoryId,
+    tags: prismaPost.tags ? prismaPost.tags.split(',').map((t: string) => t.trim()) : [],
+    featured: prismaPost.featured || false,
+    readingTime: prismaPost.readingTime || undefined,
+    createdAt: prismaPost.createdAt?.toISOString(),
+    updatedAt: prismaPost.updatedAt?.toISOString(),
+  };
+}
 
 export async function GET(
   request: Request,
@@ -48,8 +38,15 @@ export async function GET(
 ) {
   try {
     const { slug } = await context.params
-    const post = mockPosts.find(p => p.slug === slug)
-    
+
+    const post = await prisma.blogPost.findUnique({
+      where: { slug },
+      include: {
+        author: true,
+        category: true,
+      },
+    });
+
     if (!post) {
       return new Response(JSON.stringify({ error: 'Post not found' }), {
         status: 404,
@@ -57,7 +54,7 @@ export async function GET(
       })
     }
 
-    return new Response(JSON.stringify(post), {
+    return new Response(JSON.stringify(transformPrismaPost(post)), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
     })

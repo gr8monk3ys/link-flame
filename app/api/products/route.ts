@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth/next"
+import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
-import { authOptions } from "@/lib/auth"
 import { z } from "zod"
 
 // Schema for product filtering
@@ -113,10 +112,11 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const { userId } = await auth()
 
-    // Check if user is authenticated and has admin/editor role
-    if (!session?.user || !["ADMIN", "EDITOR"].includes(session.user.role)) {
+    // Check if user is authenticated
+    // TODO: Implement role-based access control (ADMIN/EDITOR) using Clerk's metadata
+    if (!userId) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }

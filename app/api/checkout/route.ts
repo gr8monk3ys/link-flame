@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { getUserIdForCart } from "@/lib/session";
+import { checkStrictRateLimit, getIdentifier } from "@/lib/rate-limit";
 
 // Define validation schema for checkout data
 const CheckoutSchema = z.object({
@@ -28,8 +30,26 @@ const CheckoutSchema = z.object({
 export async function POST(request: Request) {
   try {
     const { userId } = await auth();
+
+    // Apply strict rate limiting for checkout
+    const identifier = getIdentifier(request, userId);
+    const { success, reset } = await checkStrictRateLimit(identifier);
+
+    if (!success) {
+      return NextResponse.json(
+        { error: "Too many checkout attempts. Please try again later." },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(Math.floor((reset - Date.now()) / 1000)),
+          },
+        }
+      );
+    }
+
+    const userIdToUse = await getUserIdForCart(userId);
     const data = await request.json();
-    
+
     // Validate request data
     try {
       CheckoutSchema.parse(data);
@@ -49,38 +69,38 @@ export async function POST(request: Request) {
       throw validationError;
     }
 
-    // Simulate payment processing
-    // In a real application, you would integrate with a payment gateway like Stripe
+    // NOTE: This is a demo checkout without real payment processing
+    // In production, integrate with Stripe Checkout Sessions
+    // See: https://stripe.com/docs/api/checkout/sessions
+
     try {
-      // This would be replaced with actual payment processing logic
-      const paymentSuccessful = Math.random() > 0.1; // 90% success rate for demo
-      
-      if (!paymentSuccessful) {
-        throw new Error("Payment processing failed");
-      }
-      
-      // Create order in database
+      // Create order in database with order items
       const order = await prisma.order.create({
         data: {
-          userId: userId || "guest-user",
+          userId: userIdToUse,
           status: "processing",
           amount: data.total || 0,
           shippingAddress: `${data.address}, ${data.city}, ${data.state} ${data.zipCode}`,
           paymentMethod: data.paymentMethod,
           customerEmail: data.email,
           customerName: `${data.firstName} ${data.lastName}`,
+          items: {
+            create: data.items.map((item: any) => ({
+              productId: item.id,
+              quantity: item.quantity,
+              price: item.price,
+              title: item.title,
+            })),
+          },
         },
       });
 
-      // Store order items
-      for (const item of data.items) {
-        await prisma.cartItem.deleteMany({
-          where: {
-            userId: userId || "guest-user",
-            productId: item.id,
-          },
-        });
-      }
+      // Clear cart after successful order
+      await prisma.cartItem.deleteMany({
+        where: {
+          userId: userIdToUse,
+        },
+      });
 
       // Return success with redirect URL including order ID
       return NextResponse.json({ 

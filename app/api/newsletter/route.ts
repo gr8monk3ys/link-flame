@@ -1,51 +1,66 @@
-import { NextResponse } from "next/server"
+import { checkStrictRateLimit, getIdentifier } from "@/lib/rate-limit"
+import { prisma } from "@/lib/prisma"
+import { z } from "zod"
+import {
+  successResponse,
+  validationErrorResponse,
+  rateLimitErrorResponse,
+  handleApiError,
+} from "@/lib/api-response"
 
-// In a real application, you'd want to store this in a database
-const subscribers = new Set<string>()
+// Validation schema for newsletter subscription
+const NewsletterSchema = z.object({
+  email: z.string().email("Invalid email address").toLowerCase(),
+})
 
 export async function POST(req: Request) {
   try {
-    const { email } = await req.json()
+    // Apply rate limiting
+    const identifier = getIdentifier(req);
+    const { success, reset } = await checkStrictRateLimit(identifier);
 
-    if (!email) {
-      return NextResponse.json(
-        { error: "Email is required" },
-        { status: 400 }
-      )
+    if (!success) {
+      return rateLimitErrorResponse(reset);
     }
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: "Invalid email format" },
-        { status: 400 }
-      )
+    const body = await req.json()
+
+    // Validate input with Zod
+    const validation = NewsletterSchema.safeParse(body)
+    if (!validation.success) {
+      return validationErrorResponse(validation.error);
     }
+
+    const { email } = validation.data
 
     // Check if already subscribed
-    if (subscribers.has(email)) {
-      return NextResponse.json(
-        { message: "Email already subscribed" },
-        { status: 200 }
-      )
+    const existing = await prisma.newsletter.findUnique({
+      where: { email }
+    })
+
+    if (existing) {
+      return successResponse(
+        { email, alreadySubscribed: true },
+        { message: "Email already subscribed" }
+      );
     }
 
-    // In a real application, you'd want to:
-    // 1. Store the email in a database
-    // 2. Send a confirmation email
-    // 3. Integrate with an email service provider (e.g., Mailchimp)
-    subscribers.add(email)
+    // Store subscription in database
+    const subscription = await prisma.newsletter.create({
+      data: {
+        email,
+        subscribedAt: new Date(),
+      }
+    })
 
-    return NextResponse.json(
+    // TODO: Send confirmation email (integrate with email service like Resend, SendGrid, etc.)
+
+    return successResponse(
+      { email, subscriptionId: subscription.id },
       { message: "Successfully subscribed to newsletter" },
-      { status: 200 }
-    )
+      201
+    );
   } catch (error) {
-    console.error("Newsletter subscription error:", error)
-    return NextResponse.json(
-      { error: "Failed to subscribe to newsletter" },
-      { status: 500 }
-    )
+    return handleApiError(error);
   }
 }
