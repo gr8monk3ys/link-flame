@@ -4,6 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { CONTACT } from "@/config/constants"
 
 export default function FAQPage() {
   return (
@@ -63,7 +64,7 @@ export default function FAQPage() {
         <AccordionItem value="item-7">
           <AccordionTrigger>How do I contact customer support?</AccordionTrigger>
           <AccordionContent>
-            Our customer support team is available via email at support@linkflame.com or through our contact form. 
+            Our customer support team is available via email at {CONTACT.supportEmail} or through our contact form.
             We aim to respond to all inquiries within 24 hours during business days.
           </AccordionContent>
         </AccordionItem>
