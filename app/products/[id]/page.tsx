@@ -143,44 +143,6 @@ export default function ProductPage() {
               </div>
 
               <div className="mt-6">
-                {/* Subscription options */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-medium text-gray-900">Delivery</h3>
-                    <button
-                      type="button"
-                      className="text-sm font-medium text-green-600 hover:text-green-500"
-                    >
-                      Learn more
-                    </button>
-                  </div>
-
-                  <div>
-                    <select
-                      className="mt-1 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-green-600 sm:text-sm sm:leading-6"
-                      defaultValue="monthly"
-                    >
-                      <option value="onetime">One-time purchase</option>
-                      <option value="monthly">Delivery every 1 Month</option>
-                      <option value="bimonthly">Delivery every 2 Months</option>
-                      <option value="quarterly">Delivery every 3 Months</option>
-                    </select>
-                  </div>
-
-                  <div className="rounded-lg bg-gray-50 p-4">
-                    <div className="flex items-start">
-                      <div className="shrink-0">
-                        <InformationCircleIcon className="size-5 text-gray-400" aria-hidden="true" />
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-sm text-gray-500">
-                          Subscribe and save 15%. Cancel anytime. Free shipping on orders over $35.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
                 <div className="mt-10 flex">
                   <AddToCartButton productId={id} />
                 </div>
