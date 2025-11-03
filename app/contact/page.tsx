@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { buttonVariants } from "@/components/ui/button"
+import { CONTACT } from "@/config/constants"
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -18,17 +19,22 @@ export default function ContactPage() {
     setStatus("loading")
 
     try {
-      // TODO: Implement contact form API
-      // const response = await fetch("/api/contact", {
-      //   method: "POST",
-      //   body: JSON.stringify(formData),
-      // })
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      if (!response.ok) {
+        throw new Error("Failed to submit form")
+      }
+
       setStatus("success")
       setFormData({ name: "", email: "", subject: "", message: "" })
     } catch (error) {
+      console.error("Contact form error:", error)
       setStatus("error")
     }
   }
@@ -148,10 +154,10 @@ export default function ContactPage() {
               For business partnerships, sponsorships, or collaboration opportunities,
               please email us at: <br />
               <a
-                href="mailto:business@linkflame.com"
+                href={`mailto:${CONTACT.businessEmail}`}
                 className="text-primary hover:underline"
               >
-                business@linkflame.com
+                {CONTACT.businessEmail}
               </a>
             </p>
           </CardContent>
@@ -164,10 +170,10 @@ export default function ContactPage() {
             <p className="text-muted-foreground">
               For press inquiries or media requests, please contact: <br />
               <a
-                href="mailto:press@linkflame.com"
+                href={`mailto:${CONTACT.pressEmail}`}
                 className="text-primary hover:underline"
               >
-                press@linkflame.com
+                {CONTACT.pressEmail}
               </a>
             </p>
           </CardContent>
