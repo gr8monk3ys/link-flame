@@ -41,7 +41,14 @@ export interface ProductReview {
   cons: string[]
 }
 
-export interface Product {
+/**
+ * Detailed product type for sustainability-focused product reviews and comparisons.
+ * This is used for editorial content, not the e-commerce Product model.
+ *
+ * For the actual e-commerce products, use the Prisma-generated Product type
+ * or import from '@/types' which exports the database Product type.
+ */
+export interface DetailedProduct {
   id: string
   name: string
   slug: string
@@ -67,4 +74,20 @@ export interface Product {
   ranking?: number // Position in category rankings
   comparisonNotes?: string // Editorial notes for comparison tables
   lastUpdated: string
+}
+
+/**
+ * Simple Product type matching Prisma database schema.
+ * Use this for e-commerce functionality.
+ */
+export interface Product {
+  id: string
+  title: string
+  description: string | null
+  price: number
+  salePrice: number | null
+  image: string
+  category: string
+  createdAt?: Date
+  updatedAt?: Date
 }
