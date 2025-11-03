@@ -60,26 +60,6 @@ export const siteConfig = {
         },
       ],
     },
-    {
-      title: "Community",
-      items: [
-        {
-          title: "Join Membership",
-          href: "/community/join",
-          description: "Access exclusive content and community features",
-        },
-        {
-          title: "Success Stories",
-          href: "/community/stories",
-          description: "Real stories from our eco-conscious community",
-        },
-        {
-          title: "Events",
-          href: "/community/events",
-          description: "Workshops, webinars, and community meetups",
-        },
-      ],
-    },
   ],
   links: {
     twitter: "https://twitter.com/linkflame",
