@@ -20,7 +20,7 @@ interface BlogPostProps {
   coverImage: string
   publishedAt: Date
   author: Author
-  category: string
+  category?: string
   tags: string[]
   readingTime: string
 }
@@ -45,12 +45,14 @@ export function BlogPost({
       <header className="mb-8">
         <div className="space-y-4">
           <div className="space-y-2">
-            <a
-              href={`/blogs/${category.toLowerCase()}`}
-              className="text-sm font-medium text-primary hover:underline"
-            >
-              {category}
-            </a>
+            {category && (
+              <a
+                href={`/blogs/${category.toLowerCase()}`}
+                className="text-sm font-medium text-primary hover:underline"
+              >
+                {category}
+              </a>
+            )}
             <h1 className="text-4xl font-bold tracking-tight">{title}</h1>
           </div>
           <p className="text-xl text-muted-foreground">{description}</p>

@@ -30,13 +30,13 @@ export default function ProductRecommendations() {
 
   const handleAddToCart = async (product: Product) => {
     setIsAdding(prev => ({ ...prev, [product.id]: true }));
-    
+
     try {
       await addItemToCart({
         id: product.id,
-        title: product.name,
-        price: product.price.amount,
-        image: product.images.main,
+        title: product.title,
+        price: product.salePrice || product.price,
+        image: product.image,
         quantity: 1,
       });
     } finally {
@@ -73,14 +73,14 @@ export default function ProductRecommendations() {
             <Link href={`/products/${product.id}`} className="block">
               <div className="relative mb-3 aspect-square overflow-hidden rounded-md">
                 <Image
-                  src={product.images.main}
-                  alt={product.name}
+                  src={product.image}
+                  alt={product.title}
                   fill
                   className="object-cover transition-transform group-hover:scale-105"
                 />
               </div>
-              <h3 className="line-clamp-2 text-sm font-medium">{product.name}</h3>
-              <p className="mt-1 text-sm font-bold">{formatPrice(product.price.amount)}</p>
+              <h3 className="line-clamp-2 text-sm font-medium">{product.title}</h3>
+              <p className="mt-1 text-sm font-bold">{formatPrice(product.salePrice || product.price)}</p>
             </Link>
             <div className="mt-2">
               {isProductInCart(product.id) ? (

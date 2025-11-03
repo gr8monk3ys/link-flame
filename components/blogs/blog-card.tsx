@@ -11,14 +11,16 @@ interface BlogCardProps {
 
 export function BlogCard({ post, featured = false }: BlogCardProps) {
   const { slug, title, description, coverImage, publishedAt, author, category, tags, readingTime } = post
-  const formattedDate = typeof publishedAt === 'string' 
+  const formattedDate = typeof publishedAt === 'string'
     ? format(parseISO(publishedAt), "MMM d, yyyy")
     : format(publishedAt, "MMM d, yyyy")
+
+  const categorySlug = category ? category.toLowerCase() : 'uncategorized'
 
   return (
     <Card className={`overflow-hidden ${featured ? "md:grid md:grid-cols-2 md:gap-4" : ""}`}>
       <Link
-        href={`/blogs/${category.toLowerCase()}/${slug}`}
+        href={`/blogs/${categorySlug}/${slug}`}
         className={`relative block ${featured ? "aspect-[2/1] md:aspect-square" : "aspect-[2/1]"}`}
       >
         <Image
@@ -31,13 +33,15 @@ export function BlogCard({ post, featured = false }: BlogCardProps) {
       <div>
         <CardHeader>
           <div className="space-y-1">
-            <Link
-              href={`/blogs/${category.toLowerCase()}`}
-              className="text-sm font-medium text-primary hover:underline"
-            >
-              {category}
-            </Link>
-            <Link href={`/blogs/${category.toLowerCase()}/${slug}`}>
+            {category && (
+              <Link
+                href={`/blogs/${categorySlug}`}
+                className="text-sm font-medium text-primary hover:underline"
+              >
+                {category}
+              </Link>
+            )}
+            <Link href={`/blogs/${categorySlug}/${slug}`}>
               <h3 className={`font-bold hover:underline ${featured ? "text-2xl" : "text-xl"}`}>
                 {title}
               </h3>
