@@ -1,4 +1,5 @@
 import { Author, BlogPost } from './types'
+import { prisma } from './prisma'
 
 export type { BlogPost, Author }
 
@@ -8,71 +9,84 @@ const getBaseUrl = () => {
   return `http://localhost:${process.env.PORT ?? 3000}`; // dev SSR should use localhost
 }
 
-// Mock data for development and build time
-const mockPosts: BlogPost[] = [
-  {
-    slug: 'welcome',
-    title: 'Welcome to Our Blog',
-    description: 'Learn about our latest updates and features',
-    coverImage: '/images/blogs/default-hero.jpg',
-    publishedAt: new Date().toISOString(),
+// Helper to transform Prisma BlogPost to BlogPost type
+function transformPrismaPost(prismaPost: any): BlogPost {
+  return {
+    id: prismaPost.id,
+    slug: prismaPost.slug,
+    title: prismaPost.title,
+    description: prismaPost.description || '',
+    content: prismaPost.content || undefined,
+    coverImage: prismaPost.coverImage || '/images/blogs/default-hero.jpg',
+    publishedAt: prismaPost.publishedAt.toISOString(),
     author: {
-      name: 'Team Link Flame',
-      image: '/images/team/default-avatar.jpg',
-      role: 'Team'
+      id: prismaPost.author.id,
+      name: prismaPost.author.name,
+      image: prismaPost.author.image || '/images/team/default-avatar.jpg',
+      role: prismaPost.author.role || 'Contributor',
     },
-    content: '# Welcome\n\nThis is our first blog post.',
-    category: 'Updates',
-    tags: ['welcome', 'news'],
-    featured: true,
-    readingTime: '3 min read'
-  },
-  {
-    slug: 'getting-started',
-    title: 'Getting Started with Link Flame',
-    description: 'A guide to using our platform effectively',
-    coverImage: '/images/blogs/default-hero.jpg',
-    publishedAt: new Date(Date.now() - 86400000).toISOString(), // yesterday
-    author: {
-      name: 'Team Link Flame',
-      image: '/images/team/default-avatar.jpg',
-      role: 'Team'
-    },
-    content: '# Getting Started\n\nLearn how to use Link Flame.',
-    category: 'Guides',
-    tags: ['guide', 'tutorial'],
-    featured: false,
-    readingTime: '5 min read'
-  }
-]
+    authorId: prismaPost.authorId,
+    category: prismaPost.category?.name || 'Uncategorized',
+    categoryId: prismaPost.categoryId,
+    tags: prismaPost.tags ? prismaPost.tags.split(',').map((t: string) => t.trim()) : [],
+    featured: prismaPost.featured || false,
+    readingTime: prismaPost.readingTime || undefined,
+    createdAt: prismaPost.createdAt?.toISOString(),
+    updatedAt: prismaPost.updatedAt?.toISOString(),
+  };
+}
 
 // Helper functions
 export async function getAllPosts(): Promise<BlogPost[]> {
-  // During build or when running in Node.js, return mock data
+  // During build or when running in Node.js, fetch from database
   if (typeof window === 'undefined') {
-    return mockPosts.sort((a, b) => 
-      new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-    )
+    try {
+      const posts = await prisma.blogPost.findMany({
+        include: {
+          author: true,
+          category: true,
+        },
+        orderBy: {
+          publishedAt: 'desc',
+        },
+      });
+      return posts.map(transformPrismaPost);
+    } catch (error) {
+      console.error('Failed to fetch posts from database:', error);
+      return [];
+    }
   }
 
   // In the browser, fetch from API
   const baseUrl = getBaseUrl()
   const response = await fetch(`${baseUrl}/api/blog/posts`, { next: { revalidate: 3600 } })
-  
+
   if (!response.ok) {
     throw new Error(`Failed to fetch posts: ${response.status}`)
   }
-  
+
   const posts = await response.json() as BlogPost[]
-  return posts.sort((a: BlogPost, b: BlogPost) => 
+  return posts.sort((a: BlogPost, b: BlogPost) =>
     new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
   )
 }
 
 export async function getPost(slug: string): Promise<BlogPost | null> {
-  // During build or when running in Node.js, return mock data
+  // During build or when running in Node.js, fetch from database
   if (typeof window === 'undefined') {
-    return mockPosts.find(post => post.slug === slug) || null
+    try {
+      const post = await prisma.blogPost.findUnique({
+        where: { slug },
+        include: {
+          author: true,
+          category: true,
+        },
+      });
+      return post ? transformPrismaPost(post) : null;
+    } catch (error) {
+      console.error(`Failed to fetch post ${slug} from database:`, error);
+      return null;
+    }
   }
 
   // In the browser, fetch from API
@@ -91,8 +105,8 @@ export async function getFeaturedPosts(): Promise<BlogPost[]> {
 
 export async function getPostsByCategory(category: string): Promise<BlogPost[]> {
   const posts = await getAllPosts()
-  return posts.filter(post => 
-    post.category.toLowerCase() === category.toLowerCase()
+  return posts.filter(post =>
+    post.category && post.category.toLowerCase() === category.toLowerCase()
   ).sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
 }
 

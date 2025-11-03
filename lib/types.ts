@@ -1,19 +1,6 @@
-export interface Author {
-  name: string
-  image: string
-  role: string
-}
+/**
+ * @deprecated This file is kept for backward compatibility.
+ * Import types directly from "@/types" or "@/types/blog" instead.
+ */
 
-export interface BlogPost {
-  slug: string
-  title: string
-  description: string
-  coverImage: string
-  publishedAt: string | Date
-  author: Author
-  category: string
-  tags: string[]
-  readingTime: string
-  featured?: boolean
-  content?: string
-}
+export type { Author, BlogPost } from "@/types/blog";
