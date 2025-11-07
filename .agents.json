@@ -1,0 +1,737 @@
+{
+  "agentSystem": {
+    "version": "1.0.0",
+    "projectContext": {
+      "name": "Link Flame",
+      "type": "E-commerce & Blog Platform",
+      "stack": "Next.js 16, React 19, Prisma, NextAuth, Stripe",
+      "criticalPaths": [
+        "checkout-flow",
+        "cart-management",
+        "authentication",
+        "blog-publishing",
+        "payment-processing"
+      ]
+    },
+    "orchestration": {
+      "mode": "collaborative",
+      "conflictResolution": "consensus-based",
+      "maxConcurrentAgents": 5,
+      "communicationProtocol": "shared-context"
+    }
+  },
+  "agents": {
+    "architect": {
+      "role": "System Architect",
+      "priority": "critical",
+      "responsibilities": [
+        "Design system architecture and data flow",
+        "Make technology and pattern decisions",
+        "Review and approve major structural changes",
+        "Maintain architecture documentation",
+        "Enforce architectural patterns and best practices"
+      ],
+      "expertise": [
+        "Next.js App Router patterns",
+        "Database schema design",
+        "API architecture",
+        "State management patterns",
+        "Scalability planning"
+      ],
+      "collaboratesWith": ["feature-engineer", "database-specialist", "security-guardian"],
+      "mcpTools": ["next-devtools", "sequential-thinking", "memory", "fetch"],
+      "decisionAuthority": "high",
+      "reviewsFrom": ["feature-engineer", "database-specialist"],
+      "activeWhen": [
+        "New feature planning",
+        "Architecture refactoring",
+        "Technology evaluation",
+        "Performance bottleneck analysis"
+      ]
+    },
+    "feature-engineer": {
+      "role": "Feature Implementation Specialist",
+      "priority": "high",
+      "responsibilities": [
+        "Implement new features end-to-end",
+        "Build React components and API routes",
+        "Integrate third-party services (Stripe, email)",
+        "Write feature documentation",
+        "Coordinate with testing and security agents"
+      ],
+      "expertise": [
+        "React 19 patterns and hooks",
+        "Next.js Server/Client Components",
+        "API route handlers",
+        "Form handling and validation",
+        "Stripe integration"
+      ],
+      "collaboratesWith": ["architect", "test-engineer", "security-guardian", "ux-optimizer"],
+      "mcpTools": ["next-devtools", "sequential-thinking", "fetch", "git"],
+      "decisionAuthority": "medium",
+      "mustConsult": ["architect", "security-guardian"],
+      "activeWhen": [
+        "Implementing TODO.md features",
+        "Building new pages/components",
+        "Adding API endpoints",
+        "Integrating external services"
+      ]
+    },
+    "database-specialist": {
+      "role": "Database & Schema Manager",
+      "priority": "high",
+      "responsibilities": [
+        "Design and maintain Prisma schema",
+        "Create and test database migrations",
+        "Optimize database queries and indexes",
+        "Manage seed data and test fixtures",
+        "Plan PostgreSQL production migration"
+      ],
+      "expertise": [
+        "Prisma ORM",
+        "SQL query optimization",
+        "Database indexing strategies",
+        "Migration safety",
+        "Data integrity constraints"
+      ],
+      "collaboratesWith": ["architect", "feature-engineer", "performance-optimizer"],
+      "mcpTools": ["postgres", "sequential-thinking", "memory"],
+      "decisionAuthority": "high",
+      "criticalTasks": [
+        "Schema changes",
+        "Migration creation",
+        "Index optimization",
+        "Data model validation"
+      ],
+      "activeWhen": [
+        "Schema modifications needed",
+        "New model creation",
+        "Query performance issues",
+        "Database migration planning"
+      ]
+    },
+    "security-guardian": {
+      "role": "Security & Authentication Expert",
+      "priority": "critical",
+      "responsibilities": [
+        "Review code for security vulnerabilities",
+        "Enforce input validation (Zod schemas)",
+        "Manage authentication and authorization",
+        "Review API security (rate limiting, CSRF)",
+        "Monitor for XSS, SQL injection, and other OWASP risks"
+      ],
+      "expertise": [
+        "OWASP Top 10",
+        "NextAuth configuration",
+        "Input validation with Zod",
+        "API security patterns",
+        "Payment security (PCI compliance)"
+      ],
+      "collaboratesWith": ["feature-engineer", "api-guardian", "database-specialist"],
+      "mcpTools": ["brave-search", "fetch", "sequential-thinking"],
+      "decisionAuthority": "veto",
+      "mustReview": [
+        "Authentication changes",
+        "Payment processing code",
+        "API endpoint creation",
+        "User input handling",
+        "Third-party integrations"
+      ],
+      "activeWhen": [
+        "Security review required",
+        "Authentication changes",
+        "Payment flow modifications",
+        "API security hardening"
+      ],
+      "blockingIssues": [
+        "Missing input validation",
+        "SQL injection risk",
+        "XSS vulnerability",
+        "Authentication bypass",
+        "Insecure API endpoints"
+      ]
+    },
+    "test-engineer": {
+      "role": "Testing & Quality Assurance",
+      "priority": "high",
+      "responsibilities": [
+        "Write and maintain E2E tests (Playwright)",
+        "Create unit tests for critical logic",
+        "Test checkout and payment flows",
+        "Validate cart operations",
+        "Test authentication journeys"
+      ],
+      "expertise": [
+        "Playwright E2E testing",
+        "React Testing Library",
+        "Jest configuration",
+        "Test-driven development",
+        "Stripe test mode"
+      ],
+      "collaboratesWith": ["feature-engineer", "ux-optimizer", "performance-optimizer"],
+      "mcpTools": ["playwright", "next-devtools", "sequential-thinking"],
+      "decisionAuthority": "medium",
+      "criticalTests": [
+        "Complete checkout flow (guest & authenticated)",
+        "Cart add/remove/update operations",
+        "User authentication (sign up, sign in, sign out)",
+        "Product browsing and filtering",
+        "Blog post creation and publishing"
+      ],
+      "activeWhen": [
+        "New feature implementation complete",
+        "Bug fix verification needed",
+        "Regression testing required",
+        "Critical path validation"
+      ],
+      "testPriorities": {
+        "critical": ["checkout", "payment", "authentication"],
+        "high": ["cart", "product-catalog", "orders"],
+        "medium": ["blog", "search", "filters"],
+        "low": ["static-pages", "styling"]
+      }
+    },
+    "api-guardian": {
+      "role": "API Design & Maintenance",
+      "priority": "high",
+      "responsibilities": [
+        "Design REST API endpoints",
+        "Maintain API consistency and standards",
+        "Implement error handling patterns",
+        "Manage API versioning",
+        "Document API contracts"
+      ],
+      "expertise": [
+        "RESTful API design",
+        "Next.js API routes",
+        "Error response standardization",
+        "Request/response validation",
+        "Rate limiting patterns"
+      ],
+      "collaboratesWith": ["feature-engineer", "security-guardian", "database-specialist"],
+      "mcpTools": ["next-devtools", "fetch", "memory"],
+      "decisionAuthority": "high",
+      "standards": {
+        "errorFormat": "lib/api-response.ts helpers",
+        "validation": "Zod schemas required",
+        "authentication": "NextAuth session check",
+        "rateLimit": "Upstash Redis when available",
+        "logging": "lib/logger.ts centralized logging"
+      },
+      "activeWhen": [
+        "New API endpoint creation",
+        "API standardization tasks",
+        "Error handling improvements",
+        "API documentation updates"
+      ]
+    },
+    "performance-optimizer": {
+      "role": "Performance & Optimization",
+      "priority": "medium",
+      "responsibilities": [
+        "Optimize page load times",
+        "Reduce bundle sizes",
+        "Implement code splitting",
+        "Optimize database queries",
+        "Configure caching strategies"
+      ],
+      "expertise": [
+        "Next.js performance patterns",
+        "React optimization (memo, useMemo, useCallback)",
+        "Image optimization",
+        "Database query optimization",
+        "Caching strategies"
+      ],
+      "collaboratesWith": ["architect", "database-specialist", "feature-engineer"],
+      "mcpTools": ["next-devtools", "postgres", "playwright"],
+      "decisionAuthority": "medium",
+      "metrics": {
+        "targetLCP": "< 2.5s",
+        "targetFID": "< 100ms",
+        "targetCLS": "< 0.1",
+        "bundleSize": "< 200KB",
+        "apiResponse": "< 200ms"
+      },
+      "activeWhen": [
+        "Performance degradation detected",
+        "New feature impact assessment",
+        "Bundle size optimization",
+        "Database query slowness"
+      ]
+    },
+    "ux-optimizer": {
+      "role": "User Experience & Accessibility",
+      "priority": "medium",
+      "responsibilities": [
+        "Ensure accessibility (WCAG 2.1)",
+        "Optimize user flows",
+        "Implement loading states",
+        "Design error messages",
+        "Validate mobile responsiveness"
+      ],
+      "expertise": [
+        "WCAG accessibility standards",
+        "Responsive design patterns",
+        "Loading and error states",
+        "Form UX best practices",
+        "Mobile-first design"
+      ],
+      "collaboratesWith": ["feature-engineer", "test-engineer"],
+      "mcpTools": ["playwright", "fetch", "brave-search"],
+      "decisionAuthority": "medium",
+      "checkpoints": [
+        "Keyboard navigation works",
+        "Screen reader compatible",
+        "Loading states present",
+        "Error messages clear",
+        "Mobile responsive"
+      ],
+      "activeWhen": [
+        "New UI components created",
+        "User flow changes",
+        "Accessibility audit requested",
+        "Mobile optimization needed"
+      ]
+    },
+    "docs-keeper": {
+      "role": "Documentation Maintainer",
+      "priority": "low",
+      "responsibilities": [
+        "Update README.md with changes",
+        "Maintain CLAUDE.md accuracy",
+        "Update TODO.md task statuses",
+        "Document new features",
+        "Keep API documentation current"
+      ],
+      "expertise": [
+        "Technical writing",
+        "Markdown formatting",
+        "API documentation",
+        "Code examples",
+        "Architecture diagrams"
+      ],
+      "collaboratesWith": ["architect", "api-guardian", "feature-engineer"],
+      "mcpTools": ["memory", "git", "github"],
+      "decisionAuthority": "low",
+      "documentsToMaintain": [
+        "README.md",
+        "CLAUDE.md",
+        "TODO.md",
+        ".mcp-setup-guide.md",
+        "API endpoint documentation"
+      ],
+      "activeWhen": [
+        "Feature implementation complete",
+        "Architecture changes made",
+        "TODO tasks completed",
+        "API endpoints modified"
+      ]
+    },
+    "bug-hunter": {
+      "role": "Bug Detection & Diagnosis",
+      "priority": "high",
+      "responsibilities": [
+        "Investigate bug reports",
+        "Reproduce and isolate issues",
+        "Analyze error logs and traces",
+        "Propose bug fixes",
+        "Verify fix effectiveness"
+      ],
+      "expertise": [
+        "Debugging techniques",
+        "Error trace analysis",
+        "Browser DevTools",
+        "Network inspection",
+        "State debugging"
+      ],
+      "collaboratesWith": ["feature-engineer", "test-engineer", "performance-optimizer"],
+      "mcpTools": ["next-devtools", "sequential-thinking", "git", "playwright"],
+      "decisionAuthority": "medium",
+      "investigationSteps": [
+        "Reproduce bug in development",
+        "Check Next.js devtools errors",
+        "Review recent git changes",
+        "Analyze logs and stack traces",
+        "Identify root cause",
+        "Propose fix strategy"
+      ],
+      "activeWhen": [
+        "Bug reported",
+        "Production error detected",
+        "Unexpected behavior observed",
+        "Test failure investigation"
+      ]
+    }
+  },
+  "workflows": {
+    "new-feature": {
+      "name": "New Feature Implementation",
+      "trigger": "User requests new feature or TODO.md task",
+      "sequence": [
+        {
+          "agent": "architect",
+          "task": "Design feature architecture and data flow",
+          "output": "Architecture plan, data models, API contracts"
+        },
+        {
+          "agent": "security-guardian",
+          "task": "Review architecture for security implications",
+          "output": "Security approval or concerns to address"
+        },
+        {
+          "agent": "database-specialist",
+          "task": "Design schema changes and migrations",
+          "output": "Prisma schema updates, migration files",
+          "parallel": true
+        },
+        {
+          "agent": "api-guardian",
+          "task": "Design API endpoints and contracts",
+          "output": "API route specifications, validation schemas",
+          "parallel": true
+        },
+        {
+          "agent": "feature-engineer",
+          "task": "Implement feature (components, API, integration)",
+          "output": "Working feature implementation",
+          "dependsOn": ["database-specialist", "api-guardian"]
+        },
+        {
+          "agent": "security-guardian",
+          "task": "Security review of implementation",
+          "output": "Security approval or required fixes"
+        },
+        {
+          "agent": "test-engineer",
+          "task": "Write E2E and unit tests",
+          "output": "Test suite covering feature",
+          "parallel": true
+        },
+        {
+          "agent": "ux-optimizer",
+          "task": "Review UX and accessibility",
+          "output": "UX approval or improvement suggestions",
+          "parallel": true
+        },
+        {
+          "agent": "performance-optimizer",
+          "task": "Performance impact assessment",
+          "output": "Performance metrics and optimization recommendations"
+        },
+        {
+          "agent": "docs-keeper",
+          "task": "Update documentation",
+          "output": "Updated README, CLAUDE.md, TODO.md"
+        }
+      ],
+      "successCriteria": [
+        "All security reviews passed",
+        "Tests written and passing",
+        "Performance metrics acceptable",
+        "Documentation updated",
+        "Code reviewed and approved"
+      ]
+    },
+    "bug-fix": {
+      "name": "Bug Investigation & Fix",
+      "trigger": "Bug reported or test failure",
+      "sequence": [
+        {
+          "agent": "bug-hunter",
+          "task": "Investigate and reproduce bug",
+          "output": "Root cause analysis and fix proposal"
+        },
+        {
+          "agent": "security-guardian",
+          "task": "Check if bug is security-related",
+          "output": "Security priority assessment",
+          "condition": "security-implications"
+        },
+        {
+          "agent": "feature-engineer",
+          "task": "Implement fix",
+          "output": "Bug fix implementation"
+        },
+        {
+          "agent": "test-engineer",
+          "task": "Verify fix and add regression test",
+          "output": "Test confirming fix + regression test"
+        },
+        {
+          "agent": "performance-optimizer",
+          "task": "Verify fix doesn't degrade performance",
+          "output": "Performance validation",
+          "condition": "performance-critical-path"
+        }
+      ],
+      "successCriteria": [
+        "Bug reproduced and understood",
+        "Fix implemented and tested",
+        "Regression test added",
+        "No new issues introduced"
+      ]
+    },
+    "database-migration": {
+      "name": "Database Schema Change",
+      "trigger": "Schema modification required",
+      "sequence": [
+        {
+          "agent": "architect",
+          "task": "Review and approve schema design",
+          "output": "Architecture approval"
+        },
+        {
+          "agent": "database-specialist",
+          "task": "Create migration and test on dev database",
+          "output": "Prisma migration files"
+        },
+        {
+          "agent": "database-specialist",
+          "task": "Create rollback plan",
+          "output": "Rollback migration and procedure"
+        },
+        {
+          "agent": "test-engineer",
+          "task": "Test migration on sample data",
+          "output": "Migration test results"
+        },
+        {
+          "agent": "feature-engineer",
+          "task": "Update affected code and queries",
+          "output": "Code updates for schema changes",
+          "parallel": true
+        },
+        {
+          "agent": "docs-keeper",
+          "task": "Document migration and schema changes",
+          "output": "Updated schema documentation",
+          "parallel": true
+        }
+      ],
+      "successCriteria": [
+        "Migration tested successfully",
+        "Rollback plan documented",
+        "All code updated",
+        "No data loss risk"
+      ]
+    },
+    "security-audit": {
+      "name": "Security Audit",
+      "trigger": "Regular audit or before production deployment",
+      "sequence": [
+        {
+          "agent": "security-guardian",
+          "task": "Audit authentication and authorization",
+          "output": "Auth security report"
+        },
+        {
+          "agent": "security-guardian",
+          "task": "Audit API endpoints for vulnerabilities",
+          "output": "API security report"
+        },
+        {
+          "agent": "security-guardian",
+          "task": "Review input validation coverage",
+          "output": "Validation coverage report"
+        },
+        {
+          "agent": "security-guardian",
+          "task": "Check for OWASP Top 10 vulnerabilities",
+          "output": "OWASP compliance report"
+        },
+        {
+          "agent": "test-engineer",
+          "task": "Run security-focused E2E tests",
+          "output": "Security test results",
+          "parallel": true
+        },
+        {
+          "agent": "security-guardian",
+          "task": "Compile findings and remediation plan",
+          "output": "Security audit report with action items"
+        }
+      ],
+      "successCriteria": [
+        "No critical vulnerabilities",
+        "All high-priority issues addressed",
+        "Remediation plan for medium issues"
+      ]
+    },
+    "performance-optimization": {
+      "name": "Performance Optimization Sprint",
+      "trigger": "Performance degradation or optimization needed",
+      "sequence": [
+        {
+          "agent": "performance-optimizer",
+          "task": "Audit current performance metrics",
+          "output": "Performance baseline report"
+        },
+        {
+          "agent": "performance-optimizer",
+          "task": "Identify bottlenecks (frontend & backend)",
+          "output": "Bottleneck analysis"
+        },
+        {
+          "agent": "database-specialist",
+          "task": "Optimize slow database queries",
+          "output": "Query optimizations and indexes",
+          "parallel": true
+        },
+        {
+          "agent": "feature-engineer",
+          "task": "Implement code optimizations",
+          "output": "Optimized components and code",
+          "parallel": true
+        },
+        {
+          "agent": "test-engineer",
+          "task": "Run performance tests",
+          "output": "Performance test results"
+        },
+        {
+          "agent": "performance-optimizer",
+          "task": "Validate improvements against metrics",
+          "output": "Performance improvement report"
+        }
+      ],
+      "successCriteria": [
+        "Performance metrics meet targets",
+        "No functionality regressions",
+        "Improvements documented"
+      ]
+    }
+  },
+  "communicationProtocols": {
+    "handoff": {
+      "description": "When one agent completes work and hands off to another",
+      "format": {
+        "completedBy": "agent-name",
+        "handingOffTo": "agent-name",
+        "context": "Summary of work completed",
+        "artifacts": ["List of files changed, decisions made, tests written"],
+        "blockers": ["Any issues or concerns for next agent"],
+        "references": ["TODO.md task ID", "GitHub issue", "Documentation"]
+      }
+    },
+    "consultation": {
+      "description": "When an agent needs input from another",
+      "format": {
+        "requestingAgent": "agent-name",
+        "consultingAgent": "agent-name",
+        "question": "Specific question or decision needed",
+        "context": "Relevant background information",
+        "urgency": "low | medium | high | critical"
+      }
+    },
+    "veto": {
+      "description": "When security-guardian blocks a change",
+      "format": {
+        "vetoBy": "security-guardian",
+        "targetAgent": "agent-name",
+        "reason": "Specific security concern",
+        "severity": "medium | high | critical",
+        "requiredActions": ["List of changes needed before approval"]
+      }
+    },
+    "consensus": {
+      "description": "When multiple agents need to agree",
+      "requiredFor": [
+        "Architecture changes",
+        "Technology choices",
+        "Major refactoring",
+        "API breaking changes"
+      ],
+      "participants": ["architect", "feature-engineer", "database-specialist", "security-guardian"],
+      "threshold": "75% agreement required"
+    }
+  },
+  "priorities": {
+    "critical": {
+      "agents": ["security-guardian", "architect"],
+      "scenarios": [
+        "Security vulnerability detected",
+        "Production outage",
+        "Data loss risk",
+        "Payment processing failure"
+      ],
+      "responseTime": "immediate",
+      "escalation": "all-hands"
+    },
+    "high": {
+      "agents": ["bug-hunter", "feature-engineer", "database-specialist", "test-engineer"],
+      "scenarios": [
+        "Bug affecting critical path",
+        "Feature implementation",
+        "Database migration",
+        "Test failures"
+      ],
+      "responseTime": "< 1 day",
+      "escalation": "architect if blocked"
+    },
+    "medium": {
+      "agents": ["performance-optimizer", "ux-optimizer", "api-guardian"],
+      "scenarios": [
+        "Performance degradation",
+        "UX improvements",
+        "API standardization",
+        "Code quality issues"
+      ],
+      "responseTime": "< 3 days",
+      "escalation": "if affects critical path"
+    },
+    "low": {
+      "agents": ["docs-keeper"],
+      "scenarios": [
+        "Documentation updates",
+        "Code comments",
+        "README improvements"
+      ],
+      "responseTime": "< 1 week",
+      "escalation": "none"
+    }
+  },
+  "projectKnowledge": {
+    "criticalPaths": {
+      "checkout": {
+        "components": ["cart", "checkout-form", "stripe-integration", "order-confirmation"],
+        "apis": ["/api/cart", "/api/checkout", "/api/webhook", "/api/orders"],
+        "tests": ["E2E checkout flow", "Stripe webhook handling"],
+        "guardians": ["security-guardian", "test-engineer", "performance-optimizer"]
+      },
+      "authentication": {
+        "components": ["signin", "signup", "signout", "protected-routes"],
+        "apis": ["/api/auth/[...nextauth]", "/api/auth/signup", "/api/auth/user"],
+        "tests": ["Auth flow E2E", "Session management", "Protected route access"],
+        "guardians": ["security-guardian", "test-engineer"]
+      },
+      "cart": {
+        "components": ["cart-page", "CartProvider", "cart-items"],
+        "apis": ["/api/cart", "/api/cart/migrate"],
+        "tests": ["Cart CRUD operations", "Guest to auth migration", "Cart persistence"],
+        "guardians": ["test-engineer", "feature-engineer"]
+      },
+      "blog": {
+        "components": ["blog-list", "blog-post", "categories", "tags"],
+        "apis": ["/api/blog/posts", "/api/blog/post/[slug]"],
+        "tests": ["Blog rendering", "Category filtering", "SEO metadata"],
+        "guardians": ["ux-optimizer", "performance-optimizer"]
+      }
+    },
+    "codePatterns": {
+      "apiRoutes": "Use lib/api-response.ts helpers for consistent error formatting",
+      "validation": "All user input must have Zod schema validation",
+      "logging": "Use lib/logger.ts instead of console.log/error",
+      "authentication": "Use getServerAuth() from lib/auth.ts for API routes",
+      "database": "Use lib/prisma.ts singleton, never create new PrismaClient",
+      "errorHandling": "Use ErrorBoundary for React components",
+      "stateManagement": "Cart uses React Context, not Zustand"
+    },
+    "architectureDecisions": {
+      "why_nextauth_not_clerk": "Removed dependency on external service, full control over auth",
+      "why_context_not_zustand": "Simpler state management for cart, fewer dependencies",
+      "why_sqlite_dev_postgres_prod": "Easy local development, production scalability",
+      "why_api_response_helpers": "Consistent API error format across all endpoints",
+      "why_centralized_logging": "Single place to add monitoring service integration"
+    }
+  }
+}
