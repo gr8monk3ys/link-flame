@@ -1,24 +1,31 @@
-import { auth } from "@clerk/nextjs/server";
+import { getServerAuth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUserIdForCart } from "@/lib/session";
 import { checkRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { z } from "zod";
+import {
+  handleApiError,
+  rateLimitErrorResponse,
+  validationErrorResponse,
+  errorResponse
+} from "@/lib/api-response";
+import { logger } from "@/lib/logger";
 
 // Validation schemas
 const AddToCartSchema = z.object({
   productId: z.string().min(1, "Product ID is required"),
-  quantity: z.number().int().positive("Quantity must be a positive integer").default(1),
+  quantity: z.number().int().positive("Quantity must be a positive integer").max(999, "Quantity cannot exceed 999").default(1),
 });
 
 const UpdateCartSchema = z.object({
   productId: z.string().min(1, "Product ID is required"),
-  quantity: z.number().int().nonnegative("Quantity must be 0 or positive"),
+  quantity: z.number().int().nonnegative("Quantity must be 0 or positive").max(999, "Quantity cannot exceed 999"),
 });
 
 export async function GET(req: Request) {
   try {
-    const { userId } = await auth();
+    const { userId } = await getServerAuth();
     const userIdToUse = await getUserIdForCart(userId);
 
     const cartItems = await prisma.cartItem.findMany({
@@ -41,30 +48,22 @@ export async function GET(req: Request) {
 
     return NextResponse.json(formattedItems);
   } catch (error) {
-    console.error("[CART_GET_ERROR]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    logger.error("Failed to fetch cart items", error);
+    return handleApiError(error);
   }
 }
 
 export async function POST(req: Request) {
   try {
     // Get authenticated user ID first for rate limiting
-    const { userId: authUserId } = await auth();
+    const { userId: authUserId } = await getServerAuth();
 
     // Apply rate limiting
     const identifier = getIdentifier(req, authUserId);
     const { success, reset } = await checkRateLimit(identifier);
 
     if (!success) {
-      return NextResponse.json(
-        { error: "Too many requests. Please try again later." },
-        {
-          status: 429,
-          headers: {
-            'Retry-After': String(Math.floor((reset - Date.now()) / 1000)),
-          },
-        }
-      );
+      return rateLimitErrorResponse(reset);
     }
 
     const body = await req.json();
@@ -72,16 +71,23 @@ export async function POST(req: Request) {
     // Validate input
     const validation = AddToCartSchema.safeParse(body);
     if (!validation.success) {
-      return NextResponse.json(
-        { error: "Invalid input", details: validation.error.errors },
-        { status: 400 }
-      );
+      return validationErrorResponse(validation.error);
     }
 
     const { productId, quantity } = validation.data;
 
     // Get user ID for cart operations
     const userIdToUse = await getUserIdForCart(authUserId);
+
+    // Fetch product to check inventory
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+      select: { id: true, title: true, inventory: true },
+    });
+
+    if (!product) {
+      return errorResponse("Product not found", undefined, undefined, 404);
+    }
 
     const existingItem = await prisma.cartItem.findFirst({
       where: {
@@ -91,15 +97,47 @@ export async function POST(req: Request) {
     });
 
     if (existingItem) {
+      const newQuantity = existingItem.quantity + quantity;
+
+      // Check if new quantity exceeds max limit
+      if (newQuantity > 999) {
+        return errorResponse(
+          "Total quantity cannot exceed 999",
+          undefined,
+          undefined,
+          400
+        );
+      }
+
+      // Check if enough inventory available
+      if (newQuantity > product.inventory) {
+        return errorResponse(
+          `Only ${product.inventory} items available for ${product.title}`,
+          undefined,
+          undefined,
+          400
+        );
+      }
+
       await prisma.cartItem.update({
         where: {
           id: existingItem.id,
         },
         data: {
-          quantity: existingItem.quantity + quantity,
+          quantity: newQuantity,
         },
       });
     } else {
+      // Check inventory for new item
+      if (quantity > product.inventory) {
+        return errorResponse(
+          `Only ${product.inventory} items available for ${product.title}`,
+          undefined,
+          undefined,
+          400
+        );
+      }
+
       await prisma.cartItem.create({
         data: {
           userId: userIdToUse,
@@ -109,22 +147,28 @@ export async function POST(req: Request) {
       });
     }
 
+    logger.info("Item added to cart", {
+      userId: userIdToUse,
+      productId,
+      quantity,
+    });
+
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("[CART_ERROR]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    logger.error("Cart operation failed", error);
+    return handleApiError(error);
   }
 }
 
 export async function DELETE(req: Request) {
   try {
-    const { userId } = await auth();
+    const { userId } = await getServerAuth();
     const userIdToUse = await getUserIdForCart(userId);
 
     const url = new URL(req.url);
     const productId = url.searchParams.get("productId");
     if (!productId) {
-      return new NextResponse("Product ID is required", { status: 400 });
+      return errorResponse("Product ID is required", undefined, undefined, 400);
     }
 
     await prisma.cartItem.deleteMany({
@@ -136,14 +180,14 @@ export async function DELETE(req: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("[CART_ERROR]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    logger.error("Cart operation failed", error);
+    return handleApiError(error);
   }
 }
 
 export async function PATCH(req: Request) {
   try {
-    const { userId } = await auth();
+    const { userId } = await getServerAuth();
     const userIdToUse = await getUserIdForCart(userId);
 
     const body = await req.json();
@@ -151,10 +195,7 @@ export async function PATCH(req: Request) {
     // Validate input
     const validation = UpdateCartSchema.safeParse(body);
     if (!validation.success) {
-      return NextResponse.json(
-        { error: "Invalid input", details: validation.error.errors },
-        { status: 400 }
-      );
+      return validationErrorResponse(validation.error);
     }
 
     const { productId, quantity } = validation.data;
@@ -180,7 +221,7 @@ export async function PATCH(req: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("[CART_ERROR]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    logger.error("Cart operation failed", error);
+    return handleApiError(error);
   }
 }

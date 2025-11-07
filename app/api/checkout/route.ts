@@ -1,9 +1,25 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { getServerAuth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { getUserIdForCart } from "@/lib/session";
 import { checkStrictRateLimit, getIdentifier } from "@/lib/rate-limit";
+import {
+  handleApiError,
+  rateLimitErrorResponse,
+  validationErrorResponse,
+  errorResponse
+} from "@/lib/api-response";
+import { logger } from "@/lib/logger";
+import Stripe from "stripe";
+
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error("Missing STRIPE_SECRET_KEY");
+}
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2025-01-27.acacia",
+});
 
 // Define validation schema for checkout data
 const CheckoutSchema = z.object({
@@ -14,113 +30,133 @@ const CheckoutSchema = z.object({
   city: z.string().min(1, "City is required"),
   state: z.string().min(1, "State is required"),
   zipCode: z.string().regex(/^\d{5}(-\d{4})?$/, "Invalid ZIP code format"),
-  paymentMethod: z.string(),
-  items: z.array(
-    z.object({
-      id: z.string(),
-      title: z.string(),
-      price: z.number().positive(),
-      quantity: z.number().int().positive(),
-      image: z.string(),
-    })
-  ).min(1, "Cart cannot be empty"),
-  total: z.number().nonnegative(),
 });
 
 export async function POST(request: Request) {
   try {
-    const { userId } = await auth();
+    const { userId } = await getServerAuth();
 
     // Apply strict rate limiting for checkout
     const identifier = getIdentifier(request, userId);
     const { success, reset } = await checkStrictRateLimit(identifier);
 
     if (!success) {
-      return NextResponse.json(
-        { error: "Too many checkout attempts. Please try again later." },
-        {
-          status: 429,
-          headers: {
-            'Retry-After': String(Math.floor((reset - Date.now()) / 1000)),
-          },
-        }
-      );
+      return rateLimitErrorResponse(reset);
     }
 
     const userIdToUse = await getUserIdForCart(userId);
     const data = await request.json();
 
     // Validate request data
-    try {
-      CheckoutSchema.parse(data);
-    } catch (validationError) {
-      if (validationError instanceof z.ZodError) {
-        const errors = validationError.errors.map(err => ({
-          path: err.path.join('.'),
-          message: err.message
-        }));
-        
-        return NextResponse.json(
-          { error: "Validation failed", details: errors },
-          { status: 400 }
-        );
-      }
-      
-      throw validationError;
+    const validation = CheckoutSchema.safeParse(data);
+    if (!validation.success) {
+      return validationErrorResponse(validation.error);
     }
 
-    // NOTE: This is a demo checkout without real payment processing
-    // In production, integrate with Stripe Checkout Sessions
-    // See: https://stripe.com/docs/api/checkout/sessions
+    // Get cart items from database (server-side source of truth)
+    const cartItems = await prisma.cartItem.findMany({
+      where: {
+        userId: userIdToUse,
+      },
+      include: {
+        product: true,
+      },
+    });
+
+    if (cartItems.length === 0) {
+      return errorResponse(
+        "Cart is empty",
+        undefined,
+        undefined,
+        400
+      );
+    }
+
+    // Verify inventory and build line items with SERVER-SIDE prices
+    let serverTotal = 0;
+    const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
+
+    for (const item of cartItems) {
+      const product = item.product;
+
+      // Check inventory availability
+      if (product.inventory < item.quantity) {
+        return errorResponse(
+          `Insufficient inventory for ${product.title}. Only ${product.inventory} available.`,
+          undefined,
+          undefined,
+          400
+        );
+      }
+
+      // Use server-side prices (NEVER trust client-provided prices)
+      const actualPrice = product.salePrice || product.price;
+      serverTotal += actualPrice * item.quantity;
+
+      lineItems.push({
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: product.title,
+            description: product.subtitle || undefined,
+            images: product.image ? [product.image] : undefined,
+          },
+          unit_amount: Math.round(actualPrice * 100), // Convert to cents
+        },
+        quantity: item.quantity,
+      });
+    }
+
+    logger.info('Creating Stripe checkout session', {
+      userId: userIdToUse,
+      itemCount: cartItems.length,
+      total: serverTotal,
+    });
 
     try {
-      // Create order in database with order items
-      const order = await prisma.order.create({
-        data: {
+      // Create Stripe Checkout Session
+      const session = await stripe.checkout.sessions.create({
+        mode: 'payment',
+        line_items: lineItems,
+        metadata: {
           userId: userIdToUse,
-          status: "processing",
-          amount: data.total || 0,
-          shippingAddress: `${data.address}, ${data.city}, ${data.state} ${data.zipCode}`,
-          paymentMethod: data.paymentMethod,
           customerEmail: data.email,
           customerName: `${data.firstName} ${data.lastName}`,
-          items: {
-            create: data.items.map((item: any) => ({
-              productId: item.id,
-              quantity: item.quantity,
-              price: item.price,
-              title: item.title,
-            })),
-          },
+          shippingAddress: `${data.address}, ${data.city}, ${data.state} ${data.zipCode}`,
         },
+        customer_email: data.email,
+        success_url: `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/order-confirmation?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/checkout`,
+        // Expire after 30 minutes
+        expires_at: Math.floor(Date.now() / 1000) + (30 * 60),
       });
 
-      // Clear cart after successful order
-      await prisma.cartItem.deleteMany({
-        where: {
-          userId: userIdToUse,
-        },
+      logger.info('Stripe checkout session created', {
+        sessionId: session.id,
+        userId: userIdToUse,
+        amount: serverTotal,
       });
 
-      // Return success with redirect URL including order ID
-      return NextResponse.json({ 
-        success: true,
-        message: "Order created successfully",
-        orderId: order.id,
-        redirectUrl: `/order-confirmation?orderId=${order.id}`
+      // Return session URL for redirect to Stripe
+      // NOTE: Order is NOT created yet - it will be created by the webhook
+      // after successful payment
+      return NextResponse.json({
+        sessionUrl: session.url,
+        sessionId: session.id,
       });
-    } catch (paymentError) {
-      console.error("[PAYMENT_ERROR]", paymentError);
-      return NextResponse.json(
-        { error: paymentError instanceof Error ? paymentError.message : "Payment failed" },
-        { status: 400 }
+    } catch (stripeError) {
+      logger.error('Stripe checkout session creation failed', stripeError, {
+        userId: userIdToUse,
+      });
+      return errorResponse(
+        "Failed to create checkout session. Please try again.",
+        undefined,
+        undefined,
+        500
       );
     }
   } catch (error) {
-    console.error("[CHECKOUT_POST]", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    logger.error('Checkout failed', error);
+    return handleApiError(error);
   }
 }
