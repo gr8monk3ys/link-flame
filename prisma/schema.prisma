@@ -9,49 +9,21 @@ datasource db {
 }
 
 // User and Authentication
+// Using NextAuth with JWT strategy (no database sessions needed)
 model User {
   id            String    @id @default(cuid())
   name          String?
   email         String    @unique
   emailVerified DateTime?
   image         String?
-  password      String?
+  password      String?   // Used for credentials provider
   role          String    @default("USER")
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  accounts      Account[]
-  sessions      Session[]
   Profile       Profile?
   reviews       Review[]
 
   @@index([email])
-}
-
-model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-}
-
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Product {
@@ -62,6 +34,9 @@ model Product {
   salePrice   Float?
   image       String
   category    String      @default("Uncategorized")
+  inventory   Int         @default(0)
+  subtitle    String?
+  featured    Boolean     @default(false)
   reviews     Review[]
   cartItems   CartItem[]
   orderItems  OrderItem[]
@@ -69,6 +44,9 @@ model Product {
   updatedAt   DateTime    @updatedAt
 
   @@index([category])
+  @@index([category, featured])
+  @@index([featured])
+  @@index([createdAt(sort: Desc)])
 }
 
 model Review {
@@ -81,6 +59,10 @@ model Review {
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([userId])
+  @@index([productId, createdAt(sort: Desc)])
 }
 
 model Profile {
@@ -128,6 +110,9 @@ model BlogPost {
 
   @@index([slug])
   @@index([featured])
+  @@index([publishedAt(sort: Desc)])
+  @@index([categoryId])
+  @@index([categoryId, publishedAt(sort: Desc)])
 }
 
 model Author {
@@ -154,6 +139,8 @@ model Order {
 
   @@index([userId])
   @@index([stripeSessionId])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([status])
 }
 
 model OrderItem {
