@@ -13,19 +13,20 @@ export async function generateStaticParams() {
   }))
 }
 
-export async function generateMetadata({ 
-  params 
-}: { params: PageProps['params'] }): Promise<Metadata> {
-  const tag = decodeURIComponent(params.tag)
-  
+export async function generateMetadata({
+  params
+}: PageProps<{ tag: string }>): Promise<Metadata> {
+  const { tag } = await params
+  const decodedTag = decodeURIComponent(tag)
+
   return {
-    title: `#${tag} Tag`,
-    description: `Browse articles tagged with ${tag}`
+    title: `#${decodedTag} Tag`,
+    description: `Browse articles tagged with ${decodedTag}`
   }
 }
 
-export default async function TagPage({ params }: { params: PageProps['params'] }) {
-  const { tag } = params
+export default async function TagPage({ params }: PageProps<{ tag: string }>) {
+  const { tag } = await params
   const decodedTag = decodeURIComponent(tag)
   const posts = await getPostsByTag(decodedTag)
 

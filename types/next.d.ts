@@ -1,18 +1,8 @@
 // Global type definitions for Next.js page props
-export type PageProps = {
-  params: { 
-    [key: string]: string 
-  } & {
-    then: <TResult1 = any, TResult2 = never>(
-      onfulfilled?: ((value: any) => TResult1 | PromiseLike<TResult1>) | null, 
-      onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null
-    ) => Promise<TResult1 | TResult2>;
-    catch: <TResult = never>(
-      onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | null
-    ) => Promise<any>;
-    finally: (onfinally?: (() => void) | null) => Promise<any>;
-    [Symbol.toStringTag]: string;
-  }
+// Next.js 15+ uses Promise-based params for dynamic routes
+export type PageProps<T extends Record<string, string> = Record<string, string>> = {
+  params: Promise<T>
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
 // Extend the global namespace to include this type

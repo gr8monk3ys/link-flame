@@ -5,10 +5,10 @@ import { notFound } from 'next/navigation';
 import { StarIcon } from '@heroicons/react/20/solid';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import { useState, useEffect } from 'react';
-import { useCart } from "@/hooks/useCart";
+import { useCart } from "@/lib/providers/CartProvider";
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
-import { useAuth } from "@clerk/nextjs";
+import { useSession } from "next-auth/react";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
@@ -144,7 +144,7 @@ export default function ProductPage() {
 
               <div className="mt-6">
                 <div className="mt-10 flex">
-                  <AddToCartButton productId={id} />
+                  <AddToCartButton product={product} />
                 </div>
               </div>
             </div>
@@ -157,20 +157,27 @@ export default function ProductPage() {
   );
 }
 
-function AddToCartButton({ productId }: { productId: string | string[] | undefined }) {
-  const { addToCart } = useCart();
+function AddToCartButton({ product }: { product: Product }) {
+  const { addItemToCart } = useCart();
   const [isLoading, setIsLoading] = useState(false);
-  const { userId } = useAuth();
+  const { data: session } = useSession();
 
   const handleAddToCart = async () => {
+    if (!session) {
+      toast.error("Please sign in to add items to cart");
+      return;
+    }
+
     setIsLoading(true);
     try {
-      if (typeof productId === 'string' && userId) {
-        await addToCart(userId, productId);
-        toast.success("Product added to cart!");
-      } else {
-        toast.error("Invalid product ID or user not logged in");
-      }
+      await addItemToCart({
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        image: product.image,
+        quantity: 1,
+      });
+      toast.success("Product added to cart!");
     } catch (error) {
       console.error("Error adding product to cart:", error);
       toast.error("Failed to add product to cart.");

@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useAuth } from "@clerk/nextjs";
+import { useEffect, useState, useCallback } from "react";
+import { useSession } from "next-auth/react";
+import { useParams } from "next/navigation";
 import { format } from "date-fns";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -9,24 +10,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import Image from "next/image";
 import { Order } from "@/types";
 
-export default function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { isLoaded, isSignedIn } = useAuth();
+export default function OrderDetailPage() {
+  const { data: session, status } = useSession();
+  const params = useParams<{ id: string }>();
+  const orderId = params?.id;
+  const isLoaded = status !== "loading";
+  const isSignedIn = !!session;
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [orderId, setOrderId] = useState<string | null>(null);
 
-  useEffect(() => {
-    params.then(p => setOrderId(p.id));
-  }, [params]);
-
-  useEffect(() => {
-    if (isLoaded && isSignedIn && orderId) {
-      fetchOrder();
-    }
-  }, [isLoaded, isSignedIn, orderId]);
-
-  const fetchOrder = async () => {
+  const fetchOrder = useCallback(async () => {
     if (!orderId) return;
     try {
       const response = await fetch(`/api/orders/${orderId}`);
@@ -43,7 +37,13 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
     } finally {
       setLoading(false);
     }
-  };
+  }, [orderId]);
+
+  useEffect(() => {
+    if (isLoaded && isSignedIn && orderId) {
+      fetchOrder();
+    }
+  }, [isLoaded, isSignedIn, orderId, fetchOrder]);
 
   if (!isLoaded || loading) {
     return <div className="container py-10">Loading order details...</div>;
@@ -157,7 +157,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                 key={item.id}
                 className="flex gap-4 p-4 border rounded-lg"
               >
-                <div className="relative w-20 h-20 flex-shrink-0">
+                <div className="relative size-20 shrink-0">
                   <Image
                     src={item.product.image}
                     alt={item.title}
