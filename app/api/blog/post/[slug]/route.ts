@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { BlogPost } from '@/types'
+import { handleApiError, notFoundResponse } from '@/lib/api-response'
 
-export const dynamic = 'force-dynamic'
+// Cache individual blog posts for 1 hour (3600 seconds) for better performance
+// Remove this line if you need real-time updates
 export const revalidate = 3600
 
 // Helper to transform Prisma BlogPost to BlogPost type
@@ -48,21 +50,12 @@ export async function GET(
     });
 
     if (!post) {
-      return new Response(JSON.stringify({ error: 'Post not found' }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' }
-      })
+      return notFoundResponse("Post")
     }
 
-    return new Response(JSON.stringify(transformPrismaPost(post)), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    })
+    return NextResponse.json(transformPrismaPost(post))
   } catch (error) {
     console.error('Error fetching post:', error)
-    return new Response(JSON.stringify({ error: 'Failed to fetch post' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    })
+    return handleApiError(error)
   }
 }

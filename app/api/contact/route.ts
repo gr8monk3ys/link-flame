@@ -2,6 +2,11 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { checkStrictRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { prisma } from "@/lib/prisma";
+import {
+  handleApiError,
+  rateLimitErrorResponse,
+  validationErrorResponse
+} from "@/lib/api-response";
 
 // Validation schema for contact form
 const ContactSchema = z.object({
@@ -18,15 +23,7 @@ export async function POST(req: Request) {
     const { success, reset } = await checkStrictRateLimit(identifier);
 
     if (!success) {
-      return NextResponse.json(
-        { error: "Too many contact form submissions. Please try again later." },
-        {
-          status: 429,
-          headers: {
-            'Retry-After': String(Math.floor((reset - Date.now()) / 1000)),
-          },
-        }
-      );
+      return rateLimitErrorResponse(reset);
     }
 
     const body = await req.json();
@@ -34,10 +31,7 @@ export async function POST(req: Request) {
     // Validate input
     const validation = ContactSchema.safeParse(body);
     if (!validation.success) {
-      return NextResponse.json(
-        { error: "Invalid input", details: validation.error.errors },
-        { status: 400 }
-      );
+      return validationErrorResponse(validation.error);
     }
 
     const { name, email, subject, message } = validation.data;
@@ -73,9 +67,6 @@ export async function POST(req: Request) {
     );
   } catch (error) {
     console.error("[CONTACT_POST]", error);
-    return NextResponse.json(
-      { error: "Failed to submit contact form. Please try again." },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }

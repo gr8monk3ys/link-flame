@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getPriceRanges } from '@/lib/products';
+import { handleApiError } from '@/lib/api-response';
 
 export async function GET() {
   try {
@@ -7,9 +8,6 @@ export async function GET() {
     return NextResponse.json(priceRanges);
   } catch (error) {
     console.error('Error fetching price ranges:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch price ranges' },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }

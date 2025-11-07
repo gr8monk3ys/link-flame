@@ -1,20 +1,30 @@
 import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@clerk/nextjs/server"
+import { getServerAuth, requireRole } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
+import {
+  handleApiError,
+  unauthorizedResponse,
+  forbiddenResponse,
+  validationErrorResponse
+} from "@/lib/api-response"
+import { logger } from "@/lib/logger"
 
 // Schema for product filtering
 const filterSchema = z.object({
   categories: z.array(z.string()).optional(),
   priceRange: z
     .object({
-      min: z.number(),
-      max: z.number(),
+      min: z.number().nonnegative("Minimum price must be non-negative").max(1000000, "Minimum price cannot exceed $1,000,000"),
+      max: z.number().positive("Maximum price must be positive").max(1000000, "Maximum price cannot exceed $1,000,000"),
+    })
+    .refine((data) => data.min < data.max, {
+      message: "Minimum price must be less than maximum price",
     })
     .optional(),
   sortBy: z.enum(['newest', 'price_asc', 'price_desc', 'rating']).optional(),
-  page: z.number().min(1).default(1),
-  pageSize: z.number().min(1).max(48).default(12),
+  page: z.number().int().min(1).max(10000).default(1),
+  pageSize: z.number().int().min(1).max(100).default(12),
   searchQuery: z.string().optional(),
   rating: z.number().min(1).max(5).optional(),
   dateRange: z
@@ -23,6 +33,20 @@ const filterSchema = z.object({
       end: z.string().nullable(),
     })
     .optional(),
+})
+
+// Schema for product creation
+const createProductSchema = z.object({
+  title: z.string().min(1, "Title is required").max(200, "Title is too long"),
+  description: z.string().max(2000, "Description is too long").optional(),
+  price: z.number().positive("Price must be positive").max(1000000, "Price cannot exceed $1,000,000"),
+  salePrice: z.number().positive("Sale price must be positive").max(1000000, "Sale price cannot exceed $1,000,000").optional(),
+  image: z.string().url("Image must be a valid URL"),
+  category: z.string().max(100, "Category name is too long").optional().default("Uncategorized"),
+})
+.refine((data) => !data.salePrice || data.salePrice < data.price, {
+  message: "Sale price must be less than regular price",
+  path: ["salePrice"],
 })
 
 export async function GET(request: NextRequest) {
@@ -102,43 +126,50 @@ export async function GET(request: NextRequest) {
       totalPages: Math.ceil(total / pageSize),
     });
   } catch (error) {
-    console.error('Error fetching products:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch products' },
-      { status: 500 }
-    );
+    logger.error('Failed to fetch products', error);
+    return handleApiError(error);
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = await auth()
+    const { userId } = await getServerAuth()
 
     // Check if user is authenticated
-    // TODO: Implement role-based access control (ADMIN/EDITOR) using Clerk's metadata
     if (!userId) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      )
+      return unauthorizedResponse("Please sign in to create products")
+    }
+
+    // Check if user has required role (ADMIN or EDITOR)
+    const hasPermission = await requireRole(userId, ['ADMIN', 'EDITOR'])
+    if (!hasPermission) {
+      return forbiddenResponse("Only admins and editors can create products")
     }
 
     const body = await request.json();
 
+    // Validate input
+    const validation = createProductSchema.safeParse(body);
+    if (!validation.success) {
+      return validationErrorResponse(validation.error);
+    }
+
+    const { title, description, price, salePrice, image, category } = validation.data;
+
     const product = await prisma.product.create({
       data: {
-        ...body,
-        price: Number(body.price),
-        salePrice: Number(body.price) * 0.9,
-      } as unknown as any,
+        title,
+        description: description || null,
+        price,
+        salePrice: salePrice || null,
+        image,
+        category,
+      },
     });
 
     return NextResponse.json(product);
   } catch (error) {
-    console.error('Error creating product:', error);
-    return NextResponse.json(
-      { error: 'Failed to create product' },
-      { status: 500 }
-    );
+    logger.error('Failed to create product', error);
+    return handleApiError(error);
   }
 }

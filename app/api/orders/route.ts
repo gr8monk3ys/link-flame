@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
+import { getServerAuth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import {
   successResponse,
@@ -8,7 +8,7 @@ import {
 
 export async function GET(req: Request) {
   try {
-    const { userId } = await auth();
+    const { userId } = await getServerAuth();
 
     if (!userId) {
       return unauthorizedResponse();
