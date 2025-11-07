@@ -1,0 +1,64 @@
+{
+  "mcpServers": {
+    "next-devtools": {
+      "command": "npx",
+      "args": ["-y", "next-devtools-mcp@latest"],
+      "description": "Next.js development tools - query errors, logs, page metadata, and project structure"
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "description": "Enhanced reasoning for complex problems like implementing checkout flows, cart logic, or data migrations"
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "description": "Persistent memory across sessions - remembers project decisions, architecture patterns, and TODO progress"
+    },
+    "postgres": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
+      "env": {
+        "POSTGRES_CONNECTION_STRING": "postgresql://user:password@localhost:5432/linkflame"
+      },
+      "description": "PostgreSQL database queries - inspect schema, query data, analyze performance (when using PostgreSQL instead of SQLite)"
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "env": {
+        "BRAVE_API_KEY": "your_brave_api_key_here"
+      },
+      "description": "Web search for researching Next.js 16 features, Stripe API updates, React 19 patterns, and library documentation"
+    },
+    "fetch": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"],
+      "description": "Fetch web resources - read API documentation, check npm package details, verify Stripe webhook formats"
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "playwright-mcp"],
+      "description": "Browser automation for E2E testing - test checkout flows, cart operations, authentication, and blog navigation"
+    },
+    "git": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-git"],
+      "description": "Git operations - commits, branches, diffs, logs, and repository management"
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "your_github_token_here"
+      },
+      "description": "GitHub API access - create issues, manage PRs, query repository data, and track project progress"
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem"],
+      "args2": ["c:\\_Code\\link-flame"],
+      "description": "File system operations - read/write files, manage directory structure (redundant with Claude Code but useful for other agents)"
+    }
+  }
+}

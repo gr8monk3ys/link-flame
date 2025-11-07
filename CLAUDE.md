@@ -35,13 +35,15 @@ npx prisma db push           # Push schema changes without migrations (dev only)
 ## Architecture
 
 ### Tech Stack
-- **Framework**: Next.js 15.1.1 with App Router (React 18.2)
+- **Framework**: Next.js 16.0.1 with App Router (React 19) and MCP Server for AI agent integration
 - **Database**: SQLite via Prisma ORM (development setup, easily switchable to PostgreSQL)
-- **Authentication**: Clerk (`@clerk/nextjs`) - handles user auth, sessions, and protected routes
+- **Authentication**: NextAuth v5 with JWT strategy and credentials provider
 - **Payments**: Stripe integration for e-commerce checkout
 - **Styling**: Tailwind CSS + Radix UI components
 - **Content**: MDX support for rich blog content
-- **State**: Zustand for client-side state (cart, saved items)
+- **State**: React Context for cart management, client-side hooks for other state
+- **Validation**: Zod for API input validation with comprehensive type safety
+- **AI Integration**: Model Context Protocol (MCP) server configured in `.mcp.json` for real-time agent access
 
 ### Directory Structure
 
@@ -72,9 +74,13 @@ lib/                       # Utility functions and business logic
 ├── blog.ts               # Blog data fetching (hybrid: mock data + API)
 ├── posts.ts              # Alternative post management (mock data)
 ├── products.ts           # Product utilities
-├── auth.ts               # Auth helpers
-├── cart.ts               # Cart state management utilities
+├── auth.ts               # NextAuth server-side helpers (getServerAuth, requireRole)
+├── session.ts            # Guest session management for anonymous users
+├── api-response.ts       # Standardized API response helpers
+├── rate-limit.ts         # Rate limiting utilities
 ├── prisma.ts             # Prisma client singleton
+├── providers/            # React Context providers
+│   └── CartProvider.tsx  # Cart state management with Context API
 └── utils/                # Generic utilities
 
 content/                   # MDX blog content files
@@ -85,9 +91,10 @@ prisma/                    # Database schema and migrations
 └── seed.ts               # Database seeding script
 
 hooks/                     # Custom React hooks
-├── useCart.ts            # Cart management hook (Zustand)
 ├── useProducts.ts        # Product data fetching
 └── useSavedItems.ts      # Saved items functionality
+
+Note: Cart management now uses React Context Provider (see lib/providers/CartProvider.tsx)
 
 config/                    # Configuration files
 ├── site.ts               # Site metadata and navigation config
@@ -104,29 +111,47 @@ The codebase uses **two parallel blog systems** (likely mid-refactor):
 
 When working with blog features, understand which system is being used in that part of the codebase.
 
-### 2. Authentication Flow (Clerk)
-- Middleware (`middleware.ts`) runs Clerk authentication on all routes except static assets and Next.js internals
-- Protected routes automatically redirect unauthenticated users
-- User data accessible via `useUser()` hook or `auth()` helper in Server Components
-- Clerk handles sign-in/sign-up UI out of the box
+### 2. Authentication Flow (NextAuth v5)
+- **Middleware** (`middleware.ts`) uses NextAuth to protect routes and redirect unauthenticated users
+- **Strategy**: JWT-based sessions (no database sessions for better performance)
+- **Provider**: Credentials provider with bcrypt password hashing
+- **Server-side**: Use `getServerAuth()` from `lib/auth.ts` to access user session in API routes
+- **Client-side**: Use `useSession()` hook from `next-auth/react` in components
+- **Authorization**: Role-based access control via `requireRole()` helper (supports ADMIN, EDITOR, USER roles)
+- **Guest Sessions**: Anonymous users get guest session IDs for cart persistence before login
+
+**Auth Routes**:
+- Sign in: `/auth/signin`
+- Sign up: `/auth/signup`
+- Sign out: `/auth/signout`
+- Error page: `/auth/error`
+
+**Protected Routes**: `/account/*`, `/checkout` require authentication
 
 ### 3. Database Models (Prisma)
 Key models in `prisma/schema.prisma`:
-- **User**: Auth (managed by Clerk) + app-specific data
+- **User**: Auth with password field for credentials provider, role field for RBAC
 - **BlogPost**: Blog content with author, category, tags, featured status
-- **Product**: E-commerce products with reviews
-- **CartItem**: Shopping cart items (per-user)
-- **Order**: Stripe checkout sessions and order history
+- **Product**: E-commerce products with optional sale prices and reviews
+- **CartItem**: Shopping cart items (supports both authenticated users and guest sessions)
+- **Order**: Order records with items, payment status, and customer details
+- **Newsletter**: Email subscriptions for newsletter
+- **Contact**: Contact form submissions
 
-Note: Schema uses SQLite (`file:./dev.db`) but can be switched to PostgreSQL by updating `datasource.db.provider`.
+Note: Schema uses SQLite (`file:./dev.db`) but can be switched to PostgreSQL by updating `datasource.db.provider`. The Account and Session models have been removed as JWT strategy is used instead of database sessions.
 
 ### 4. E-commerce Integration
-- **Stripe Checkout**: Creates sessions via `/api/checkout`
+- **Stripe Checkout**: Creates sessions via `/api/checkout` (currently demo mode without real Stripe integration)
 - **Webhooks**: `/api/webhook` handles Stripe events (payment confirmation, order fulfillment)
-- **Cart State**: Managed by Zustand (`useCart` hook in `hooks/useCart.ts`)
-- Products can be fetched from:
-  - Prisma database (`Product` model)
-  - Shopify Storefront API (configured via env vars)
+- **Cart State**: Managed by React Context Provider (`lib/providers/CartProvider.tsx`)
+  - Supports both authenticated users and anonymous guest sessions
+  - Automatic cart migration when guest users log in (merges duplicate items)
+  - Guest sessions use cookies with 30-day expiration
+- **Guest Sessions**: Managed via `lib/session.ts` with functions:
+  - `getGuestSessionId()`: Creates or retrieves guest session ID
+  - `getUserIdForCart()`: Returns user ID or guest session ID
+  - `clearGuestSession()`: Clears guest session after login
+- Products fetched from Prisma database (`Product` model)
 
 ### 5. Content Management
 - **MDX Files**: Blog content stored in `content/blogs/` as `.mdx` files
@@ -136,11 +161,14 @@ Note: Schema uses SQLite (`file:./dev.db`) but can be switched to PostgreSQL by 
 ## Environment Variables
 
 Required environment variables (see `.env.example`):
-- `DATABASE_URL`: Database connection string
-- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`: Clerk authentication
-- `STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`: Stripe payments
-- `NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN`, `NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN`: Shopify integration (optional)
-- `NEXTAUTH_SECRET`: NextAuth secret (if using NextAuth alongside Clerk)
+- `DATABASE_URL`: Database connection string (SQLite by default)
+- `NEXTAUTH_URL`: Base URL for NextAuth (e.g., http://localhost:3000)
+- `NEXTAUTH_SECRET`: Secret for NextAuth JWT encryption (generate with `openssl rand -base64 32`)
+- `STRIPE_SECRET_KEY`: Stripe secret key for backend operations
+- `STRIPE_PUBLISHABLE_KEY`: Stripe publishable key for frontend
+- `STRIPE_WEBHOOK_SECRET`: Stripe webhook signing secret for event verification
+- `UPSTASH_REDIS_REST_URL`: Upstash Redis URL for rate limiting (optional)
+- `UPSTASH_REDIS_REST_TOKEN`: Upstash Redis token for rate limiting (optional)
 
 ## Important Development Notes
 
@@ -150,9 +178,22 @@ Required environment variables (see `.env.example`):
 3. For quick prototyping, use `npx prisma db push` (skips migrations)
 
 ### Authentication
-- Clerk middleware protects all routes by default
-- To make a route public, configure in `middleware.ts` matcher config
-- Access user data: `const { userId } = auth()` in Server Components, `const { user } = useUser()` in Client Components
+- NextAuth middleware protects specific routes (configured in `middleware.ts`)
+- Protected routes: `/account/*`, `/checkout`
+- **Server Components/API Routes**:
+  ```typescript
+  import { getServerAuth } from '@/lib/auth'
+  const { userId, user, session } = await getServerAuth()
+  ```
+- **Client Components**:
+  ```typescript
+  import { useSession } from 'next-auth/react'
+  const { data: session, status } = useSession()
+  ```
+- **Role-based access**:
+  ```typescript
+  const hasAccess = await requireRole(userId, ['ADMIN', 'EDITOR'])
+  ```
 
 ### Adding New Blog Posts
 Two options (depending on which system is active):
@@ -161,9 +202,21 @@ Two options (depending on which system is active):
 
 ### API Routes
 - All API routes are in `app/api/`
-- Use `NextResponse` for responses
-- Authentication: Check `auth()` from `@clerk/nextjs/server`
-- Rate limiting available via Upstash Redis (`@upstash/ratelimit`)
+- **Standardized responses**: Use helpers from `lib/api-response.ts`:
+  - `successResponse(data, options)`: Success responses (200/201)
+  - `errorResponse(message, code, details, status)`: Generic errors
+  - `validationErrorResponse(zodError)`: Zod validation errors (400)
+  - `unauthorizedResponse(message)`: Auth required (401)
+  - `forbiddenResponse(message)`: Permission denied (403)
+  - `notFoundResponse(resource)`: Resource not found (404)
+  - `rateLimitErrorResponse(reset)`: Rate limit exceeded (429)
+  - `handleApiError(error)`: Catch-all error handler (500)
+- **Authentication**: Use `getServerAuth()` from `lib/auth.ts`
+- **Validation**: Use Zod schemas for all API inputs with comprehensive validation:
+  - Numeric fields have min/max bounds (e.g., prices max $1M, quantities max 999)
+  - String fields have length limits
+  - Sale prices validated to be less than regular price
+- **Rate limiting**: Available via Upstash Redis (strict and standard modes)
 
 ### Component Organization
 - Feature-specific components go in `components/{feature}/`

@@ -1,6 +1,6 @@
 # 🌱 Link Flame - E-commerce & Blog Platform
 
-A Next.js 15 full-stack application demonstrating modern web development patterns with blog management, e-commerce functionality, and user authentication.
+A Next.js 16 full-stack application demonstrating modern web development patterns with blog management, e-commerce functionality, user authentication, and AI coding agent integration via MCP.
 
 ## Project Status
 
@@ -22,8 +22,8 @@ A Next.js 15 full-stack application demonstrating modern web development pattern
 ## Tech Stack
 
 ### Core
-- **Next.js 15.1.1** - App Router, Server Components, API Routes
-- **React 18** - UI library
+- **Next.js 16.0.1** - App Router, Server Components, API Routes, MCP Server
+- **React 19** - UI library with enhanced features
 - **TypeScript** - Type safety throughout
 - **Tailwind CSS** - Utility-first styling
 - **Radix UI** - Accessible component primitives
@@ -117,7 +117,134 @@ npx prisma migrate dev
 npx prisma db seed  # Optional: seed with sample data
 ```
 
-4. **Start development server:**
+## Model Context Protocol (MCP) Integration
+
+This project includes Next.js 16's built-in MCP server support, allowing AI coding agents to interact with your running application in real-time.
+
+### What is MCP?
+
+[Model Context Protocol (MCP)](https://modelcontextprotocol.io) is an open standard that enables AI agents and coding assistants to access your application's internals through a standardized interface. With MCP, coding agents can:
+
+- **Detect and diagnose errors** - Query build errors, runtime errors, and type errors from your dev server
+- **Access live application state** - Get real-time information about routes, components, and configuration
+- **Query documentation** - Access Next.js knowledge base and best practices
+- **Assist with migrations** - Automated upgrade helpers and codemods
+
+### Setup
+
+MCP is already configured in this project via `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "next-devtools": {
+      "command": "npx",
+      "args": ["-y", "next-devtools-mcp@latest"]
+    }
+  }
+}
+```
+
+### Usage
+
+1. **Start your development server:**
+```bash
+npm run dev
+```
+
+2. **Your MCP-compatible coding agent** (like Claude Code) will automatically discover and connect to the running Next.js instance at `http://localhost:3000/_next/mcp`
+
+3. **Ask your agent questions** like:
+   - "What errors are currently in my application?"
+   - "Help me upgrade to the latest Next.js features"
+   - "What pages are in my app?"
+
+### Available MCP Tools
+
+The Next.js MCP server provides these tools to coding agents:
+
+- **`get_errors`** - Retrieve current build errors, runtime errors, and type errors
+- **`get_logs`** - Access development server logs and browser console output
+- **`get_page_metadata`** - Get information about specific pages and their rendering
+- **`get_project_metadata`** - Retrieve project structure and configuration
+- **`get_server_action_by_id`** - Look up Server Actions by ID
+
+For more information, see:
+- [Next.js MCP documentation](https://nextjs.org/docs/app/api-reference/cli/next#enabling-mcp-server)
+- [Link Flame MCP Setup Guide](.mcp-setup-guide.md) - Detailed configuration for all 10 MCP servers
+
+### Advanced MCP Configuration
+
+This project includes 10 MCP servers beyond just Next.js devtools:
+
+| Server | Purpose | Setup Required |
+|--------|---------|----------------|
+| **next-devtools** | Next.js introspection | ✅ Ready |
+| **sequential-thinking** | Complex problem solving | ✅ Ready |
+| **memory** | Persistent session knowledge | ✅ Ready |
+| **fetch** | Web content retrieval | ✅ Ready |
+| **git** | Version control operations | ✅ Ready |
+| **postgres** | Database queries | ⚠️ PostgreSQL + config |
+| **playwright** | E2E browser testing | ⚠️ npm install |
+| **brave-search** | Web research | ⚠️ API key |
+| **github** | GitHub API access | ⚠️ Personal token |
+| **filesystem** | File operations | ℹ️ Optional |
+
+**Quick Start:** The first 5 servers work immediately without any configuration.
+
+See [.mcp-setup-guide.md](.mcp-setup-guide.md) for detailed setup instructions and use cases.
+
+## AI Subagents System
+
+Link Flame includes a sophisticated **multi-agent AI system** with 7 specialized agents that collaborate to handle different aspects of development, from security reviews to performance optimization.
+
+### Available Agents
+
+| Agent | Specialty | When to Use |
+|-------|-----------|-------------|
+| **[Security Guardian](.claude/agents/security-guardian.md)** | Security & Auth | Payment security, authentication, OWASP compliance |
+| **[Test Engineer](.claude/agents/test-engineer.md)** | QA & Testing | E2E tests, checkout validation, regression testing |
+| **[Feature Engineer](.claude/agents/feature-engineer.md)** | Feature Development | Implementing new features, TODO.md tasks |
+| **[Database Specialist](.claude/agents/database-specialist.md)** | Data & Schema | Prisma migrations, schema design, query optimization |
+| **[Performance Optimizer](.claude/agents/performance-optimizer.md)** | Speed & Performance | Core Web Vitals, bundle size, API response times |
+| **[API Guardian](.claude/agents/api-guardian.md)** | API Design | RESTful endpoints, validation, error handling |
+| **[Bug Hunter](.claude/agents/bug-hunter.md)** | Debugging & Fixes | Issue investigation, root cause analysis |
+
+### How to Use Subagents
+
+Simply invoke an agent by name when working with AI coding assistants like Claude Code:
+
+```
+"Security Guardian, review the Stripe webhook handler"
+"Feature Engineer, implement product reviews functionality"
+"Test Engineer, write E2E tests for the checkout flow"
+```
+
+### Example Workflows
+
+**Implementing a New Feature:**
+```
+1. Feature Engineer: Plan and implement the feature
+2. Security Guardian: Review for vulnerabilities
+3. Database Specialist: Design schema changes
+4. API Guardian: Review endpoint consistency
+5. Test Engineer: Write E2E tests
+6. Performance Optimizer: Verify performance impact
+```
+
+**Fixing a Production Bug:**
+```
+1. Bug Hunter: Investigate and diagnose root cause
+2. Feature Engineer: Implement fix
+3. Test Engineer: Add regression test
+4. Security Guardian: Verify no security implications
+```
+
+**See [.claude/AGENTS_GUIDE.md](.claude/AGENTS_GUIDE.md) for comprehensive documentation, workflows, and best practices.**
+
+### Running the Application
+
+**Start development server:**
 ```bash
 npm run dev
 ```
