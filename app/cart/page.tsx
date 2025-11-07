@@ -4,7 +4,7 @@ import { useEffect, useState, memo, Suspense } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import { SignedIn } from "@clerk/nextjs";
+import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/providers/CartProvider";
 import { useSavedItems } from "@/hooks/useSavedItems";
@@ -188,17 +188,18 @@ CartItemRow.displayName = "CartItemRow";
 
 export default function CartPage() {
   const router = useRouter();
-  const { 
-    cart, 
-    removeItem, 
-    updateQuantity, 
-    isLoading, 
+  const { data: session, status } = useSession();
+  const {
+    cart,
+    removeItem,
+    updateQuantity,
+    isLoading,
     cartTotal,
     hasInitializedCart,
     fetchCartItems
   } = useCart();
   const { saveItem } = useSavedItems();
-  
+
   const items = cart.items || [];
 
   // Fetch cart items when the page loads
@@ -206,8 +207,27 @@ export default function CartPage() {
     fetchCartItems();
   }, [fetchCartItems]);
 
+  // Redirect to sign in if not authenticated
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/signin?callbackUrl=/cart");
+    }
+  }, [status, router]);
+
+  if (status === "loading") {
+    return (
+      <div className="container flex items-center justify-center min-h-[calc(100vh-200px)]">
+        <div className="animate-spin rounded-full size-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return null;
+  }
+
   return (
-    <SignedIn>
+    <>
       <Toaster position="top-right" />
       <div className="container py-8">
         <h1 className="mb-8 text-3xl font-bold">Shopping Cart</h1>
@@ -288,6 +308,6 @@ export default function CartPage() {
           </>
         )}
       </div>
-    </SignedIn>
+    </>
   );
 }

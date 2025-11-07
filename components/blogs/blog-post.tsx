@@ -6,6 +6,7 @@ import { format } from "date-fns"
 import { Share2, Heart, MessageSquare, Bookmark } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { buttonVariants } from "@/components/ui/button"
+import DOMPurify from "isomorphic-dompurify"
 
 interface Author {
   name: string
@@ -114,7 +115,7 @@ export function BlogPost({
 
       {/* Content */}
       <div className="prose prose-lg max-w-none">
-        <div dangerouslySetInnerHTML={{ __html: content }} />
+        <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }} />
       </div>
 
       {/* Tags */}

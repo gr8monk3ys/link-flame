@@ -2,11 +2,14 @@
 
 import React, { Component, ErrorInfo, ReactNode, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { logger } from '@/lib/logger';
 
-// Function to report errors to a monitoring service (placeholder)
+// Function to report errors to a monitoring service
 const reportError = (error: Error, errorInfo: ErrorInfo) => {
-  // In a real app, this would send the error to a service like Sentry, LogRocket, etc.
-  console.error('Error reported to monitoring service:', error, errorInfo);
+  // Report to centralized logging service
+  logger.error('React error boundary caught error', error, {
+    componentStack: errorInfo.componentStack
+  });
 };
 
 interface Props {
@@ -65,8 +68,8 @@ class ErrorBoundaryClass extends Component<Props, State> {
         return (
           <div className="rounded-md border border-red-200 bg-red-50 p-4">
             <div className="flex">
-              <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+              <div className="shrink-0">
+                <svg className="size-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                 </svg>
               </div>
@@ -149,7 +152,11 @@ const ErrorBoundary = (props: Props) => {
   useEffect(() => {
     // Add global error handler for uncaught errors
     const errorHandler = (event: ErrorEvent) => {
-      console.error('Global error caught:', event.error);
+      logger.error('Global uncaught error', event.error, {
+        filename: event.filename,
+        lineno: event.lineno,
+        colno: event.colno
+      });
       setWindowError(event.error);
       // Prevent default browser error handling
       event.preventDefault();
@@ -168,8 +175,8 @@ const ErrorBoundary = (props: Props) => {
       return (
         <div className="rounded-md border border-red-200 bg-red-50 p-4">
           <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+            <div className="shrink-0">
+              <svg className="size-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
               </svg>
             </div>

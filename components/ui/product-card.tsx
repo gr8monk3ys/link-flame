@@ -6,8 +6,8 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { buttonVariants } from "@/components/ui/button"
 import { StarRating } from "@/components/ui/star-rating"
-import { useCart } from "@/hooks/useCart";
-import { useAuth, SignedIn, SignedOut } from "@clerk/nextjs";
+import { useCart } from "@/lib/providers/CartProvider";
+import { useSession } from "next-auth/react";
 
 export type TopPickProduct = {
   id: string
@@ -30,8 +30,9 @@ interface AdminProductCardProps {
 type ProductCardProps = TopPickProductCardProps | AdminProductCardProps
 
 const ProductCard = (props: ProductCardProps) => {
-  const { userId } = useAuth();
-  const { addToCart } = useCart()
+  const { data: session } = useSession();
+  const userId = session?.user?.id;
+  const { addItemToCart } = useCart()
   if (props.variant === "admin") {
     const { product } = props
     return (
@@ -64,17 +65,23 @@ const ProductCard = (props: ProductCardProps) => {
               </div>
             )}
           </div>
-          <SignedIn>
+          {userId && (
             <button
               className={buttonVariants({
                 variant: "default",
                 className: "w-full",
               })}
-              onClick={() => userId && addToCart(userId, product.id)}
+              onClick={() => addItemToCart({
+                id: product.id,
+                title: product.title,
+                price: product.price,
+                image: product.image,
+                quantity: 1,
+              })}
             >
               Add to Cart
             </button>
-          </SignedIn>
+          )}
         </CardContent>
       </Card>
     )
@@ -108,17 +115,23 @@ const ProductCard = (props: ProductCardProps) => {
         >
           View Details
         </a>
-        <SignedIn>
+        {userId && (
           <button
             className={buttonVariants({
               variant: "default",
               className: "w-full",
             })}
-            onClick={() => userId && addToCart(userId, product.id)}
+            onClick={() => addItemToCart({
+              id: product.id,
+              title: product.title,
+              price: 0, // TopPick doesn't have price, may need to fetch
+              image: product.image,
+              quantity: 1,
+            })}
           >
             Add to Cart
           </button>
-        </SignedIn>
+        )}
       </CardFooter>
     </Card>
   )

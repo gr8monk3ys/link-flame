@@ -5,7 +5,7 @@ import { fontSans } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
 import { ThemeProvider } from "@/components/layout/theme-provider"
 import { Analytics } from "@/components/layout/analytics"
-import { ClerkProvider } from "@clerk/nextjs";
+import { SessionProvider } from "next-auth/react";
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { CartProvider } from "@/lib/providers/CartProvider"
@@ -84,7 +84,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           fontSans.variable
         )}
       >
-        <ClerkProvider>
+        <SessionProvider>
           <ThemeProvider
             attribute="class"
             defaultTheme="light"
@@ -104,7 +104,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
               </ErrorBoundary>
             </CartProvider>
           </ThemeProvider>
-        </ClerkProvider>
+        </SessionProvider>
       </body>
     </html>
   )

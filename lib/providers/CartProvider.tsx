@@ -10,6 +10,7 @@ import React, {
   useState,
   useMemo,
 } from 'react'
+import { useSession } from 'next-auth/react'
 import { CartItem } from '@/types/cart'
 import { cartReducer } from './cartReducer'
 import { toast } from 'sonner'
@@ -38,6 +39,7 @@ const Context = createContext({} as CartContext)
 export const useCart = () => useContext(Context)
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
+  const { data: session, status } = useSession()
   const [cart, dispatchCart] = useReducer(cartReducer, {
     items: [],
   })
@@ -53,6 +55,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(false)
   const hasInitialized = useRef(false)
   const [hasInitializedCart, setHasInitialized] = useState(false)
+  const prevAuthStatus = useRef<string | null>(null)
 
   // Check local storage for a cart
   // If there is a cart, fetch the products and hydrate the cart
@@ -117,7 +120,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(true)
     try {
       const response = await fetch('/api/cart')
-      
+
       if (response.ok) {
         const items = await response.json()
         dispatchCart({
@@ -135,6 +138,40 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       setIsLoading(false)
     }
   }, [])
+
+  // Handle cart migration when user logs in
+  useEffect(() => {
+    const migrateGuestCart = async () => {
+      // Check if user just logged in (transition from unauthenticated to authenticated)
+      if (prevAuthStatus.current === 'unauthenticated' && status === 'authenticated' && session?.user?.id) {
+        try {
+          const response = await fetch('/api/cart/migrate', {
+            method: 'POST',
+          })
+
+          if (response.ok) {
+            const data = await response.json()
+            if (data.total > 0) {
+              toast.success(`Welcome back! ${data.total} item(s) added to your cart`)
+              // Refresh cart to show migrated items
+              await fetchCartItems()
+            }
+          } else {
+            console.error('Failed to migrate guest cart')
+          }
+        } catch (error) {
+          console.error('[CART_MIGRATION_ERROR]', error)
+        }
+      }
+
+      // Update the previous auth status
+      prevAuthStatus.current = status
+    }
+
+    if (status !== 'loading') {
+      migrateGuestCart()
+    }
+  }, [status, session, fetchCartItems])
 
   // Sync cart to local storage - only store IDs and quantities
   const syncCartToLocalStorage = useCallback((currentCart: { items: CartItem[] }) => {
