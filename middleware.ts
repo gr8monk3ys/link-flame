@@ -1,6 +1,25 @@
-import { clerkMiddleware } from '@clerk/nextjs/server'
+import { auth } from '@/auth';
+import { NextResponse } from 'next/server';
 
-export default clerkMiddleware()
+export default auth((req) => {
+  const { pathname } = req.nextUrl;
+  const isLoggedIn = !!req.auth;
+
+  // Protected routes that require authentication
+  const protectedRoutes = ['/account', '/checkout'];
+  const isProtectedRoute = protectedRoutes.some((route) =>
+    pathname.startsWith(route)
+  );
+
+  // Redirect to sign-in if accessing protected route without auth
+  if (isProtectedRoute && !isLoggedIn) {
+    const signInUrl = new URL('/auth/signin', req.url);
+    signInUrl.searchParams.set('callbackUrl', pathname);
+    return NextResponse.redirect(signInUrl);
+  }
+
+  return NextResponse.next();
+});
 
 export const config = {
   matcher: [
