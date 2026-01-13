@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { checkStrictRateLimit, getIdentifier } from "@/lib/rate-limit";
+import { validateCsrfToken } from "@/lib/csrf";
+import { sendContactNotification, isEmailConfigured } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
 import {
   handleApiError,
   rateLimitErrorResponse,
-  validationErrorResponse
+  validationErrorResponse,
+  errorResponse
 } from "@/lib/api-response";
 
 // Validation schema for contact form
@@ -18,6 +21,17 @@ const ContactSchema = z.object({
 
 export async function POST(req: Request) {
   try {
+    // CSRF protection
+    const csrfValid = await validateCsrfToken(req);
+    if (!csrfValid) {
+      return errorResponse(
+        "Invalid or missing CSRF token",
+        "CSRF_VALIDATION_FAILED",
+        undefined,
+        403
+      );
+    }
+
     // Apply strict rate limiting (prevent spam)
     const identifier = getIdentifier(req);
     const { success, reset } = await checkStrictRateLimit(identifier);
@@ -47,15 +61,12 @@ export async function POST(req: Request) {
       },
     });
 
-    // TODO: Send notification email to admin
-    // TODO: Send confirmation email to user
-    // Example with Resend:
-    // await resend.emails.send({
-    //   from: 'noreply@linkflame.com',
-    //   to: 'admin@linkflame.com',
-    //   subject: `New Contact: ${subject}`,
-    //   html: `<p><strong>From:</strong> ${name} (${email})</p><p><strong>Message:</strong> ${message}</p>`
-    // });
+    // Send notification email to admin and confirmation to user (if configured)
+    if (isEmailConfigured()) {
+      await sendContactNotification({ name, email, subject, message });
+    } else {
+      console.warn('[CONTACT] Email service not configured - skipping notification emails');
+    }
 
     return NextResponse.json(
       {

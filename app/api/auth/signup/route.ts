@@ -5,8 +5,10 @@ import { z } from "zod";
 import {
   handleApiError,
   validationErrorResponse,
-  errorResponse
+  errorResponse,
+  rateLimitErrorResponse
 } from "@/lib/api-response";
+import { checkStrictRateLimit, getIdentifier } from "@/lib/rate-limit";
 
 const signupSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -16,6 +18,14 @@ const signupSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    // Rate limiting: 5 requests per minute for signup
+    const identifier = getIdentifier(request);
+    const { success, reset } = await checkStrictRateLimit(identifier);
+
+    if (!success) {
+      return rateLimitErrorResponse(reset);
+    }
+
     const body = await request.json();
 
     // Validate input

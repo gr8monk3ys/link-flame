@@ -1,0 +1,182 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  # Deploy to staging on push to main
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'staging')
+    environment:
+      name: staging
+      url: ${{ vars.STAGING_URL }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Build application
+        run: npm run build
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NEXTAUTH_URL: ${{ vars.STAGING_URL }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+
+      - name: Run database migrations
+        run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      # Vercel deployment (if using Vercel)
+      - name: Deploy to Vercel (Staging)
+        if: vars.DEPLOY_PLATFORM == 'vercel'
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./
+          alias-domains: |
+            staging.link-flame.com
+
+      # Alternative: Deploy to custom server via SSH
+      - name: Deploy to Server (SSH)
+        if: vars.DEPLOY_PLATFORM == 'ssh'
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/link-flame-staging
+            git pull origin main
+            npm ci --production
+            npx prisma generate
+            npx prisma migrate deploy
+            pm2 restart link-flame-staging
+
+      - name: Notify deployment success
+        if: success()
+        run: echo "Successfully deployed to staging!"
+
+      - name: Notify deployment failure
+        if: failure()
+        run: echo "Deployment to staging failed!"
+
+  # Deploy to production (manual trigger only)
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && inputs.environment == 'production'
+    environment:
+      name: production
+      url: ${{ vars.PRODUCTION_URL }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Build application
+        run: npm run build
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NEXTAUTH_URL: ${{ vars.PRODUCTION_URL }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+
+      - name: Create database backup
+        run: |
+          echo "Creating database backup before migration..."
+          # Add your backup command here based on your database provider
+          # For PostgreSQL: pg_dump $DATABASE_URL > backup_$(date +%Y%m%d_%H%M%S).sql
+
+      - name: Run database migrations
+        run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      # Vercel deployment (if using Vercel)
+      - name: Deploy to Vercel (Production)
+        if: vars.DEPLOY_PLATFORM == 'vercel'
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: ./
+
+      # Alternative: Deploy to custom server via SSH
+      - name: Deploy to Server (SSH)
+        if: vars.DEPLOY_PLATFORM == 'ssh'
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/link-flame-production
+            git pull origin main
+            npm ci --production
+            npx prisma generate
+            npx prisma migrate deploy
+            pm2 restart link-flame-production
+
+      - name: Health check
+        run: |
+          echo "Running health check..."
+          sleep 30
+          curl -f ${{ vars.PRODUCTION_URL }}/api/health || exit 1
+
+      - name: Notify deployment success
+        if: success()
+        run: echo "Successfully deployed to production!"
+
+      - name: Rollback on failure
+        if: failure()
+        run: |
+          echo "Production deployment failed! Manual rollback may be required."
+          # Add rollback commands here if needed

@@ -37,9 +37,12 @@ model Product {
   inventory   Int         @default(0)
   subtitle    String?
   featured    Boolean     @default(false)
+  hasVariants Boolean     @default(false) // Whether this product has variant options
   reviews     Review[]
+  variants    ProductVariant[]
   cartItems   CartItem[]
   orderItems  OrderItem[]
+  savedItems  SavedItem[]
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
@@ -47,6 +50,34 @@ model Product {
   @@index([category, featured])
   @@index([featured])
   @@index([createdAt(sort: Desc)])
+}
+
+// Product variants for size, color, material options
+model ProductVariant {
+  id          String    @id @default(cuid())
+  productId   String
+  sku         String?   // Stock Keeping Unit for this variant
+  size        String?   // e.g., "S", "M", "L", "XL"
+  color       String?   // e.g., "Red", "Blue", "Green"
+  colorCode   String?   // Hex color code for UI display, e.g., "#FF0000"
+  material    String?   // e.g., "Cotton", "Bamboo", "Organic Cotton"
+  price       Float?    // Override price (if null, uses product.price)
+  salePrice   Float?    // Override sale price
+  image       String?   // Override image (for color-specific photos)
+  inventory   Int       @default(0)
+  isDefault   Boolean   @default(false) // Mark one variant as default selection
+  sortOrder   Int       @default(0)     // For controlling display order
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  product     Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
+
+  @@unique([productId, sku])
+  @@index([productId])
+  @@index([productId, isDefault])
+  @@index([productId, sortOrder])
 }
 
 model Review {
@@ -76,13 +107,32 @@ model CartItem {
   id        String   @id @default(cuid())
   userId    String
   productId String
+  variantId String?  // Optional: if product has variants, this specifies which one
   quantity  Int
   product   Product  @relation(fields: [productId], references: [id])
+  variant   ProductVariant? @relation(fields: [variantId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([userId, productId, variantId]) // Prevent duplicate cart items for same variant
   @@index([userId])
   @@index([productId])
+  @@index([variantId])
+}
+
+model SavedItem {
+  id        String   @id @default(cuid())
+  userId    String   // Can be authenticated user ID or guest session ID
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  savedAt   DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, productId]) // Prevent duplicate saves
+  @@index([userId])
+  @@index([productId])
+  @@index([userId, savedAt(sort: Desc)])
 }
 
 model Category {
@@ -128,11 +178,20 @@ model Order {
   userId          String
   stripeSessionId String?     @unique
   amount          Float
-  status          String
+  status          String      // Payment status: paid, pending, failed, refunded
   shippingAddress String?
   paymentMethod   String?
   customerEmail   String?
   customerName    String?
+
+  // Shipping tracking fields
+  shippingStatus    String?   @default("processing") // processing, shipped, in_transit, out_for_delivery, delivered, cancelled
+  trackingNumber    String?
+  shippingCarrier   String?   // UPS, USPS, FedEx, DHL, etc.
+  estimatedDelivery DateTime?
+  shippedAt         DateTime?
+  deliveredAt       DateTime?
+
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
   items           OrderItem[]
@@ -141,22 +200,31 @@ model Order {
   @@index([stripeSessionId])
   @@index([userId, createdAt(sort: Desc)])
   @@index([status])
+  @@index([shippingStatus])
 }
 
 model OrderItem {
-  id        String   @id @default(cuid())
-  orderId   String
-  productId String
-  quantity  Int
-  price     Float
-  title     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product   Product  @relation(fields: [productId], references: [id])
+  id         String   @id @default(cuid())
+  orderId    String
+  productId  String
+  variantId  String?  // Reference to variant if applicable
+  quantity   Int
+  price      Float
+  title      String
+  // Store variant details at time of order (denormalized for historical accuracy)
+  variantSku     String?
+  variantSize    String?
+  variantColor   String?
+  variantMaterial String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product    Product  @relation(fields: [productId], references: [id])
+  variant    ProductVariant? @relation(fields: [variantId], references: [id])
 
   @@index([orderId])
   @@index([productId])
+  @@index([variantId])
 }
 
 model Newsletter {

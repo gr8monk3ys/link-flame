@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUserIdForCart } from "@/lib/session";
 import { checkRateLimit, getIdentifier } from "@/lib/rate-limit";
+import { validateCsrfToken } from "@/lib/csrf";
 import { z } from "zod";
 import {
   handleApiError,
@@ -15,11 +16,13 @@ import { logger } from "@/lib/logger";
 // Validation schemas
 const AddToCartSchema = z.object({
   productId: z.string().min(1, "Product ID is required"),
+  variantId: z.string().optional().nullable(), // Optional variant ID
   quantity: z.number().int().positive("Quantity must be a positive integer").max(999, "Quantity cannot exceed 999").default(1),
 });
 
 const UpdateCartSchema = z.object({
   productId: z.string().min(1, "Product ID is required"),
+  variantId: z.string().optional().nullable(), // Optional variant ID
   quantity: z.number().int().nonnegative("Quantity must be 0 or positive").max(999, "Quantity cannot exceed 999"),
 });
 
@@ -34,17 +37,36 @@ export async function GET(req: Request) {
       },
       include: {
         product: true,
+        variant: true,
       },
     });
 
     // Transform the data to match the CartItem interface
-    const formattedItems = cartItems.map(item => ({
-      id: item.productId,
-      title: item.product.title,
-      price: Number(item.product.price),
-      image: item.product.image,
-      quantity: item.quantity,
-    }));
+    const formattedItems = cartItems.map(item => {
+      // Use variant price if available, otherwise use product price
+      const price = item.variant?.price ?? item.variant?.salePrice ??
+                    item.product.salePrice ?? item.product.price;
+      const image = item.variant?.image ?? item.product.image;
+
+      return {
+        id: item.productId,
+        cartItemId: item.id,
+        title: item.product.title,
+        price: Number(price),
+        image: image,
+        quantity: item.quantity,
+        // Variant info
+        variantId: item.variantId,
+        variant: item.variant ? {
+          id: item.variant.id,
+          sku: item.variant.sku,
+          size: item.variant.size,
+          color: item.variant.color,
+          colorCode: item.variant.colorCode,
+          material: item.variant.material,
+        } : null,
+      };
+    });
 
     return NextResponse.json(formattedItems);
   } catch (error) {
@@ -55,6 +77,17 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
+    // CSRF protection
+    const csrfValid = await validateCsrfToken(req);
+    if (!csrfValid) {
+      return errorResponse(
+        "Invalid or missing CSRF token",
+        "CSRF_VALIDATION_FAILED",
+        undefined,
+        403
+      );
+    }
+
     // Get authenticated user ID first for rate limiting
     const { userId: authUserId } = await getServerAuth();
 
@@ -74,25 +107,58 @@ export async function POST(req: Request) {
       return validationErrorResponse(validation.error);
     }
 
-    const { productId, quantity } = validation.data;
+    const { productId, variantId, quantity } = validation.data;
 
     // Get user ID for cart operations
     const userIdToUse = await getUserIdForCart(authUserId);
 
-    // Fetch product to check inventory
+    // Fetch product with variants to check inventory
     const product = await prisma.product.findUnique({
       where: { id: productId },
-      select: { id: true, title: true, inventory: true },
+      select: {
+        id: true,
+        title: true,
+        inventory: true,
+        hasVariants: true,
+        variants: true,
+      },
     });
 
     if (!product) {
       return errorResponse("Product not found", undefined, undefined, 404);
     }
 
+    // Validate variant if product has variants
+    let variant = null;
+    let inventoryToCheck = product.inventory;
+
+    if (product.hasVariants) {
+      if (!variantId) {
+        return errorResponse(
+          "Please select a variant (size/color) for this product",
+          undefined,
+          undefined,
+          400
+        );
+      }
+
+      variant = product.variants.find(v => v.id === variantId);
+      if (!variant) {
+        return errorResponse("Selected variant not found", undefined, undefined, 404);
+      }
+
+      inventoryToCheck = variant.inventory;
+    } else if (variantId) {
+      // Product doesn't have variants but variantId was provided - ignore it
+      // This allows backward compatibility
+    }
+
+    // Find existing cart item for this product+variant combination
     const existingItem = await prisma.cartItem.findFirst({
       where: {
         userId: userIdToUse,
         productId,
+        variantId: variantId || null,
       },
     });
 
@@ -110,9 +176,12 @@ export async function POST(req: Request) {
       }
 
       // Check if enough inventory available
-      if (newQuantity > product.inventory) {
+      if (newQuantity > inventoryToCheck) {
+        const itemName = variant
+          ? `${product.title} (${[variant.size, variant.color, variant.material].filter(Boolean).join(", ")})`
+          : product.title;
         return errorResponse(
-          `Only ${product.inventory} items available for ${product.title}`,
+          `Only ${inventoryToCheck} items available for ${itemName}`,
           undefined,
           undefined,
           400
@@ -129,9 +198,12 @@ export async function POST(req: Request) {
       });
     } else {
       // Check inventory for new item
-      if (quantity > product.inventory) {
+      if (quantity > inventoryToCheck) {
+        const itemName = variant
+          ? `${product.title} (${[variant.size, variant.color, variant.material].filter(Boolean).join(", ")})`
+          : product.title;
         return errorResponse(
-          `Only ${product.inventory} items available for ${product.title}`,
+          `Only ${inventoryToCheck} items available for ${itemName}`,
           undefined,
           undefined,
           400
@@ -142,6 +214,7 @@ export async function POST(req: Request) {
         data: {
           userId: userIdToUse,
           productId,
+          variantId: variantId || null,
           quantity,
         },
       });
@@ -150,6 +223,7 @@ export async function POST(req: Request) {
     logger.info("Item added to cart", {
       userId: userIdToUse,
       productId,
+      variantId,
       quantity,
     });
 
@@ -162,21 +236,44 @@ export async function POST(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
+    // CSRF protection
+    const csrfValid = await validateCsrfToken(req);
+    if (!csrfValid) {
+      return errorResponse(
+        "Invalid or missing CSRF token",
+        "CSRF_VALIDATION_FAILED",
+        undefined,
+        403
+      );
+    }
+
     const { userId } = await getServerAuth();
     const userIdToUse = await getUserIdForCart(userId);
 
     const url = new URL(req.url);
     const productId = url.searchParams.get("productId");
-    if (!productId) {
-      return errorResponse("Product ID is required", undefined, undefined, 400);
-    }
+    const variantId = url.searchParams.get("variantId");
+    const cartItemId = url.searchParams.get("cartItemId"); // Alternative: delete by cart item ID
 
-    await prisma.cartItem.deleteMany({
-      where: {
-        userId: userIdToUse,
-        productId,
-      },
-    });
+    // Support deletion by cartItemId (more precise) or by productId+variantId
+    if (cartItemId) {
+      await prisma.cartItem.deleteMany({
+        where: {
+          id: cartItemId,
+          userId: userIdToUse,
+        },
+      });
+    } else if (productId) {
+      await prisma.cartItem.deleteMany({
+        where: {
+          userId: userIdToUse,
+          productId,
+          variantId: variantId || null,
+        },
+      });
+    } else {
+      return errorResponse("Product ID or Cart Item ID is required", undefined, undefined, 400);
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -187,6 +284,17 @@ export async function DELETE(req: Request) {
 
 export async function PATCH(req: Request) {
   try {
+    // CSRF protection
+    const csrfValid = await validateCsrfToken(req);
+    if (!csrfValid) {
+      return errorResponse(
+        "Invalid or missing CSRF token",
+        "CSRF_VALIDATION_FAILED",
+        undefined,
+        403
+      );
+    }
+
     const { userId } = await getServerAuth();
     const userIdToUse = await getUserIdForCart(userId);
 
@@ -198,13 +306,14 @@ export async function PATCH(req: Request) {
       return validationErrorResponse(validation.error);
     }
 
-    const { productId, quantity } = validation.data;
+    const { productId, variantId, quantity } = validation.data;
 
     if (quantity === 0) {
       await prisma.cartItem.deleteMany({
         where: {
           userId: userIdToUse,
           productId,
+          variantId: variantId || null,
         },
       });
     } else {
@@ -212,6 +321,7 @@ export async function PATCH(req: Request) {
         where: {
           userId: userIdToUse,
           productId,
+          variantId: variantId || null,
         },
         data: {
           quantity,

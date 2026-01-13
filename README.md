@@ -7,7 +7,7 @@ A Next.js 16 full-stack application demonstrating modern web development pattern
 **This is a demonstration/learning project** showcasing:
 - Modern Next.js App Router architecture
 - Stripe payment integration
-- Clerk authentication
+- NextAuth v5 authentication with JWT strategy
 - Prisma ORM with SQLite/PostgreSQL
 - TypeScript throughout
 - API design patterns
@@ -31,7 +31,7 @@ A Next.js 16 full-stack application demonstrating modern web development pattern
 ### Backend
 - **Prisma ORM** - Database modeling and migrations
 - **SQLite** (dev) / **PostgreSQL** (production-ready)
-- **Clerk** - Authentication and user management
+- **NextAuth v5** - Authentication with JWT strategy and credentials provider
 - **Stripe** - Payment processing and webhooks
 
 ### Infrastructure
@@ -58,7 +58,7 @@ A Next.js 16 full-stack application demonstrating modern web development pattern
 - SEO-optimized metadata
 
 ### ✅ User Management
-- Clerk authentication (OAuth, email/password)
+- NextAuth v5 authentication (JWT-based, credentials provider)
 - Protected routes and API endpoints
 - User-specific cart and order data
 - Guest session handling with unique IDs
@@ -97,9 +97,10 @@ Edit `.env` with your credentials:
 # Database
 DATABASE_URL="file:./prisma/dev.db"
 
-# Clerk Authentication (https://clerk.com)
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_..."
-CLERK_SECRET_KEY="sk_test_..."
+# NextAuth v5 (https://next-auth.js.org)
+# Generate secret with: openssl rand -base64 32
+NEXTAUTH_SECRET="your_nextauth_secret_here"
+NEXTAUTH_URL="http://localhost:3000"
 
 # Stripe (https://stripe.com)
 STRIPE_SECRET_KEY="sk_test_..."
@@ -253,19 +254,33 @@ Open [http://localhost:3000](http://localhost:3000)
 
 ### Detailed Service Configuration
 
-#### Clerk Authentication Setup
+#### NextAuth v5 Authentication Setup
 
-1. Create a free account at [clerk.com](https://clerk.com)
-2. Create a new application
-3. Navigate to **API Keys** in the dashboard
-4. Copy your publishable and secret keys to `.env`:
-   ```env
-   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
-   CLERK_SECRET_KEY=sk_test_...
+1. **Generate a secret key**:
+   ```bash
+   openssl rand -base64 32
    ```
-5. Configure allowed redirect URLs in Clerk dashboard:
-   - Add `http://localhost:3000` for development
-   - Add your production domain for deployment
+
+2. **Add to `.env`**:
+   ```env
+   NEXTAUTH_SECRET=your_generated_secret_here
+   NEXTAUTH_URL=http://localhost:3000
+   ```
+
+3. **Authentication features**:
+   - JWT-based sessions (no database sessions needed)
+   - Credentials provider with bcrypt password hashing
+   - Role-based access control (ADMIN, EDITOR, USER)
+   - Guest session support for anonymous cart management
+
+4. **Protected routes** (configured in `middleware.ts`):
+   - `/account/*` - User account pages
+   - `/checkout` - Checkout flow
+
+5. **Auth pages**:
+   - Sign in: `/auth/signin`
+   - Sign up: `/auth/signup`
+   - Sign out: `/auth/signout`
 
 #### Stripe Payment Setup
 

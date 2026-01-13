@@ -10,6 +10,7 @@ import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { CartProvider } from "@/lib/providers/CartProvider"
 import ErrorBoundary from "@/components/layout/error-boundary"
+import { ServiceWorkerRegistration } from "@/components/shared/service-worker-registration"
 
 export function getMetadata(): Metadata {
   const metadata: Metadata = {
@@ -101,6 +102,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                   <SiteFooter className="mt-auto" />
                 </div>
                 {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && <Analytics />}
+                <ServiceWorkerRegistration />
               </ErrorBoundary>
             </CartProvider>
           </ThemeProvider>

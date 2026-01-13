@@ -154,7 +154,7 @@ export default function ProductGrid({
                 height={400}
                 className="size-full object-cover object-center transition-opacity group-hover:opacity-75"
                 priority={currentPage === 1}
-                unoptimized
+                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
               />
             </div>
             <div className="mt-4 space-y-2">

@@ -8,6 +8,20 @@ import { buttonVariants } from "@/components/ui/button"
 import { StarRating } from "@/components/ui/star-rating"
 import { useCart } from "@/lib/providers/CartProvider";
 import { useSession } from "next-auth/react";
+import { toast } from "sonner";
+
+// Stock status thresholds
+const LOW_STOCK_THRESHOLD = 5;
+
+function getStockBadge(inventory: number): { label: string; variant: "default" | "secondary" | "destructive" | "outline" } | null {
+  if (inventory <= 0) {
+    return { label: 'Out of Stock', variant: 'destructive' };
+  }
+  if (inventory <= LOW_STOCK_THRESHOLD) {
+    return { label: `Only ${inventory} left`, variant: 'secondary' };
+  }
+  return null; // No badge for normal stock
+}
 
 export type TopPickProduct = {
   id: string
@@ -35,9 +49,26 @@ const ProductCard = (props: ProductCardProps) => {
   const { addItemToCart } = useCart()
   if (props.variant === "admin") {
     const { product } = props
+    const stockBadge = getStockBadge(product.inventory ?? 0);
+    const isOutOfStock = (product.inventory ?? 0) <= 0;
+
+    const handleAddToCart = () => {
+      if (isOutOfStock) {
+        toast.error("This product is out of stock");
+        return;
+      }
+      addItemToCart({
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        image: product.image,
+        quantity: 1,
+      });
+    };
+
     return (
       <Card key={product.id}>
-        <CardHeader>
+        <CardHeader className="relative">
           <AspectRatio ratio={1}>
             <Image
               src={product.image}
@@ -46,6 +77,14 @@ const ProductCard = (props: ProductCardProps) => {
               className="rounded-md object-cover"
             />
           </AspectRatio>
+          {stockBadge && (
+            <Badge
+              variant={stockBadge.variant}
+              className="absolute top-2 right-2"
+            >
+              {stockBadge.label}
+            </Badge>
+          )}
         </CardHeader>
         <CardContent>
           <CardTitle>{product.title}</CardTitle>
@@ -68,18 +107,13 @@ const ProductCard = (props: ProductCardProps) => {
           {userId && (
             <button
               className={buttonVariants({
-                variant: "default",
-                className: "w-full",
+                variant: isOutOfStock ? "secondary" : "default",
+                className: `w-full mt-4 ${isOutOfStock ? "cursor-not-allowed opacity-50" : ""}`,
               })}
-              onClick={() => addItemToCart({
-                id: product.id,
-                title: product.title,
-                price: product.price,
-                image: product.image,
-                quantity: 1,
-              })}
+              onClick={handleAddToCart}
+              disabled={isOutOfStock}
             >
-              Add to Cart
+              {isOutOfStock ? "Out of Stock" : "Add to Cart"}
             </button>
           )}
         </CardContent>

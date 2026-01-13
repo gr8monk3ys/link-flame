@@ -7,8 +7,77 @@ import { format } from "date-fns";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
-import { Order } from "@/types";
+import { Check, Package, Truck, Home, CheckCircle, XCircle, ExternalLink } from "lucide-react";
+
+interface ShippingStep {
+  key: string;
+  label: string;
+  completed: boolean;
+  current: boolean;
+}
+
+interface OrderWithTracking {
+  id: string;
+  amount: number;
+  status: string;
+  shippingStatus: string | null;
+  shippingStatusLabel: string;
+  shippingProgress: ShippingStep[];
+  trackingNumber: string | null;
+  shippingCarrier: string | null;
+  trackingUrl: string | null;
+  estimatedDelivery: string | null;
+  shippedAt: string | null;
+  deliveredAt: string | null;
+  shippingAddress: string | null;
+  customerName: string | null;
+  customerEmail: string | null;
+  paymentMethod: string | null;
+  createdAt: string;
+  isCancelled: boolean;
+  isDelivered: boolean;
+  itemCount: number;
+  items: Array<{
+    id: string;
+    title: string;
+    price: number;
+    quantity: number;
+    variantSize: string | null;
+    variantColor: string | null;
+    variantMaterial: string | null;
+    product: {
+      id: string;
+      image: string;
+      description: string | null;
+    };
+    variant: {
+      id: string;
+      image: string | null;
+    } | null;
+  }>;
+}
+
+// Icon mapping for shipping steps
+function getStepIcon(key: string, completed: boolean, current: boolean) {
+  const baseClass = `h-6 w-6 ${completed ? "text-primary" : current ? "text-primary" : "text-muted-foreground"}`;
+
+  switch (key) {
+    case "processing":
+      return <Package className={baseClass} />;
+    case "shipped":
+      return <Package className={baseClass} />;
+    case "in_transit":
+      return <Truck className={baseClass} />;
+    case "out_for_delivery":
+      return <Truck className={baseClass} />;
+    case "delivered":
+      return <Home className={baseClass} />;
+    default:
+      return <Package className={baseClass} />;
+  }
+}
 
 export default function OrderDetailPage() {
   const { data: session, status } = useSession();
@@ -16,7 +85,7 @@ export default function OrderDetailPage() {
   const orderId = params?.id;
   const isLoaded = status !== "loading";
   const isSignedIn = !!session;
-  const [order, setOrder] = useState<Order | null>(null);
+  const [order, setOrder] = useState<OrderWithTracking | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,7 +100,7 @@ export default function OrderDetailPage() {
         throw new Error("Failed to fetch order");
       }
       const data = await response.json();
-      setOrder(data.order);
+      setOrder(data.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -87,9 +156,10 @@ export default function OrderDetailPage() {
         </Link>
       </div>
 
+      {/* Order Header */}
       <Card className="mb-6">
         <CardHeader>
-          <div className="flex justify-between items-start">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
             <div>
               <CardTitle className="text-2xl">Order Details</CardTitle>
               <CardDescription className="mt-2">
@@ -99,22 +169,134 @@ export default function OrderDetailPage() {
                 Placed on {format(new Date(order.createdAt), "MMMM d, yyyy 'at' h:mm a")}
               </CardDescription>
             </div>
-            <span
-              className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ${
-                order.status === "paid"
-                  ? "bg-green-100 text-green-800"
-                  : order.status === "processing"
-                  ? "bg-blue-100 text-blue-800"
-                  : "bg-gray-100 text-gray-800"
-              }`}
-            >
-              {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-            </span>
+            <div className="flex flex-col gap-2">
+              {/* Payment status */}
+              <Badge variant={order.status === "paid" ? "default" : "secondary"}>
+                {order.status === "paid" ? <CheckCircle className="h-3 w-3 mr-1" /> : null}
+                {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+              </Badge>
+              {/* Shipping status */}
+              <Badge variant={order.isCancelled ? "destructive" : order.isDelivered ? "default" : "outline"}>
+                {order.isCancelled ? <XCircle className="h-3 w-3 mr-1" /> : null}
+                {order.isDelivered ? <CheckCircle className="h-3 w-3 mr-1" /> : null}
+                {order.shippingStatusLabel}
+              </Badge>
+            </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Customer Information */}
-          <div className="grid gap-4 md:grid-cols-2">
+      </Card>
+
+      {/* Shipping Progress Tracker */}
+      {!order.isCancelled && order.shippingProgress && order.shippingProgress.length > 0 && (
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>Shipping Progress</CardTitle>
+            {order.estimatedDelivery && !order.isDelivered && (
+              <CardDescription>
+                Estimated delivery: {format(new Date(order.estimatedDelivery), "MMMM d, yyyy")}
+              </CardDescription>
+            )}
+            {order.deliveredAt && (
+              <CardDescription className="text-green-600">
+                Delivered on {format(new Date(order.deliveredAt), "MMMM d, yyyy 'at' h:mm a")}
+              </CardDescription>
+            )}
+          </CardHeader>
+          <CardContent>
+            {/* Progress Steps */}
+            <div className="relative">
+              <div className="flex justify-between">
+                {order.shippingProgress.map((step, index) => (
+                  <div key={step.key} className="flex flex-col items-center relative z-10">
+                    <div
+                      className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
+                        step.completed
+                          ? "bg-primary border-primary text-primary-foreground"
+                          : step.current
+                          ? "border-primary bg-background"
+                          : "border-muted bg-background"
+                      }`}
+                    >
+                      {step.completed ? (
+                        <Check className="h-5 w-5" />
+                      ) : (
+                        getStepIcon(step.key, step.completed, step.current)
+                      )}
+                    </div>
+                    <span className={`mt-2 text-xs text-center ${step.completed || step.current ? "font-medium" : "text-muted-foreground"}`}>
+                      {step.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              {/* Progress line */}
+              <div className="absolute top-5 left-0 right-0 h-0.5 bg-muted -z-0">
+                <div
+                  className="h-full bg-primary transition-all duration-500"
+                  style={{
+                    width: `${(order.shippingProgress.filter(s => s.completed).length / (order.shippingProgress.length - 1)) * 100}%`
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Tracking Info */}
+            {order.trackingNumber && (
+              <div className="mt-6 p-4 bg-muted rounded-lg">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                  <div>
+                    <div className="text-sm text-muted-foreground">Tracking Number</div>
+                    <div className="font-mono font-medium">{order.trackingNumber}</div>
+                    {order.shippingCarrier && (
+                      <div className="text-sm text-muted-foreground">via {order.shippingCarrier}</div>
+                    )}
+                  </div>
+                  {order.trackingUrl && (
+                    <a
+                      href={order.trackingUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
+                    >
+                      Track Package
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Shipped date */}
+            {order.shippedAt && (
+              <div className="mt-4 text-sm text-muted-foreground">
+                Shipped on {format(new Date(order.shippedAt), "MMMM d, yyyy")}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Cancelled Order Notice */}
+      {order.isCancelled && (
+        <Card className="mb-6 border-destructive">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-3 text-destructive">
+              <XCircle className="h-6 w-6" />
+              <div>
+                <div className="font-semibold">Order Cancelled</div>
+                <div className="text-sm text-muted-foreground">
+                  This order has been cancelled. Please contact support if you have any questions.
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Customer & Shipping Info */}
+      <Card className="mb-6">
+        <CardContent className="pt-6">
+          <div className="grid gap-6 md:grid-cols-2">
             <div>
               <h3 className="font-semibold mb-2">Customer Information</h3>
               <div className="text-sm text-muted-foreground space-y-1">
@@ -131,64 +313,69 @@ export default function OrderDetailPage() {
               </div>
             )}
           </div>
-
-          {/* Payment Information */}
-          <div>
-            <h3 className="font-semibold mb-2">Payment Information</h3>
-            <div className="text-sm text-muted-foreground">
-              {order.paymentMethod && <div>Method: {order.paymentMethod}</div>}
-              <div className="mt-1 font-semibold text-lg text-foreground">
-                Total: ${order.amount.toFixed(2)}
-              </div>
-            </div>
-          </div>
         </CardContent>
       </Card>
 
       {/* Order Items */}
       <Card>
         <CardHeader>
-          <CardTitle>Order Items ({order.items.length})</CardTitle>
+          <CardTitle>Order Items ({order.itemCount})</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {order.items.map((item) => (
-              <div
-                key={item.id}
-                className="flex gap-4 p-4 border rounded-lg"
-              >
-                <div className="relative size-20 shrink-0">
-                  <Image
-                    src={item.product.image}
-                    alt={item.title}
-                    fill
-                    className="object-cover rounded"
-                  />
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-medium">{item.title}</h4>
-                  {item.product.description && (
-                    <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                      {item.product.description}
-                    </p>
-                  )}
-                  <div className="mt-2 text-sm text-muted-foreground">
-                    Quantity: {item.quantity} × ${item.price.toFixed(2)}
+            {order.items.map((item) => {
+              // Use variant image if available, otherwise product image
+              const displayImage = item.variant?.image || item.product.image;
+              // Build variant details string
+              const variantDetails = [
+                item.variantSize,
+                item.variantColor,
+                item.variantMaterial,
+              ].filter(Boolean);
+
+              return (
+                <div
+                  key={item.id}
+                  className="flex gap-4 p-4 border rounded-lg"
+                >
+                  <div className="relative size-20 shrink-0">
+                    <Image
+                      src={displayImage}
+                      alt={item.title}
+                      fill
+                      className="object-cover rounded"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-medium">{item.title}</h4>
+                    {variantDetails.length > 0 && (
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {variantDetails.join(' / ')}
+                      </p>
+                    )}
+                    {item.product.description && (
+                      <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                        {item.product.description}
+                      </p>
+                    )}
+                    <div className="mt-2 text-sm text-muted-foreground">
+                      Quantity: {item.quantity} × ${item.price.toFixed(2)}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-semibold">
+                      ${(item.price * item.quantity).toFixed(2)}
+                    </div>
+                    <Link
+                      href={`/products/${item.product.id}`}
+                      className="text-sm text-primary hover:underline mt-2 inline-block"
+                    >
+                      View Product
+                    </Link>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="font-semibold">
-                    ${(item.price * item.quantity).toFixed(2)}
-                  </div>
-                  <Link
-                    href={`/products/${item.product.id}`}
-                    className="text-sm text-primary hover:underline mt-2 inline-block"
-                  >
-                    View Product
-                  </Link>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Order Summary */}

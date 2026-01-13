@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { getUserIdForCart } from "@/lib/session";
 import { checkStrictRateLimit, getIdentifier } from "@/lib/rate-limit";
+import { validateCsrfToken } from "@/lib/csrf";
 import {
   handleApiError,
   rateLimitErrorResponse,
@@ -13,13 +14,20 @@ import {
 import { logger } from "@/lib/logger";
 import Stripe from "stripe";
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error("Missing STRIPE_SECRET_KEY");
-}
+// Initialize Stripe lazily to allow build without secret key
+let stripe: Stripe | null = null;
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2025-01-27.acacia",
-});
+function getStripe(): Stripe {
+  if (!stripe) {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new Error("Missing STRIPE_SECRET_KEY");
+    }
+    stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2025-01-27.acacia",
+    });
+  }
+  return stripe;
+}
 
 // Define validation schema for checkout data
 const CheckoutSchema = z.object({
@@ -34,6 +42,17 @@ const CheckoutSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    // CSRF protection
+    const csrfValid = await validateCsrfToken(request);
+    if (!csrfValid) {
+      return errorResponse(
+        "Invalid or missing CSRF token",
+        "CSRF_VALIDATION_FAILED",
+        undefined,
+        403
+      );
+    }
+
     const { userId } = await getServerAuth();
 
     // Apply strict rate limiting for checkout
@@ -60,6 +79,7 @@ export async function POST(request: Request) {
       },
       include: {
         product: true,
+        variant: true,
       },
     });
 
@@ -78,11 +98,15 @@ export async function POST(request: Request) {
 
     for (const item of cartItems) {
       const product = item.product;
+      const variant = item.variant;
 
-      // Check inventory availability
-      if (product.inventory < item.quantity) {
+      // Check inventory availability (variant or product level)
+      const availableInventory = variant ? variant.inventory : product.inventory;
+      const inventorySource = variant ? `${product.title} (${[variant.size, variant.color, variant.material].filter(Boolean).join(', ')})` : product.title;
+
+      if (availableInventory < item.quantity) {
         return errorResponse(
-          `Insufficient inventory for ${product.title}. Only ${product.inventory} available.`,
+          `Insufficient inventory for ${inventorySource}. Only ${availableInventory} available.`,
           undefined,
           undefined,
           400
@@ -90,16 +114,34 @@ export async function POST(request: Request) {
       }
 
       // Use server-side prices (NEVER trust client-provided prices)
-      const actualPrice = product.salePrice || product.price;
+      // Priority: variant sale price > variant price > product sale price > product price
+      const actualPrice = variant?.salePrice ?? variant?.price ?? product.salePrice ?? product.price;
       serverTotal += actualPrice * item.quantity;
+
+      // Build product name with variant info
+      let productName = product.title;
+      if (variant) {
+        const variantParts = [variant.size, variant.color, variant.material].filter(Boolean);
+        if (variantParts.length > 0) {
+          productName += ` (${variantParts.join(', ')})`;
+        }
+      }
+
+      // Use variant image if available, otherwise product image
+      const productImage = variant?.image ?? product.image;
 
       lineItems.push({
         price_data: {
           currency: 'usd',
           product_data: {
-            name: product.title,
+            name: productName,
             description: product.subtitle || undefined,
-            images: product.image ? [product.image] : undefined,
+            images: productImage ? [productImage] : undefined,
+            metadata: {
+              productId: product.id,
+              variantId: variant?.id || '',
+              sku: variant?.sku || '',
+            },
           },
           unit_amount: Math.round(actualPrice * 100), // Convert to cents
         },
@@ -115,7 +157,7 @@ export async function POST(request: Request) {
 
     try {
       // Create Stripe Checkout Session
-      const session = await stripe.checkout.sessions.create({
+      const session = await getStripe().checkout.sessions.create({
         mode: 'payment',
         line_items: lineItems,
         metadata: {

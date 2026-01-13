@@ -21,6 +21,11 @@ export async function GET(request: NextRequest) {
             rating: true,
           },
         },
+        variants: {
+          orderBy: {
+            sortOrder: 'asc',
+          },
+        },
       },
     });
 

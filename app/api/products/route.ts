@@ -9,6 +9,7 @@ import {
   validationErrorResponse
 } from "@/lib/api-response"
 import { logger } from "@/lib/logger"
+import { invalidateProductCaches } from "@/lib/cache"
 
 // Schema for product filtering
 const filterSchema = z.object({
@@ -166,6 +167,9 @@ export async function POST(request: NextRequest) {
         category,
       },
     });
+
+    // Invalidate product caches
+    await invalidateProductCaches();
 
     return NextResponse.json(product);
   } catch (error) {

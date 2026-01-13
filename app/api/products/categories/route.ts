@@ -1,6 +1,10 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 import { handleApiError } from '@/lib/api-response';
+import { getOrSetCached, CacheKeys, CacheTTL } from '@/lib/cache';
+
+// Enable ISR with 1 hour revalidation
+export const revalidate = 3600;
 
 interface Category {
   id: string;
@@ -9,7 +13,13 @@ interface Category {
 
 export async function GET() {
   try {
-    const categories = await prisma.category.findMany();
+    // Try to get from Redis cache, fallback to database
+    const categories = await getOrSetCached<Category[]>(
+      CacheKeys.CATEGORIES,
+      async () => prisma.category.findMany(),
+      CacheTTL.LONG // 1 hour
+    );
+
     return NextResponse.json(categories);
   } catch (error) {
     console.error("Error fetching product categories:", error);

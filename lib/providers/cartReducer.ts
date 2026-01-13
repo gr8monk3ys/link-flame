@@ -15,15 +15,22 @@ type CartAction =
     }
   | {
       type: 'UPDATE_QUANTITY'
-      payload: { id: string; quantity: number }
+      payload: { id: string; variantId?: string | null; quantity: number }
     }
   | {
       type: 'REMOVE_ITEM'
-      payload: { id: string }
+      payload: { id: string; variantId?: string | null }
     }
   | {
       type: 'CLEAR_CART'
     }
+
+// Helper to match cart items by productId + variantId
+const matchCartItem = (item: CartItem, productId: string, variantId?: string | null): boolean => {
+  if (item.id !== productId) return false
+  // Match by variantId (null === null for items without variants)
+  return (item.variantId || null) === (variantId || null)
+}
 
 export const cartReducer = (cart: CartType, action: CartAction): CartType => {
   switch (action.type) {
@@ -34,8 +41,12 @@ export const cartReducer = (cart: CartType, action: CartAction): CartType => {
     case 'ADD_ITEM': {
       const { payload: incomingItem } = action
       const productId = incomingItem.id
+      const variantId = incomingItem.variantId || null
 
-      const indexInCart = cart?.items?.findIndex(item => item.id === productId)
+      // Find by productId + variantId
+      const indexInCart = cart?.items?.findIndex(item =>
+        matchCartItem(item, productId, variantId)
+      )
 
       let withAddedItem = [...(cart?.items || [])]
 
@@ -46,7 +57,7 @@ export const cartReducer = (cart: CartType, action: CartAction): CartType => {
       if (typeof indexInCart === 'number' && indexInCart > -1) {
         withAddedItem[indexInCart] = {
           ...withAddedItem[indexInCart],
-          quantity: incomingItem.quantity,
+          quantity: withAddedItem[indexInCart].quantity + incomingItem.quantity,
         }
       }
 
@@ -57,9 +68,11 @@ export const cartReducer = (cart: CartType, action: CartAction): CartType => {
     }
 
     case 'UPDATE_QUANTITY': {
-      const { payload: { id, quantity } } = action
-      
-      const indexInCart = cart?.items?.findIndex(item => item.id === id)
+      const { payload: { id, variantId, quantity } } = action
+
+      const indexInCart = cart?.items?.findIndex(item =>
+        matchCartItem(item, id, variantId)
+      )
 
       if (typeof indexInCart !== 'number' || indexInCart === -1) {
         return cart
@@ -78,11 +91,11 @@ export const cartReducer = (cart: CartType, action: CartAction): CartType => {
     }
 
     case 'REMOVE_ITEM': {
-      const { payload: { id } } = action
-      
+      const { payload: { id, variantId } } = action
+
       return {
         ...cart,
-        items: cart.items.filter(item => item.id !== id),
+        items: cart.items.filter(item => !matchCartItem(item, id, variantId)),
       }
     }
 

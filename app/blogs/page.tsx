@@ -7,9 +7,13 @@ export default async function BlogsPage() {
     getFeaturedPosts(),
     getAllPosts()
   ])
-  
+
   // Get unique categories
   const categories = Array.from(new Set(allPosts.map(post => post.category).filter((cat): cat is string => cat !== undefined)))
+
+  // Get unique tags
+  const allTags = allPosts.flatMap(post => post.tags || [])
+  const tags = Array.from(new Set(allTags)).sort()
 
   return (
     <div className="container py-10">
@@ -25,7 +29,7 @@ export default async function BlogsPage() {
 
       {/* Search Section */}
       <div className="my-8">
-        <BlogSearch />
+        <BlogSearch categories={categories} tags={tags} />
       </div>
 
       {/* Featured Posts */}

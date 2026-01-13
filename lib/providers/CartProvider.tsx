@@ -21,10 +21,10 @@ export type CartContext = {
     items: CartItem[]
   }
   addItemToCart: (item: CartItem) => void
-  updateQuantity: (productId: string, quantity: number) => void
-  removeItem: (productId: string) => void
+  updateQuantity: (productId: string, quantity: number, variantId?: string | null) => void
+  removeItem: (productId: string, variantId?: string | null, cartItemId?: string) => void
   clearCart: () => void
-  isProductInCart: (productId: string) => boolean
+  isProductInCart: (productId: string, variantId?: string | null) => boolean
   cartTotal: {
     formatted: string
     raw: number
@@ -173,7 +173,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [status, session, fetchCartItems])
 
-  // Sync cart to local storage - only store IDs and quantities
+  // Sync cart to local storage - only store IDs, quantities, and variantIds
   const syncCartToLocalStorage = useCallback((currentCart: { items: CartItem[] }) => {
     if (!hasInitialized.current) return
 
@@ -183,6 +183,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         items: currentCart?.items?.map((item: CartItem) => ({
           id: item.id,
           quantity: item.quantity,
+          variantId: item.variantId || null,
         })) || [],
       }
 
@@ -222,31 +223,32 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       type: 'ADD_ITEM',
       payload: item,
     })
-    
+
     setIsLoading(true)
     try {
       const userId = await getUserId()
-      
+
       const response = await fetch('/api/cart', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          userId, 
-          productId: item.id, 
-          quantity: item.quantity 
+        body: JSON.stringify({
+          userId,
+          productId: item.id,
+          variantId: item.variantId || null,
+          quantity: item.quantity
         }),
       })
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
-        throw new Error(errorData.error || 'Failed to add item to cart')
+        throw new Error(errorData.error?.message || errorData.error || 'Failed to add item to cart')
       }
 
       toast.success('Item added to cart')
     } catch (error) {
       console.error('[ADD_TO_CART_ERROR]', error)
       toast.error(error instanceof Error ? error.message : 'Failed to add item to cart')
-      
+
       // Revert optimistic update on error
       await fetchCartItems()
     } finally {
@@ -255,22 +257,22 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   }, [fetchCartItems])
 
   // Debounced API call for quantity updates
-  const updateQuantityApi = useDebouncedCallback(async (productId: string, quantity: number) => {
+  const updateQuantityApi = useDebouncedCallback(async (productId: string, quantity: number, variantId?: string | null) => {
     try {
       const response = await fetch('/api/cart', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId, quantity }),
+        body: JSON.stringify({ productId, variantId: variantId || null, quantity }),
       })
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
-        throw new Error(errorData.error || 'Failed to update cart')
+        throw new Error(errorData.error?.message || errorData.error || 'Failed to update cart')
       }
     } catch (error) {
       console.error('[UPDATE_CART_ERROR]', error)
       toast.error(error instanceof Error ? error.message : 'Failed to update quantity')
-      
+
       // Revert optimistic update on error
       await fetchCartItems()
     } finally {
@@ -279,49 +281,60 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   }, 500)
 
   // Update quantity with optimistic updates
-  const updateQuantity = useCallback(async (productId: string, quantity: number) => {
+  const updateQuantity = useCallback(async (productId: string, quantity: number, variantId?: string | null) => {
     // Validate quantity
     if (quantity < 1 || quantity > 99) {
       toast.error('Quantity must be between 1 and 99')
       return
     }
-    
-    // Optimistic update
+
+    // Optimistic update - find item by productId + variantId
     dispatchCart({
       type: 'UPDATE_QUANTITY',
-      payload: { id: productId, quantity },
+      payload: { id: productId, variantId: variantId || null, quantity },
     })
-    
+
     setIsLoading(true)
-    
+
     // Actual API update (debounced)
-    updateQuantityApi(productId, quantity)
+    updateQuantityApi(productId, quantity, variantId)
   }, [updateQuantityApi])
 
   // Remove item from cart with optimistic updates
-  const removeItem = useCallback(async (productId: string) => {
+  const removeItem = useCallback(async (productId: string, variantId?: string | null, cartItemId?: string) => {
     // Optimistic update
     dispatchCart({
       type: 'REMOVE_ITEM',
-      payload: { id: productId },
+      payload: { id: productId, variantId: variantId || null },
     })
-    
+
     setIsLoading(true)
     try {
-      const response = await fetch(`/api/cart?productId=${productId}`, {
+      // Build query params - prefer cartItemId if available for precise deletion
+      const params = new URLSearchParams()
+      if (cartItemId) {
+        params.set('cartItemId', cartItemId)
+      } else {
+        params.set('productId', productId)
+        if (variantId) {
+          params.set('variantId', variantId)
+        }
+      }
+
+      const response = await fetch(`/api/cart?${params.toString()}`, {
         method: 'DELETE',
       })
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
-        throw new Error(errorData.error || 'Failed to remove item')
+        throw new Error(errorData.error?.message || errorData.error || 'Failed to remove item')
       }
-      
+
       toast.success('Item removed from cart')
     } catch (error) {
       console.error('[REMOVE_ITEM_ERROR]', error)
       toast.error(error instanceof Error ? error.message : 'Failed to remove item')
-      
+
       // Revert optimistic update on error
       await fetchCartItems()
     } finally {
@@ -336,10 +349,17 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     })
   }, [])
 
-  // Check if product is in cart
+  // Check if product (with optional variant) is in cart
   const isProductInCart = useCallback(
-    (productId: string): boolean => {
-      return Boolean(cart?.items?.find(item => item.id === productId))
+    (productId: string, variantId?: string | null): boolean => {
+      return Boolean(cart?.items?.find(item => {
+        if (item.id !== productId) return false
+        // If variantId is specified, also match by variantId
+        if (variantId !== undefined) {
+          return item.variantId === (variantId || null)
+        }
+        return true
+      }))
     },
     [cart],
   )
