@@ -33,11 +33,14 @@ export async function getGuestSessionId(): Promise<string> {
     // Generate a new session ID for this guest user
     sessionId = `guest_${nanoid(24)}`
     cookieStore.set(SESSION_COOKIE_NAME, sessionId, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: SESSION_COOKIE_MAX_AGE,
-      path: '/',
+      httpOnly: true,                                    // Prevents JavaScript access (XSS protection)
+      secure: process.env.NODE_ENV === 'production',   // HTTPS only in production
+      sameSite: 'lax',                                  // CSRF protection (allows top-level navigation)
+      maxAge: SESSION_COOKIE_MAX_AGE,                   // 30 days
+      path: '/',                                        // Available across entire site
+      priority: 'high',                                 // Prioritize this cookie for performance
+      // Note: Consider iron-session for encrypted cookies in future versions
+      // for additional security against session fixation attacks
     })
   }
 

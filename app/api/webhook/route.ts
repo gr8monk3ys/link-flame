@@ -35,6 +35,7 @@ export async function POST(req: Request) {
 
   let event: Stripe.Event;
 
+  // Validate webhook signature
   try {
     event = getStripe().webhooks.constructEvent(
       body,
@@ -42,8 +43,13 @@ export async function POST(req: Request) {
       getWebhookSecret()
     );
   } catch (error: any) {
-    logger.error('Webhook signature verification failed', error);
-    return errorResponse(`Webhook Error: ${error.message}`, undefined, undefined, 400);
+    // Signature verification failure - likely tampering, don't retry
+    logger.error('Webhook signature verification failed - potential security issue', {
+      error: error.message,
+      hasSignature: !!signature,
+      bodyLength: body.length,
+    });
+    return errorResponse(`Webhook Error: ${error.message}`, 'WEBHOOK_SIGNATURE_INVALID', undefined, 400);
   }
 
   logger.info('Webhook received', {
@@ -51,14 +57,16 @@ export async function POST(req: Request) {
     id: event.id,
   });
 
-  const session = event.data.object as Stripe.Checkout.Session;
-  const userId = session?.metadata?.userId;
+  // Wrap processing in try-catch for retry-friendly error handling
+  try {
+    const session = event.data.object as Stripe.Checkout.Session;
+    const userId = session?.metadata?.userId;
 
-  if (event.type === "checkout.session.completed" && userId) {
-    logger.info('Processing checkout.session.completed', {
-      sessionId: session.id,
-      userId,
-    });
+    if (event.type === "checkout.session.completed" && userId) {
+      logger.info('Processing checkout.session.completed', {
+        sessionId: session.id,
+        userId,
+      });
 
     // IDEMPOTENCY CHECK: Prevent duplicate orders if webhook is retried
     const existingOrder = await prisma.order.findUnique({
@@ -248,7 +256,27 @@ export async function POST(req: Request) {
         orderId: order.id,
       });
     }
-  }
+    }
 
-  return new NextResponse(null, { status: 200 });
+    return new NextResponse(null, { status: 200 });
+  } catch (error: any) {
+    // Critical error during order processing - log detailed info for debugging
+    logger.error('Critical error processing webhook', {
+      eventType: event.type,
+      eventId: event.id,
+      error: error.message,
+      stack: error.stack,
+      userId: (event.data.object as any)?.metadata?.userId,
+      sessionId: (event.data.object as any)?.id,
+    });
+
+    // Return 500 to trigger Stripe's automatic retry
+    // Stripe will retry webhooks with exponential backoff for up to 3 days
+    return errorResponse(
+      'Internal error processing webhook - will be retried',
+      'WEBHOOK_PROCESSING_ERROR',
+      { eventId: event.id, willRetry: true },
+      500
+    );
+  }
 }
