@@ -57,6 +57,10 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [hasInitializedCart, setHasInitialized] = useState(false)
   const prevAuthStatus = useRef<string | null>(null)
 
+  // Track pending quantity updates to handle race conditions
+  const pendingQuantityUpdates = useRef(0)
+  const quantityUpdateVersion = useRef(0)
+
   // Check local storage for a cart
   // If there is a cart, fetch the products and hydrate the cart
   useEffect(() => {
@@ -256,32 +260,51 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [fetchCartItems])
 
-  // Debounced API call for quantity updates
-  const updateQuantityApi = useDebouncedCallback(async (productId: string, quantity: number, variantId?: string | null) => {
+  // Debounced API call for quantity updates with race condition handling
+  const updateQuantityApi = useDebouncedCallback(async (productId: string, quantity: number, variantId: string | null, version: number) => {
+    // Ignore stale requests - a newer update has been queued
+    if (version !== quantityUpdateVersion.current) {
+      pendingQuantityUpdates.current = Math.max(0, pendingQuantityUpdates.current - 1)
+      if (pendingQuantityUpdates.current === 0) {
+        setIsLoading(false)
+      }
+      return
+    }
+
     try {
       const response = await fetch('/api/cart', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId, variantId: variantId || null, quantity }),
+        body: JSON.stringify({ productId, variantId, quantity }),
       })
+
+      // Check again if this is still the latest version after API call
+      if (version !== quantityUpdateVersion.current) {
+        return
+      }
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
         throw new Error(errorData.error?.message || errorData.error || 'Failed to update cart')
       }
     } catch (error) {
-      console.error('[UPDATE_CART_ERROR]', error)
-      toast.error(error instanceof Error ? error.message : 'Failed to update quantity')
-
-      // Revert optimistic update on error
-      await fetchCartItems()
+      // Only handle error if this is still the latest version
+      if (version === quantityUpdateVersion.current) {
+        console.error('[UPDATE_CART_ERROR]', error)
+        toast.error(error instanceof Error ? error.message : 'Failed to update quantity')
+        // Revert optimistic update on error
+        await fetchCartItems()
+      }
     } finally {
-      setIsLoading(false)
+      pendingQuantityUpdates.current = Math.max(0, pendingQuantityUpdates.current - 1)
+      if (pendingQuantityUpdates.current === 0) {
+        setIsLoading(false)
+      }
     }
   }, 500)
 
-  // Update quantity with optimistic updates
-  const updateQuantity = useCallback(async (productId: string, quantity: number, variantId?: string | null) => {
+  // Update quantity with optimistic updates and race condition handling
+  const updateQuantity = useCallback((productId: string, quantity: number, variantId?: string | null) => {
     // Validate quantity
     if (quantity < 1 || quantity > 99) {
       toast.error('Quantity must be between 1 and 99')
@@ -294,10 +317,15 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       payload: { id: productId, variantId: variantId || null, quantity },
     })
 
+    // Track this update for race condition handling
+    quantityUpdateVersion.current += 1
+    pendingQuantityUpdates.current += 1
+    const currentVersion = quantityUpdateVersion.current
+
     setIsLoading(true)
 
-    // Actual API update (debounced)
-    updateQuantityApi(productId, quantity, variantId)
+    // Actual API update (debounced) - pass version for stale request detection
+    updateQuantityApi(productId, quantity, variantId || null, currentVersion)
   }, [updateQuantityApi])
 
   // Remove item from cart with optimistic updates
