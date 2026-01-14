@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
+import { logger } from "@/lib/logger";
 
 /**
  * Standard API response structure
@@ -144,7 +145,7 @@ export const ErrorCodes = {
  * Handle common API errors
  */
 export function handleApiError(error: unknown): NextResponse<ApiResponse> {
-  console.error("[API_ERROR]", error);
+  logger.error("API error occurred", error);
 
   // Zod validation error
   if (error instanceof ZodError) {
@@ -241,5 +242,21 @@ export function notFoundResponse(
     ErrorCodes.NOT_FOUND,
     undefined,
     404
+  );
+}
+
+/**
+ * Utility function for conflict errors (409)
+ * Use when the request conflicts with the current state of the resource
+ * Examples: duplicate email, resource already exists
+ */
+export function conflictResponse(
+  message: string = "Resource already exists"
+): NextResponse<ApiResponse> {
+  return errorResponse(
+    message,
+    ErrorCodes.CONFLICT,
+    undefined,
+    409
   );
 }
