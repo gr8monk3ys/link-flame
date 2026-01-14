@@ -10,6 +10,7 @@ import {
   handleApiError,
   errorResponse
 } from "@/lib/api-response"
+import { logger } from "@/lib/logger"
 
 // Validation schema for newsletter subscription
 const NewsletterSchema = z.object({
@@ -71,7 +72,7 @@ export async function POST(req: Request) {
     if (isEmailConfigured()) {
       await sendNewsletterConfirmation(email);
     } else {
-      console.warn('[NEWSLETTER] Email service not configured - skipping confirmation email');
+      logger.warn('Email service not configured - skipping confirmation email');
     }
 
     return successResponse(

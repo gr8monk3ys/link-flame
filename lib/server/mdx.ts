@@ -2,6 +2,7 @@ import { readFile, readdir } from 'node:fs/promises'
 import path from 'path'
 import matter from 'gray-matter'
 import { cache } from 'react'
+import { logger } from '@/lib/logger'
 
 // Cache the MDX posts retrieval
 export const getAllMDXPosts = cache(async () => {
@@ -42,7 +43,7 @@ export const getMDXPost = cache(async (slug: string) => {
       ...data,
     }
   } catch (error) {
-    console.error(`Error reading MDX file ${slug}:`, error)
+    logger.error(`Error reading MDX file ${slug}`, error)
     throw new Error(`Failed to get post: ${slug}`)
   }
 })

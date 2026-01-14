@@ -11,6 +11,7 @@ import {
   rateLimitErrorResponse,
 } from "@/lib/api-response";
 import { checkStrictRateLimit, getIdentifier } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 const deleteAccountSchema = z.object({
   password: z.string().min(1, "Password is required to confirm account deletion"),
@@ -115,7 +116,7 @@ export async function DELETE(request: Request) {
       deletedAt: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("[ACCOUNT_DELETE_ERROR]", error);
+    logger.error("Failed to delete account", error);
     return handleApiError(error);
   }
 }

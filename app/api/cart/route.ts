@@ -1,5 +1,4 @@
 import { getServerAuth } from "@/lib/auth";
-import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUserIdForCart } from "@/lib/session";
 import { checkRateLimit, getIdentifier } from "@/lib/rate-limit";
@@ -9,7 +8,8 @@ import {
   handleApiError,
   rateLimitErrorResponse,
   validationErrorResponse,
-  errorResponse
+  errorResponse,
+  successResponse
 } from "@/lib/api-response";
 import { logger } from "@/lib/logger";
 
@@ -68,7 +68,7 @@ export async function GET(req: Request) {
       };
     });
 
-    return NextResponse.json(formattedItems);
+    return successResponse(formattedItems);
   } catch (error) {
     logger.error("Failed to fetch cart items", error);
     return handleApiError(error);
@@ -227,7 +227,7 @@ export async function POST(req: Request) {
       quantity,
     });
 
-    return NextResponse.json({ success: true });
+    return successResponse({ success: true });
   } catch (error) {
     logger.error("Cart operation failed", error);
     return handleApiError(error);
@@ -275,7 +275,7 @@ export async function DELETE(req: Request) {
       return errorResponse("Product ID or Cart Item ID is required", undefined, undefined, 400);
     }
 
-    return NextResponse.json({ success: true });
+    return successResponse({ success: true });
   } catch (error) {
     logger.error("Cart operation failed", error);
     return handleApiError(error);
@@ -329,7 +329,7 @@ export async function PATCH(req: Request) {
       });
     }
 
-    return NextResponse.json({ success: true });
+    return successResponse({ success: true });
   } catch (error) {
     logger.error("Cart operation failed", error);
     return handleApiError(error);

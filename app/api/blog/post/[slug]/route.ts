@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { BlogPost } from '@/types'
 import { handleApiError, notFoundResponse } from '@/lib/api-response'
+import { logger } from '@/lib/logger'
 
 // Cache individual blog posts for 1 hour (3600 seconds) for better performance
 // Remove this line if you need real-time updates
@@ -55,7 +56,7 @@ export async function GET(
 
     return NextResponse.json(transformPrismaPost(post))
   } catch (error) {
-    console.error('Error fetching post:', error)
+    logger.error('Failed to fetch post', error)
     return handleApiError(error)
   }
 }

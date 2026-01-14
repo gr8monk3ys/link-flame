@@ -1,38 +1,11 @@
-import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { BlogPost } from '@/types'
-import { handleApiError } from '@/lib/api-response'
+import { handleApiError, successResponse } from '@/lib/api-response'
+import { transformPrismaPost } from '@/lib/transformations/blog'
+import { logger } from '@/lib/logger'
 
 // Cache blog posts for 1 hour (3600 seconds) for better performance
 // Remove this line if you need real-time updates
 export const revalidate = 3600
-
-// Helper to transform Prisma BlogPost to BlogPost type
-function transformPrismaPost(prismaPost: any): BlogPost {
-  return {
-    id: prismaPost.id,
-    slug: prismaPost.slug,
-    title: prismaPost.title,
-    description: prismaPost.description || '',
-    content: prismaPost.content || undefined,
-    coverImage: prismaPost.coverImage || '/images/blogs/default-hero.jpg',
-    publishedAt: prismaPost.publishedAt.toISOString(),
-    author: {
-      id: prismaPost.author.id,
-      name: prismaPost.author.name,
-      image: prismaPost.author.image || '/images/team/default-avatar.jpg',
-      role: prismaPost.author.role || 'Contributor',
-    },
-    authorId: prismaPost.authorId,
-    category: prismaPost.category?.name || 'Uncategorized',
-    categoryId: prismaPost.categoryId,
-    tags: prismaPost.tags ? prismaPost.tags.split(',').map((t: string) => t.trim()) : [],
-    featured: prismaPost.featured || false,
-    readingTime: prismaPost.readingTime || undefined,
-    createdAt: prismaPost.createdAt?.toISOString(),
-    updatedAt: prismaPost.updatedAt?.toISOString(),
-  };
-}
 
 export async function GET() {
   try {
@@ -46,9 +19,9 @@ export async function GET() {
       },
     })
 
-    return NextResponse.json(posts.map(transformPrismaPost))
+    return successResponse(posts.map(transformPrismaPost))
   } catch (error) {
-    console.error('Error fetching posts:', error)
+    logger.error('Failed to fetch blog posts', error)
     return handleApiError(error)
   }
 }

@@ -1,6 +1,7 @@
 import { getServerAuth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import { handleApiError } from "@/lib/api-response";
+import { logger } from "@/lib/logger";
 
 export async function GET() {
   try {
@@ -11,7 +12,7 @@ export async function GET() {
       isAuthenticated: !!userId
     });
   } catch (error) {
-    console.error("[AUTH_USER_ERROR]", error);
+    logger.error("Auth user check failed", error);
     return handleApiError(error);
   }
 }

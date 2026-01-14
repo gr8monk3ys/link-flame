@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
 import { prisma } from '@/lib/prisma'
+import { logger } from '@/lib/logger'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
@@ -64,7 +65,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     }))
   } catch (error) {
-    console.error('Error generating blog sitemap:', error)
+    logger.error('Error generating blog sitemap', error)
   }
 
   // Dynamic product routes
@@ -84,7 +85,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     }))
   } catch (error) {
-    console.error('Error generating product sitemap:', error)
+    logger.error('Error generating product sitemap', error)
   }
 
   return [...staticRoutes, ...blogRoutes, ...productRoutes]

@@ -11,6 +11,7 @@
  */
 
 import { Resend } from 'resend';
+import { logger } from '@/lib/logger';
 
 // Initialize Resend client
 const resend = process.env.RESEND_API_KEY
@@ -43,7 +44,7 @@ export async function sendOrderConfirmation(
   }
 ) {
   if (!resend) {
-    console.warn('[EMAIL] Resend not configured - skipping order confirmation email');
+    logger.warn('Resend not configured - skipping order confirmation email');
     return { success: false, error: 'Email service not configured' };
   }
 
@@ -56,14 +57,14 @@ export async function sendOrderConfirmation(
     });
 
     if (error) {
-      console.error('[EMAIL] Failed to send order confirmation:', error);
+      logger.error('Failed to send order confirmation', error);
       return { success: false, error };
     }
 
-    console.log('[EMAIL] Order confirmation sent:', data);
+    logger.info('Order confirmation sent', { to, orderId: orderDetails.orderId });
     return { success: true, data };
   } catch (error) {
-    console.error('[EMAIL] Error sending order confirmation:', error);
+    logger.error('Error sending order confirmation', error);
     return { success: false, error };
   }
 }
@@ -75,7 +76,7 @@ export async function sendOrderConfirmation(
  */
 export async function sendNewsletterConfirmation(to: string) {
   if (!resend) {
-    console.warn('[EMAIL] Resend not configured - skipping newsletter confirmation');
+    logger.warn('Resend not configured - skipping newsletter confirmation');
     return { success: false, error: 'Email service not configured' };
   }
 
@@ -88,14 +89,14 @@ export async function sendNewsletterConfirmation(to: string) {
     });
 
     if (error) {
-      console.error('[EMAIL] Failed to send newsletter confirmation:', error);
+      logger.error('Failed to send newsletter confirmation', error);
       return { success: false, error };
     }
 
-    console.log('[EMAIL] Newsletter confirmation sent:', data);
+    logger.info('Newsletter confirmation sent', { to });
     return { success: true, data };
   } catch (error) {
-    console.error('[EMAIL] Error sending newsletter confirmation:', error);
+    logger.error('Error sending newsletter confirmation', error);
     return { success: false, error };
   }
 }
@@ -112,7 +113,7 @@ export async function sendContactNotification(contactData: {
   message: string;
 }) {
   if (!resend) {
-    console.warn('[EMAIL] Resend not configured - skipping contact notification');
+    logger.warn('Resend not configured - skipping contact notification');
     return { success: false, error: 'Email service not configured' };
   }
 
@@ -129,7 +130,7 @@ export async function sendContactNotification(contactData: {
     });
 
     if (error) {
-      console.error('[EMAIL] Failed to send contact notification:', error);
+      logger.error('Failed to send contact notification', error);
       return { success: false, error };
     }
 
@@ -141,10 +142,10 @@ export async function sendContactNotification(contactData: {
       html: generateContactConfirmationHTML(contactData),
     });
 
-    console.log('[EMAIL] Contact notification sent:', data);
+    logger.info('Contact notification sent', { from: contactData.email, subject: contactData.subject });
     return { success: true, data };
   } catch (error) {
-    console.error('[EMAIL] Error sending contact notification:', error);
+    logger.error('Error sending contact notification', error);
     return { success: false, error };
   }
 }

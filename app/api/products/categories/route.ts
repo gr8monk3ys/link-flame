@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 import { handleApiError } from '@/lib/api-response';
 import { getOrSetCached, CacheKeys, CacheTTL } from '@/lib/cache';
+import { logger } from '@/lib/logger';
 
 // Enable ISR with 1 hour revalidation
 export const revalidate = 3600;
@@ -22,7 +23,7 @@ export async function GET() {
 
     return NextResponse.json(categories);
   } catch (error) {
-    console.error("Error fetching product categories:", error);
+    logger.error("Failed to fetch product categories", error);
     return handleApiError(error);
   }
 }

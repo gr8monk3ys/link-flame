@@ -15,6 +15,7 @@
  */
 
 import { Redis } from "@upstash/redis";
+import { logger } from "@/lib/logger";
 
 // Initialize Redis client
 let redis: Redis | null = null;
@@ -72,7 +73,7 @@ export async function getCached<T>(key: string): Promise<T | null> {
     const value = await redis.get<T>(key);
     return value;
   } catch (error) {
-    console.error(`Cache get error for key ${key}:`, error);
+    logger.error(`Cache get error for key ${key}`, error);
     return null;
   }
 }
@@ -96,7 +97,7 @@ export async function setCached<T>(
   try {
     await redis.set(key, value, { ex: ttlSeconds });
   } catch (error) {
-    console.error(`Cache set error for key ${key}:`, error);
+    logger.error(`Cache set error for key ${key}`, error);
   }
 }
 
@@ -113,7 +114,7 @@ export async function deleteCached(key: string): Promise<void> {
   try {
     await redis.del(key);
   } catch (error) {
-    console.error(`Cache delete error for key ${key}:`, error);
+    logger.error(`Cache delete error for key ${key}`, error);
   }
 }
 
@@ -135,7 +136,7 @@ export async function deleteCachedByPattern(pattern: string): Promise<void> {
       await redis.del(...keys);
     }
   } catch (error) {
-    console.error(`Cache delete by pattern error for ${pattern}:`, error);
+    logger.error(`Cache delete by pattern error for ${pattern}`, error);
   }
 }
 

@@ -11,6 +11,7 @@ import {
   rateLimitErrorResponse,
 } from "@/lib/api-response";
 import { checkStrictRateLimit, getIdentifier } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 const changePasswordSchema = z.object({
   currentPassword: z.string().min(1, "Current password is required"),
@@ -109,7 +110,7 @@ export async function PATCH(request: Request) {
       message: "Password changed successfully",
     });
   } catch (error) {
-    console.error("[PASSWORD_CHANGE_ERROR]", error);
+    logger.error("Failed to change password", error);
     return handleApiError(error);
   }
 }

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { logger } from '@/lib/logger';
 
 export async function GET() {
   try {
@@ -14,7 +15,7 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error('Error reading OpenAPI spec:', error);
+    logger.error('Failed to read OpenAPI spec', error);
     return NextResponse.json(
       { error: 'OpenAPI specification not found' },
       { status: 404 }

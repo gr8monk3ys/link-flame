@@ -3,6 +3,7 @@ import { getServerAuth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getGuestSessionId, clearGuestSession } from "@/lib/session";
 import { handleApiError, unauthorizedResponse } from "@/lib/api-response";
+import { logger } from "@/lib/logger";
 
 /**
  * POST /api/cart/migrate
@@ -106,7 +107,7 @@ export async function POST(request: Request) {
       total: migratedCount + mergedCount,
     });
   } catch (error) {
-    console.error("[CART_MIGRATION_ERROR]", error);
+    logger.error("Cart migration failed", error);
     return handleApiError(error);
   }
 }

@@ -10,6 +10,7 @@ import {
   validationErrorResponse,
   errorResponse
 } from "@/lib/api-response";
+import { logger } from "@/lib/logger";
 
 // Validation schema for contact form
 const ContactSchema = z.object({
@@ -65,7 +66,7 @@ export async function POST(req: Request) {
     if (isEmailConfigured()) {
       await sendContactNotification({ name, email, subject, message });
     } else {
-      console.warn('[CONTACT] Email service not configured - skipping notification emails');
+      logger.warn('Email service not configured - skipping notification emails');
     }
 
     return NextResponse.json(
@@ -77,7 +78,7 @@ export async function POST(req: Request) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("[CONTACT_POST]", error);
+    logger.error("Contact form submission failed", error);
     return handleApiError(error);
   }
 }

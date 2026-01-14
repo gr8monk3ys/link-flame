@@ -1,12 +1,23 @@
 import { getServerAuth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
+import { z } from "zod";
 import {
   successResponse,
   unauthorizedResponse,
   handleApiError,
   paginatedResponse,
   PaginationMeta,
+  validationErrorResponse,
 } from "@/lib/api-response";
+import { logger } from "@/lib/logger";
+
+// Schema for query parameter validation
+const queryParamsSchema = z.object({
+  page: z.coerce.number().int().min(1).max(10000).default(1),
+  limit: z.coerce.number().int().min(1).max(50).default(10),
+  status: z.enum(["processing", "shipped", "in_transit", "out_for_delivery", "delivered", "cancelled", "all"]).optional(),
+});
 
 // Shipping status labels for display
 export const SHIPPING_STATUS_LABELS: Record<string, string> = {
@@ -36,11 +47,23 @@ export async function GET(req: Request) {
     }
 
     const url = new URL(req.url);
-    const page = Math.max(1, parseInt(url.searchParams.get("page") || "1"));
-    const limit = Math.min(50, Math.max(1, parseInt(url.searchParams.get("limit") || "10")));
-    const status = url.searchParams.get("status"); // Filter by shipping status
 
-    const where: any = { userId };
+    // Validate query parameters with Zod
+    const queryParams = {
+      page: url.searchParams.get("page") || undefined,
+      limit: url.searchParams.get("limit") || undefined,
+      status: url.searchParams.get("status") || undefined,
+    };
+
+    const validation = queryParamsSchema.safeParse(queryParams);
+    if (!validation.success) {
+      return validationErrorResponse(validation.error);
+    }
+
+    const { page, limit, status } = validation.data;
+
+    // Build where clause with proper Prisma types
+    const where: Prisma.OrderWhereInput = { userId };
 
     // Optional status filter
     if (status && status !== "all") {
@@ -94,7 +117,7 @@ export async function GET(req: Request) {
 
     return paginatedResponse(formattedOrders, pagination);
   } catch (error) {
-    console.error("[ORDERS_GET_ERROR]", error);
+    logger.error("Failed to fetch orders", error);
     return handleApiError(error);
   }
 }

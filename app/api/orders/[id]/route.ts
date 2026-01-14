@@ -6,6 +6,7 @@ import {
   notFoundResponse,
   handleApiError,
 } from "@/lib/api-response";
+import { logger } from "@/lib/logger";
 
 // Shipping status labels for display
 const SHIPPING_STATUS_LABELS: Record<string, string> = {
@@ -92,7 +93,7 @@ export async function GET(
 
     return successResponse(formattedOrder);
   } catch (error) {
-    console.error("[ORDER_GET_ERROR]", error);
+    logger.error("Failed to fetch order", error);
     return handleApiError(error);
   }
 }

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { handleApiError, errorResponse, notFoundResponse } from '@/lib/api-response';
+import { handleApiError, errorResponse, notFoundResponse, rateLimitErrorResponse } from '@/lib/api-response';
+import { checkRateLimit, getIdentifier } from '@/lib/rate-limit';
+import { logger } from '@/lib/logger';
 
 // Using a simpler approach with request URL
 export async function GET(request: NextRequest) {
@@ -10,6 +12,13 @@ export async function GET(request: NextRequest) {
 
   if (!id) {
     return errorResponse("Product ID is required", undefined, undefined, 400);
+  }
+
+  // Rate limit to prevent enumeration attacks
+  const identifier = getIdentifier(request);
+  const { success, reset } = await checkRateLimit(`product:${identifier}`);
+  if (!success) {
+    return rateLimitErrorResponse(reset);
   }
 
   try {
@@ -33,9 +42,21 @@ export async function GET(request: NextRequest) {
       return notFoundResponse("Product");
     }
 
-    return NextResponse.json(product);
+    // Normalize prices to ensure they're plain numbers
+    const normalizedProduct = {
+      ...product,
+      price: Number(product.price),
+      salePrice: product.salePrice ? Number(product.salePrice) : null,
+      variants: product.variants.map((variant) => ({
+        ...variant,
+        price: variant.price ? Number(variant.price) : null,
+        salePrice: variant.salePrice ? Number(variant.salePrice) : null,
+      })),
+    };
+
+    return NextResponse.json(normalizedProduct);
   } catch (error) {
-    console.error("[PRODUCT_GET]", error);
+    logger.error('Failed to fetch product', error);
     return handleApiError(error);
   }
 }

@@ -1,15 +1,18 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getServerAuth, requireRole } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { Prisma } from "@prisma/client"
 import { z } from "zod"
 import {
   handleApiError,
   unauthorizedResponse,
   forbiddenResponse,
-  validationErrorResponse
+  validationErrorResponse,
+  rateLimitErrorResponse
 } from "@/lib/api-response"
 import { logger } from "@/lib/logger"
 import { invalidateProductCaches } from "@/lib/cache"
+import { checkRateLimit, getIdentifier } from "@/lib/rate-limit"
 
 // Schema for product filtering
 const filterSchema = z.object({
@@ -51,6 +54,13 @@ const createProductSchema = z.object({
 })
 
 export async function GET(request: NextRequest) {
+  // Rate limit to prevent catalog scraping
+  const identifier = getIdentifier(request);
+  const { success, reset } = await checkRateLimit(`products:${identifier}`);
+  if (!success) {
+    return rateLimitErrorResponse(reset);
+  }
+
   try {
     const { searchParams } = new URL(request.url)
     
@@ -65,14 +75,16 @@ export async function GET(request: NextRequest) {
     const page = Number(searchParams.get('page')) || 1;
     const pageSize = Number(searchParams.get('pageSize')) || 12;
 
-    // Build where clause
-    const where: any = {};
+    // Build where clause with proper Prisma types
+    const where: Prisma.ProductWhereInput = {};
 
     if (search) {
+      // Note: SQLite doesn't support case-insensitive mode, using contains only
+      // For production PostgreSQL, add mode: 'insensitive' to each filter
       where.OR = [
-        { title: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } },
-        { category: { contains: search, mode: 'insensitive' } },
+        { title: { contains: search } },
+        { description: { contains: search } },
+        { category: { contains: search } },
       ];
     }
 
@@ -81,15 +93,17 @@ export async function GET(request: NextRequest) {
     }
 
     if (startDate || endDate) {
-      where.createdAt = {};
-      if (startDate) where.createdAt.gte = new Date(startDate);
-      if (endDate) where.createdAt.lte = new Date(endDate);
+      const createdAtFilter: Prisma.DateTimeFilter = {};
+      if (startDate) createdAtFilter.gte = new Date(startDate);
+      if (endDate) createdAtFilter.lte = new Date(endDate);
+      where.createdAt = createdAtFilter;
     }
 
     if (minPrice !== null || maxPrice !== null) {
-      where.price = {};
-      if (minPrice !== null) where.price.gte = minPrice;
-      if (maxPrice !== null) where.price.lte = maxPrice;
+      const priceFilter: Prisma.FloatFilter = {};
+      if (minPrice !== null) priceFilter.gte = minPrice;
+      if (maxPrice !== null) priceFilter.lte = maxPrice;
+      where.price = priceFilter;
     }
 
     // Get total count for pagination
@@ -119,8 +133,15 @@ export async function GET(request: NextRequest) {
         })
       : products;
 
+    // Normalize prices to ensure they're plain numbers (not Decimal objects)
+    const normalizedProducts = filteredProducts.map((product) => ({
+      ...product,
+      price: Number(product.price),
+      salePrice: product.salePrice ? Number(product.salePrice) : null,
+    }));
+
     return NextResponse.json({
-      products: filteredProducts,
+      products: normalizedProducts,
       total: total,
       page,
       pageSize,

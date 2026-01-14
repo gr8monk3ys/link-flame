@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import { getServerAuth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getUserIdForCart } from "@/lib/session";
@@ -13,6 +12,7 @@ import {
   errorResponse,
   notFoundResponse,
 } from "@/lib/api-response";
+import { logger } from "@/lib/logger";
 
 /**
  * Saved Items API
@@ -57,9 +57,9 @@ export async function GET(req: Request) {
       savedAt: item.savedAt.toISOString(),
     }));
 
-    return NextResponse.json(formattedItems);
+    return successResponse(formattedItems);
   } catch (error) {
-    console.error("[SAVED_ITEMS_GET_ERROR]", error);
+    logger.error("Failed to fetch saved items", error);
     return handleApiError(error);
   }
 }
@@ -144,7 +144,7 @@ export async function POST(req: Request) {
       },
     });
 
-    console.log("[SAVED_ITEMS] Item saved", {
+    logger.info("Item saved to wishlist", {
       userId: userIdToUse,
       productId,
     });
@@ -162,7 +162,7 @@ export async function POST(req: Request) {
       201
     );
   } catch (error) {
-    console.error("[SAVED_ITEMS_POST_ERROR]", error);
+    logger.error("Failed to save item", error);
     return handleApiError(error);
   }
 }
@@ -202,14 +202,14 @@ export async function DELETE(req: Request) {
       },
     });
 
-    console.log("[SAVED_ITEMS] Item removed", {
+    logger.info("Item removed from wishlist", {
       userId: userIdToUse,
       productId,
     });
 
     return successResponse({ removed: true });
   } catch (error) {
-    console.error("[SAVED_ITEMS_DELETE_ERROR]", error);
+    logger.error("Failed to remove saved item", error);
     return handleApiError(error);
   }
 }
