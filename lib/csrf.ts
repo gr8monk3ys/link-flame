@@ -35,11 +35,13 @@
 
 import { cookies } from 'next/headers';
 import { randomBytes, createHmac, timingSafeEqual } from 'crypto';
+import { logger } from '@/lib/logger';
+import { SECURITY } from '@/config/constants';
 
-const CSRF_COOKIE_NAME = 'csrf_token';
+const CSRF_COOKIE_NAME = SECURITY.csrf.cookieName;
 const CSRF_SECRET = process.env.NEXTAUTH_SECRET || 'fallback-secret-for-csrf';
-const CSRF_TOKEN_LENGTH = 32;
-const CSRF_TOKEN_EXPIRY = 24 * 60 * 60 * 1000; // 24 hours
+const CSRF_TOKEN_LENGTH = SECURITY.csrf.tokenLength;
+const CSRF_TOKEN_EXPIRY = SECURITY.csrf.tokenExpiry;
 
 /**
  * Generate a cryptographically secure CSRF token
@@ -117,7 +119,7 @@ export function verifyCsrfToken(token: string, providedToken: string): boolean {
 
     return signaturesMatch && tokensMatch;
   } catch (error) {
-    console.error('[CSRF] Token verification error:', error);
+    logger.error('CSRF token verification error', error);
     return false;
   }
 }

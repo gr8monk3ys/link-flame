@@ -1,8 +1,9 @@
 import { nanoid } from 'nanoid'
 import { cookies } from 'next/headers'
+import { SECURITY } from '@/config/constants'
 
 const SESSION_COOKIE_NAME = 'guest_session_id'
-const SESSION_COOKIE_MAX_AGE = 60 * 60 * 24 * 30 // 30 days
+const SESSION_COOKIE_MAX_AGE = SECURITY.session.guestSessionExpiry / 1000 // Convert ms to seconds
 
 /**
  * Gets or creates a guest session ID from cookies.
@@ -31,7 +32,7 @@ export async function getGuestSessionId(): Promise<string> {
 
   if (!sessionId) {
     // Generate a new session ID for this guest user
-    sessionId = `guest_${nanoid(24)}`
+    sessionId = `${SECURITY.session.guestSessionPrefix}${nanoid(24)}`
     cookieStore.set(SESSION_COOKIE_NAME, sessionId, {
       httpOnly: true,                                    // Prevents JavaScript access (XSS protection)
       secure: process.env.NODE_ENV === 'production',   // HTTPS only in production

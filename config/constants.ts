@@ -105,3 +105,62 @@ export const DATE_FORMATS = {
   withTime: 'MMM d, yyyy h:mm a',
   iso: "yyyy-MM-dd'T'HH:mm:ss.SSSxxx",
 } as const
+
+/**
+ * Security configuration
+ */
+export const SECURITY = {
+  // CSRF token settings
+  csrf: {
+    cookieName: 'csrf_token',
+    tokenLength: 32, // bytes
+    tokenExpiry: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
+  },
+
+  // Rate limiting
+  rateLimit: {
+    standard: {
+      requests: 10,
+      window: '10 s',
+    },
+    strict: {
+      requests: 5,
+      window: '1 m',
+    },
+  },
+
+  // Password requirements
+  password: {
+    minLength: 6,
+    maxLength: 100,
+  },
+
+  // Session settings
+  session: {
+    guestSessionExpiry: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
+    guestSessionPrefix: 'guest_',
+  },
+} as const
+
+/**
+ * Cache configuration
+ */
+export const CACHE = {
+  // TTL values in seconds
+  ttl: {
+    short: 300, // 5 minutes
+    medium: 1800, // 30 minutes
+    long: 3600, // 1 hour
+    veryLong: 86400, // 24 hours
+  },
+
+  // Cache key prefixes
+  keys: {
+    products: 'cache:products',
+    categories: 'cache:categories',
+    priceRanges: 'cache:price_ranges',
+    blogPosts: 'cache:blog_posts',
+    blogCategories: 'cache:blog_categories',
+    blogTags: 'cache:blog_tags',
+  },
+} as const
