@@ -240,7 +240,12 @@ describe('API Response Helpers', () => {
       const error = new Error('Test');
       handleApiError(error);
 
-      expect(console.error).toHaveBeenCalledWith('[API_ERROR]', error);
+      // Logger formats output as "[ERROR] message" with error details
+      expect(console.error).toHaveBeenCalledWith(
+        expect.stringContaining('[ERROR]'),
+        expect.objectContaining({ message: 'Test' }),
+        expect.anything()
+      );
     });
   });
 

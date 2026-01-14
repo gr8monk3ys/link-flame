@@ -22,10 +22,10 @@ const generateTestUser = () => ({
 test.describe('Guest Cart Operations', () => {
   test('should add item to cart as guest user', async ({ page }) => {
     // Navigate to products page
-    await page.goto('/products');
+    await page.goto('/collections');
 
     // Wait for products to load
-    await page.waitForSelector('[data-testid="product-card"], .product-card, article', {
+    await page.waitForSelector('.group.relative, [data-testid="product-card"]', {
       timeout: 10000,
     });
 
@@ -48,8 +48,8 @@ test.describe('Guest Cart Operations', () => {
 
   test('should persist guest cart across page reloads', async ({ page }) => {
     // Add item to cart
-    await page.goto('/products');
-    await page.waitForSelector('[data-testid="product-card"], .product-card, article');
+    await page.goto('/collections');
+    await page.waitForSelector('.group.relative, [data-testid="product-card"]');
     await page.locator('button:has-text("Add to Cart")').first().click();
     await page.waitForTimeout(1000);
 
@@ -68,8 +68,8 @@ test.describe('Guest Cart Operations', () => {
 
   test('should update item quantity in cart', async ({ page }) => {
     // Add item to cart
-    await page.goto('/products');
-    await page.waitForSelector('[data-testid="product-card"], .product-card, article');
+    await page.goto('/collections');
+    await page.waitForSelector('.group.relative, [data-testid="product-card"]');
     await page.locator('button:has-text("Add to Cart")').first().click();
     await page.waitForTimeout(1000);
 
@@ -95,8 +95,8 @@ test.describe('Guest Cart Operations', () => {
 
   test('should remove item from cart', async ({ page }) => {
     // Add item to cart
-    await page.goto('/products');
-    await page.waitForSelector('[data-testid="product-card"], .product-card, article');
+    await page.goto('/collections');
+    await page.waitForSelector('.group.relative, [data-testid="product-card"]');
     await page.locator('button:has-text("Add to Cart")').first().click();
     await page.waitForTimeout(1000);
 
@@ -133,8 +133,8 @@ test.describe('Authenticated Cart Operations', () => {
     await page.waitForURL(/\/(?!auth)/);
 
     // Add item to cart
-    await page.goto('/products');
-    await page.waitForSelector('[data-testid="product-card"], .product-card, article');
+    await page.goto('/collections');
+    await page.waitForSelector('.group.relative, [data-testid="product-card"]');
     await page.locator('button:has-text("Add to Cart")').first().click();
     await page.waitForTimeout(1000);
 
@@ -163,8 +163,8 @@ test.describe('Authenticated Cart Operations', () => {
     await page.waitForURL(/\/(?!auth)/);
 
     // Add item to cart
-    await page.goto('/products');
-    await page.waitForSelector('[data-testid="product-card"], .product-card, article');
+    await page.goto('/collections');
+    await page.waitForSelector('.group.relative, [data-testid="product-card"]');
     await page.locator('button:has-text("Add to Cart")').first().click();
     await page.waitForTimeout(1000);
 
@@ -198,8 +198,8 @@ test.describe('Cart Migration', () => {
     });
 
     // Add item to cart as guest
-    await page.goto('/products');
-    await page.waitForSelector('[data-testid="product-card"], .product-card, article');
+    await page.goto('/collections');
+    await page.waitForSelector('.group.relative, [data-testid="product-card"]');
     await page.locator('button:has-text("Add to Cart")').first().click();
     await page.waitForTimeout(1000);
 
@@ -229,8 +229,8 @@ test.describe('Cart Migration', () => {
 test.describe('Cart API', () => {
   test('should retrieve cart via API', async ({ page }) => {
     // Add item via UI to initialize cart
-    await page.goto('/products');
-    await page.waitForSelector('[data-testid="product-card"], .product-card, article');
+    await page.goto('/collections');
+    await page.waitForSelector('.group.relative, [data-testid="product-card"]');
     await page.locator('button:has-text("Add to Cart")').first().click();
     await page.waitForTimeout(1000);
 

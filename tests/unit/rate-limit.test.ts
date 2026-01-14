@@ -144,8 +144,10 @@ describe('Rate Limiting Utilities', () => {
     it('should warn when rate limiting is not configured', async () => {
       await checkRateLimit('test-identifier');
 
+      // Logger formats output as "[WARN] message" with additional metadata
       expect(console.warn).toHaveBeenCalledWith(
-        expect.stringContaining('Rate limiting is not configured')
+        expect.stringContaining('Rate limiting is not configured'),
+        expect.anything()
       );
     });
 
@@ -177,8 +179,10 @@ describe('Rate Limiting Utilities', () => {
     it('should warn when rate limiting is not configured', async () => {
       await checkStrictRateLimit('test-identifier');
 
+      // Logger formats output as "[WARN] message" with additional metadata
       expect(console.warn).toHaveBeenCalledWith(
-        expect.stringContaining('Rate limiting is not configured')
+        expect.stringContaining('Rate limiting is not configured'),
+        expect.anything()
       );
     });
 
