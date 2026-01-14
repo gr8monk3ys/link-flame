@@ -1,39 +1,18 @@
 import { Author, BlogPost } from './types'
 import { prisma } from './prisma'
+import { transformPrismaPost } from './transformations/blog'
 
 export type { BlogPost, Author }
+
+// Result type for functions that can fail
+export type BlogResult<T> =
+  | { success: true; data: T }
+  | { success: false; data: null; error: Error }
 
 const getBaseUrl = () => {
   if (typeof window !== 'undefined') return ''; // browser should use relative url
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`; // SSR should use vercel url
   return `http://localhost:${process.env.PORT ?? 3000}`; // dev SSR should use localhost
-}
-
-// Helper to transform Prisma BlogPost to BlogPost type
-function transformPrismaPost(prismaPost: any): BlogPost {
-  return {
-    id: prismaPost.id,
-    slug: prismaPost.slug,
-    title: prismaPost.title,
-    description: prismaPost.description || '',
-    content: prismaPost.content || undefined,
-    coverImage: prismaPost.coverImage || '/images/blogs/default-hero.jpg',
-    publishedAt: prismaPost.publishedAt.toISOString(),
-    author: {
-      id: prismaPost.author.id,
-      name: prismaPost.author.name,
-      image: prismaPost.author.image || '/images/team/default-avatar.jpg',
-      role: prismaPost.author.role || 'Contributor',
-    },
-    authorId: prismaPost.authorId,
-    category: prismaPost.category?.name || 'Uncategorized',
-    categoryId: prismaPost.categoryId,
-    tags: prismaPost.tags ? prismaPost.tags.split(',').map((t: string) => t.trim()) : [],
-    featured: prismaPost.featured || false,
-    readingTime: prismaPost.readingTime || undefined,
-    createdAt: prismaPost.createdAt?.toISOString(),
-    updatedAt: prismaPost.updatedAt?.toISOString(),
-  };
 }
 
 // Helper functions
@@ -52,8 +31,10 @@ export async function getAllPosts(): Promise<BlogPost[]> {
       });
       return posts.map(transformPrismaPost);
     } catch (error) {
-      console.error('Failed to fetch posts from database:', error);
-      return [];
+      // Throw error instead of silently returning empty array
+      // This allows callers to distinguish "no posts" from "error"
+      const message = error instanceof Error ? error.message : 'Unknown database error';
+      throw new Error(`Failed to fetch posts from database: ${message}`);
     }
   }
 
@@ -84,8 +65,10 @@ export async function getPost(slug: string): Promise<BlogPost | null> {
       });
       return post ? transformPrismaPost(post) : null;
     } catch (error) {
-      console.error(`Failed to fetch post ${slug} from database:`, error);
-      return null;
+      // Throw error instead of silently returning null
+      // This allows callers to distinguish "post not found" from "error"
+      const message = error instanceof Error ? error.message : 'Unknown database error';
+      throw new Error(`Failed to fetch post '${slug}' from database: ${message}`);
     }
   }
 
