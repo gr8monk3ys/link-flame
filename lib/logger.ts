@@ -6,12 +6,21 @@
  * - Easy to add external logging services (Sentry, LogRocket, etc.)
  * - Can disable/filter logs in production
  * - Structured logging with consistent format
+ * - Request ID tracing for correlating logs
  */
 
 type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 interface LogMeta {
-  [key: string]: any;
+  [key: string]: unknown;
+}
+
+/**
+ * Get request ID from a Request object
+ * Use this in API routes to extract the request ID header
+ */
+export function getRequestIdFromRequest(request: Request): string | undefined {
+  return request.headers.get('x-request-id') || undefined;
 }
 
 class Logger {
@@ -19,11 +28,21 @@ class Logger {
   private isProduction = process.env.NODE_ENV === 'production';
 
   /**
+   * Format metadata with optional request ID
+   */
+  private formatMeta(meta?: LogMeta, requestId?: string): LogMeta | string {
+    if (requestId) {
+      return { requestId, ...meta };
+    }
+    return meta || '';
+  }
+
+  /**
    * Log debug information (development only)
    */
   debug(message: string, meta?: LogMeta): void {
     if (this.isDevelopment) {
-      console.log(`[DEBUG] ${message}`, meta || '');
+      console.log(`[DEBUG] ${message}`, this.formatMeta(meta));
     }
   }
 
@@ -32,7 +51,7 @@ class Logger {
    */
   info(message: string, meta?: LogMeta): void {
     if (this.isDevelopment) {
-      console.log(`[INFO] ${message}`, meta || '');
+      console.log(`[INFO] ${message}`, this.formatMeta(meta));
     }
     // In production, you might send to a logging service
     // this.sendToLoggingService('info', message, meta);
@@ -42,7 +61,7 @@ class Logger {
    * Log warnings that need attention
    */
   warn(message: string, meta?: LogMeta): void {
-    console.warn(`[WARN] ${message}`, meta || '');
+    console.warn(`[WARN] ${message}`, this.formatMeta(meta));
 
     if (this.isProduction) {
       // Send warnings to monitoring service in production
@@ -58,13 +77,45 @@ class Logger {
       ? { message: error.message, stack: error.stack }
       : error;
 
-    console.error(`[ERROR] ${message}`, errorDetails, meta || '');
+    console.error(`[ERROR] ${message}`, errorDetails, this.formatMeta(meta));
 
     if (this.isProduction) {
       // Send errors to monitoring service in production
       // Example: Sentry, LogRocket, Bugsnag
       // this.sendToLoggingService('error', message, { ...meta, error: errorDetails });
     }
+  }
+
+  /**
+   * Create a logger context with request ID for consistent logging
+   */
+  withRequestId(requestId: string | undefined): {
+    debug: (message: string, meta?: LogMeta) => void;
+    info: (message: string, meta?: LogMeta) => void;
+    warn: (message: string, meta?: LogMeta) => void;
+    error: (message: string, error?: Error | unknown, meta?: LogMeta) => void;
+  } {
+    return {
+      debug: (message: string, meta?: LogMeta) => {
+        if (this.isDevelopment) {
+          console.log(`[DEBUG] ${message}`, this.formatMeta(meta, requestId));
+        }
+      },
+      info: (message: string, meta?: LogMeta) => {
+        if (this.isDevelopment) {
+          console.log(`[INFO] ${message}`, this.formatMeta(meta, requestId));
+        }
+      },
+      warn: (message: string, meta?: LogMeta) => {
+        console.warn(`[WARN] ${message}`, this.formatMeta(meta, requestId));
+      },
+      error: (message: string, error?: Error | unknown, meta?: LogMeta) => {
+        const errorDetails = error instanceof Error
+          ? { message: error.message, stack: error.stack }
+          : error;
+        console.error(`[ERROR] ${message}`, errorDetails, this.formatMeta(meta, requestId));
+      },
+    };
   }
 
   /**
