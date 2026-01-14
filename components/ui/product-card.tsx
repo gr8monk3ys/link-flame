@@ -31,6 +31,18 @@ export type TopPickProduct = {
   url: string
 }
 
+export type ProductWithRelations = {
+  id: string
+  title: string
+  description: string | null
+  price: number
+  salePrice: number | null
+  image: string
+  category: string
+  inventory: number
+  reviews: Array<{ rating: number }>
+}
+
 interface TopPickProductCardProps {
   variant: "topPick"
   product: TopPickProduct
@@ -38,7 +50,7 @@ interface TopPickProductCardProps {
 
 interface AdminProductCardProps {
   variant: "admin"
-  product: any // ProductWithRelations
+  product: ProductWithRelations
 }
 
 type ProductCardProps = TopPickProductCardProps | AdminProductCardProps

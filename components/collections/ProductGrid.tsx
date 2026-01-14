@@ -1,13 +1,15 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { useCart } from "@/lib/providers/CartProvider";
+import { toast } from "sonner";
 
 interface Product {
   id: string;
   title: string;
-  price: { toString: () => string } | number;
-  salePrice?: { toString: () => string } | number;
+  price: number;
+  salePrice?: number | null;
   image: string;
   category: string;
   description?: string;
@@ -77,12 +79,8 @@ export default function ProductGrid({
     return new Date(date) > thirtyDaysAgo;
   };
 
-  const formatPrice = (price: { toString: () => string } | number) => {
-    if (typeof price === 'number') {
-      return price.toFixed(2);
-    }
-    // Handle Prisma Decimal
-    return Number(price.toString()).toFixed(2);
+  const formatPrice = (price: number) => {
+    return price.toFixed(2);
   };
 
   return (
@@ -90,37 +88,37 @@ export default function ProductGrid({
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {products.map((product) => (
           <div key={product.id} className="group relative">
-            {/* Quick view button */}
-            <button
+            {/* Quick view link */}
+            <Link
+              href={`/products/${product.id}`}
               className="absolute right-4 top-4 z-10 rounded-full bg-white p-2 opacity-0 shadow-md transition-opacity group-hover:opacity-100"
-              onClick={() => window.location.href = `/products/${product.id}`}
+              aria-label={`View details for ${product.title}`}
             >
-              <svg className="size-5 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="size-5 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
               </svg>
-            </button>
+            </Link>
 
             {/* Add to cart button */}
             <button
               className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-full bg-green-600 px-4 py-2 text-sm font-semibold text-white opacity-0 shadow-md transition-opacity hover:bg-green-500 group-hover:opacity-100"
+              aria-label={`Add ${product.title} to cart`}
               onClick={async () => {
                 try {
                   const cartItem = {
                     id: product.id,
                     title: product.title,
-                    price: typeof product.price === 'number' 
-                      ? product.price 
-                      : Number(product.price.toString()),
+                    price: product.price,
                     image: product.image,
                     quantity: 1
                   };
-                  
+
                   await addItemToCart(cartItem);
-                  alert("Product added to cart!");
+                  toast.success("Product added to cart!");
                 } catch (error) {
                   console.error("Error adding to cart:", error);
-                  alert("Failed to add product to cart. Please try again.");
+                  toast.error("Failed to add product to cart. Please try again.");
                 }
               }}
             >
@@ -139,9 +137,13 @@ export default function ProductGrid({
             {/* Wishlist button */}
             <button
               className="absolute right-4 top-16 z-10 rounded-full bg-white p-2 opacity-0 shadow-md transition-opacity group-hover:opacity-100"
-              onClick={() => {/* TODO: Implement wishlist */}}
+              aria-label={`Add ${product.title} to wishlist`}
+              onClick={() => {
+                // TODO: Implement wishlist
+                toast.info("Wishlist feature coming soon!");
+              }}
             >
-              <svg className="size-5 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="size-5 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
             </button>

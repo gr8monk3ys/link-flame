@@ -111,8 +111,9 @@ export default function AccountSettingsPage() {
 
       // Update session with new name/email
       await update();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to update profile");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to update profile";
+      toast.error(message);
     } finally {
       setSavingProfile(false);
     }
@@ -159,8 +160,9 @@ export default function AccountSettingsPage() {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to change password");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to change password";
+      toast.error(message);
     } finally {
       setChangingPassword(false);
     }
@@ -200,8 +202,9 @@ export default function AccountSettingsPage() {
       toast.success("Account deleted successfully");
       // Sign out and redirect to home
       signOut({ callbackUrl: "/" });
-    } catch (error: any) {
-      toast.error(error.message || "Failed to delete account");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to delete account";
+      toast.error(message);
     } finally {
       setDeletingAccount(false);
     }

@@ -243,7 +243,7 @@ export function CarbonFootprintCalculator() {
             <Label>Diet Type</Label>
             <Select
               value={factors.lifestyle.dietType}
-              onValueChange={(value: any) => 
+              onValueChange={(value: "meat-heavy" | "average" | "vegetarian" | "vegan") =>
                 setFactors({
                   ...factors,
                   lifestyle: {
