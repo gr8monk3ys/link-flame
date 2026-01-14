@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Link Flame is an eco-friendly living blog and e-commerce platform built with Next.js 13+ (App Router), featuring blog content management, user authentication, and Stripe-powered product sales.
+Link Flame is an eco-friendly living blog and e-commerce platform built with Next.js 16 (App Router), featuring blog content management, user authentication, and Stripe-powered product sales.
 
 ## Development Commands
 
@@ -30,6 +30,9 @@ npx prisma generate          # Generate Prisma Client (runs automatically on pos
 npx prisma studio            # Open database GUI
 npx prisma db seed           # Seed database with initial data
 npx prisma db push           # Push schema changes without migrations (dev only)
+
+# Bundle analysis
+npm run analyze              # Analyze bundle size with webpack bundle analyzer
 ```
 
 ## Architecture
@@ -71,8 +74,7 @@ components/                 # React components organized by feature
 └── ui/                    # Radix UI component wrappers
 
 lib/                       # Utility functions and business logic
-├── blog.ts               # Blog data fetching (hybrid: mock data + API)
-├── posts.ts              # Alternative post management (mock data)
+├── blog.ts               # Blog data fetching (SSR: Prisma, client: API)
 ├── products.ts           # Product utilities
 ├── auth.ts               # NextAuth server-side helpers (getServerAuth, requireRole)
 ├── session.ts            # Guest session management for anonymous users
@@ -103,13 +105,11 @@ config/                    # Configuration files
 
 ## Key Architectural Patterns
 
-### 1. Dual Blog Content System
-The codebase uses **two parallel blog systems** (likely mid-refactor):
-- **`lib/posts.ts`**: Simple mock data array of posts
-- **`lib/blog.ts`**: Hybrid system that uses mock data during build/SSR and fetches from `/api/blog/*` endpoints in browser
-- **API Routes**: `/app/api/blog/` endpoints interact with Prisma database for blog posts
-
-When working with blog features, understand which system is being used in that part of the codebase.
+### 1. Blog Content System
+The codebase uses a unified blog system via `lib/blog.ts`:
+- **Server-side (SSR/build)**: Fetches directly from Prisma database
+- **Client-side (browser)**: Fetches from `/api/blog/*` endpoints
+- **API Routes**: `/app/api/blog/` endpoints for CRUD operations with search, filtering by category/tags
 
 ### 2. Authentication Flow (NextAuth v5)
 - **Middleware** (`middleware.ts`) uses NextAuth to protect routes and redirect unauthenticated users
@@ -246,33 +246,33 @@ npm run test:unit:watch        # Watch mode
 npm run test:unit:ui           # Interactive UI mode
 npm run test:unit:coverage     # With coverage report
 
+# Run a single unit test file
+npx vitest run tests/unit/csrf.test.ts
+npx vitest tests/unit/csrf.test.ts  # Watch mode for single file
+
 # E2E tests (Playwright)
 npm run test:e2e               # Run all E2E tests
 npm run test:e2e:ui            # Interactive UI mode
 npm run test:e2e:headed        # Run with visible browser
 npm run test:e2e:debug         # Debug mode
 npm run test:e2e:report        # View test report
+
+# Run a single E2E test file
+npx playwright test tests/e2e/auth.spec.ts
+npx playwright test tests/e2e/auth.spec.ts --headed  # With browser visible
+
+# Run tests matching a pattern
+npx vitest run -t "token generation"  # Run tests with matching name
+npx playwright test --grep "sign in"  # Run E2E tests with matching title
 ```
 
-**Test Coverage:**
-
-**Unit Tests (61 tests):**
-- **CSRF Protection** (15 tests): Token generation, verification, expiry, tampering, timing-safe comparison
-- **API Responses** (25 tests): Success/error responses, pagination, validation, rate limits, error handling
-- **Rate Limiting** (21 tests): Identifier extraction, IP handling, graceful degradation, IPv6 support
-
-**E2E Tests (27 tests):**
-- **Authentication** (9 tests): Signup, signin, signout, validation, protected routes
-- **Rate Limiting** (8 tests): Verification of 5 req/min limits on auth/contact/newsletter
-- **Shopping Cart** (10 tests): Guest cart, authenticated cart, persistence, migration
-
-**Total:** 88 automated tests
+**Test Structure:**
+- **Unit Tests** (`tests/unit/`): CSRF protection, API responses, rate limiting utilities
+- **E2E Tests** (`tests/e2e/`): Authentication flows, rate limiting verification, cart operations
 
 **Configuration:**
-- Unit test directory: `tests/unit/`
-- E2E test directory: `tests/e2e/`
-- Unit test config: `vitest.config.ts` (happy-dom environment)
-- E2E test config: `playwright.config.ts` (auto-starts dev server)
+- Unit test config: `vitest.config.ts` (happy-dom environment, `@/` alias)
+- E2E test config: `playwright.config.ts` (auto-starts dev server on port 3000)
 - Test setup: `tests/setup.ts`
 - Full documentation: `tests/README.md`
 
@@ -311,3 +311,19 @@ The application implements comprehensive security measures:
 - **JWT Sessions**: NextAuth v5 with secure token management
 
 **Security Audit Report**: `SECURITY_AUDIT.md`
+
+## AI Subagents
+
+This project includes 7 specialized AI subagents in `.claude/agents/` for domain-specific tasks:
+
+| Agent | Domain |
+|-------|--------|
+| **Security Guardian** | Payment security, authentication, OWASP compliance |
+| **Test Engineer** | E2E tests, checkout validation, regression testing |
+| **Feature Engineer** | Implementing new features from TODO.md |
+| **Database Specialist** | Prisma migrations, schema design, query optimization |
+| **Performance Optimizer** | Core Web Vitals, bundle size, API response times |
+| **API Guardian** | RESTful endpoints, validation, error handling |
+| **Bug Hunter** | Issue investigation, root cause analysis |
+
+See `.claude/AGENTS_GUIDE.md` for detailed usage instructions and collaboration workflows.

@@ -163,6 +163,7 @@ model BlogPost {
   @@index([publishedAt(sort: Desc)])
   @@index([categoryId])
   @@index([categoryId, publishedAt(sort: Desc)])
+  @@index([featured, publishedAt(sort: Desc)]) // Optimizes featured posts query
 }
 
 model Author {
