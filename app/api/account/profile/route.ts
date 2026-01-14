@@ -7,7 +7,9 @@ import {
   handleApiError,
   validationErrorResponse,
   errorResponse,
+  conflictResponse,
 } from "@/lib/api-response";
+import { logger } from "@/lib/logger";
 
 const updateProfileSchema = z.object({
   name: z.string().min(1, "Name is required").max(100, "Name must be less than 100 characters").optional(),
@@ -58,7 +60,7 @@ export async function GET() {
       bio: user.Profile?.bio || null,
     });
   } catch (error) {
-    console.error("[PROFILE_GET_ERROR]", error);
+    logger.error("Failed to fetch profile", error);
     return handleApiError(error);
   }
 }
@@ -99,7 +101,7 @@ export async function PATCH(request: Request) {
       });
 
       if (existingUser && existingUser.id !== userId) {
-        return errorResponse("Email is already in use by another account", undefined, undefined, 400);
+        return conflictResponse("Email is already in use by another account");
       }
     }
 
@@ -127,7 +129,7 @@ export async function PATCH(request: Request) {
       user: updatedUser,
     });
   } catch (error) {
-    console.error("[PROFILE_UPDATE_ERROR]", error);
+    logger.error("Failed to update profile", error);
     return handleApiError(error);
   }
 }

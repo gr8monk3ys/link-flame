@@ -5,10 +5,11 @@ import { z } from "zod";
 import {
   handleApiError,
   validationErrorResponse,
-  errorResponse,
+  conflictResponse,
   rateLimitErrorResponse
 } from "@/lib/api-response";
 import { checkStrictRateLimit, getIdentifier } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 const signupSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -42,7 +43,7 @@ export async function POST(request: Request) {
     });
 
     if (existingUser) {
-      return errorResponse("User with this email already exists", undefined, undefined, 400);
+      return conflictResponse("User with this email already exists");
     }
 
     // Hash password
@@ -70,7 +71,7 @@ export async function POST(request: Request) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("[SIGNUP_ERROR]", error);
+    logger.error("Signup failed", error);
     return handleApiError(error);
   }
 }
