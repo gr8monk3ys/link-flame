@@ -72,7 +72,7 @@ jobs:
       # Alternative: Deploy to custom server via SSH
       - name: Deploy to Server (SSH)
         if: vars.DEPLOY_PLATFORM == 'ssh'
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.2.4
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
@@ -152,7 +152,7 @@ jobs:
       # Alternative: Deploy to custom server via SSH
       - name: Deploy to Server (SSH)
         if: vars.DEPLOY_PLATFORM == 'ssh'
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.2.4
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
