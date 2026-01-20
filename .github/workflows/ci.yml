@@ -139,7 +139,7 @@ jobs:
           CI: true
 
       - name: Upload Playwright report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           name: playwright-report
@@ -147,7 +147,7 @@ jobs:
           retention-days: 7
 
       - name: Upload test screenshots
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: test-screenshots
@@ -183,7 +183,7 @@ jobs:
           NEXTAUTH_SECRET: build-secret-for-ci-only
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: nextjs-build
           path: .next/
