@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useCart } from "@/lib/providers/CartProvider";
 import { toast } from "sonner";
+import { ImperfectBadge } from "@/components/imperfect";
 
 interface Product {
   id: string;
@@ -15,6 +16,11 @@ interface Product {
   description?: string;
   reviews: { rating: number }[];
   createdAt: Date;
+  // Imperfect product fields
+  isImperfect?: boolean;
+  imperfectReason?: string | null;
+  imperfectDiscount?: number | null;
+  imperfectPrice?: number | null;
 }
 
 interface ProductGridProps {
@@ -125,14 +131,21 @@ export default function ProductGrid({
               Add to Cart
             </button>
 
-            {/* New badge */}
-            {isNewProduct(product.createdAt) && (
-              <div className="absolute left-4 top-4 z-10">
+            {/* Badges - New or Imperfect */}
+            <div className="absolute left-4 top-4 z-10 flex flex-col gap-2">
+              {/* Imperfect badge takes priority if product is imperfect with discount */}
+              {product.isImperfect && product.imperfectDiscount ? (
+                <ImperfectBadge
+                  discountPercent={product.imperfectDiscount}
+                  size="sm"
+                  variant="prominent"
+                />
+              ) : isNewProduct(product.createdAt) ? (
                 <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
                   New
                 </span>
-              </div>
-            )}
+              ) : null}
+            </div>
 
             {/* Wishlist button */}
             <button
@@ -168,7 +181,13 @@ export default function ProductGrid({
                   </a>
                 </h3>
                 <div className="text-sm font-medium">
-                  {product.salePrice ? (
+                  {/* Imperfect price display - takes priority */}
+                  {product.isImperfect && product.imperfectPrice ? (
+                    <div className="flex flex-col items-end">
+                      <span className="text-amber-600 font-bold">${formatPrice(product.imperfectPrice)}</span>
+                      <span className="text-gray-500 line-through text-xs">${formatPrice(product.price)}</span>
+                    </div>
+                  ) : product.salePrice ? (
                     <div className="flex flex-col items-end">
                       <span className="text-red-600">${formatPrice(product.salePrice)}</span>
                       <span className="text-gray-500 line-through">${formatPrice(product.price)}</span>

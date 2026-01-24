@@ -5,6 +5,7 @@ import { Icons } from "@/components/shared/icons"
 import { siteConfig } from "@/config/site"
 import { NewsletterSignup } from "@/components/shared/newsletter-signup"
 import { cn } from "@/lib/utils"
+import { SustainabilityCommitment } from "@/components/sustainability"
 
 interface SiteFooterProps {
   className?: string
@@ -14,7 +15,7 @@ export function SiteFooter({ className }: SiteFooterProps) {
   return (
     <footer className={cn("border-t bg-background", className)}>
       <div className="container py-12 md:py-16 lg:py-20">
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-5">
           {/* Company Info */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
@@ -148,6 +149,11 @@ export function SiteFooter({ className }: SiteFooterProps) {
                 </Link>
               </li>
             </ul>
+          </div>
+
+          {/* Sustainability */}
+          <div>
+            <SustainabilityCommitment variant="footer" />
           </div>
 
           {/* Newsletter */}

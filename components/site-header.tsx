@@ -3,6 +3,7 @@ import { siteConfig } from "@/config/site"
 import { Icons } from "@/components/shared/icons"
 import { MainNav } from "@/components/main-nav"
 import { CartLink } from "@/components/cart-link"
+import { LoyaltyBadge } from "@/components/loyalty"
 import { cn } from "@/lib/utils"
 
 interface SiteHeaderProps {
@@ -15,7 +16,7 @@ export function SiteHeader({ className }: SiteHeaderProps) {
       <div className="container flex h-16 items-center justify-between">
         <MainNav items={siteConfig.mainNav} />
         <div className="flex items-center space-x-4">
-          <nav className="flex items-center space-x-6">
+          <nav className="flex items-center space-x-4 sm:space-x-6">
             {/* Search */}
             <Link
               href="/search"
@@ -26,6 +27,9 @@ export function SiteHeader({ className }: SiteHeaderProps) {
                 <span className="sr-only">Search</span>
               </div>
             </Link>
+
+            {/* Loyalty Badge - Shows points and tier for authenticated users */}
+            <LoyaltyBadge compact className="hidden sm:flex" />
 
             {/* Account */}
             <Link

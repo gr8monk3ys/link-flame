@@ -9,6 +9,8 @@ import { StarRating } from "@/components/ui/star-rating"
 import { useCart } from "@/lib/providers/CartProvider";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
+import { SustainabilityTags } from "@/components/sustainability/PlasticFreeTag";
+import { ValueBadgeList } from "@/components/filters/ValueBadge";
 
 // Stock status thresholds
 const LOW_STOCK_THRESHOLD = 5;
@@ -31,6 +33,13 @@ export type TopPickProduct = {
   url: string
 }
 
+export type ProductValue = {
+  id: string
+  name: string
+  slug: string
+  iconName?: string | null
+}
+
 export type ProductWithRelations = {
   id: string
   title: string
@@ -41,6 +50,14 @@ export type ProductWithRelations = {
   category: string
   inventory: number
   reviews: Array<{ rating: number }>
+  // Sustainability fields
+  isPlasticFree?: boolean
+  isVegan?: boolean
+  isCrueltyFree?: boolean
+  isOrganicCertified?: boolean
+  carbonFootprintGrams?: number | null
+  // Shop by Values
+  values?: ProductValue[]
 }
 
 interface TopPickProductCardProps {
@@ -114,6 +131,23 @@ const ProductCard = (props: ProductCardProps) => {
                   ({product.reviews.length} reviews)
                 </span>
               </div>
+            )}
+            {/* Sustainability badges */}
+            <SustainabilityTags
+              isPlasticFree={product.isPlasticFree}
+              isVegan={product.isVegan}
+              isCrueltyFree={product.isCrueltyFree}
+              isOrganicCertified={product.isOrganicCertified}
+              size="sm"
+              maxTags={2}
+            />
+            {/* Shop by Values badges */}
+            {product.values && product.values.length > 0 && (
+              <ValueBadgeList
+                values={product.values}
+                maxDisplay={3}
+                size="sm"
+              />
             )}
           </div>
           {userId && (

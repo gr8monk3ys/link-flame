@@ -7,7 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useCart } from "@/lib/providers/CartProvider";
 import { LoadingShimmer } from "@/components/ui/loading-shimmer";
+import { InlineRedeemWidget } from "@/components/loyalty";
+import { ReferralCodeInput } from "@/components/referrals/ReferralCodeInput";
 import { toast } from "sonner";
+import { CarbonNeutralBanner } from "@/components/sustainability";
 
 // Form validation types
 type FormErrors = {
@@ -20,6 +23,9 @@ export default function CheckoutForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
+  const [loyaltyDiscount, setLoyaltyDiscount] = useState<number>(0);
+  const [referralCode, setReferralCode] = useState<string | null>(null);
+  const [referralDiscount, setReferralDiscount] = useState<number>(0);
   const [formData, setFormData] = useState({
     email: "",
     firstName: "",
@@ -30,6 +36,11 @@ export default function CheckoutForm() {
     zipCode: "",
     paymentMethod: "credit-card",
   });
+
+  // Calculate referral discount amount and final total
+  const referralDiscountAmount = referralDiscount > 0 ? (cartTotal.raw * referralDiscount) / 100 : 0;
+  const totalDiscount = loyaltyDiscount + referralDiscountAmount;
+  const finalTotal = Math.max(0, cartTotal.raw - totalDiscount);
 
   // Disable checkout button if cart is empty
   const isCheckoutDisabled = cart.items.length === 0 || isLoading;
@@ -100,7 +111,10 @@ export default function CheckoutForm() {
       const orderData = {
         ...formData,
         items: cart.items,
-        total: cartTotal.raw,
+        total: finalTotal,
+        loyaltyDiscount: loyaltyDiscount,
+        referralCode: referralCode,
+        referralDiscount: referralDiscountAmount,
       };
 
       const response = await fetch("/api/checkout", {
@@ -287,7 +301,62 @@ export default function CheckoutForm() {
           )}
         </div>
       </div>
-      
+
+      {/* Referral Code Section */}
+      <div className="border-t pt-4">
+        <ReferralCodeInput
+          onCodeApplied={(code, discount) => {
+            setReferralCode(code);
+            setReferralDiscount(discount);
+          }}
+          onCodeRemoved={() => {
+            setReferralCode(null);
+            setReferralDiscount(0);
+          }}
+          disabled={isLoading}
+        />
+      </div>
+
+      {/* Loyalty Points Redemption */}
+      <div className="border-t pt-4">
+        <h3 className="text-sm font-medium mb-3">Loyalty Rewards</h3>
+        <InlineRedeemWidget
+          onDiscountApplied={(discount) => setLoyaltyDiscount(discount)}
+          maxOrderTotal={cartTotal.raw}
+        />
+      </div>
+
+      {/* Show discount summary if any discount applied */}
+      {totalDiscount > 0 && (
+        <div className="bg-green-50 border border-green-200 rounded-md p-4 space-y-2">
+          <div className="flex justify-between text-sm">
+            <span>Subtotal</span>
+            <span>${cartTotal.raw.toFixed(2)}</span>
+          </div>
+          {referralDiscountAmount > 0 && (
+            <div className="flex justify-between text-sm text-green-700">
+              <span>Referral Discount ({referralDiscount}%)</span>
+              <span>-${referralDiscountAmount.toFixed(2)}</span>
+            </div>
+          )}
+          {loyaltyDiscount > 0 && (
+            <div className="flex justify-between text-sm text-green-700">
+              <span>Loyalty Points Discount</span>
+              <span>-${loyaltyDiscount.toFixed(2)}</span>
+            </div>
+          )}
+          <div className="flex justify-between font-semibold border-t border-green-200 pt-2">
+            <span>Total</span>
+            <span>${finalTotal.toFixed(2)}</span>
+          </div>
+        </div>
+)}
+
+      {/* Carbon Neutral Shipping Notice */}
+      <div className="border-t pt-4">
+        <CarbonNeutralBanner variant="compact" showLearnMore={false} />
+      </div>
+
       <div className="space-y-2">
         <Label id="payment-method-label">Payment Method</Label>
         <div className="sr-only" id="payment-method-instructions">

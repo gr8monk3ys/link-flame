@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { StarIcon } from '@heroicons/react/20/solid';
+import Link from 'next/link';
 
 interface FilterState {
   search: string;
@@ -15,6 +16,7 @@ interface FilterState {
     min: number | null;
     max: number | null;
   };
+  imperfect?: boolean | null;
 }
 
 interface FilterSidebarProps {
@@ -208,6 +210,55 @@ export default function FilterSidebar({
             />
           </div>
         </div>
+      </div>
+
+      {/* Perfectly Imperfect Section */}
+      <div className="rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 p-4 border border-amber-200">
+        <div className="flex items-center gap-2 mb-3">
+          <svg
+            className="w-5 h-5 text-amber-600"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z" />
+          </svg>
+          <h3 className="text-lg font-medium text-amber-900">Perfectly Imperfect</h3>
+        </div>
+        <p className="text-sm text-amber-800 mb-4">
+          Save up to 47% on items with minor cosmetic imperfections. Same quality, less waste.
+        </p>
+        <div className="flex items-center gap-3 mb-3">
+          <input
+            id="imperfect-filter"
+            type="checkbox"
+            checked={filters.imperfect === true}
+            onChange={(e) =>
+              onFilterChange({
+                imperfect: e.target.checked ? true : null,
+              })
+            }
+            className="size-4 rounded border-amber-300 text-amber-600 focus:ring-amber-500"
+          />
+          <label htmlFor="imperfect-filter" className="text-sm text-amber-800">
+            Show only imperfect deals
+          </label>
+        </div>
+        <Link
+          href="/imperfect"
+          className="inline-flex items-center gap-1 text-sm font-medium text-amber-700 hover:text-amber-800"
+        >
+          View all imperfect items
+          <svg
+            className="w-4 h-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+          </svg>
+        </Link>
       </div>
     </div>
   );
