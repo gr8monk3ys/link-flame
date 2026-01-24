@@ -8,7 +8,7 @@
  * - 1 point per $1 spent on purchases
  * - 50 points for writing a review
  * - 200 points for successful referral
- * - 100 points for signup bonus
+ * - 200 points for signup bonus
  *
  * Redemption:
  * - 100 points = $1 discount
@@ -55,7 +55,7 @@ export const LOYALTY_CONFIG = {
   pointsPerDollar: 1,
   reviewPoints: 50,
   referralPoints: 200,
-  signupBonus: 100,
+  signupBonus: 200,
 
   // Redemption rate: 100 points = $1
   pointsPerDollarDiscount: 100,

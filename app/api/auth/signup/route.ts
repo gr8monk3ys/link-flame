@@ -12,6 +12,7 @@ import {
 import { checkStrictRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { validateCsrfToken } from "@/lib/csrf";
 import { logger } from "@/lib/logger";
+import { awardSignupBonus, LOYALTY_CONFIG } from "@/lib/loyalty";
 
 const signupSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -72,6 +73,24 @@ export async function POST(request: Request) {
       },
     });
 
+    // Award signup bonus points (200 points)
+    // This is idempotent - will not award duplicate points
+    let bonusPointsAwarded = false;
+    try {
+      bonusPointsAwarded = await awardSignupBonus(user.id);
+      if (bonusPointsAwarded) {
+        logger.info("Signup bonus points awarded", {
+          userId: user.id,
+          points: LOYALTY_CONFIG.signupBonus,
+        });
+      }
+    } catch (bonusError) {
+      // Log the error but don't fail signup - points can be awarded later
+      logger.error("Failed to award signup bonus points", bonusError, {
+        userId: user.id,
+      });
+    }
+
     return NextResponse.json(
       {
         user: {
@@ -80,6 +99,13 @@ export async function POST(request: Request) {
           email: user.email,
           role: user.role,
         },
+        loyaltyBonus: bonusPointsAwarded
+          ? {
+              awarded: true,
+              points: LOYALTY_CONFIG.signupBonus,
+              message: "Welcome bonus for joining Link Flame!",
+            }
+          : null,
       },
       { status: 201 }
     );
