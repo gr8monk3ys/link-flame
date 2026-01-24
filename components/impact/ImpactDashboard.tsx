@@ -1,0 +1,174 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
+import { cn } from "@/lib/utils";
+import { ImpactCard } from "./ImpactCard";
+import { Loader2, RefreshCw, Share2, TrendingUp } from "lucide-react";
+
+const ImpactShareCard = dynamic(
+  () => import("./ImpactShareCard").then((mod) => mod.ImpactShareCard),
+  { ssr: false, loading: () => null }
+);
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+
+interface ImpactMetric {
+  id: string;
+  metricId: string;
+  name: string;
+  slug: string;
+  unit: string;
+  iconName: string;
+  totalValue: number;
+  comparison: string | null;
+  nextMilestone: number | null;
+  progress: number;
+  lastUpdatedAt: string;
+}
+
+interface ImpactDashboardProps {
+  className?: string;
+}
+
+export function ImpactDashboard({ className }: ImpactDashboardProps) {
+  const [metrics, setMetrics] = useState<ImpactMetric[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showShareCard, setShowShareCard] = useState(false);
+
+  const fetchImpact = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const response = await fetch("/api/impact/personal");
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error?.message || "Failed to fetch impact data");
+      }
+
+      setMetrics(data.data || []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchImpact();
+  }, []);
+
+  const totalImpactValue = metrics.reduce((sum, m) => sum + m.totalValue, 0);
+
+  if (isLoading) {
+    return (
+      <div className={cn("flex items-center justify-center py-12", className)}>
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card className={cn("", className)}>
+        <CardContent className="py-12 text-center">
+          <p className="text-muted-foreground mb-4">{error}</p>
+          <Button variant="outline" onClick={fetchImpact}>
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Try Again
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (metrics.length === 0) {
+    return (
+      <Card className={cn("", className)}>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <TrendingUp className="h-5 w-5 text-green-600" />
+            Your Environmental Impact
+          </CardTitle>
+          <CardDescription>
+            Start your eco-friendly journey today!
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="py-8 text-center">
+          <div className="mb-4">
+            <div className="h-24 w-24 mx-auto rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+              <TrendingUp className="h-12 w-12 text-green-600 dark:text-green-400" />
+            </div>
+          </div>
+          <h3 className="font-semibold text-lg mb-2">No Impact Yet</h3>
+          <p className="text-muted-foreground max-w-md mx-auto">
+            When you make eco-friendly purchases, your positive environmental
+            impact will be tracked here. Start shopping sustainably to see your
+            contribution to a greener planet!
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <div className={cn("space-y-6", className)}>
+      {/* Header */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-green-600" />
+                Your Environmental Impact
+              </CardTitle>
+              <CardDescription>
+                Track your contribution to a sustainable future
+              </CardDescription>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowShareCard(true)}
+              >
+                <Share2 className="h-4 w-4 mr-2" />
+                Share
+              </Button>
+              <Button variant="ghost" size="sm" onClick={fetchImpact} aria-label="Refresh impact data">
+                <RefreshCw className="h-4 w-4" aria-hidden="true" />
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+      </Card>
+
+      {/* Impact Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {metrics.map((metric) => (
+          <ImpactCard
+            key={metric.metricId}
+            name={metric.name}
+            value={metric.totalValue}
+            unit={metric.unit}
+            iconName={metric.iconName}
+            comparison={metric.comparison}
+            progress={metric.progress}
+            nextMilestone={metric.nextMilestone}
+          />
+        ))}
+      </div>
+
+      {/* Share Card Modal */}
+      {showShareCard && (
+        <ImpactShareCard
+          metrics={metrics}
+          onClose={() => setShowShareCard(false)}
+        />
+      )}
+    </div>
+  );
+}
