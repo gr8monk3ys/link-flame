@@ -33,6 +33,12 @@ SELECT
     CURRENT_TIMESTAMP as updatedAt
 FROM (SELECT DISTINCT "userId" FROM "SavedItem") as si;
 
+-- Drop existing indexes from SavedItem before renaming (SQLite indexes are database-level)
+DROP INDEX IF EXISTS "SavedItem_userId_idx";
+DROP INDEX IF EXISTS "SavedItem_productId_idx";
+DROP INDEX IF EXISTS "SavedItem_userId_savedAt_idx";
+DROP INDEX IF EXISTS "SavedItem_userId_productId_key";
+
 -- Rename old SavedItem table
 ALTER TABLE "SavedItem" RENAME TO "SavedItem_old";
 

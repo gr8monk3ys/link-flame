@@ -56,6 +56,10 @@ model Product {
   featured    Boolean     @default(false)
   hasVariants Boolean     @default(false) // Whether this product has variant options
 
+  // Brand relationship
+  brandId     String?     // Optional link to brand
+  brand       Brand?      @relation(fields: [brandId], references: [id])
+
   // Sustainability fields
   isPlasticFree        Boolean   @default(false)
   isVegan              Boolean   @default(false)
@@ -95,6 +99,7 @@ model Product {
   @@index([isOrganicCertified])
   @@index([isImperfect])
   @@index([isSubscribable])
+  @@index([brandId])
 }
 
 // Product variants for size, color, material options
@@ -271,6 +276,13 @@ model Order {
   shippedAt         DateTime?
   deliveredAt       DateTime?
 
+  // Gift options
+  isGift              Boolean   @default(false)
+  giftMessage         String?   // Max 500 characters
+  giftRecipientName   String?
+  giftRecipientEmail  String?
+  hidePrice           Boolean   @default(false) // Hide price on packing slip
+
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
   items           OrderItem[]
@@ -282,6 +294,7 @@ model Order {
   @@index([userId, createdAt(sort: Desc)])
   @@index([status])
   @@index([shippingStatus])
+  @@index([isGift])
 }
 
 model OrderItem {
@@ -699,6 +712,38 @@ model SubscriptionPause {
 }
 
 // ===========================================
+// BRAND DIRECTORY
+// ===========================================
+
+// Brand: Eco-friendly partner brand
+model Brand {
+  id           String    @id @default(cuid())
+  slug         String    @unique // URL-friendly identifier
+  name         String    // Brand name
+  description  String?   // Brief description
+  logo         String?   // URL to brand logo
+  website      String?   // Brand website URL
+  story        String?   // Full brand story (longer content)
+  foundedYear  Int?      // Year the brand was founded
+  headquarters String?   // Brand headquarters location
+  certifications String? // JSON array of certification slugs
+  values       String?   // JSON array of value slugs (Women-Owned, BIPOC-Owned, etc.)
+  featured     Boolean   @default(false) // Featured on homepage
+  isActive     Boolean   @default(true)  // Whether brand is visible
+  sortOrder    Int       @default(0)     // For controlling display order
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  products     Product[]
+
+  @@index([slug])
+  @@index([featured])
+  @@index([isActive])
+  @@index([isActive, sortOrder])
+  @@index([isActive, featured])
+}
+
+// ===========================================
 // LOYALTY PROGRAM
 // ===========================================
 
@@ -796,4 +841,115 @@ model Referral {
   @@index([refereeId])
   @@index([referralCodeId])
   @@index([status])
+}
+
+// ===========================================
+// GIFT CARDS
+// ===========================================
+
+// Gift card for purchasing and gifting store credit
+model GiftCard {
+  id              String    @id @default(cuid())
+  code            String    @unique // 16-character alphanumeric code
+  initialBalance  Float     // Original amount of the gift card
+  currentBalance  Float     // Remaining balance
+  purchaserId     String?   // User who purchased the gift card (optional for guest purchases)
+  recipientEmail  String?   // Email address of the recipient
+  recipientName   String?   // Name of the recipient
+  message         String?   // Personal message from purchaser
+  status          String    @default("ACTIVE") // ACTIVE, REDEEMED, EXPIRED, CANCELLED
+  expiresAt       DateTime? // Optional expiration date
+  purchasedAt     DateTime  @default(now())
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  transactions    GiftCardTransaction[]
+
+  @@index([code])
+  @@index([purchaserId])
+  @@index([recipientEmail])
+  @@index([status])
+  @@index([expiresAt])
+}
+
+// Transaction history for gift card usage
+model GiftCardTransaction {
+  id          String   @id @default(cuid())
+  giftCardId  String
+  orderId     String?  // Reference to order if used in checkout
+  amount      Float    // Transaction amount (positive for purchase, negative for redemption)
+  type        String   // PURCHASE, REDEMPTION, REFUND
+  description String?  // Optional description of the transaction
+  createdAt   DateTime @default(now())
+
+  giftCard    GiftCard @relation(fields: [giftCardId], references: [id], onDelete: Cascade)
+
+  @@index([giftCardId])
+  @@index([orderId])
+  @@index([type])
+  @@index([createdAt(sort: Desc)])
+}
+
+// ===========================================
+// TERRACYCLE RECYCLING PROGRAM
+// ===========================================
+
+// Tracks customer TerraCycle shipments for recycling packaging
+model TerraCycleSubmission {
+  id                String    @id @default(cuid())
+  visibleId         String    @unique // User-facing ID (e.g., TC-ABC123)
+  userId            String    // User who made the submission
+  status            String    @default("PENDING") // PENDING, LABEL_SENT, SHIPPED, RECEIVED, PROCESSED
+  itemCount         Int?      // Estimated number of items in the shipment
+  weightKg          Float?    // Weight of the shipment in kg (filled after processing)
+
+  // Shipping information
+  shippingLabelUrl  String?   // URL to the prepaid shipping label
+  trackingNumber    String?   // Shipping tracking number
+  carrier           String?   // Shipping carrier (USPS, UPS, FedEx, etc.)
+
+  // Processing information
+  processedAt       DateTime? // When TerraCycle processed the shipment
+  materialsRecycled String?   // JSON array of materials recycled
+  impactMetrics     String?   // JSON object of impact metrics (plastic saved, CO2 offset, etc.)
+
+  // Rewards
+  pointsAwarded     Int       @default(0) // Loyalty points awarded for this submission
+  pointsAwardedAt   DateTime? // When points were awarded
+
+  // User notes
+  notes             String?   // User notes about the shipment
+
+  labelRequestedAt  DateTime  @default(now()) // When the shipping label was requested
+  shippedAt         DateTime? // When the user shipped the package
+  receivedAt        DateTime? // When TerraCycle received the package
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([userId, status])
+  @@index([visibleId])
+  @@index([trackingNumber])
+  @@index([labelRequestedAt(sort: Desc)])
+}
+
+// Tracks aggregate TerraCycle statistics for users
+model TerraCycleStats {
+  id                  String   @id @default(cuid())
+  userId              String   @unique // One stats record per user
+  totalSubmissions    Int      @default(0) // Total number of submissions
+  totalItemsRecycled  Int      @default(0) // Total items recycled
+  totalWeightKg       Float    @default(0) // Total weight recycled in kg
+  totalPointsEarned   Int      @default(0) // Total points earned from recycling
+  plasticSavedKg      Float    @default(0) // Plastic diverted from landfills
+  co2SavedKg          Float    @default(0) // CO2 emissions prevented
+  waterSavedLiters    Float    @default(0) // Water saved through recycling
+  lastSubmissionAt    DateTime? // Date of most recent submission
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([userId])
+  @@index([totalItemsRecycled(sort: Desc)])
+  @@index([totalWeightKg(sort: Desc)])
 }

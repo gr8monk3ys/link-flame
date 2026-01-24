@@ -2,6 +2,160 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+// Eco-friendly partner brands data
+const brands = [
+  {
+    slug: 'grove-collaborative',
+    name: 'Grove Collaborative',
+    description: 'Leading the way in sustainable home essentials with plastic-free, effective products for a cleaner home and planet.',
+    logo: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&q=80',
+    website: 'https://www.grove.co',
+    story: 'Founded in 2012, Grove Collaborative started with a simple mission: make natural, sustainable products accessible to everyone. Today, we are a certified B Corporation committed to being plastic-free by 2025.\n\nOur products are designed to be effective, sustainable, and affordable. We believe that making eco-friendly choices should be easy, not a sacrifice. Every product we create is thoughtfully designed with both people and planet in mind.',
+    foundedYear: 2012,
+    headquarters: 'San Francisco, CA',
+    certifications: JSON.stringify(['b-corp', 'climate-neutral', '1-percent-planet']),
+    values: JSON.stringify(['plastic-free', 'carbon-negative', 'women-owned']),
+    featured: true,
+    isActive: true,
+    sortOrder: 1,
+  },
+  {
+    slug: 'package-free-shop',
+    name: 'Package Free Shop',
+    description: 'Zero waste living made simple. We offer sustainable alternatives for everyday products, all without unnecessary packaging.',
+    logo: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&q=80',
+    website: 'https://packagefreeshop.com',
+    story: 'Package Free Shop was born from a simple idea: what if you could buy the products you need without all the wasteful packaging? Founded by Lauren Singer, one of the pioneers of the zero waste movement, we curate products that help you reduce your environmental footprint.\n\nFrom personal care to home goods, every item we sell is selected for its sustainability credentials. We believe small changes make a big difference.',
+    foundedYear: 2017,
+    headquarters: 'Brooklyn, NY',
+    certifications: JSON.stringify(['b-corp', '1-percent-planet']),
+    values: JSON.stringify(['zero-waste', 'plastic-free', 'women-owned', 'small-batch']),
+    featured: true,
+    isActive: true,
+    sortOrder: 2,
+  },
+  {
+    slug: 'ethique-beauty',
+    name: 'Ethique Beauty',
+    description: 'Solid beauty bars that are good for you and the planet. Our concentrated bars save plastic and reduce carbon emissions.',
+    logo: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400&q=80',
+    website: 'https://ethique.com',
+    story: 'Ethique was founded in New Zealand in 2012 with a radical idea: beauty products do not need to come in plastic bottles. Our solid bars are concentrated formulas that last longer and eliminate the need for plastic packaging.\n\nWe have prevented over 20 million plastic bottles from being manufactured. Every bar is handmade, cruelty-free, vegan, and palm oil-free. Join us in making beauty sustainable.',
+    foundedYear: 2012,
+    headquarters: 'Christchurch, New Zealand',
+    certifications: JSON.stringify(['b-corp', 'leaping-bunny', 'climate-neutral']),
+    values: JSON.stringify(['plastic-free', 'vegan', 'women-owned', 'carbon-negative']),
+    featured: true,
+    isActive: true,
+    sortOrder: 3,
+  },
+  {
+    slug: 'blueland',
+    name: 'Blueland',
+    description: 'Revolutionary cleaning products that eliminate single-use plastic. Just add water to our tablets for powerful, eco-friendly cleaning.',
+    logo: 'https://images.unsplash.com/photo-1563453392212-326f5e854473?w=400&q=80',
+    website: 'https://www.blueland.com',
+    story: 'Blueland was founded when our CEO Sarah Paiji Yoo had her first child and discovered the shocking amount of plastic waste produced by household cleaners. She set out to create a better way.\n\nOur innovative cleaning tablets dissolve in water to create powerful cleaning solutions. By shipping dry tablets instead of pre-diluted liquids in plastic bottles, we save millions of single-use plastic containers from ending up in landfills.',
+    foundedYear: 2019,
+    headquarters: 'New York, NY',
+    certifications: JSON.stringify(['b-corp', 'ewg-verified', 'leaping-bunny']),
+    values: JSON.stringify(['plastic-free', 'women-owned', 'made-in-usa']),
+    featured: true,
+    isActive: true,
+    sortOrder: 4,
+  },
+  {
+    slug: 'tentree',
+    name: 'Tentree',
+    description: 'Sustainable apparel with a mission: 10 trees planted for every item sold. Fashion that makes a real difference.',
+    logo: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&q=80',
+    website: 'https://www.tentree.com',
+    story: 'Tentree was born from a single question: what if every purchase could plant trees? Since 2012, we have planted over 75 million trees across the globe.\n\nOur clothing is made from sustainable materials like organic cotton, recycled polyester, and TENCEL. We believe fashion should be a force for environmental good, not destruction.',
+    foundedYear: 2012,
+    headquarters: 'Vancouver, Canada',
+    certifications: JSON.stringify(['b-corp', 'climate-neutral', 'fair-trade']),
+    values: JSON.stringify(['regenerative', 'carbon-negative', 'family-owned']),
+    featured: true,
+    isActive: true,
+    sortOrder: 5,
+  },
+  {
+    slug: 'earthhero',
+    name: 'EarthHero',
+    description: 'Your one-stop shop for sustainable living. We curate the best eco-friendly products from hundreds of conscious brands.',
+    logo: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=400&q=80',
+    website: 'https://earthhero.com',
+    story: 'EarthHero was founded to make sustainable shopping easier. We vet every brand and product against strict sustainability criteria before adding them to our marketplace.\n\nFrom zero waste essentials to sustainable fashion, we have everything you need to live more sustainably. Plus, we plant a tree with every order as part of our commitment to reforestation.',
+    foundedYear: 2017,
+    headquarters: 'Boulder, CO',
+    certifications: JSON.stringify(['b-corp', '1-percent-planet']),
+    values: JSON.stringify(['small-batch', 'made-in-usa', 'plastic-free']),
+    featured: true,
+    isActive: true,
+    sortOrder: 6,
+  },
+  {
+    slug: 'pela-case',
+    name: 'Pela Case',
+    description: 'The world is first 100% compostable phone case company. Protecting your phone and the planet.',
+    logo: 'https://images.unsplash.com/photo-1580910051074-3eb694886f2e?w=400&q=80',
+    website: 'https://pelacase.com',
+    story: 'Pela was inspired by a simple observation: why do we protect our phones with cases that will outlast us for hundreds of years? We created the first phone case that breaks down in backyard compost.\n\nOur proprietary Flaxstic material is made from plant-based materials and can fully decompose in just a few years. Since launching, we have saved millions of pounds of plastic from being produced.',
+    foundedYear: 2016,
+    headquarters: 'Kelowna, Canada',
+    certifications: JSON.stringify(['b-corp', 'climate-neutral']),
+    values: JSON.stringify(['plastic-free', 'zero-waste', 'family-owned']),
+    featured: false,
+    isActive: true,
+    sortOrder: 7,
+  },
+  {
+    slug: 'all-birds',
+    name: 'Allbirds',
+    description: 'Comfortable, sustainable footwear made from natural materials like merino wool and eucalyptus fiber.',
+    logo: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80',
+    website: 'https://www.allbirds.com',
+    story: 'Allbirds was born from a curiosity: why is wool not used in footwear? Our founders, a former professional soccer player and a renewable materials expert, set out to create the most comfortable, sustainable shoes possible.\n\nWe source merino wool from New Zealand, use eucalyptus fiber from South African tree farms, and have pioneered the use of SweetFoam made from sugarcane. Every decision we make considers our impact on the planet.',
+    foundedYear: 2016,
+    headquarters: 'San Francisco, CA',
+    certifications: JSON.stringify(['b-corp', 'climate-neutral', 'fair-trade']),
+    values: JSON.stringify(['carbon-negative', 'regenerative']),
+    featured: false,
+    isActive: true,
+    sortOrder: 8,
+  },
+  {
+    slug: 'by-humankind',
+    name: 'By Humankind',
+    description: 'Personal care products designed to eliminate single-use plastic without compromising on quality or experience.',
+    logo: 'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=400&q=80',
+    website: 'https://byhumankind.com',
+    story: 'By Humankind started with a simple goal: create personal care products that work just as well as conventional options but without the plastic waste.\n\nFrom refillable deodorant to plastic-free shampoo bars, we have reimagined everyday essentials. Our products are designed to be refilled and reused, dramatically reducing your bathroom plastic footprint.',
+    foundedYear: 2018,
+    headquarters: 'New York, NY',
+    certifications: JSON.stringify(['b-corp', 'leaping-bunny']),
+    values: JSON.stringify(['plastic-free', 'vegan', 'bipoc-owned']),
+    featured: false,
+    isActive: true,
+    sortOrder: 9,
+  },
+  {
+    slug: 'plaine-products',
+    name: 'Plaine Products',
+    description: 'Sustainable body care in infinitely reusable aluminum bottles. We pick up your empties and refill them.',
+    logo: 'https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?w=400&q=80',
+    website: 'https://www.plaineproducts.com',
+    story: 'Founded by twin sisters Lindsey and Alison Delaplaine, Plaine Products operates on a simple circular model: we send you products in aluminum bottles, you use them, send back the empties, and we refill them.\n\nOur body care products are salon-quality, vegan, and cruelty-free. The closed-loop system means zero packaging waste and a truly sustainable solution for personal care.',
+    foundedYear: 2017,
+    headquarters: 'Sarasota, FL',
+    certifications: JSON.stringify(['leaping-bunny', 'made-safe']),
+    values: JSON.stringify(['women-owned', 'vegan', 'zero-waste', 'family-owned']),
+    featured: false,
+    isActive: true,
+    sortOrder: 10,
+  },
+];
+
 // Product Values for "Shop by Values" filtering
 const productValues = [
   { name: 'Zero Waste', label: 'Zero Waste', slug: 'zero-waste', description: 'Products designed to eliminate waste entirely', iconName: 'trash-zero', sortOrder: 1 },
@@ -222,6 +376,18 @@ const productSustainabilityData: Record<string, {
 };
 
 async function main() {
+  // Clear existing brands
+  await prisma.brand.deleteMany();
+  console.log('Cleared existing brands');
+
+  // Seed brands
+  for (const brand of brands) {
+    await prisma.brand.create({
+      data: brand,
+    });
+  }
+  console.log('Created partner brands');
+
   // Create sample products with sustainability data
   const products = [
     {
