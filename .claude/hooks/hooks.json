@@ -1,0 +1,82 @@
+{
+  "hooks": [
+    {
+      "event": "SessionStart",
+      "command": "./.claude/hooks/session-start.sh",
+      "description": "Restores previous context when sessions begin (memory persistence)"
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool_name": ["Edit", "Write"]
+      },
+      "command": "./.claude/hooks/block-sensitive-files.sh",
+      "description": "Prevents editing .env, credentials, keys, and other sensitive files"
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool_name": ["Write"]
+      },
+      "command": "./.claude/hooks/validate-json.sh",
+      "description": "Validates JSON syntax before writing JSON files"
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool_name": ["Edit", "Write"]
+      },
+      "command": "./.claude/hooks/strategic-compact.sh",
+      "description": "Monitors edit operations and suggests compaction at natural breakpoints"
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool_name": ["Edit", "Write"]
+      },
+      "command": "./.claude/hooks/auto-format.sh",
+      "description": "Auto-formats code with Prettier/Biome/ESLint after edits"
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool_name": ["Edit", "Write"]
+      },
+      "command": "./.claude/hooks/typecheck.sh",
+      "description": "Runs TypeScript type checking after code changes"
+    },
+    {
+      "event": "Stop",
+      "command": "./.claude/hooks/session-end.sh",
+      "description": "Persists session state when sessions complete (memory persistence)"
+    },
+    {
+      "event": "Stop",
+      "command": "./.claude/hooks/continuous-learning.sh",
+      "description": "Analyzes session patterns and extracts reusable skills"
+    },
+    {
+      "event": "Stop",
+      "command": "./.claude/hooks/auto-commit.sh",
+      "description": "Auto-commits changes when task completes"
+    },
+    {
+      "event": "Stop",
+      "command": "./.claude/hooks/notify-completion.sh",
+      "description": "Desktop notification on completion"
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool_name": ["Bash"]
+      },
+      "command": "./.claude/hooks/test-gate.sh",
+      "description": "Blocks git commits until tests pass"
+    },
+    {
+      "event": "UserPromptSubmit",
+      "command": "./.claude/hooks/skill-activator.sh",
+      "description": "Injects skill activation hints based on trigger words"
+    }
+  ]
+}
