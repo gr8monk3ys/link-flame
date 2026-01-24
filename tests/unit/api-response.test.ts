@@ -10,9 +10,13 @@ import {
   unauthorizedResponse,
   forbiddenResponse,
   notFoundResponse,
+  conflictResponse,
   ErrorCodes,
   type PaginationMeta,
-} from '@/lib/api-response';
+  type ValidationErrorDetail,
+  type RateLimitErrorDetail,
+  type ErrorCode,
+} from '@/lib/api-response'
 
 describe('API Response Helpers', () => {
   beforeEach(() => {
@@ -332,16 +336,59 @@ describe('API Response Helpers', () => {
     });
   });
 
+  describe('conflictResponse', () => {
+    it('should create conflict error with default message', async () => {
+      const response = conflictResponse()
+      const body = await response.json()
+
+      expect(response.status).toBe(409)
+      expect(body.error?.message).toBe('Resource already exists')
+      expect(body.error?.code).toBe(ErrorCodes.CONFLICT)
+    })
+
+    it('should accept custom message', async () => {
+      const response = conflictResponse('Email already registered')
+      const body = await response.json()
+
+      expect(body.error?.message).toBe('Email already registered')
+    })
+  })
+
   describe('ErrorCodes', () => {
     it('should export all standard error codes', () => {
-      expect(ErrorCodes).toHaveProperty('VALIDATION_ERROR');
-      expect(ErrorCodes).toHaveProperty('AUTHENTICATION_ERROR');
-      expect(ErrorCodes).toHaveProperty('AUTHORIZATION_ERROR');
-      expect(ErrorCodes).toHaveProperty('NOT_FOUND');
-      expect(ErrorCodes).toHaveProperty('RATE_LIMIT_EXCEEDED');
-      expect(ErrorCodes).toHaveProperty('INTERNAL_ERROR');
-      expect(ErrorCodes).toHaveProperty('BAD_REQUEST');
-      expect(ErrorCodes).toHaveProperty('CONFLICT');
-    });
-  });
-});
+      expect(ErrorCodes).toHaveProperty('VALIDATION_ERROR')
+      expect(ErrorCodes).toHaveProperty('AUTHENTICATION_ERROR')
+      expect(ErrorCodes).toHaveProperty('AUTHORIZATION_ERROR')
+      expect(ErrorCodes).toHaveProperty('NOT_FOUND')
+      expect(ErrorCodes).toHaveProperty('RATE_LIMIT_EXCEEDED')
+      expect(ErrorCodes).toHaveProperty('INTERNAL_ERROR')
+      expect(ErrorCodes).toHaveProperty('BAD_REQUEST')
+      expect(ErrorCodes).toHaveProperty('CONFLICT')
+    })
+
+    it('should have correct type inference', () => {
+      // Type should be a union of literal strings
+      const code: ErrorCode = ErrorCodes.VALIDATION_ERROR
+      expect(code).toBe('VALIDATION_ERROR')
+    })
+  })
+
+  describe('Type Exports', () => {
+    it('should export ValidationErrorDetail type', () => {
+      const detail: ValidationErrorDetail = {
+        field: 'email',
+        message: 'Invalid email',
+        code: 'invalid_string',
+      }
+      expect(detail.field).toBe('email')
+    })
+
+    it('should export RateLimitErrorDetail type', () => {
+      const detail: RateLimitErrorDetail = {
+        retryAfter: 60,
+        resetAt: new Date().toISOString(),
+      }
+      expect(detail.retryAfter).toBe(60)
+    })
+  })
+})
