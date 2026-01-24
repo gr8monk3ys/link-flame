@@ -1,9 +1,228 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+// Product Values for "Shop by Values" filtering
+const productValues = [
+  { name: 'Zero Waste', label: 'Zero Waste', slug: 'zero-waste', description: 'Products designed to eliminate waste entirely', iconName: 'trash-zero', sortOrder: 1 },
+  { name: 'Plastic-Free', label: 'Plastic-Free', slug: 'plastic-free', description: 'Products made without any plastic materials', iconName: 'plastic-off', sortOrder: 2 },
+  { name: 'Vegan', label: 'Vegan', slug: 'vegan', description: 'Products containing no animal-derived ingredients', iconName: 'leaf', sortOrder: 3 },
+  { name: 'Cruelty-Free', label: 'Cruelty-Free', slug: 'cruelty-free', description: 'Products not tested on animals', iconName: 'heart', sortOrder: 4 },
+  { name: 'Women-Owned', label: 'Women-Owned', slug: 'women-owned', description: 'Products from women-owned businesses', iconName: 'woman', sortOrder: 5 },
+  { name: 'Black-Owned', label: 'Black-Owned', slug: 'black-owned', description: 'Products from Black-owned businesses', iconName: 'hand-fist', sortOrder: 6 },
+  { name: 'Small Business', label: 'Small Business', slug: 'small-business', description: 'Products from small, independent businesses', iconName: 'store', sortOrder: 7 },
+  { name: 'Made in USA', label: 'Made in USA', slug: 'made-in-usa', description: 'Products manufactured in the United States', iconName: 'flag-usa', sortOrder: 8 },
+  { name: 'Organic', label: 'Organic', slug: 'organic', description: 'Products made with certified organic materials', iconName: 'seedling', sortOrder: 9 },
+  { name: 'Fair Trade', label: 'Fair Trade', slug: 'fair-trade', description: 'Products certified as fair trade', iconName: 'handshake', sortOrder: 10 },
+  { name: 'Biodegradable', label: 'Biodegradable', slug: 'biodegradable', description: 'Products that naturally decompose', iconName: 'recycle', sortOrder: 11 },
+  { name: 'Recyclable', label: 'Recyclable', slug: 'recyclable', description: 'Products that can be recycled after use', iconName: 'arrows-rotate', sortOrder: 12 },
+];
+
+// Map of product titles to their sustainability value slugs
+const productValueAssignments: Record<string, string[]> = {
+  'Bamboo Water Bottle': ['plastic-free', 'zero-waste', 'biodegradable'],
+  'Reusable Produce Bags - Set of 5': ['plastic-free', 'zero-waste', 'recyclable'],
+  'Bamboo Cutlery Set': ['plastic-free', 'zero-waste', 'biodegradable', 'vegan'],
+  'Natural Loofah Sponge - 3 Pack': ['plastic-free', 'zero-waste', 'biodegradable', 'vegan', 'organic'],
+  'Beeswax Food Wraps': ['plastic-free', 'zero-waste', 'organic', 'biodegradable'],
+  'Bamboo Toothbrush Set': ['plastic-free', 'biodegradable', 'vegan', 'cruelty-free'],
+  'Stainless Steel Lunch Container': ['plastic-free', 'zero-waste', 'recyclable'],
+  'Wool Dryer Balls - Set of 6': ['plastic-free', 'zero-waste', 'cruelty-free', 'biodegradable'],
+  'Bamboo Bathroom Set': ['plastic-free', 'biodegradable', 'zero-waste'],
+  'Reusable Coffee Filter': ['plastic-free', 'zero-waste', 'organic', 'biodegradable'],
+  'Natural Cleaning Kit': ['plastic-free', 'vegan', 'cruelty-free', 'biodegradable'],
+  'Bamboo Dish Brush': ['plastic-free', 'zero-waste', 'biodegradable', 'vegan'],
+  'Organic Cotton Napkins - Set of 8': ['plastic-free', 'organic', 'biodegradable', 'fair-trade'],
+  'Compost Bin with Charcoal Filter': ['zero-waste', 'recyclable'],
+  'Glass Food Storage Set': ['plastic-free', 'zero-waste', 'recyclable'],
+};
+
+// Sustainability certifications to seed
+const certifications = [
+  {
+    name: '1% for the Planet',
+    description: 'Member commits 1% of annual sales to environmental nonprofits',
+    iconUrl: '/images/certifications/one-percent-planet.svg',
+    verificationUrl: 'https://www.onepercentfortheplanet.org/business-members',
+    sortOrder: 1,
+  },
+  {
+    name: 'B Corp Certified',
+    description: 'Certified B Corporations meet verified standards of social and environmental performance, accountability, and transparency',
+    iconUrl: '/images/certifications/b-corp.svg',
+    verificationUrl: 'https://www.bcorporation.net/en-us/find-a-b-corp',
+    sortOrder: 2,
+  },
+  {
+    name: 'Climate Neutral',
+    description: 'Company has measured, reduced, and offset all carbon emissions from their operations',
+    iconUrl: '/images/certifications/climate-neutral.svg',
+    verificationUrl: 'https://www.climateneutral.org/brand-directory',
+    sortOrder: 3,
+  },
+  {
+    name: 'Plastic Free',
+    description: 'Product and packaging contain no plastic materials',
+    iconUrl: '/images/certifications/plastic-free.svg',
+    verificationUrl: null,
+    sortOrder: 4,
+  },
+  {
+    name: 'Vegan',
+    description: 'Product contains no animal-derived ingredients',
+    iconUrl: '/images/certifications/vegan.svg',
+    verificationUrl: null,
+    sortOrder: 5,
+  },
+  {
+    name: 'Cruelty Free',
+    description: 'Product has not been tested on animals at any stage of development',
+    iconUrl: '/images/certifications/cruelty-free.svg',
+    verificationUrl: 'https://www.leapingbunny.org/guide/brands',
+    sortOrder: 6,
+  },
+  {
+    name: 'USDA Organic',
+    description: 'Product meets USDA organic standards for organic production and handling',
+    iconUrl: '/images/certifications/usda-organic.svg',
+    verificationUrl: 'https://www.usda.gov/topics/organic',
+    sortOrder: 7,
+  },
+];
+
+// Product sustainability attributes (used when creating products)
+const productSustainabilityData: Record<string, {
+  isPlasticFree: boolean;
+  isVegan: boolean;
+  isCrueltyFree: boolean;
+  isOrganicCertified: boolean;
+  carbonFootprintGrams: number | null;
+  certificationNames: string[];
+}> = {
+  'Bamboo Water Bottle': {
+    isPlasticFree: true,
+    isVegan: true,
+    isCrueltyFree: true,
+    isOrganicCertified: false,
+    carbonFootprintGrams: 450,
+    certificationNames: ['Plastic Free', 'Vegan', 'B Corp Certified'],
+  },
+  'Reusable Produce Bags - Set of 5': {
+    isPlasticFree: true,
+    isVegan: true,
+    isCrueltyFree: true,
+    isOrganicCertified: false,
+    carbonFootprintGrams: 120,
+    certificationNames: ['Plastic Free', 'Vegan'],
+  },
+  'Bamboo Cutlery Set': {
+    isPlasticFree: true,
+    isVegan: true,
+    isCrueltyFree: true,
+    isOrganicCertified: false,
+    carbonFootprintGrams: 180,
+    certificationNames: ['Plastic Free', 'Vegan', 'Climate Neutral'],
+  },
+  'Natural Loofah Sponge - 3 Pack': {
+    isPlasticFree: true,
+    isVegan: true,
+    isCrueltyFree: true,
+    isOrganicCertified: true,
+    carbonFootprintGrams: 50,
+    certificationNames: ['Plastic Free', 'Vegan', 'USDA Organic'],
+  },
+  'Beeswax Food Wraps': {
+    isPlasticFree: true,
+    isVegan: false, // Contains beeswax
+    isCrueltyFree: true,
+    isOrganicCertified: true,
+    carbonFootprintGrams: 150,
+    certificationNames: ['Plastic Free', 'USDA Organic', '1% for the Planet'],
+  },
+  'Bamboo Toothbrush Set': {
+    isPlasticFree: true,
+    isVegan: true,
+    isCrueltyFree: true,
+    isOrganicCertified: false,
+    carbonFootprintGrams: 80,
+    certificationNames: ['Plastic Free', 'Vegan', 'Cruelty Free'],
+  },
+  'Stainless Steel Lunch Container': {
+    isPlasticFree: true,
+    isVegan: true,
+    isCrueltyFree: true,
+    isOrganicCertified: false,
+    carbonFootprintGrams: 600,
+    certificationNames: ['Plastic Free', 'Vegan', 'Climate Neutral'],
+  },
+  'Wool Dryer Balls - Set of 6': {
+    isPlasticFree: true,
+    isVegan: false, // Contains wool
+    isCrueltyFree: true,
+    isOrganicCertified: false,
+    carbonFootprintGrams: 200,
+    certificationNames: ['Plastic Free', 'Cruelty Free'],
+  },
+  'Bamboo Bathroom Set': {
+    isPlasticFree: true,
+    isVegan: true,
+    isCrueltyFree: true,
+    isOrganicCertified: false,
+    carbonFootprintGrams: 350,
+    certificationNames: ['Plastic Free', 'Vegan'],
+  },
+  'Reusable Coffee Filter': {
+    isPlasticFree: true,
+    isVegan: true,
+    isCrueltyFree: true,
+    isOrganicCertified: true,
+    carbonFootprintGrams: 40,
+    certificationNames: ['Plastic Free', 'Vegan', 'USDA Organic'],
+  },
+  'Natural Cleaning Kit': {
+    isPlasticFree: false, // Glass bottles
+    isVegan: true,
+    isCrueltyFree: true,
+    isOrganicCertified: false,
+    carbonFootprintGrams: 280,
+    certificationNames: ['Vegan', 'Cruelty Free', 'B Corp Certified'],
+  },
+  'Bamboo Dish Brush': {
+    isPlasticFree: true,
+    isVegan: true,
+    isCrueltyFree: true,
+    isOrganicCertified: false,
+    carbonFootprintGrams: 60,
+    certificationNames: ['Plastic Free', 'Vegan'],
+  },
+  'Organic Cotton Napkins - Set of 8': {
+    isPlasticFree: true,
+    isVegan: true,
+    isCrueltyFree: true,
+    isOrganicCertified: true,
+    carbonFootprintGrams: 180,
+    certificationNames: ['Plastic Free', 'Vegan', 'USDA Organic', '1% for the Planet'],
+  },
+  'Compost Bin with Charcoal Filter': {
+    isPlasticFree: false, // May have some components
+    isVegan: true,
+    isCrueltyFree: true,
+    isOrganicCertified: false,
+    carbonFootprintGrams: 800,
+    certificationNames: ['Vegan', 'Climate Neutral'],
+  },
+  'Glass Food Storage Set': {
+    isPlasticFree: true,
+    isVegan: true,
+    isCrueltyFree: true,
+    isOrganicCertified: false,
+    carbonFootprintGrams: 1200,
+    certificationNames: ['Plastic Free', 'Vegan'],
+  },
+};
+
 async function main() {
-  // Create sample products
+  // Create sample products with sustainability data
   const products = [
     {
       title: 'Bamboo Water Bottle',
@@ -112,20 +331,103 @@ async function main() {
     }
   ];
 
-  // Clear existing products
+  // Clear existing data (respect foreign key constraints)
+  await prisma.quizResponse.deleteMany();
+  await prisma.cartItem.deleteMany();
+  await prisma.orderItem.deleteMany();
+  await prisma.savedItem.deleteMany();
+  await prisma.review.deleteMany();
+  await prisma.productCertification.deleteMany();
+  await prisma.productValueAssignment.deleteMany();
+  await prisma.productValue.deleteMany();
+  await prisma.sustainabilityCertification.deleteMany();
+  await prisma.productVariant.deleteMany();
   await prisma.product.deleteMany();
 
-  // Create products
+  // Create sustainability certifications
+  const createdCertifications: Record<string, string> = {};
+  for (const cert of certifications) {
+    const created = await prisma.sustainabilityCertification.create({
+      data: cert,
+    });
+    createdCertifications[cert.name] = created.id;
+  }
+  console.log('Created sustainability certifications');
+
+  // Create product values for "Shop by Values" filtering
+  const createdValues: Record<string, string> = {};
+  for (const value of productValues) {
+    const created = await prisma.productValue.create({
+      data: value,
+    });
+    createdValues[value.slug] = created.id;
+  }
+  console.log('Created product values for Shop by Values');
+
+  // Create products with sustainability fields
+  const createdProducts: Record<string, string> = {};
   for (const product of products) {
-    await prisma.product.create({
+    const sustainabilityData = productSustainabilityData[product.title] || {
+      isPlasticFree: false,
+      isVegan: false,
+      isCrueltyFree: false,
+      isOrganicCertified: false,
+      carbonFootprintGrams: null,
+      certificationNames: [],
+    };
+
+    const created = await prisma.product.create({
       data: {
         ...product,
-        price: product.price,
+        inventory: Math.floor(Math.random() * 50) + 10, // Random inventory between 10-59
+        isPlasticFree: sustainabilityData.isPlasticFree,
+        isVegan: sustainabilityData.isVegan,
+        isCrueltyFree: sustainabilityData.isCrueltyFree,
+        isOrganicCertified: sustainabilityData.isOrganicCertified,
+        carbonFootprintGrams: sustainabilityData.carbonFootprintGrams,
       },
     });
+    createdProducts[product.title] = created.id;
   }
+  console.log('Created products with sustainability data');
 
-  console.log('✓ Seeded products');
+  // Link products to certifications
+  for (const [productTitle, sustainabilityData] of Object.entries(productSustainabilityData)) {
+    const productId = createdProducts[productTitle];
+    if (!productId) continue;
+
+    for (const certName of sustainabilityData.certificationNames) {
+      const certId = createdCertifications[certName];
+      if (!certId) continue;
+
+      await prisma.productCertification.create({
+        data: {
+          productId,
+          certificationId: certId,
+        },
+      });
+    }
+  }
+  console.log('Linked products to certifications');
+
+  // Assign product values for "Shop by Values" filtering
+  for (const [productTitle, valueSlugs] of Object.entries(productValueAssignments)) {
+    const productId = createdProducts[productTitle];
+    if (!productId) continue;
+
+    for (const slug of valueSlugs) {
+      const valueId = createdValues[slug];
+      if (!valueId) continue;
+
+      await prisma.productValueAssignment.create({
+        data: {
+          productId,
+          valueId,
+        },
+      });
+    }
+  }
+  console.log('Assigned product values for Shop by Values');
 
   // Clear existing blog data
   await prisma.blogPost.deleteMany();
@@ -240,7 +542,7 @@ Remember: Every small change makes a difference!`,
       readingTime: '8 min read',
       content: `# Ultimate Guide to Composting
 
-Composting is one of the most impactful ways to reduce waste and nourish your garden. This comprehensive guide will teach you everything you need to know.
+Composting is one of the most impactful ways to reduce waste and nourish your garden.
 
 ## Why Compost?
 
@@ -270,12 +572,6 @@ Aim for a 3:1 ratio of brown to green materials.
 3. Maintain proper airflow
 4. Monitor temperature
 
-## Troubleshooting
-
-**Too smelly?** Add more brown materials
-**Not breaking down?** Add more green materials and water
-**Attracting pests?** Bury food scraps deeper
-
 Ready to start? Your garden will thank you!`,
     },
   });
@@ -294,7 +590,7 @@ Ready to start? Your garden will thank you!`,
       readingTime: '6 min read',
       content: `# 10 Easy Swaps for a Zero-Waste Bathroom
 
-Your bathroom is one of the easiest places to start reducing waste. These simple swaps make a big difference!
+Your bathroom is one of the easiest places to start reducing waste.
 
 ## The Swaps
 
@@ -313,31 +609,282 @@ Replace disposable razors with a durable safety razor.
 ### 5. Refillable Containers
 Buy products in bulk and use refillable containers.
 
-### 6. Natural Loofah
-Replace plastic bath poufs with natural loofahs.
-
-### 7. Bamboo Cotton Swabs
-Choose bamboo cotton swabs over plastic ones.
-
-### 8. Solid Deodorant
-Use package-free deodorant bars or make your own.
-
-### 9. Menstrual Cup or Reusable Pads
-Consider reusable menstrual products.
-
-### 10. DIY Products
-Make your own toothpaste, deodorant, and cleaners.
-
 ## The Impact
 
-By making these switches, the average person can eliminate hundreds of pieces of plastic waste per year!
-
-Start with one or two swaps and gradually transition your entire bathroom.`,
+By making these switches, the average person can eliminate hundreds of pieces of plastic waste per year!`,
     },
   });
 
-  console.log('✓ Seeded blog posts');
-  console.log('Database has been seeded. 🌱');
+  console.log('Seeded blog posts');
+
+  // Seed Quiz Questions
+  await prisma.quizQuestion.deleteMany();
+
+  const quizQuestions = [
+    {
+      visibleId: 'q1',
+      question: 'What area of your life do you want to make more sustainable?',
+      questionType: 'SINGLE_CHOICE',
+      options: JSON.stringify([
+        { value: 'kitchen', label: 'Kitchen' },
+        { value: 'bathroom', label: 'Bathroom' },
+        { value: 'personal-care', label: 'Personal Care' },
+        { value: 'cleaning', label: 'Cleaning' },
+        { value: 'all', label: 'All of the above' },
+      ]),
+      orderIndex: 1,
+      categoryFilter: null,
+      isActive: true,
+    },
+    {
+      visibleId: 'q2',
+      question: "What's your experience with eco-friendly products?",
+      questionType: 'SINGLE_CHOICE',
+      options: JSON.stringify([
+        { value: 'beginner', label: "Beginner - I'm just getting started" },
+        { value: 'some-experience', label: "Some experience - I've tried a few products" },
+        { value: 'eco-expert', label: 'Eco-expert - Sustainability is my lifestyle' },
+      ]),
+      orderIndex: 2,
+      categoryFilter: null,
+      isActive: true,
+    },
+    {
+      visibleId: 'q3',
+      question: 'What matters most to you? (Select all that apply)',
+      questionType: 'MULTIPLE_CHOICE',
+      options: JSON.stringify([
+        { value: 'plastic-free', label: 'Plastic-free packaging' },
+        { value: 'vegan', label: 'Vegan & cruelty-free' },
+        { value: 'organic', label: 'Organic & natural ingredients' },
+        { value: 'budget-friendly', label: 'Budget-friendly options' },
+      ]),
+      orderIndex: 3,
+      categoryFilter: null,
+      isActive: true,
+    },
+    {
+      visibleId: 'q4',
+      question: 'Any allergies or sensitivities?',
+      questionType: 'MULTIPLE_CHOICE',
+      options: JSON.stringify([
+        { value: 'fragrance-free', label: 'Fragrance-free preferred' },
+        { value: 'nut-free', label: 'Nut-free required' },
+        { value: 'none', label: 'No allergies or sensitivities' },
+      ]),
+      orderIndex: 4,
+      categoryFilter: null,
+      isActive: true,
+    },
+    {
+      visibleId: 'q5',
+      question: 'How many people are in your household?',
+      questionType: 'SINGLE_CHOICE',
+      options: JSON.stringify([
+        { value: '1', label: 'Just me' },
+        { value: '2-3', label: '2-3 people' },
+        { value: '4+', label: '4 or more people' },
+      ]),
+      orderIndex: 5,
+      categoryFilter: null,
+      isActive: true,
+    },
+  ];
+
+  for (const question of quizQuestions) {
+    await prisma.quizQuestion.create({
+      data: question,
+    });
+  }
+
+  console.log('Seeded quiz questions');
+
+  // Seed Environmental Impact Metrics
+  console.log('Seeding impact metrics...');
+
+  // Clear existing impact data
+  await prisma.orderImpact.deleteMany();
+  await prisma.userImpact.deleteMany();
+  await prisma.productImpact.deleteMany();
+  await prisma.impactMetric.deleteMany();
+
+  const impactMetrics = [
+    {
+      name: 'Plastic Bottles Saved',
+      slug: 'plastic-bottles-saved',
+      unit: 'bottles',
+      iconName: 'bottle',
+      description: 'Number of single-use plastic bottles avoided by choosing reusable alternatives',
+      comparison: "That's {value} weeks of single-use plastic avoided!",
+      sortOrder: 1,
+      isActive: true,
+    },
+    {
+      name: 'Single-Use Items Replaced',
+      slug: 'single-use-items-replaced',
+      unit: 'items',
+      iconName: 'recycle',
+      description: 'Disposable items replaced by reusable eco-friendly alternatives',
+      comparison: 'Equivalent to {value} months of disposable items!',
+      sortOrder: 2,
+      isActive: true,
+    },
+    {
+      name: 'Carbon Offset',
+      slug: 'carbon-offset',
+      unit: 'kg CO2',
+      iconName: 'leaf',
+      description: 'Kilograms of CO2 offset through sustainable product choices',
+      comparison: 'Like planting {value} trees for a year!',
+      sortOrder: 3,
+      isActive: true,
+    },
+    {
+      name: 'Trees Planted',
+      slug: 'trees-planted',
+      unit: 'trees',
+      iconName: 'tree',
+      description: 'Trees planted through our partnership with reforestation organizations',
+      comparison: '{value} kg of CO2 absorbed per year!',
+      sortOrder: 4,
+      isActive: true,
+    },
+    {
+      name: 'Water Saved',
+      slug: 'water-saved',
+      unit: 'liters',
+      iconName: 'droplet',
+      description: 'Liters of water saved by choosing products with lower water footprints',
+      comparison: "That's {value} showers worth of water!",
+      sortOrder: 5,
+      isActive: true,
+    },
+    {
+      name: 'Waste Diverted',
+      slug: 'waste-diverted',
+      unit: 'kg',
+      iconName: 'trash',
+      description: 'Kilograms of waste diverted from landfills through reusable products',
+      comparison: '{value} pounds kept out of landfills!',
+      sortOrder: 6,
+      isActive: true,
+    },
+  ];
+
+  const createdMetricIds: Record<string, string> = {};
+  for (const metric of impactMetrics) {
+    const created = await prisma.impactMetric.create({
+      data: metric,
+    });
+    createdMetricIds[metric.slug] = created.id;
+  }
+  console.log('Created impact metrics');
+
+  // Product impact data (mapping product titles to their impact values)
+  const productImpactData: Record<string, Record<string, number>> = {
+    'Bamboo Water Bottle': {
+      'plastic-bottles-saved': 365,
+      'single-use-items-replaced': 365,
+      'carbon-offset': 2.5,
+      'waste-diverted': 0.5,
+    },
+    'Reusable Produce Bags - Set of 5': {
+      'single-use-items-replaced': 500,
+      'carbon-offset': 1.0,
+      'waste-diverted': 0.3,
+    },
+    'Bamboo Cutlery Set': {
+      'single-use-items-replaced': 200,
+      'carbon-offset': 1.5,
+      'waste-diverted': 0.2,
+    },
+    'Natural Loofah Sponge - 3 Pack': {
+      'single-use-items-replaced': 36,
+      'carbon-offset': 0.5,
+      'waste-diverted': 0.1,
+    },
+    'Beeswax Food Wraps': {
+      'single-use-items-replaced': 300,
+      'carbon-offset': 1.0,
+      'waste-diverted': 0.2,
+    },
+    'Bamboo Toothbrush Set': {
+      'single-use-items-replaced': 4,
+      'carbon-offset': 0.3,
+      'waste-diverted': 0.05,
+    },
+    'Stainless Steel Lunch Container': {
+      'single-use-items-replaced': 250,
+      'carbon-offset': 2.0,
+      'waste-diverted': 0.4,
+    },
+    'Wool Dryer Balls - Set of 6': {
+      'single-use-items-replaced': 1000,
+      'carbon-offset': 1.0,
+      'waste-diverted': 0.3,
+    },
+    'Bamboo Bathroom Set': {
+      'plastic-bottles-saved': 3,
+      'single-use-items-replaced': 10,
+      'carbon-offset': 0.8,
+      'waste-diverted': 0.2,
+    },
+    'Reusable Coffee Filter': {
+      'single-use-items-replaced': 500,
+      'carbon-offset': 0.5,
+      'water-saved': 100,
+      'waste-diverted': 0.2,
+    },
+    'Natural Cleaning Kit': {
+      'plastic-bottles-saved': 10,
+      'single-use-items-replaced': 20,
+      'carbon-offset': 1.5,
+      'water-saved': 50,
+      'waste-diverted': 0.3,
+    },
+    'Bamboo Dish Brush': {
+      'single-use-items-replaced': 12,
+      'carbon-offset': 0.2,
+      'waste-diverted': 0.05,
+    },
+    'Organic Cotton Napkins - Set of 8': {
+      'single-use-items-replaced': 1000,
+      'carbon-offset': 0.8,
+      'water-saved': 200,
+      'waste-diverted': 0.4,
+    },
+    'Compost Bin with Charcoal Filter': {
+      'carbon-offset': 50,
+      'waste-diverted': 100,
+    },
+    'Glass Food Storage Set': {
+      'single-use-items-replaced': 500,
+      'carbon-offset': 2.0,
+      'waste-diverted': 0.5,
+    },
+  };
+
+  // Link products to their environmental impacts
+  for (const [productTitle, impacts] of Object.entries(productImpactData)) {
+    const productId = createdProducts[productTitle];
+    if (!productId) continue;
+
+    for (const [metricSlug, value] of Object.entries(impacts)) {
+      const metricId = createdMetricIds[metricSlug];
+      if (!metricId || value <= 0) continue;
+
+      await prisma.productImpact.create({
+        data: {
+          productId,
+          metricId,
+          valuePerUnit: value,
+        },
+      });
+    }
+  }
+  console.log('Linked products to environmental impacts');
+
+  console.log('Database has been seeded successfully!');
 }
 
 main()

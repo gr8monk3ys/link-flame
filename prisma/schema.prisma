@@ -18,12 +18,29 @@ model User {
   image         String?
   password      String?   // Used for credentials provider
   role          String    @default("USER")
+
+  // Loyalty program fields
+  loyaltyTier         String    @default("SEEDLING") // SEEDLING, SPROUT, BLOOM, FLOURISH
+  totalLifetimePoints Int       @default(0)
+
+  // Referral program fields
+  referralCode        String?   @unique // User's own referral code
+
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  Profile       Profile?
-  reviews       Review[]
+
+  Profile            Profile?
+  reviews            Review[]
+  userImpacts        UserImpact[]
+  loyaltyPoints      LoyaltyPoints[]
+  loyaltyRedemptions LoyaltyRedemption[]
+  referralCodes      ReferralCode[]
+  referralsGiven     Referral[]          @relation("Referrer")
+  referralReceived   Referral?           @relation("Referee")
+  subscriptions      Subscription[]
 
   @@index([email])
+  @@index([referralCode])
 }
 
 model Product {
@@ -38,18 +55,46 @@ model Product {
   subtitle    String?
   featured    Boolean     @default(false)
   hasVariants Boolean     @default(false) // Whether this product has variant options
-  reviews     Review[]
-  variants    ProductVariant[]
-  cartItems   CartItem[]
-  orderItems  OrderItem[]
-  savedItems  SavedItem[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+
+  // Sustainability fields
+  isPlasticFree        Boolean   @default(false)
+  isVegan              Boolean   @default(false)
+  isCrueltyFree        Boolean   @default(false)
+  isOrganicCertified   Boolean   @default(false)
+  carbonFootprintGrams Int?      // Carbon footprint in grams CO2e
+
+  // Imperfect/Seconds sale fields
+  isImperfect       Boolean  @default(false)
+  imperfectReason   String?  // e.g., "Packaging damage", "Minor cosmetic flaw"
+  imperfectDiscount Int?     // Discount percentage for imperfect items (1-90%)
+
+  // Subscription eligibility
+  isSubscribable    Boolean  @default(false)
+
+  reviews           Review[]
+  variants          ProductVariant[]
+  cartItems         CartItem[]
+  orderItems        OrderItem[]
+  savedItems        SavedItem[]
+  certifications    ProductCertification[]
+  productImpacts    ProductImpact[]
+  imperfectBatches  ImperfectBatch[]
+  bundleProducts    BundleProduct[]
+  subscriptionItems SubscriptionItem[]
+  values            ProductValueAssignment[]
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
 
   @@index([category])
   @@index([category, featured])
   @@index([featured])
   @@index([createdAt(sort: Desc)])
+  @@index([isPlasticFree])
+  @@index([isVegan])
+  @@index([isCrueltyFree])
+  @@index([isOrganicCertified])
+  @@index([isImperfect])
+  @@index([isSubscribable])
 }
 
 // Product variants for size, color, material options
@@ -67,12 +112,19 @@ model ProductVariant {
   inventory   Int       @default(0)
   isDefault   Boolean   @default(false) // Mark one variant as default selection
   sortOrder   Int       @default(0)     // For controlling display order
+
+  // Imperfect/Seconds sale fields for variant-level imperfections
+  isImperfect       Boolean  @default(false)
+  imperfectReason   String?
+  imperfectDiscount Int?
+
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  product     Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
-  cartItems   CartItem[]
-  orderItems  OrderItem[]
+  product           Product            @relation(fields: [productId], references: [id], onDelete: Cascade)
+  cartItems         CartItem[]
+  orderItems        OrderItem[]
+  subscriptionItems SubscriptionItem[]
 
   @@unique([productId, sku])
   @@index([productId])
@@ -121,18 +173,44 @@ model CartItem {
 }
 
 model SavedItem {
-  id        String   @id @default(cuid())
-  userId    String   // Can be authenticated user ID or guest session ID
-  productId String
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  savedAt   DateTime @default(now())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String    @id @default(cuid())
+  userId     String    // Can be authenticated user ID or guest session ID
+  productId  String
+  wishlistId String?   // Optional: belongs to a specific wishlist
+  note       String?   // User note about why they saved this item
+  addedAt    DateTime  @default(now())
+  savedAt    DateTime  @default(now())
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
-  @@unique([userId, productId]) // Prevent duplicate saves
+  product    Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  wishlist   Wishlist? @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId, wishlistId]) // Prevent duplicate saves in same wishlist
   @@index([userId])
   @@index([productId])
+  @@index([wishlistId])
   @@index([userId, savedAt(sort: Desc)])
+  @@index([userId, addedAt(sort: Desc)])
+}
+
+// Wishlist for organizing saved items
+model Wishlist {
+  id         String    @id @default(cuid())
+  visibleId  String    @unique // User-facing ID (e.g., wl_abc123)
+  userId     String    // Owner of the wishlist
+  name       String    // e.g., "Favorites", "Gift Ideas", "Kitchen Essentials"
+  isDefault  Boolean   @default(false) // Default wishlist for user
+  isPublic   Boolean   @default(false) // Whether this wishlist can be shared
+  shareToken String?   @unique // Token for sharing public wishlists
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  items      SavedItem[]
+
+  @@index([userId])
+  @@index([userId, isDefault])
+  @@index([shareToken])
 }
 
 model Category {
@@ -196,6 +274,8 @@ model Order {
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
   items           OrderItem[]
+  carbonOffset    CarbonOffset?
+  orderImpacts    OrderImpact[]
 
   @@index([userId])
   @@index([stripeSessionId])
@@ -252,4 +332,468 @@ model Contact {
   @@index([email])
   @@index([status])
   @@index([submittedAt])
+}
+
+// Sustainability Certification Models
+// Represents certifications like B Corp, 1% for Planet, etc.
+model SustainabilityCertification {
+  id              String   @id @default(cuid())
+  name            String   @unique // e.g., "B Corp Certified", "1% for the Planet"
+  description     String?  // Detailed description of what this certification means
+  iconUrl         String?  // URL to the certification badge/icon image
+  verificationUrl String?  // URL where customers can verify the certification
+  sortOrder       Int      @default(0) // For controlling display order
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  products        ProductCertification[]
+
+  @@index([isActive])
+  @@index([sortOrder])
+}
+
+// Junction table for Product-Certification many-to-many relationship
+model ProductCertification {
+  id                String   @id @default(cuid())
+  productId         String
+  certificationId   String
+  verifiedAt        DateTime @default(now()) // When this certification was verified for this product
+  expiresAt         DateTime? // Optional expiration date
+  certificateNumber String?  // Optional certification number/ID
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  product           Product                     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  certification     SustainabilityCertification @relation(fields: [certificationId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, certificationId]) // Prevent duplicate certifications per product
+  @@index([productId])
+  @@index([certificationId])
+}
+
+// Carbon Offset tracking for orders
+model CarbonOffset {
+  id              String    @id @default(cuid())
+  orderId         String    @unique
+  offsetAmountKg  Float     // Amount of CO2 offset in kilograms
+  provider        String?   // Carbon offset provider (e.g., "Pachama", "Gold Standard")
+  certificateUrl  String?   // URL to the offset certificate
+  projectName     String?   // Name of the offset project
+  purchasedAt     DateTime  @default(now())
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  order           Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([provider])
+  @@index([purchasedAt(sort: Desc)])
+}
+
+// Environmental Impact Tracking Models
+
+// Defines types of environmental impact metrics (e.g., plastic saved, carbon offset)
+model ImpactMetric {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  unit        String
+  iconName    String
+  description String?
+  comparison  String?
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  productImpacts ProductImpact[]
+  userImpacts    UserImpact[]
+  orderImpacts   OrderImpact[]
+
+  @@index([isActive, sortOrder])
+  @@index([slug])
+}
+
+// Links products to their environmental impact values
+model ProductImpact {
+  id           String   @id @default(cuid())
+  productId    String
+  metricId     String
+  valuePerUnit Float
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  product Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  metric  ImpactMetric @relation(fields: [metricId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, metricId])
+  @@index([productId])
+  @@index([metricId])
+}
+
+// Aggregated user impact totals for each metric
+model UserImpact {
+  id            String   @id @default(cuid())
+  userId        String
+  metricId      String
+  totalValue    Float    @default(0)
+  lastUpdatedAt DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user   User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  metric ImpactMetric @relation(fields: [metricId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, metricId])
+  @@index([userId])
+  @@index([metricId])
+}
+
+// Impact values calculated for each order
+model OrderImpact {
+  id        String   @id @default(cuid())
+  orderId   String
+  metricId  String
+  value     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  order  Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  metric ImpactMetric @relation(fields: [metricId], references: [id], onDelete: Cascade)
+
+  @@unique([orderId, metricId])
+  @@index([orderId])
+  @@index([metricId])
+}
+
+// ===========================================
+// PRODUCT BUNDLES
+// ===========================================
+
+// Bundle: A curated collection of products sold together at a discount
+model Bundle {
+  id              String    @id @default(cuid())
+  slug            String    @unique
+  title           String    // Display name of the bundle
+  description     String?
+  image           String?
+  category        String?
+  discountPercent Float     @default(10) // Percentage discount for the bundle
+  isActive        Boolean   @default(true)
+  isCustomizable  Boolean   @default(false) // Whether users can customize the bundle
+  minItems        Int?      // Minimum items required (null = no minimum)
+  maxItems        Int?      // Maximum items allowed (null = unlimited)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  products   BundleProduct[]
+  selections BundleSelection[]
+
+  @@index([isActive])
+  @@index([category])
+  @@index([slug])
+}
+
+// Junction table for Bundle-Product relationship
+model BundleProduct {
+  id          String   @id @default(cuid())
+  bundleId    String
+  productId   String
+  isRequired  Boolean  @default(false) // Whether this product must be in the bundle
+  isDefault   Boolean  @default(false) // Whether this product is selected by default
+  maxQuantity Int      @default(1)     // Maximum quantity of this product in bundle
+  sortOrder   Int      @default(0)     // Display order within bundle
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  bundle  Bundle  @relation(fields: [bundleId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([bundleId, productId])
+  @@index([bundleId])
+  @@index([productId])
+}
+
+// User's customized bundle selection
+model BundleSelection {
+  id             String   @id @default(cuid())
+  bundleId       String
+  userId         String?  // Authenticated user ID (optional for guests)
+  sessionId      String?  // Guest session ID (optional for logged-in users)
+  selectedItems  String   // JSON array of selected items with details
+  totalPrice     Float
+  discountedPrice Float   @default(0)
+  savings        Float    @default(0)
+  status         String   @default("pending") // pending, in_cart, purchased
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  bundle Bundle @relation(fields: [bundleId], references: [id], onDelete: Cascade)
+
+  @@index([bundleId])
+  @@index([userId])
+  @@index([sessionId])
+}
+
+// ===========================================
+// IMPERFECT/SECONDS SALE
+// ===========================================
+
+// Batch of imperfect items with specific reason and discount
+model ImperfectBatch {
+  id              String    @id @default(cuid())
+  productId       String
+  quantity        Int       @default(0)  // Available imperfect quantity
+  reason          String    // Reason for imperfection
+  discountPercent Int       // Discount percentage for this batch
+  isActive        Boolean   @default(true)
+  expiresAt       DateTime? // Optional expiration for the batch
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([isActive])
+  @@index([productId, isActive])
+}
+
+// ===========================================
+// QUIZ SYSTEM
+// ===========================================
+
+// Quiz questions for product recommendations
+model QuizQuestion {
+  id             String   @id @default(cuid())
+  visibleId      String   @unique // User-facing ID (e.g., q1, q2)
+  question       String   // The question text
+  questionType   String   // SINGLE_CHOICE or MULTIPLE_CHOICE
+  options        String   // JSON array of QuizOption objects
+  categoryFilter String?  // Filter to specific category if applicable
+  orderIndex     Int      @default(0) // Display order
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([isActive, orderIndex])
+}
+
+// User quiz responses and recommendations
+model QuizResponse {
+  id                    String   @id @default(cuid())
+  visibleId             String   @unique // User-facing ID (e.g., quiz_abc123)
+  sessionId             String?  // Guest session ID
+  userId                String?  // Authenticated user ID (if logged in)
+  responses             String   // JSON object of question answers
+  recommendedProductIds String   // JSON array of recommended product IDs
+  completedAt           DateTime @default(now()) // When the quiz was completed
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([sessionId])
+  @@index([userId])
+  @@index([visibleId])
+}
+
+// Product values for quiz matching (e.g., eco-friendly, vegan)
+model ProductValue {
+  id          String   @id @default(cuid())
+  name        String   @unique // e.g., "plastic-free", "vegan"
+  slug        String   @unique // URL-friendly identifier
+  label       String   // Display label
+  description String?
+  iconName    String?  // Icon name for display
+  sortOrder   Int      @default(0) // Display order
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  products ProductValueAssignment[]
+
+  @@index([sortOrder])
+}
+
+// Junction table for Product-Value relationship
+model ProductValueAssignment {
+  id        String   @id @default(cuid())
+  productId String
+  valueId   String
+  strength  Float    @default(1.0) // How strongly this product matches the value (0-1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  product Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  value   ProductValue @relation(fields: [valueId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, valueId])
+  @@index([productId])
+  @@index([valueId])
+}
+
+// ===========================================
+// SUBSCRIPTIONS (SUBSCRIBE & SAVE)
+// ===========================================
+
+// Subscription: Recurring delivery of products
+model Subscription {
+  id               String    @id @default(cuid())
+  visibleId        String    @unique // User-facing ID (e.g., SUB-ABC123)
+  userId           String
+  status           String    @default("ACTIVE") // ACTIVE, PAUSED, CANCELLED
+  frequency        String    // WEEKLY, BIWEEKLY, MONTHLY, BIMONTHLY
+  nextDeliveryDate DateTime
+  lastDeliveryDate DateTime?
+  skipNextDelivery Boolean   @default(false) // Whether to skip the next delivery
+  pausedAt         DateTime?
+  cancelledAt      DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  user   User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items  SubscriptionItem[]
+  pauses SubscriptionPause[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([userId, status])
+  @@index([nextDeliveryDate])
+}
+
+// Individual items within a subscription
+model SubscriptionItem {
+  id                  String   @id @default(cuid())
+  subscriptionId      String
+  productId           String
+  variantId           String?
+  quantity            Int      @default(1)
+  priceAtSubscription Float    // Price locked in at subscription time
+  discountPercent     Float    @default(0) // Discount applied to this item
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  subscription Subscription    @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  product      Product         @relation(fields: [productId], references: [id])
+  variant      ProductVariant? @relation(fields: [variantId], references: [id])
+
+  @@unique([subscriptionId, productId, variantId])
+  @@index([subscriptionId])
+  @@index([productId])
+  @@index([variantId])
+}
+
+// Track subscription pauses
+model SubscriptionPause {
+  id             String    @id @default(cuid())
+  subscriptionId String
+  pausedAt       DateTime  @default(now())
+  resumeAt       DateTime? // Scheduled resume date (null = indefinite pause)
+  resumedAt      DateTime? // Actual resume date
+  reason         String?   // Reason for pausing
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@index([subscriptionId])
+  @@index([subscriptionId, resumedAt])
+}
+
+// ===========================================
+// LOYALTY PROGRAM
+// ===========================================
+
+// Tracks loyalty points earned by users
+model LoyaltyPoints {
+  id          String    @id @default(cuid())
+  userId      String
+  points      Int       // Points earned (positive number)
+  source      String    // PURCHASE, REVIEW, REFERRAL, SIGNUP
+  orderId     String?   // Reference to order if earned from purchase
+  reviewId    String?   // Reference to review if earned from review
+  referralId  String?   // Reference to referral if earned from referral
+  description String?   // Human-readable description
+  expiresAt   DateTime? // Optional expiration date
+  earnedAt    DateTime  @default(now()) // When the points were earned
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, expiresAt])
+  @@index([source])
+  @@index([orderId])
+  @@index([earnedAt])
+}
+
+// Tracks loyalty point redemptions
+model LoyaltyRedemption {
+  id             String   @id @default(cuid())
+  userId         String
+  pointsUsed     Int      // Points redeemed
+  orderId        String?  // Order where redemption was applied
+  discount       Float    // Dollar amount discounted
+  discountAmount Float    @default(0) // Alias for discount amount
+  status         String   @default("applied") // applied, refunded
+  redeemedAt     DateTime @default(now()) // When the points were redeemed
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([orderId])
+  @@index([status])
+  @@index([redeemedAt])
+}
+
+// ===========================================
+// REFERRAL PROGRAM
+// ===========================================
+
+// User's referral code(s) for sharing
+model ReferralCode {
+  id             String   @id @default(cuid())
+  code           String   @unique // The actual referral code (e.g., ECO-ABC123)
+  ownerId        String   // User who owns this code
+  discountPercent Int     @default(10) // Discount for referee
+  isActive       Boolean  @default(true)
+  usageLimit     Int?     // Maximum number of uses (null = unlimited)
+  usageCount     Int      @default(0) // Current usage count
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  owner     User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  referrals Referral[]
+
+  @@index([code])
+  @@index([ownerId])
+  @@index([isActive])
+}
+
+// Tracks individual referrals
+model Referral {
+  id                String    @id @default(cuid())
+  referrerId        String    // User who made the referral
+  refereeId         String    @unique // User who was referred (one referral per user)
+  referralCodeId    String    // The referral code used
+  status            String    @default("PENDING") // PENDING, COMPLETED, REWARDED, EXPIRED
+  discountApplied   Float?    // Discount applied to referee's first order
+  pointsAwarded     Int?      // Points awarded to referrer
+  rewardPoints      Int       @default(0) // Points to be awarded to referrer (alias)
+  firstOrderId      String?   // Referee's first order that triggered completion
+  refereeOrderId    String?   // Alias for first order ID
+  completedAt       DateTime? // When referral was completed
+  rewardedAt        DateTime? // When referrer was rewarded
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  referrer     User         @relation("Referrer", fields: [referrerId], references: [id], onDelete: Cascade)
+  referee      User         @relation("Referee", fields: [refereeId], references: [id], onDelete: Cascade)
+  referralCode ReferralCode @relation(fields: [referralCodeId], references: [id], onDelete: Cascade)
+
+  @@index([referrerId])
+  @@index([refereeId])
+  @@index([referralCodeId])
+  @@index([status])
 }
