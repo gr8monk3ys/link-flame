@@ -9,7 +9,9 @@ import {
   paginatedResponse,
   PaginationMeta,
   validationErrorResponse,
+  rateLimitErrorResponse,
 } from "@/lib/api-response";
+import { checkRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 
 // Schema for query parameter validation
@@ -44,6 +46,14 @@ export async function GET(req: Request) {
 
     if (!userId) {
       return unauthorizedResponse("You must be logged in to view orders");
+    }
+
+    // Apply rate limiting to prevent abuse
+    const identifier = getIdentifier(req, userId);
+    const { success, reset } = await checkRateLimit(identifier);
+
+    if (!success) {
+      return rateLimitErrorResponse(reset);
     }
 
     const url = new URL(req.url);

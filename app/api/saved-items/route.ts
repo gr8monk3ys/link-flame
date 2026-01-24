@@ -1,3 +1,4 @@
+import { NextRequest } from "next/server";
 import { getServerAuth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getUserIdForCart } from "@/lib/session";
@@ -5,59 +6,138 @@ import { checkRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { validateCsrfToken } from "@/lib/csrf";
 import { z } from "zod";
 import {
-  successResponse,
+  paginatedResponse,
   handleApiError,
   rateLimitErrorResponse,
   validationErrorResponse,
   errorResponse,
   notFoundResponse,
+  successResponse,
 } from "@/lib/api-response";
 import { logger } from "@/lib/logger";
+import {
+  getOrCreateDefaultWishlist,
+  addToWishlist,
+  removeFromWishlist,
+} from "@/lib/wishlists";
 
 /**
- * Saved Items API
+ * Saved Items API (Legacy/Backward Compatible)
  *
- * GET  /api/saved-items - Get all saved items for the current user/guest
- * POST /api/saved-items - Add a product to saved items
+ * This API maintains backward compatibility with the original saved items implementation
+ * while using the new wishlist-based system underneath.
+ *
+ * All operations use the user's default "Favorites" wishlist.
+ *
+ * GET  /api/saved-items - Get paginated saved items for the current user/guest
+ * POST /api/saved-items - Add a product to saved items (default wishlist)
+ * DELETE /api/saved-items?productId=xxx - Remove a product from saved items
  */
 
 const SaveItemSchema = z.object({
   productId: z.string().min(1, "Product ID is required"),
 });
 
+// Pagination query parameter validation schema
+const PaginationSchema = z.object({
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().positive().max(50).default(20),
+});
+
 /**
  * GET /api/saved-items
  *
- * Returns all saved items for the current user (authenticated or guest)
+ * Returns paginated saved items for the current user (authenticated or guest)
+ * across all wishlists, formatted for backward compatibility.
+ *
+ * Query Parameters:
+ * - page: number (optional, default: 1) - Page number
+ * - limit: number (optional, default: 20, max: 50) - Items per page
+ *
+ * Response: 200 OK
+ * {
+ *   "success": true,
+ *   "data": [...items],
+ *   "meta": {
+ *     "timestamp": "...",
+ *     "pagination": {
+ *       "page": 1,
+ *       "limit": 20,
+ *       "total": 45,
+ *       "totalPages": 3,
+ *       "hasNextPage": true,
+ *       "hasPreviousPage": false
+ *     }
+ *   }
+ * }
  */
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   try {
     const { userId } = await getServerAuth();
     const userIdToUse = await getUserIdForCart(userId);
 
-    const savedItems = await prisma.savedItem.findMany({
-      where: {
-        userId: userIdToUse,
-      },
-      include: {
-        product: true,
-      },
-      orderBy: {
-        savedAt: "desc",
-      },
+    // Parse and validate query parameters
+    const { searchParams } = new URL(req.url);
+    const queryParams = {
+      page: searchParams.get("page") || "1",
+      limit: searchParams.get("limit") || "20",
+    };
+
+    const validation = PaginationSchema.safeParse(queryParams);
+    if (!validation.success) {
+      return validationErrorResponse(validation.error);
+    }
+
+    const { page, limit } = validation.data;
+    const skip = (page - 1) * limit;
+
+    // Ensure default wishlist exists
+    await getOrCreateDefaultWishlist(userIdToUse);
+
+    // Get total count of saved items
+    const total = await prisma.savedItem.count({
+      where: { userId: userIdToUse },
     });
 
-    // Transform the data to match the SavedItem interface expected by the hook
+    // Get paginated saved items across all wishlists
+    const savedItems = await prisma.savedItem.findMany({
+      where: { userId: userIdToUse },
+      include: {
+        product: true,
+        wishlist: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: { addedAt: "desc" },
+      skip,
+      take: limit,
+    });
+
+    // Transform the data to match the original SavedItem interface
     const formattedItems = savedItems.map((item) => ({
-      id: item.productId,
+      id: item.productId, // Use productId as id for backward compatibility
       title: item.product.title,
       price: Number(item.product.price),
       image: item.product.image,
       quantity: 1, // Saved items don't have quantities
-      savedAt: item.savedAt.toISOString(),
+      savedAt: item.addedAt.toISOString(),
+      wishlistId: item.wishlist?.id ?? null,
+      wishlistName: item.wishlist?.name ?? "Favorites",
     }));
 
-    return successResponse(formattedItems);
+    const totalPages = Math.ceil(total / limit);
+
+    return paginatedResponse(formattedItems, {
+      page,
+      limit,
+      total,
+      totalPages,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1,
+    });
   } catch (error) {
     logger.error("Failed to fetch saved items", error);
     return handleApiError(error);
@@ -67,7 +147,7 @@ export async function GET(req: Request) {
 /**
  * POST /api/saved-items
  *
- * Add a product to saved items (wishlist)
+ * Add a product to saved items (default wishlist)
  */
 export async function POST(req: Request) {
   try {
@@ -106,57 +186,40 @@ export async function POST(req: Request) {
     // Get user ID for saved items operations
     const userIdToUse = await getUserIdForCart(authUserId);
 
-    // Check if product exists
-    const product = await prisma.product.findUnique({
-      where: { id: productId },
-      select: { id: true, title: true },
-    });
+    // Get or create default wishlist
+    const defaultWishlist = await getOrCreateDefaultWishlist(userIdToUse);
 
-    if (!product) {
-      return notFoundResponse("Product");
+    // Add to default wishlist
+    const result = await addToWishlist(defaultWishlist.id, productId, userIdToUse);
+
+    if (!result.success) {
+      if (result.error === "Product not found") {
+        return notFoundResponse("Product");
+      }
+      if (result.alreadySaved) {
+        return successResponse(
+          { alreadySaved: true },
+          { message: "Item already saved" }
+        );
+      }
+      return errorResponse(result.error || "Failed to save item", undefined, undefined, 400);
     }
-
-    // Check if already saved (upsert handles this, but we want to return appropriate message)
-    const existingItem = await prisma.savedItem.findUnique({
-      where: {
-        userId_productId: {
-          userId: userIdToUse,
-          productId,
-        },
-      },
-    });
-
-    if (existingItem) {
-      return successResponse(
-        { alreadySaved: true },
-        { message: "Item already saved" }
-      );
-    }
-
-    // Create saved item
-    const savedItem = await prisma.savedItem.create({
-      data: {
-        userId: userIdToUse,
-        productId,
-      },
-      include: {
-        product: true,
-      },
-    });
 
     logger.info("Item saved to wishlist", {
       userId: userIdToUse,
       productId,
+      wishlistId: defaultWishlist.id,
     });
 
+    // Return in original format for backward compatibility
     return successResponse(
       {
-        id: savedItem.productId,
-        title: savedItem.product.title,
-        price: Number(savedItem.product.price),
-        image: savedItem.product.image,
+        id: result.item!.productId,
+        title: result.item!.product.title,
+        price: Number(result.item!.product.price),
+        image: result.item!.product.image,
         quantity: 1,
-        savedAt: savedItem.savedAt.toISOString(),
+        savedAt: result.item!.addedAt.toISOString(),
       },
       undefined,
       201
@@ -170,7 +233,7 @@ export async function POST(req: Request) {
 /**
  * DELETE /api/saved-items
  *
- * Remove a product from saved items
+ * Remove a product from saved items (searches across all wishlists)
  */
 export async function DELETE(req: Request) {
   try {
@@ -194,17 +257,39 @@ export async function DELETE(req: Request) {
       return errorResponse("Product ID is required", undefined, undefined, 400);
     }
 
-    // Delete the saved item
-    await prisma.savedItem.deleteMany({
+    // Find the saved item across all wishlists
+    const savedItem = await prisma.savedItem.findFirst({
       where: {
         userId: userIdToUse,
         productId,
       },
+      include: {
+        wishlist: true,
+      },
     });
+
+    if (!savedItem) {
+      // Item not found, but we'll still return success for backward compatibility
+      return successResponse({ removed: true });
+    }
+
+    // Remove from wishlist
+    const wishlistId = savedItem.wishlistId;
+    if (!wishlistId) {
+      // If no wishlist ID, just delete the saved item directly
+      await prisma.savedItem.delete({ where: { id: savedItem.id } });
+      return successResponse({ removed: true });
+    }
+    const result = await removeFromWishlist(wishlistId, productId, userIdToUse);
+
+    if (!result.success) {
+      return errorResponse(result.error || "Failed to remove item", undefined, undefined, 400);
+    }
 
     logger.info("Item removed from wishlist", {
       userId: userIdToUse,
       productId,
+      wishlistId: savedItem.wishlistId,
     });
 
     return successResponse({ removed: true });

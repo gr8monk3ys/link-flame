@@ -5,7 +5,9 @@ import {
   unauthorizedResponse,
   notFoundResponse,
   handleApiError,
+  rateLimitErrorResponse,
 } from "@/lib/api-response";
+import { checkRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 
 // Shipping status labels for display
@@ -41,6 +43,14 @@ export async function GET(
 
     if (!userId) {
       return unauthorizedResponse("You must be logged in to view order details");
+    }
+
+    // Apply rate limiting to prevent abuse
+    const identifier = getIdentifier(req, userId);
+    const { success, reset } = await checkRateLimit(identifier);
+
+    if (!success) {
+      return rateLimitErrorResponse(reset);
     }
 
     const { id } = await params;

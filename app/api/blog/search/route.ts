@@ -1,12 +1,13 @@
-import { NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { searchPosts } from '@/lib/blog';
-import { errorResponse, successResponse, handleApiError } from '@/lib/api-response';
+import { errorResponse, paginatedResponse, handleApiError, validationErrorResponse, rateLimitErrorResponse } from '@/lib/api-response';
+import { checkRateLimit, getIdentifier } from '@/lib/rate-limit';
 import { z } from 'zod';
 
 /**
  * Blog Search API Endpoint
  *
- * GET /api/blog/search?q={query}&category={category}&tag={tag}
+ * GET /api/blog/search?q={query}&category={category}&tag={tag}&page={page}&limit={limit}
  *
  * Searches blog posts by query, optionally filtered by category and/or tag.
  *
@@ -14,11 +15,29 @@ import { z } from 'zod';
  * - `q` (optional): Search query string
  * - `category` (optional): Filter by category name
  * - `tag` (optional): Filter by tag
- * - `limit` (optional): Maximum number of results (default: 50)
+ * - `page` (optional, default: 1): Page number
+ * - `limit` (optional, default: 20, max: 50): Items per page
+ *
+ * **Response: 200 OK**
+ * {
+ *   "success": true,
+ *   "data": [...posts],
+ *   "meta": {
+ *     "timestamp": "...",
+ *     "pagination": {
+ *       "page": 1,
+ *       "limit": 20,
+ *       "total": 50,
+ *       "totalPages": 3,
+ *       "hasNextPage": true,
+ *       "hasPreviousPage": false
+ *     }
+ *   }
+ * }
  *
  * **Example:**
  * ```
- * GET /api/blog/search?q=sustainable&category=Lifestyle&limit=10
+ * GET /api/blog/search?q=sustainable&category=Lifestyle&page=1&limit=10
  * ```
  */
 
@@ -26,28 +45,46 @@ const searchSchema = z.object({
   q: z.string().optional(),
   category: z.string().optional(),
   tag: z.string().optional(),
-  limit: z.coerce.number().min(1).max(100).optional().default(50),
+  page: z.coerce.number().int().min(1).max(10000).default(1),
+  limit: z.coerce.number().int().min(1).max(50).default(20),
 });
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
+    // Apply rate limiting to prevent search abuse
+    const identifier = getIdentifier(request);
+    const { success, reset } = await checkRateLimit(identifier);
+
+    if (!success) {
+      return rateLimitErrorResponse(reset);
+    }
+
     const { searchParams } = new URL(request.url);
 
     // Validate query parameters
-    const params = searchSchema.parse({
+    const validation = searchSchema.safeParse({
       q: searchParams.get('q') || undefined,
       category: searchParams.get('category') || undefined,
       tag: searchParams.get('tag') || undefined,
-      limit: searchParams.get('limit') || undefined,
+      page: searchParams.get('page') || '1',
+      limit: searchParams.get('limit') || '20',
     });
 
-    const { q, category, tag, limit } = params;
+    if (!validation.success) {
+      return validationErrorResponse(validation.error);
+    }
+
+    const { q, category, tag, page, limit } = validation.data;
 
     // If no search parameters provided, return empty results
     if (!q && !category && !tag) {
-      return successResponse([], {
-        count: 0,
-        query: params,
+      return paginatedResponse([], {
+        page: 1,
+        limit,
+        total: 0,
+        totalPages: 0,
+        hasNextPage: false,
+        hasPreviousPage: false,
       });
     }
 
@@ -56,7 +93,7 @@ export async function GET(request: Request) {
 
     // If no query but category/tag provided, need to fetch all posts first
     if (!q && (category || tag)) {
-      const { getAllPosts, getPostsByCategory, getPostsByTag } = await import('@/lib/blog');
+      const { getPostsByCategory, getPostsByTag } = await import('@/lib/blog');
 
       if (category && tag) {
         // Filter by both category and tag
@@ -83,22 +120,25 @@ export async function GET(request: Request) {
       }
     }
 
-    // Apply limit
-    const limitedResults = results.slice(0, limit);
+    // Calculate pagination
+    const total = results.length;
+    const totalPages = Math.ceil(total / limit);
+    const skip = (page - 1) * limit;
 
-    return successResponse(limitedResults, {
-      count: limitedResults.length,
-      total: results.length,
-      query: params,
+    // Apply pagination
+    const paginatedResults = results.slice(skip, skip + limit);
+
+    return paginatedResponse(paginatedResults, {
+      page,
+      limit,
+      total,
+      totalPages,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return errorResponse(
-        'Invalid search parameters',
-        'VALIDATION_ERROR',
-        error.errors,
-        400
-      );
+      return validationErrorResponse(error);
     }
 
     return handleApiError(error);
