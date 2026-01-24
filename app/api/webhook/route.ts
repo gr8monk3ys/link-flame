@@ -6,6 +6,8 @@ import { Prisma } from "@prisma/client";
 import { errorResponse } from "@/lib/api-response";
 import { logger } from "@/lib/logger";
 import { sendOrderConfirmation, isEmailConfigured } from "@/lib/email";
+import { awardPurchasePoints } from "@/lib/loyalty";
+import { storeOrderImpact } from "@/lib/impact";
 
 // Initialize Stripe lazily to allow build without secret key
 let stripe: Stripe | null = null;
@@ -308,6 +310,64 @@ export async function POST(req: Request) {
 
       // Send order confirmation email
       await sendOrderConfirmationEmail(order.id, order.customerEmail || '');
+
+      // Award loyalty points for the purchase
+      // Only award points for authenticated users (not guest sessions)
+      if (userId && !userId.startsWith('guest_')) {
+        try {
+          const loyaltyResult = await awardPurchasePoints(userId, order.id, order.amount);
+          if (loyaltyResult.success) {
+            logger.info('Loyalty points awarded for purchase', {
+              userId,
+              orderId: order.id,
+              pointsAwarded: loyaltyResult.pointsAwarded,
+              orderAmount: order.amount,
+            });
+          }
+        } catch (loyaltyError) {
+          // Log but don't fail the webhook if loyalty points fail
+          logger.error('Failed to award loyalty points', loyaltyError, {
+            userId,
+            orderId: order.id,
+            orderAmount: order.amount,
+          });
+        }
+      }
+
+      // Calculate and store environmental impact for the order
+      // Only track impact for authenticated users (not guest sessions)
+      if (userId && !userId.startsWith('guest_')) {
+        try {
+          const impactItems = cartItems.map(item => ({
+            productId: item.productId,
+            quantity: item.quantity,
+          }));
+
+          const impactResult = await storeOrderImpact(order.id, userId, impactItems);
+
+          logger.info('Environmental impact stored for order', {
+            userId,
+            orderId: order.id,
+            impactMetricsCount: impactResult.orderImpacts.length,
+            milestonesAchieved: impactResult.milestones.length,
+          });
+
+          // Log any milestones achieved
+          if (impactResult.milestones.length > 0) {
+            logger.info('User achieved impact milestones', {
+              userId,
+              orderId: order.id,
+              milestones: impactResult.milestones,
+            });
+          }
+        } catch (impactError) {
+          // Log but don't fail the webhook if impact tracking fails
+          logger.error('Failed to store environmental impact', impactError, {
+            userId,
+            orderId: order.id,
+          });
+        }
+      }
     }
 
     return new NextResponse(null, { status: 200 });
