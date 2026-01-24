@@ -7,7 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Package, Truck, CheckCircle, Clock, XCircle } from "lucide-react";
+import { Package, Truck, CheckCircle, Clock, XCircle, Gift } from "lucide-react";
 
 interface OrderWithTracking {
   id: string;
@@ -21,6 +21,9 @@ interface OrderWithTracking {
   trackingNumber: string | null;
   thumbnail: string | null;
   itemCount: number;
+  isGift: boolean;
+  giftRecipientName: string | null;
+  giftMessage: string | null;
   items: Array<{
     id: string;
     title: string;
@@ -38,15 +41,15 @@ interface OrderWithTracking {
 function getShippingIcon(status: string | null) {
   switch (status) {
     case "delivered":
-      return <CheckCircle className="h-4 w-4" />;
+      return <CheckCircle className="size-4" />;
     case "shipped":
     case "in_transit":
     case "out_for_delivery":
-      return <Truck className="h-4 w-4" />;
+      return <Truck className="size-4" />;
     case "cancelled":
-      return <XCircle className="h-4 w-4" />;
+      return <XCircle className="size-4" />;
     default:
-      return <Clock className="h-4 w-4" />;
+      return <Clock className="size-4" />;
   }
 }
 
@@ -139,10 +142,10 @@ export default function OrdersPage() {
 
   return (
     <div className="container py-10">
-      <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-3xl font-bold">Order History</h1>
-          <p className="text-muted-foreground mt-2">
+          <p className="mt-2 text-muted-foreground">
             View and track your orders
           </p>
         </div>
@@ -200,11 +203,11 @@ export default function OrdersPage() {
           {orders.map((order) => (
             <Card key={order.id}>
               <CardHeader>
-                <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
+                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                   <div className="flex gap-4">
                     {/* Order thumbnail */}
                     {order.thumbnail && (
-                      <div className="relative h-16 w-16 shrink-0 rounded-md overflow-hidden">
+                      <div className="relative size-16 shrink-0 overflow-hidden rounded-md">
                         <Image
                           src={order.thumbnail}
                           alt="Order item"
@@ -212,8 +215,8 @@ export default function OrdersPage() {
                           className="object-cover"
                         />
                         {order.itemCount > 1 && (
-                          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                            <span className="text-white text-xs font-medium">
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                            <span className="text-xs font-medium text-white">
                               +{order.itemCount - 1}
                             </span>
                           </div>
@@ -225,7 +228,7 @@ export default function OrdersPage() {
                       <CardDescription>
                         Placed on {format(new Date(order.createdAt), "MMMM d, yyyy")}
                       </CardDescription>
-                      <div className="flex items-center gap-2 mt-2">
+                      <div className="mt-2 flex flex-wrap items-center gap-2">
                         {/* Payment status */}
                         <span
                           className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
@@ -243,6 +246,13 @@ export default function OrdersPage() {
                           {getShippingIcon(order.shippingStatus)}
                           <span className="ml-1">{order.shippingStatusLabel}</span>
                         </Badge>
+                        {/* Gift indicator */}
+                        {order.isGift && (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-pink-100 px-2 py-0.5 text-xs font-medium text-pink-800">
+                            <Gift className="size-3" />
+                            Gift
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -258,7 +268,7 @@ export default function OrdersPage() {
               </CardHeader>
               <CardContent>
                 {order.trackingNumber && (
-                  <div className="mb-4 p-3 bg-muted rounded-md">
+                  <div className="mb-4 rounded-md bg-muted p-3">
                     <div className="text-sm">
                       <strong>Tracking #:</strong> {order.trackingNumber}
                     </div>
@@ -269,10 +279,10 @@ export default function OrdersPage() {
                     <strong>Shipping to:</strong> {order.shippingAddress}
                   </div>
                 )}
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                   <Link
                     href={`/account/orders/${order.id}`}
-                    className="text-sm text-primary hover:underline font-medium"
+                    className="text-sm font-medium text-primary hover:underline"
                   >
                     View Order Details →
                   </Link>

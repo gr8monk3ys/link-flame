@@ -29,6 +29,15 @@ function getStripe(): Stripe {
   return stripe;
 }
 
+// Gift options schema for conditional validation
+const GiftOptionsSchema = z.object({
+  isGift: z.boolean().default(false),
+  giftMessage: z.string().max(500, "Gift message must be 500 characters or less").optional(),
+  giftRecipientName: z.string().max(100, "Recipient name must be 100 characters or less").optional(),
+  giftRecipientEmail: z.string().email("Invalid recipient email address").optional().or(z.literal("")),
+  hidePrice: z.boolean().default(false),
+});
+
 // Define validation schema for checkout data
 const CheckoutSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -38,6 +47,8 @@ const CheckoutSchema = z.object({
   city: z.string().min(1, "City is required"),
   state: z.string().min(1, "State is required"),
   zipCode: z.string().regex(/^\d{5}(-\d{4})?$/, "Invalid ZIP code format"),
+  // Gift options (optional)
+  ...GiftOptionsSchema.shape,
 });
 
 export async function POST(request: Request) {
@@ -149,24 +160,52 @@ export async function POST(request: Request) {
       });
     }
 
+    // Extract gift options from validated data
+    const giftOptions = {
+      isGift: validation.data.isGift || false,
+      giftMessage: validation.data.giftMessage || '',
+      giftRecipientName: validation.data.giftRecipientName || '',
+      giftRecipientEmail: validation.data.giftRecipientEmail || '',
+      hidePrice: validation.data.hidePrice || false,
+    };
+
     logger.info('Creating Stripe checkout session', {
       userId: userIdToUse,
       itemCount: cartItems.length,
       total: serverTotal,
+      isGift: giftOptions.isGift,
     });
 
     try {
-      // Create Stripe Checkout Session
+      // Create Stripe Checkout Session with automatic payment methods
+      // This enables Apple Pay, Google Pay, and other payment methods based on customer location
       const session = await getStripe().checkout.sessions.create({
         mode: 'payment',
         line_items: lineItems,
+        // Enable automatic payment methods - Stripe will show Apple Pay, Google Pay, etc.
+        // based on what's available on the customer's device and region
+        payment_method_types: ['card'],
+        payment_method_options: {
+          card: {
+            // Enable wallet payment methods (Apple Pay, Google Pay) for card payments
+            request_three_d_secure: 'automatic',
+          },
+        },
         metadata: {
           userId: userIdToUse,
           customerEmail: data.email,
-          customerName: `${data.firstName} ${data.lastName}`,
-          shippingAddress: `${data.address}, ${data.city}, ${data.state} ${data.zipCode}`,
+          customerName: `${validation.data.firstName} ${validation.data.lastName}`,
+          shippingAddress: `${validation.data.address}, ${validation.data.city}, ${validation.data.state} ${validation.data.zipCode}`,
+          // Gift options stored in metadata
+          isGift: giftOptions.isGift.toString(),
+          giftMessage: giftOptions.giftMessage,
+          giftRecipientName: giftOptions.giftRecipientName,
+          giftRecipientEmail: giftOptions.giftRecipientEmail,
+          hidePrice: giftOptions.hidePrice.toString(),
         },
         customer_email: data.email,
+        // Billing address collection for better fraud prevention
+        billing_address_collection: 'auto',
         success_url: `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/order-confirmation?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/checkout`,
         // Expire after 30 minutes

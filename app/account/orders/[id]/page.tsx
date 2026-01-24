@@ -9,7 +9,7 @@ import { notFound } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
-import { Check, Package, Truck, Home, CheckCircle, XCircle, ExternalLink } from "lucide-react";
+import { Check, Package, Truck, Home, CheckCircle, XCircle, ExternalLink, Gift } from "lucide-react";
 
 interface ShippingStep {
   key: string;
@@ -39,6 +39,11 @@ interface OrderWithTracking {
   isCancelled: boolean;
   isDelivered: boolean;
   itemCount: number;
+  isGift: boolean;
+  giftMessage: string | null;
+  giftRecipientName: string | null;
+  giftRecipientEmail: string | null;
+  hidePrice: boolean;
   items: Array<{
     id: string;
     title: string;
@@ -149,7 +154,7 @@ export default function OrderDetailPage() {
   }
 
   return (
-    <div className="container py-10 max-w-4xl">
+    <div className="container max-w-4xl py-10">
       <div className="mb-6">
         <Link href="/account/orders" className="text-sm text-primary hover:underline">
           ← Back to Orders
@@ -159,7 +164,7 @@ export default function OrderDetailPage() {
       {/* Order Header */}
       <Card className="mb-6">
         <CardHeader>
-          <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
               <CardTitle className="text-2xl">Order Details</CardTitle>
               <CardDescription className="mt-2">
@@ -172,13 +177,13 @@ export default function OrderDetailPage() {
             <div className="flex flex-col gap-2">
               {/* Payment status */}
               <Badge variant={order.status === "paid" ? "default" : "secondary"}>
-                {order.status === "paid" ? <CheckCircle className="h-3 w-3 mr-1" /> : null}
+                {order.status === "paid" ? <CheckCircle className="mr-1 size-3" /> : null}
                 {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
               </Badge>
               {/* Shipping status */}
               <Badge variant={order.isCancelled ? "destructive" : order.isDelivered ? "default" : "outline"}>
-                {order.isCancelled ? <XCircle className="h-3 w-3 mr-1" /> : null}
-                {order.isDelivered ? <CheckCircle className="h-3 w-3 mr-1" /> : null}
+                {order.isCancelled ? <XCircle className="mr-1 size-3" /> : null}
+                {order.isDelivered ? <CheckCircle className="mr-1 size-3" /> : null}
                 {order.shippingStatusLabel}
               </Badge>
             </div>
@@ -207,30 +212,30 @@ export default function OrderDetailPage() {
             <div className="relative">
               <div className="flex justify-between">
                 {order.shippingProgress.map((step, index) => (
-                  <div key={step.key} className="flex flex-col items-center relative z-10">
+                  <div key={step.key} className="relative z-10 flex flex-col items-center">
                     <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
+                      className={`flex size-10 items-center justify-center rounded-full border-2 ${
                         step.completed
-                          ? "bg-primary border-primary text-primary-foreground"
+                          ? "border-primary bg-primary text-primary-foreground"
                           : step.current
                           ? "border-primary bg-background"
                           : "border-muted bg-background"
                       }`}
                     >
                       {step.completed ? (
-                        <Check className="h-5 w-5" />
+                        <Check className="size-5" />
                       ) : (
                         getStepIcon(step.key, step.completed, step.current)
                       )}
                     </div>
-                    <span className={`mt-2 text-xs text-center ${step.completed || step.current ? "font-medium" : "text-muted-foreground"}`}>
+                    <span className={`mt-2 text-center text-xs ${step.completed || step.current ? "font-medium" : "text-muted-foreground"}`}>
                       {step.label}
                     </span>
                   </div>
                 ))}
               </div>
               {/* Progress line */}
-              <div className="absolute top-5 left-0 right-0 h-0.5 bg-muted -z-0">
+              <div className="absolute inset-x-0 top-5 -z-0 h-0.5 bg-muted">
                 <div
                   className="h-full bg-primary transition-all duration-500"
                   style={{
@@ -242,8 +247,8 @@ export default function OrderDetailPage() {
 
             {/* Tracking Info */}
             {order.trackingNumber && (
-              <div className="mt-6 p-4 bg-muted rounded-lg">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+              <div className="mt-6 rounded-lg bg-muted p-4">
+                <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                   <div>
                     <div className="text-sm text-muted-foreground">Tracking Number</div>
                     <div className="font-mono font-medium">{order.trackingNumber}</div>
@@ -259,7 +264,7 @@ export default function OrderDetailPage() {
                       className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
                     >
                       Track Package
-                      <ExternalLink className="h-3 w-3" />
+                      <ExternalLink className="size-3" />
                     </a>
                   )}
                 </div>
@@ -281,7 +286,7 @@ export default function OrderDetailPage() {
         <Card className="mb-6 border-destructive">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3 text-destructive">
-              <XCircle className="h-6 w-6" />
+              <XCircle className="size-6" />
               <div>
                 <div className="font-semibold">Order Cancelled</div>
                 <div className="text-sm text-muted-foreground">
@@ -293,20 +298,66 @@ export default function OrderDetailPage() {
         </Card>
       )}
 
+      {/* Gift Information */}
+      {order.isGift && (
+        <Card className="mb-6 border-pink-200 bg-pink-50/50">
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-2">
+              <Gift className="size-5 text-pink-600" />
+              <CardTitle className="text-lg text-pink-800">Gift Order</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="space-y-3">
+              {order.giftRecipientName && (
+                <div>
+                  <div className="text-sm font-medium text-pink-800">Recipient</div>
+                  <div className="text-sm text-pink-700">{order.giftRecipientName}</div>
+                </div>
+              )}
+
+              {order.giftMessage && (
+                <div>
+                  <div className="mb-1 text-sm font-medium text-pink-800">Gift Message</div>
+                  <div className="rounded-lg border border-pink-200 bg-white/70 p-3 text-sm italic text-pink-700">
+                    &ldquo;{order.giftMessage}&rdquo;
+                  </div>
+                </div>
+              )}
+
+              <div className="flex flex-wrap gap-3 pt-2">
+                {order.hidePrice && (
+                  <div className="flex items-center gap-1 rounded-full bg-pink-100 px-2 py-1 text-xs text-pink-700">
+                    <Check className="size-3" />
+                    <span>Prices hidden on packing slip</span>
+                  </div>
+                )}
+                {order.giftRecipientEmail && (
+                  <div className="flex items-center gap-1 rounded-full bg-pink-100 px-2 py-1 text-xs text-pink-700">
+                    <Check className="size-3" />
+                    <span>Recipient will be notified</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Customer & Shipping Info */}
       <Card className="mb-6">
         <CardContent className="pt-6">
           <div className="grid gap-6 md:grid-cols-2">
             <div>
-              <h3 className="font-semibold mb-2">Customer Information</h3>
-              <div className="text-sm text-muted-foreground space-y-1">
+              <h3 className="mb-2 font-semibold">Customer Information</h3>
+              <div className="space-y-1 text-sm text-muted-foreground">
                 {order.customerName && <div>{order.customerName}</div>}
                 {order.customerEmail && <div>{order.customerEmail}</div>}
               </div>
             </div>
             {order.shippingAddress && (
               <div>
-                <h3 className="font-semibold mb-2">Shipping Address</h3>
+                <h3 className="mb-2 font-semibold">Shipping Address</h3>
                 <div className="text-sm text-muted-foreground">
                   {order.shippingAddress}
                 </div>
@@ -336,25 +387,25 @@ export default function OrderDetailPage() {
               return (
                 <div
                   key={item.id}
-                  className="flex gap-4 p-4 border rounded-lg"
+                  className="flex gap-4 rounded-lg border p-4"
                 >
                   <div className="relative size-20 shrink-0">
                     <Image
                       src={displayImage}
                       alt={item.title}
                       fill
-                      className="object-cover rounded"
+                      className="rounded object-cover"
                     />
                   </div>
                   <div className="flex-1">
                     <h4 className="font-medium">{item.title}</h4>
                     {variantDetails.length > 0 && (
-                      <p className="text-sm text-muted-foreground mt-1">
+                      <p className="mt-1 text-sm text-muted-foreground">
                         {variantDetails.join(' / ')}
                       </p>
                     )}
                     {item.product.description && (
-                      <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                      <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
                         {item.product.description}
                       </p>
                     )}
@@ -368,7 +419,7 @@ export default function OrderDetailPage() {
                     </div>
                     <Link
                       href={`/products/${item.product.id}`}
-                      className="text-sm text-primary hover:underline mt-2 inline-block"
+                      className="mt-2 inline-block text-sm text-primary hover:underline"
                     >
                       View Product
                     </Link>
@@ -379,8 +430,8 @@ export default function OrderDetailPage() {
           </div>
 
           {/* Order Summary */}
-          <div className="mt-6 pt-6 border-t">
-            <div className="flex justify-between items-center text-lg font-bold">
+          <div className="mt-6 border-t pt-6">
+            <div className="flex items-center justify-between text-lg font-bold">
               <span>Total</span>
               <span>${order.amount.toFixed(2)}</span>
             </div>

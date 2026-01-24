@@ -1,25 +1,75 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, useCallback } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/providers/CartProvider";
 import { Toaster } from "sonner";
+import { Gift, Check } from "lucide-react";
+
+interface OrderDetails {
+  id: string;
+  amount: number;
+  status: string;
+  customerName: string | null;
+  customerEmail: string | null;
+  shippingAddress: string | null;
+  createdAt: string;
+  estimatedDelivery: string | null;
+  isGift: boolean;
+  giftMessage: string | null;
+  giftRecipientName: string | null;
+  giftRecipientEmail: string | null;
+  hidePrice: boolean;
+  itemCount: number;
+}
 
 function OrderConfirmationContent() {
   const { clearCart } = useCart();
   const searchParams = useSearchParams();
-  const [orderDetails, setOrderDetails] = useState({
-    orderId: searchParams.get("orderId") || "N/A",
-    date: new Date().toLocaleDateString(),
-    estimatedDelivery: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),
-  });
+  const sessionId = searchParams.get("session_id");
+  const [loading, setLoading] = useState(true);
+  const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
 
-  // Clear the cart when the page loads
+  // Fetch order details from API
+  const fetchOrderDetails = useCallback(async () => {
+    if (!sessionId) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/orders/by-session?session_id=${sessionId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setOrderDetails(data.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch order details:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [sessionId]);
+
+  // Clear the cart and fetch order details when the page loads
   useEffect(() => {
     clearCart();
-  }, [clearCart]);
+    fetchOrderDetails();
+  }, [clearCart, fetchOrderDetails]);
+
+  // Format dates for display
+  const orderDate = orderDetails?.createdAt
+    ? new Date(orderDetails.createdAt).toLocaleDateString()
+    : new Date().toLocaleDateString();
+
+  const estimatedDelivery = orderDetails?.estimatedDelivery
+    ? new Date(orderDetails.estimatedDelivery).toLocaleDateString()
+    : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString();
+
+  const orderId = orderDetails?.id
+    ? `#${orderDetails.id.slice(0, 8)}`
+    : searchParams.get("orderId") || "N/A";
 
   return (
     <div className="container py-12">
@@ -50,26 +100,66 @@ function OrderConfirmationContent() {
               shipped soon.
             </p>
           </div>
-          
+
           <div className="mb-6 space-y-4 rounded-lg bg-muted/50 p-4">
             <div className="flex justify-between border-b pb-2">
               <span className="font-medium">Order Number:</span>
-              <span>{orderDetails.orderId}</span>
+              <span>{orderId}</span>
             </div>
             <div className="flex justify-between border-b pb-2">
               <span className="font-medium">Order Date:</span>
-              <span>{orderDetails.date}</span>
+              <span>{orderDate}</span>
             </div>
             <div className="flex justify-between">
               <span className="font-medium">Estimated Delivery:</span>
-              <span>{orderDetails.estimatedDelivery}</span>
+              <span>{estimatedDelivery}</span>
             </div>
           </div>
-          
+
+          {/* Gift Message Section */}
+          {orderDetails?.isGift && (
+            <div className="mb-6 space-y-3 rounded-lg border border-green-200 bg-green-50 p-4">
+              <div className="flex items-center gap-2 text-green-700">
+                <Gift className="size-5" aria-hidden="true" />
+                <span className="font-medium">Gift Order</span>
+              </div>
+
+              {orderDetails.giftRecipientName && (
+                <div className="text-sm">
+                  <span className="font-medium">Recipient: </span>
+                  <span>{orderDetails.giftRecipientName}</span>
+                </div>
+              )}
+
+              {orderDetails.giftMessage && (
+                <div className="text-sm">
+                  <span className="mb-1 block font-medium">Gift Message:</span>
+                  <p className="rounded border border-green-200 bg-white p-3 italic text-muted-foreground">
+                    &ldquo;{orderDetails.giftMessage}&rdquo;
+                  </p>
+                </div>
+              )}
+
+              {orderDetails.hidePrice && (
+                <div className="flex items-center gap-2 text-sm text-green-700">
+                  <Check className="size-4" aria-hidden="true" />
+                  <span>Prices will be hidden on the packing slip</span>
+                </div>
+              )}
+
+              {orderDetails.giftRecipientEmail && (
+                <div className="flex items-center gap-2 text-sm text-green-700">
+                  <Check className="size-4" aria-hidden="true" />
+                  <span>Gift recipient will be notified when shipped</span>
+                </div>
+              )}
+            </div>
+          )}
+
           <p className="mb-6 text-center text-sm text-muted-foreground">
             A confirmation email has been sent to your email address with all the details of your order.
           </p>
-          
+
           <div className="flex flex-col space-y-3 sm:flex-row sm:space-x-3 sm:space-y-0">
             <Button asChild className="flex-1">
               <Link href="/collections">Continue Shopping</Link>

@@ -50,6 +50,29 @@ type CartItemWithRelations = Prisma.CartItemGetPayload<{
 }>;
 
 /**
+ * Extracts gift options from Stripe session metadata
+ */
+function extractGiftOptions(metadata: Stripe.Metadata | null) {
+  if (!metadata) {
+    return {
+      isGift: false,
+      giftMessage: null,
+      giftRecipientName: null,
+      giftRecipientEmail: null,
+      hidePrice: false,
+    };
+  }
+
+  return {
+    isGift: metadata.isGift === 'true',
+    giftMessage: metadata.giftMessage || null,
+    giftRecipientName: metadata.giftRecipientName || null,
+    giftRecipientEmail: metadata.giftRecipientEmail || null,
+    hidePrice: metadata.hidePrice === 'true',
+  };
+}
+
+/**
  * Creates an order from checkout session and decrements inventory
  */
 async function createOrderFromCheckout(
@@ -57,8 +80,11 @@ async function createOrderFromCheckout(
   userId: string,
   cartItems: CartItemWithRelations[]
 ) {
+  // Extract gift options from session metadata
+  const giftOptions = extractGiftOptions(session.metadata);
+
   return prisma.$transaction(async (tx) => {
-    // Create the order with items (including variant details)
+    // Create the order with items (including variant details and gift options)
     const newOrder = await tx.order.create({
       data: {
         userId,
@@ -68,6 +94,12 @@ async function createOrderFromCheckout(
         customerEmail: session.customer_details?.email || session.metadata?.customerEmail,
         customerName: session.customer_details?.name || session.metadata?.customerName,
         shippingAddress: session.metadata?.shippingAddress,
+        // Gift options
+        isGift: giftOptions.isGift,
+        giftMessage: giftOptions.giftMessage,
+        giftRecipientName: giftOptions.giftRecipientName,
+        giftRecipientEmail: giftOptions.giftRecipientEmail,
+        hidePrice: giftOptions.hidePrice,
         items: {
           create: cartItems.map((item) => {
             // Use variant price if available, otherwise product price
@@ -303,6 +335,7 @@ export async function POST(req: Request) {
         amount: order.amount,
         itemCount: cartItems.length,
         inventoryUpdated: true,
+        isGift: order.isGift,
       });
 
       // Clear the user's cart
