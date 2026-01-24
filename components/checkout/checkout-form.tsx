@@ -11,6 +11,8 @@ import { InlineRedeemWidget } from "@/components/loyalty";
 import { ReferralCodeInput } from "@/components/referrals/ReferralCodeInput";
 import { toast } from "sonner";
 import { CarbonNeutralBanner } from "@/components/sustainability";
+import { ExpressCheckout } from "./ExpressCheckout";
+import { GiftOptions, GiftOptionsData } from "./GiftOptions";
 
 // Form validation types
 type FormErrors = {
@@ -26,6 +28,13 @@ export default function CheckoutForm() {
   const [loyaltyDiscount, setLoyaltyDiscount] = useState<number>(0);
   const [referralCode, setReferralCode] = useState<string | null>(null);
   const [referralDiscount, setReferralDiscount] = useState<number>(0);
+  const [giftOptions, setGiftOptions] = useState<GiftOptionsData>({
+    isGift: false,
+    giftMessage: "",
+    giftRecipientName: "",
+    giftRecipientEmail: "",
+    hidePrice: false,
+  });
   const [formData, setFormData] = useState({
     email: "",
     firstName: "",
@@ -115,6 +124,12 @@ export default function CheckoutForm() {
         loyaltyDiscount: loyaltyDiscount,
         referralCode: referralCode,
         referralDiscount: referralDiscountAmount,
+        // Gift options
+        isGift: giftOptions.isGift,
+        giftMessage: giftOptions.giftMessage,
+        giftRecipientName: giftOptions.giftRecipientName,
+        giftRecipientEmail: giftOptions.giftRecipientEmail,
+        hidePrice: giftOptions.hidePrice,
       };
 
       const response = await fetch("/api/checkout", {
@@ -152,15 +167,20 @@ export default function CheckoutForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4" aria-label="Checkout form">
-      {error && (
-        <div className="rounded-md bg-red-50 p-4 text-sm text-red-500" role="alert" aria-live="assertive">
-          {error}
-        </div>
-      )}
-      
-      <div className="space-y-2">
-        <Label htmlFor="email" id="email-label">Email</Label>
+    <div className="space-y-6">
+      {/* Express Checkout Section (Apple Pay / Google Pay) */}
+      <ExpressCheckout disabled={isLoading} />
+
+      {/* Standard Checkout Form */}
+      <form onSubmit={handleSubmit} className="space-y-4" aria-label="Checkout form">
+        {error && (
+          <div className="rounded-md bg-red-50 p-4 text-sm text-red-500" role="alert" aria-live="assertive">
+            {error}
+          </div>
+        )}
+
+        <div className="space-y-2">
+          <Label htmlFor="email" id="email-label">Email</Label>
         <Input
           type="email"
           id="email"
@@ -302,6 +322,15 @@ export default function CheckoutForm() {
         </div>
       </div>
 
+      {/* Gift Options Section */}
+      <div className="border-t pt-4">
+        <GiftOptions
+          value={giftOptions}
+          onChange={setGiftOptions}
+          disabled={isLoading}
+        />
+      </div>
+
       {/* Referral Code Section */}
       <div className="border-t pt-4">
         <ReferralCodeInput
@@ -319,7 +348,7 @@ export default function CheckoutForm() {
 
       {/* Loyalty Points Redemption */}
       <div className="border-t pt-4">
-        <h3 className="text-sm font-medium mb-3">Loyalty Rewards</h3>
+        <h3 className="mb-3 text-sm font-medium">Loyalty Rewards</h3>
         <InlineRedeemWidget
           onDiscountApplied={(discount) => setLoyaltyDiscount(discount)}
           maxOrderTotal={cartTotal.raw}
@@ -328,7 +357,7 @@ export default function CheckoutForm() {
 
       {/* Show discount summary if any discount applied */}
       {totalDiscount > 0 && (
-        <div className="bg-green-50 border border-green-200 rounded-md p-4 space-y-2">
+        <div className="space-y-2 rounded-md border border-green-200 bg-green-50 p-4">
           <div className="flex justify-between text-sm">
             <span>Subtotal</span>
             <span>${cartTotal.raw.toFixed(2)}</span>
@@ -345,7 +374,7 @@ export default function CheckoutForm() {
               <span>-${loyaltyDiscount.toFixed(2)}</span>
             </div>
           )}
-          <div className="flex justify-between font-semibold border-t border-green-200 pt-2">
+          <div className="flex justify-between border-t border-green-200 pt-2 font-semibold">
             <span>Total</span>
             <span>${finalTotal.toFixed(2)}</span>
           </div>
@@ -451,6 +480,7 @@ export default function CheckoutForm() {
           )}
         </Button>
       </div>
-    </form>
+      </form>
+    </div>
   );
 }
