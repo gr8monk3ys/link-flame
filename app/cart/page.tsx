@@ -14,6 +14,7 @@ import CheckoutForm from "@/components/checkout/checkout-form";
 import ErrorBoundary from "@/components/layout/error-boundary";
 import { LoadingShimmer } from "@/components/ui/loading-shimmer";
 import { Toaster } from "sonner";
+import { CarbonNeutralBanner, CarbonNeutralShippingLine } from "@/components/sustainability";
 
 // Lazy load non-critical components
 const ProductRecommendations = dynamic(
@@ -230,7 +231,11 @@ export default function CartPage() {
     <>
       <Toaster position="top-right" />
       <div className="container py-8">
-        <h1 className="mb-8 text-3xl font-bold">Shopping Cart</h1>
+        <h1 className="mb-4 text-3xl font-bold">Shopping Cart</h1>
+        {/* Carbon-neutral shipping banner */}
+        <div className="mb-8">
+          <CarbonNeutralBanner variant="compact" />
+        </div>
         
         {isLoading && !hasInitializedCart ? (
           <div className="space-y-4">
@@ -274,6 +279,8 @@ export default function CartPage() {
                         Calculated at checkout
                       </span>
                     </div>
+                    {/* Carbon-neutral shipping line */}
+                    <CarbonNeutralShippingLine />
                     <div className="flex items-center justify-between border-t pt-4">
                       <span className="text-lg font-medium">Total</span>
                       <span className="text-lg font-bold">{cartTotal.formatted}</span>

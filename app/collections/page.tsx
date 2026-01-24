@@ -2,8 +2,17 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useDebounce } from '@/lib/hooks/useDebounce';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import FilterSidebar from '@/components/collections/FilterSidebar';
 import ProductGrid from '@/components/collections/ProductGrid';
+import { ValueFilterBar, ValueFilterSidebar, ActiveFilters } from '@/components/filters';
+
+interface ProductValue {
+  id: string;
+  name: string;
+  slug: string;
+  iconName?: string | null;
+}
 
 interface Product {
   id: string;
@@ -15,6 +24,13 @@ interface Product {
   description?: string;
   reviews: { rating: number }[];
   createdAt: Date;
+  // Imperfect product fields
+  isImperfect?: boolean;
+  imperfectReason?: string | null;
+  imperfectDiscount?: number | null;
+  imperfectPrice?: number | null;
+  // Sustainability values
+  values?: ProductValue[];
 }
 
 interface FilterState {
@@ -29,15 +45,24 @@ interface FilterState {
     min: number | null;
     max: number | null;
   };
+  imperfect?: boolean | null;
+  values: string[]; // Sustainability value slugs
 }
 
 export default function CollectionsPage() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(12);
-  
+
+  // Get values from URL for "Shop by Values" filtering
+  const urlValues = searchParams.get('values')?.split(',').filter(Boolean) || [];
+
   const [filters, setFilters] = useState<FilterState>({
     search: '',
     categories: [],
@@ -50,7 +75,18 @@ export default function CollectionsPage() {
       min: null,
       max: null,
     },
+    imperfect: null,
+    values: urlValues,
   });
+
+  // Sync URL values with filter state
+  useEffect(() => {
+    const newUrlValues = searchParams.get('values')?.split(',').filter(Boolean) || [];
+    if (JSON.stringify(newUrlValues) !== JSON.stringify(filters.values)) {
+      setFilters(prev => ({ ...prev, values: newUrlValues }));
+      setCurrentPage(1);
+    }
+  }, [searchParams, filters.values]);
 
   // Debounce search input
   const debouncedSearch = useDebounce(filters.search, 300);
@@ -69,10 +105,16 @@ export default function CollectionsPage() {
     if (filters.dateRange.end) params.append('endDate', filters.dateRange.end.toISOString());
     if (debouncedPriceRange.min !== null) params.append('minPrice', debouncedPriceRange.min.toString());
     if (debouncedPriceRange.max !== null) params.append('maxPrice', debouncedPriceRange.max.toString());
-    
+    if (filters.imperfect === true) params.append('imperfect', 'true');
+
+    // Add sustainability values filter
+    if (filters.values.length > 0) {
+      params.append('values', filters.values.join(','));
+    }
+
     params.append('page', currentPage.toString());
     params.append('pageSize', pageSize.toString());
-    
+
     return params;
   }, [
     debouncedSearch,
@@ -80,6 +122,8 @@ export default function CollectionsPage() {
     filters.rating,
     filters.dateRange,
     debouncedPriceRange,
+    filters.imperfect,
+    filters.values,
     currentPage,
     pageSize,
   ]);
@@ -120,8 +164,25 @@ export default function CollectionsPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {/* Shop by Values - Horizontal Filter Bar */}
+      <div className="py-6 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Shop by Values</h2>
+        <ValueFilterBar />
+      </div>
+
+      {/* Active Filters Display */}
+      <ActiveFilters className="py-4" />
+
       <div className="flex flex-col gap-8 py-8 lg:flex-row">
-        <div className="w-full lg:w-64">
+        <div className="w-full lg:w-64 space-y-6">
+          {/* Values Sidebar Filter */}
+          <ValueFilterSidebar
+            title="Values"
+            collapsible={true}
+            defaultExpanded={true}
+          />
+
+          {/* Existing Filters */}
           <FilterSidebar
             filters={filters}
             onFilterChange={handleFilterChange}

@@ -10,9 +10,21 @@ import { useParams } from 'next/navigation';
 import { useSession } from "next-auth/react";
 import { ProductReviews } from '@/components/products/product-reviews';
 import { VariantSelector, ProductVariant } from '@/components/products/variant-selector';
+import { SubscribeOption } from '@/components/subscriptions';
+import { SubscriptionFrequency } from '@/lib/subscriptions';
+import { ImperfectBadge, ImperfectReasonTooltip, ImperfectSavingsBadge } from '@/components/imperfect';
+import { EcoImpactCard, CertificationBadgesFull, CarbonNeutralBadge, type Certification } from '@/components/sustainability';
+import { ValueBadgeList } from '@/components/filters/ValueBadge';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
+}
+
+interface ProductValue {
+  id: string;
+  name: string;
+  slug: string;
+  iconName?: string | null;
 }
 
 interface Product {
@@ -24,8 +36,24 @@ interface Product {
   image: string;
   inventory: number;
   hasVariants: boolean;
+  isSubscribable?: boolean;
   variants: ProductVariant[];
   reviews: { rating: number }[];
+  // Imperfect product fields
+  isImperfect?: boolean;
+  imperfectReason?: string | null;
+  imperfectDiscount?: number | null;
+  // Sustainability fields
+  isPlasticFree?: boolean;
+  isVegan?: boolean;
+  isCrueltyFree?: boolean;
+  isOrganicCertified?: boolean;
+  carbonFootprintGrams?: number | null;
+  certifications?: Array<{
+    certification: Certification;
+  }>;
+  // Shop by Values
+  values?: ProductValue[];
 }
 
 // Stock status thresholds
@@ -53,6 +81,8 @@ interface ProductData {
 export default function ProductPage() {
   const [productData, setProductData] = useState<ProductData | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
+  const [isSubscription, setIsSubscription] = useState(false);
+  const [subscriptionFrequency, setSubscriptionFrequency] = useState<SubscriptionFrequency | null>(null);
   const { id } = useParams();
 
   useEffect(() => {
@@ -91,6 +121,11 @@ export default function ProductPage() {
 
   const handleVariantChange = useCallback((variant: ProductVariant) => {
     setSelectedVariant(variant);
+  }, []);
+
+  const handleSubscriptionChange = useCallback((subscription: boolean, frequency: SubscriptionFrequency | null) => {
+    setIsSubscription(subscription);
+    setSubscriptionFrequency(frequency);
   }, []);
 
   if (!productData) {
@@ -148,20 +183,62 @@ export default function ProductPage() {
 
             {/* Product info */}
             <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
+              {/* Imperfect Badge - Show prominently if product is imperfect */}
+              {product.isImperfect && product.imperfectDiscount && (
+                <div className="mb-4">
+                  <ImperfectBadge
+                    discountPercent={product.imperfectDiscount}
+                    size="lg"
+                    variant="prominent"
+                  />
+                </div>
+              )}
+
               <h1 className="text-3xl font-bold tracking-tight text-gray-900">{product.title}</h1>
 
               <div className="mt-3">
                 <h2 className="sr-only">Product information</h2>
-                <p className="text-3xl tracking-tight text-gray-900">
-                  ${Number(displayPrice).toFixed(2)}
-                </p>
-                {/* Show original price if on sale */}
-                {selectedVariant?.salePrice && selectedVariant.price && selectedVariant.price > selectedVariant.salePrice && (
-                  <p className="text-lg text-gray-500 line-through">
-                    ${Number(selectedVariant.price).toFixed(2)}
-                  </p>
+                {/* Imperfect price display */}
+                {product.isImperfect && product.imperfectDiscount ? (
+                  <div className="space-y-2">
+                    <div className="flex items-baseline gap-3">
+                      <p className="text-3xl tracking-tight text-amber-600 font-bold">
+                        ${(displayPrice * (1 - product.imperfectDiscount / 100)).toFixed(2)}
+                      </p>
+                      <p className="text-xl text-gray-500 line-through">
+                        ${Number(displayPrice).toFixed(2)}
+                      </p>
+                    </div>
+                    <ImperfectSavingsBadge
+                      originalPrice={displayPrice}
+                      imperfectPrice={displayPrice * (1 - product.imperfectDiscount / 100)}
+                      size="md"
+                    />
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-3xl tracking-tight text-gray-900">
+                      ${Number(displayPrice).toFixed(2)}
+                    </p>
+                    {/* Show original price if on sale */}
+                    {selectedVariant?.salePrice && selectedVariant.price && selectedVariant.price > selectedVariant.salePrice && (
+                      <p className="text-lg text-gray-500 line-through">
+                        ${Number(selectedVariant.price).toFixed(2)}
+                      </p>
+                    )}
+                  </>
                 )}
               </div>
+
+              {/* Imperfect Reason Tooltip */}
+              {product.isImperfect && product.imperfectReason && (
+                <div className="mt-4">
+                  <ImperfectReasonTooltip
+                    reason={product.imperfectReason}
+                    position="bottom"
+                  />
+                </div>
+              )}
 
               {/* Stock Status */}
               {(() => {
@@ -209,6 +286,47 @@ export default function ProductPage() {
                 <p className="text-base text-gray-900">{product.description}</p>
               </div>
 
+              {/* Sustainability Section */}
+              {(product.isPlasticFree || product.isVegan || product.isCrueltyFree || product.isOrganicCertified || product.carbonFootprintGrams) && (
+                <div className="mt-6">
+                  <EcoImpactCard
+                    carbonFootprintGrams={product.carbonFootprintGrams}
+                    isPlasticFree={product.isPlasticFree}
+                    isVegan={product.isVegan}
+                    isCrueltyFree={product.isCrueltyFree}
+                    isOrganicCertified={product.isOrganicCertified}
+                    variant="default"
+                  />
+                </div>
+              )}
+
+              {/* Certifications */}
+              {product.certifications && product.certifications.length > 0 && (
+                <div className="mt-4">
+                  <h4 className="text-sm font-medium text-gray-900 mb-2">Certifications</h4>
+                  <CertificationBadgesFull
+                    certifications={product.certifications.map(pc => pc.certification)}
+                  />
+                </div>
+              )}
+
+              {/* Shop by Values */}
+              {product.values && product.values.length > 0 && (
+                <div className="mt-4">
+                  <h4 className="text-sm font-medium text-gray-900 mb-2">Values</h4>
+                  <ValueBadgeList
+                    values={product.values}
+                    size="md"
+                    maxDisplay={12}
+                  />
+                </div>
+              )}
+
+              {/* Carbon Neutral Shipping Badge */}
+              <div className="mt-4">
+                <CarbonNeutralBadge />
+              </div>
+
               {/* Variant Selector */}
               {product.hasVariants && product.variants.length > 0 && (
                 <div className="mt-8 border-t pt-6">
@@ -222,6 +340,14 @@ export default function ProductPage() {
                 </div>
               )}
 
+              {/* Subscribe & Save Option */}
+              <SubscribeOption
+                originalPrice={displayPrice}
+                productTitle={product.title}
+                isSubscribable={product.isSubscribable !== false}
+                onSubscriptionChange={handleSubscriptionChange}
+              />
+
               <div className="mt-6">
                 <div className="mt-10 flex">
                   <AddToCartButton
@@ -230,6 +356,8 @@ export default function ProductPage() {
                     selectedVariant={selectedVariant}
                     displayPrice={displayPrice}
                     displayImage={displayImage}
+                    isSubscription={isSubscription}
+                    subscriptionFrequency={subscriptionFrequency}
                   />
                 </div>
               </div>
@@ -254,6 +382,8 @@ interface AddToCartButtonProps {
   selectedVariant: ProductVariant | null;
   displayPrice: number;
   displayImage: string;
+  isSubscription?: boolean;
+  subscriptionFrequency?: SubscriptionFrequency | null;
 }
 
 function AddToCartButton({
@@ -262,6 +392,8 @@ function AddToCartButton({
   selectedVariant,
   displayPrice,
   displayImage,
+  isSubscription = false,
+  subscriptionFrequency = null,
 }: AddToCartButtonProps) {
   const { addItemToCart } = useCart();
   const [isLoading, setIsLoading] = useState(false);
@@ -301,6 +433,36 @@ function AddToCartButton({
         }
       }
 
+      // Handle subscription purchase
+      if (isSubscription && subscriptionFrequency) {
+        const response = await fetch('/api/subscriptions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            frequency: subscriptionFrequency,
+            items: [{
+              productId: product.id,
+              variantId: selectedVariant?.id || null,
+              quantity: 1,
+            }],
+          }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error?.message || 'Failed to create subscription');
+        }
+
+        toast.success("Subscription created! View it in your account.", {
+          action: {
+            label: "View",
+            onClick: () => window.location.href = "/account/subscriptions",
+          },
+        });
+        return;
+      }
+
+      // Regular add to cart
       await addItemToCart({
         id: product.id,
         title: product.title + variantDescription,
@@ -319,8 +481,8 @@ function AddToCartButton({
       });
       toast.success("Product added to cart!");
     } catch (error) {
-      console.error("Error adding product to cart:", error);
-      toast.error("Failed to add product to cart.");
+      console.error("Error:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to complete action.");
     } finally {
       setIsLoading(false);
     }
@@ -350,6 +512,10 @@ function AddToCartButton({
     );
   }
 
+  const buttonText = isLoading
+    ? (isSubscription ? 'Creating subscription...' : 'Adding...')
+    : (isSubscription ? 'Subscribe & Save' : 'Add to cart');
+
   return (
     <button
       type="button"
@@ -357,7 +523,7 @@ function AddToCartButton({
       disabled={isLoading}
       className="flex max-w-xs flex-1 items-center justify-center rounded-md border border-transparent bg-green-600 px-8 py-3 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full"
     >
-      {isLoading ? <span>Adding...</span> : <span>Add to cart</span>}
+      {buttonText}
     </button>
   );
 }

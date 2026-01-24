@@ -8,11 +8,32 @@ import {
   Package,
   Settings,
   Heart,
+  Trophy,
+  TrendingUp,
   ChevronRight,
-  Loader2
+  Loader2,
+  RefreshCw
 } from "lucide-react";
 
 const accountLinks = [
+  {
+    title: "Subscribe & Save",
+    description: "Manage your recurring deliveries and save up to 20%",
+    href: "/account/subscriptions",
+    icon: RefreshCw,
+  },
+  {
+    title: "Environmental Impact",
+    description: "Track your positive impact on the planet",
+    href: "/account/impact",
+    icon: TrendingUp,
+  },
+  {
+    title: "Loyalty Rewards",
+    description: "View your points, tier status, and redeem rewards",
+    href: "/account/loyalty",
+    icon: Trophy,
+  },
   {
     title: "Order History",
     description: "View and track your orders",
@@ -26,9 +47,9 @@ const accountLinks = [
     icon: Settings,
   },
   {
-    title: "Saved Items",
-    description: "View your wishlist and saved products",
-    href: "/saved",
+    title: "Wishlists",
+    description: "Manage your wishlists and saved products",
+    href: "/account/saved",
     icon: Heart,
   },
 ];
