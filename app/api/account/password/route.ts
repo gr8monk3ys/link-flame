@@ -11,6 +11,7 @@ import {
   rateLimitErrorResponse,
 } from "@/lib/api-response";
 import { checkStrictRateLimit, getIdentifier } from "@/lib/rate-limit";
+import { validateCsrfToken } from "@/lib/csrf";
 import { logger } from "@/lib/logger";
 
 const changePasswordSchema = z.object({
@@ -33,6 +34,17 @@ const changePasswordSchema = z.object({
  */
 export async function PATCH(request: Request) {
   try {
+    // CSRF protection - Critical for password changes
+    const csrfValid = await validateCsrfToken(request);
+    if (!csrfValid) {
+      return errorResponse(
+        "Invalid or missing CSRF token",
+        "CSRF_VALIDATION_FAILED",
+        undefined,
+        403
+      );
+    }
+
     const { userId } = await getServerAuth();
 
     if (!userId) {

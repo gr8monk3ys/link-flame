@@ -6,9 +6,11 @@ import {
   handleApiError,
   validationErrorResponse,
   conflictResponse,
-  rateLimitErrorResponse
+  rateLimitErrorResponse,
+  errorResponse,
 } from "@/lib/api-response";
 import { checkStrictRateLimit, getIdentifier } from "@/lib/rate-limit";
+import { validateCsrfToken } from "@/lib/csrf";
 import { logger } from "@/lib/logger";
 
 const signupSchema = z.object({
@@ -19,6 +21,17 @@ const signupSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    // CSRF protection for user registration
+    const csrfValid = await validateCsrfToken(request);
+    if (!csrfValid) {
+      return errorResponse(
+        "Invalid or missing CSRF token",
+        "CSRF_VALIDATION_FAILED",
+        undefined,
+        403
+      );
+    }
+
     // Rate limiting: 5 requests per minute for signup
     const identifier = getIdentifier(request);
     const { success, reset } = await checkStrictRateLimit(identifier);

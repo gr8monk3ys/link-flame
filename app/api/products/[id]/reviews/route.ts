@@ -8,7 +8,10 @@ import {
   notFoundResponse,
   validationErrorResponse,
   handleApiError,
+  rateLimitErrorResponse,
 } from '@/lib/api-response';
+import { checkRateLimit, checkStrictRateLimit, getIdentifier } from '@/lib/rate-limit';
+import { validateCsrfToken } from '@/lib/csrf';
 import { z } from 'zod';
 
 /**
@@ -33,6 +36,14 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    // Apply rate limiting to prevent abuse
+    const identifier = getIdentifier(request);
+    const { success, reset } = await checkRateLimit(identifier);
+
+    if (!success) {
+      return rateLimitErrorResponse(reset);
+    }
+
     const { id: productId } = await params;
     const { searchParams } = new URL(request.url);
 
@@ -137,12 +148,31 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    // CSRF protection for review submissions
+    const csrfValid = await validateCsrfToken(request);
+    if (!csrfValid) {
+      return errorResponse(
+        "Invalid or missing CSRF token",
+        "CSRF_VALIDATION_FAILED",
+        undefined,
+        403
+      );
+    }
+
     const { id: productId } = await params;
 
     // Check authentication
     const { userId } = await getServerAuth();
     if (!userId) {
       return unauthorizedResponse('You must be logged in to submit a review');
+    }
+
+    // Apply strict rate limiting for review submission (5 req/min) - user-generated content
+    const identifier = getIdentifier(request, userId);
+    const { success, reset } = await checkStrictRateLimit(identifier);
+
+    if (!success) {
+      return rateLimitErrorResponse(reset);
     }
 
     // Parse and validate request body

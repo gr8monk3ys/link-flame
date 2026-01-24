@@ -35,6 +35,19 @@ export async function GET(request: NextRequest) {
             sortOrder: 'asc',
           },
         },
+        // Include product values for "Shop by Values" display
+        values: {
+          include: {
+            value: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                iconName: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -42,7 +55,7 @@ export async function GET(request: NextRequest) {
       return notFoundResponse("Product");
     }
 
-    // Normalize prices to ensure they're plain numbers
+    // Normalize prices and flatten values
     const normalizedProduct = {
       ...product,
       price: Number(product.price),
@@ -52,6 +65,8 @@ export async function GET(request: NextRequest) {
         price: variant.price ? Number(variant.price) : null,
         salePrice: variant.salePrice ? Number(variant.salePrice) : null,
       })),
+      // Flatten values for easier frontend consumption
+      values: product.values?.map((pva) => pva.value) || [],
     };
 
     return NextResponse.json(normalizedProduct);

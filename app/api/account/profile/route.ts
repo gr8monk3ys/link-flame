@@ -8,7 +8,10 @@ import {
   validationErrorResponse,
   errorResponse,
   conflictResponse,
+  rateLimitErrorResponse,
 } from "@/lib/api-response";
+import { checkRateLimit, checkStrictRateLimit, getIdentifier } from "@/lib/rate-limit";
+import { validateCsrfToken } from "@/lib/csrf";
 import { logger } from "@/lib/logger";
 
 const updateProfileSchema = z.object({
@@ -21,12 +24,20 @@ const updateProfileSchema = z.object({
  *
  * Returns the current user's profile information
  */
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const { userId } = await getServerAuth();
 
     if (!userId) {
       return unauthorizedResponse("You must be logged in to view your profile");
+    }
+
+    // Apply rate limiting to prevent abuse
+    const identifier = getIdentifier(request, userId);
+    const { success, reset } = await checkRateLimit(identifier);
+
+    if (!success) {
+      return rateLimitErrorResponse(reset);
     }
 
     const user = await prisma.user.findUnique({
@@ -73,10 +84,29 @@ export async function GET() {
  */
 export async function PATCH(request: Request) {
   try {
+    // CSRF protection for profile updates
+    const csrfValid = await validateCsrfToken(request);
+    if (!csrfValid) {
+      return errorResponse(
+        "Invalid or missing CSRF token",
+        "CSRF_VALIDATION_FAILED",
+        undefined,
+        403
+      );
+    }
+
     const { userId } = await getServerAuth();
 
     if (!userId) {
       return unauthorizedResponse("You must be logged in to update your profile");
+    }
+
+    // Apply strict rate limiting for profile modifications (5 req/min)
+    const identifier = getIdentifier(request, userId);
+    const { success, reset } = await checkStrictRateLimit(identifier);
+
+    if (!success) {
+      return rateLimitErrorResponse(reset);
     }
 
     const body = await request.json();

@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import { getServerAuth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getGuestSessionId, clearGuestSession } from "@/lib/session";
-import { handleApiError, unauthorizedResponse } from "@/lib/api-response";
+import { handleApiError, unauthorizedResponse, errorResponse, rateLimitErrorResponse } from "@/lib/api-response";
+import { checkStrictRateLimit, getIdentifier } from "@/lib/rate-limit";
+import { validateCsrfToken } from "@/lib/csrf";
 import { logger } from "@/lib/logger";
 
 /**
@@ -14,10 +16,29 @@ import { logger } from "@/lib/logger";
  */
 export async function POST(request: Request) {
   try {
+    // CSRF protection for cart migration
+    const csrfValid = await validateCsrfToken(request);
+    if (!csrfValid) {
+      return errorResponse(
+        "Invalid or missing CSRF token",
+        "CSRF_VALIDATION_FAILED",
+        undefined,
+        403
+      );
+    }
+
     const { userId } = await getServerAuth();
 
     if (!userId) {
       return unauthorizedResponse("Must be logged in to migrate cart");
+    }
+
+    // Apply strict rate limiting for cart migration (5 req/min) - sensitive operation
+    const identifier = getIdentifier(request, userId);
+    const { success, reset } = await checkStrictRateLimit(identifier);
+
+    if (!success) {
+      return rateLimitErrorResponse(reset);
     }
 
     // Get the guest session ID from cookie

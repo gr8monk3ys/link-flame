@@ -8,11 +8,13 @@ import {
   unauthorizedResponse,
   forbiddenResponse,
   validationErrorResponse,
-  rateLimitErrorResponse
+  rateLimitErrorResponse,
+  errorResponse,
 } from "@/lib/api-response"
 import { logger } from "@/lib/logger"
 import { invalidateProductCaches } from "@/lib/cache"
 import { checkRateLimit, getIdentifier } from "@/lib/rate-limit"
+import { validateCsrfToken } from "@/lib/csrf"
 
 // Schema for product filtering
 const filterSchema = z.object({
@@ -74,6 +76,11 @@ export async function GET(request: NextRequest) {
     const maxPrice = searchParams.get('maxPrice') ? Number(searchParams.get('maxPrice')) : null;
     const page = Number(searchParams.get('page')) || 1;
     const pageSize = Number(searchParams.get('pageSize')) || 12;
+    // Imperfect products filter
+    const imperfect = searchParams.get('imperfect');
+    // "Shop by Values" filter - comma-separated value slugs
+    const valuesParam = searchParams.get('values');
+    const valueSlugs = valuesParam ? valuesParam.split(',').map(s => s.trim()).filter(Boolean) : [];
 
     // Build where clause with proper Prisma types
     const where: Prisma.ProductWhereInput = {};
@@ -106,6 +113,25 @@ export async function GET(request: NextRequest) {
       where.price = priceFilter;
     }
 
+    // Filter by imperfect status
+    if (imperfect === 'true') {
+      where.isImperfect = true;
+    } else if (imperfect === 'false') {
+      where.isImperfect = false;
+    }
+
+    // Filter by sustainability values (Shop by Values)
+    // Shows products matching ANY of the selected values (OR logic)
+    if (valueSlugs.length > 0) {
+      where.values = {
+        some: {
+          value: {
+            slug: { in: valueSlugs },
+          },
+        },
+      };
+    }
+
     // Get total count for pagination
     const total = await prisma.product.count({ where });
 
@@ -116,6 +142,19 @@ export async function GET(request: NextRequest) {
         reviews: {
           select: {
             rating: true,
+          },
+        },
+        // Include product values for "Shop by Values" badges
+        values: {
+          include: {
+            value: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                iconName: true,
+              },
+            },
           },
         },
       },
@@ -133,12 +172,29 @@ export async function GET(request: NextRequest) {
         })
       : products;
 
-    // Normalize prices to ensure they're plain numbers (not Decimal objects)
-    const normalizedProducts = filteredProducts.map((product) => ({
-      ...product,
-      price: Number(product.price),
-      salePrice: product.salePrice ? Number(product.salePrice) : null,
-    }));
+    // Normalize prices and calculate imperfect discounted prices
+    const normalizedProducts = filteredProducts.map((product) => {
+      const basePrice = Number(product.price);
+      const salePrice = product.salePrice ? Number(product.salePrice) : null;
+
+      // Calculate imperfect price if product is imperfect with a discount
+      let imperfectPrice = null;
+      if (product.isImperfect && product.imperfectDiscount) {
+        const effectivePrice = salePrice ?? basePrice;
+        imperfectPrice = effectivePrice * (1 - product.imperfectDiscount / 100);
+      }
+
+      // Flatten values for easier frontend consumption
+      const values = product.values?.map((pva) => pva.value) || [];
+
+      return {
+        ...product,
+        price: basePrice,
+        salePrice,
+        imperfectPrice,
+        values, // Array of { id, name, slug, iconName }
+      };
+    });
 
     return NextResponse.json({
       products: normalizedProducts,
@@ -155,6 +211,17 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    // CSRF protection for admin product creation
+    const csrfValid = await validateCsrfToken(request);
+    if (!csrfValid) {
+      return errorResponse(
+        "Invalid or missing CSRF token",
+        "CSRF_VALIDATION_FAILED",
+        undefined,
+        403
+      );
+    }
+
     const { userId } = await getServerAuth()
 
     // Check if user is authenticated
