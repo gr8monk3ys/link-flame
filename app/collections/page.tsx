@@ -165,8 +165,8 @@ export default function CollectionsPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       {/* Shop by Values - Horizontal Filter Bar */}
-      <div className="py-6 border-b border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Shop by Values</h2>
+      <div className="border-b border-gray-200 py-6">
+        <h2 className="mb-4 text-lg font-semibold text-gray-900">Shop by Values</h2>
         <ValueFilterBar />
       </div>
 
@@ -174,7 +174,7 @@ export default function CollectionsPage() {
       <ActiveFilters className="py-4" />
 
       <div className="flex flex-col gap-8 py-8 lg:flex-row">
-        <div className="w-full lg:w-64 space-y-6">
+        <div className="w-full space-y-6 lg:w-64">
           {/* Values Sidebar Filter */}
           <ValueFilterSidebar
             title="Values"

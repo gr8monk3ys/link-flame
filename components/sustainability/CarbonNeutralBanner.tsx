@@ -73,7 +73,7 @@ export function CarbonNeutralBanner({
           className
         )}
       >
-        <LeafIcon className="h-4 w-4" />
+        <LeafIcon className="size-4" />
         <span>Carbon-neutral shipping</span>
       </div>
     );
@@ -87,7 +87,7 @@ export function CarbonNeutralBanner({
           className
         )}
       >
-        <LeafIcon className="h-4 w-4 shrink-0" />
+        <LeafIcon className="size-4 shrink-0" />
         <span className="font-medium">Carbon-neutral shipping on all orders</span>
       </div>
     );
@@ -101,15 +101,15 @@ export function CarbonNeutralBanner({
       )}
     >
       <div className="flex items-start gap-4">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green-100 dark:bg-green-800/50">
-          <LeafIcon className="h-5 w-5 text-green-600 dark:text-green-400" />
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-green-100 dark:bg-green-800/50">
+          <LeafIcon className="size-5 text-green-600 dark:text-green-400" />
         </div>
         <div className="flex-1 space-y-1">
           <div className="flex items-center gap-2">
             <h3 className="font-semibold text-green-900 dark:text-green-100">
               Carbon-Neutral Shipping
             </h3>
-            <CheckCircleIcon className="h-4 w-4 text-green-600 dark:text-green-400" />
+            <CheckCircleIcon className="size-4 text-green-600 dark:text-green-400" />
           </div>
           <p className="text-sm text-green-700 dark:text-green-300">
             Every order ships with fully offset carbon emissions. We partner with verified
@@ -117,11 +117,11 @@ export function CarbonNeutralBanner({
           </p>
           <div className="flex flex-wrap items-center gap-4 pt-2">
             <div className="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400">
-              <TruckIcon className="h-4 w-4" />
+              <TruckIcon className="size-4" />
               <span>Offset on every shipment</span>
             </div>
             <div className="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400">
-              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
                 <path d="M2 12h20" />
                 <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
@@ -153,7 +153,7 @@ export function CarbonNeutralShippingLine({ className }: { className?: string })
       )}
     >
       <div className="flex items-center gap-2 text-green-700 dark:text-green-400">
-        <LeafIcon className="h-4 w-4" />
+        <LeafIcon className="size-4" />
         <span>Carbon offset</span>
       </div>
       <span className="font-medium text-green-700 dark:text-green-400">Included</span>
@@ -171,7 +171,7 @@ export function CarbonNeutralBadge({ className }: { className?: string }) {
       )}
       title="This order ships carbon-neutral"
     >
-      <LeafIcon className="h-3 w-3" />
+      <LeafIcon className="size-3" />
       <span>Carbon Neutral</span>
     </div>
   );

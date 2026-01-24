@@ -166,7 +166,7 @@ export function BundleProductSelector({
               <CardContent className="p-0">
                 <div className="flex gap-3 p-3">
                   {/* Product Image */}
-                  <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-md">
+                  <div className="relative size-20 shrink-0 overflow-hidden rounded-md">
                     <Image
                       src={product.image}
                       alt={product.title}
@@ -176,7 +176,7 @@ export function BundleProductSelector({
                     />
                     {product.isRequired && (
                       <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                        <Lock className="h-5 w-5 text-white" />
+                        <Lock className="size-5 text-white" />
                       </div>
                     )}
                   </div>
@@ -233,12 +233,12 @@ export function BundleProductSelector({
                         <Button
                           variant="outline"
                           size="icon"
-                          className="h-7 w-7"
+                          className="size-7"
                           onClick={() => handleQuantityChange(product.id, -1)}
                           disabled={selection!.quantity <= 1}
                           aria-label="Decrease quantity"
                         >
-                          <Minus className="h-3 w-3" />
+                          <Minus className="size-3" />
                         </Button>
                         <span className="w-8 text-center text-sm font-medium">
                           {selection!.quantity}
@@ -246,7 +246,7 @@ export function BundleProductSelector({
                         <Button
                           variant="outline"
                           size="icon"
-                          className="h-7 w-7"
+                          className="size-7"
                           onClick={() => handleQuantityChange(product.id, 1)}
                           disabled={
                             selection!.quantity >= product.maxQuantity ||
@@ -254,7 +254,7 @@ export function BundleProductSelector({
                           }
                           aria-label="Increase quantity"
                         >
-                          <Plus className="h-3 w-3" />
+                          <Plus className="size-3" />
                         </Button>
                         <span className="text-xs text-muted-foreground">
                           Max: {product.maxQuantity}

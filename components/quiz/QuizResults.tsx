@@ -133,15 +133,15 @@ export function QuizResults({
 
   if (products.length === 0) {
     return (
-      <div className="text-center py-12">
-        <Leaf className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-        <h3 className="text-xl font-semibold mb-2">No recommendations yet</h3>
-        <p className="text-muted-foreground mb-6">
+      <div className="py-12 text-center">
+        <Leaf className="mx-auto mb-4 size-16 text-muted-foreground" />
+        <h3 className="mb-2 text-xl font-semibold">No recommendations yet</h3>
+        <p className="mb-6 text-muted-foreground">
           We couldn&apos;t find products matching your preferences. Try adjusting your answers!
         </p>
         {onRetakeQuiz && (
           <Button onClick={onRetakeQuiz} variant="outline">
-            <RefreshCw className="w-4 h-4 mr-2" />
+            <RefreshCw className="mr-2 size-4" />
             Retake Quiz
           </Button>
         )}
@@ -152,14 +152,14 @@ export function QuizResults({
   return (
     <div className="space-y-8">
       {/* Results Header */}
-      <div className="text-center space-y-4">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-2">
-          <Sparkles className="w-8 h-8 text-primary" />
+      <div className="space-y-4 text-center">
+        <div className="mb-2 inline-flex size-16 items-center justify-center rounded-full bg-primary/10">
+          <Sparkles className="size-8 text-primary" />
         </div>
-        <h2 className="text-2xl sm:text-3xl font-bold">
+        <h2 className="text-2xl font-bold sm:text-3xl">
           Your Personalized Recommendations
         </h2>
-        <p className="text-muted-foreground max-w-lg mx-auto">
+        <p className="mx-auto max-w-lg text-muted-foreground">
           Based on your answers, we&apos;ve selected {products.length} eco-friendly products
           that match your lifestyle and values.
         </p>
@@ -168,13 +168,13 @@ export function QuizResults({
         <div className="flex items-center justify-center gap-3 pt-2">
           {showShareButton && (
             <Button variant="outline" size="sm" onClick={handleShare}>
-              <Share2 className="w-4 h-4 mr-2" />
+              <Share2 className="mr-2 size-4" />
               Share Results
             </Button>
           )}
           {onRetakeQuiz && (
             <Button variant="ghost" size="sm" onClick={onRetakeQuiz}>
-              <RefreshCw className="w-4 h-4 mr-2" />
+              <RefreshCw className="mr-2 size-4" />
               Retake Quiz
             </Button>
           )}
@@ -182,7 +182,7 @@ export function QuizResults({
       </div>
 
       {/* Product Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {products.map((product, index) => {
           const isLoading = loadingIds.has(product.id);
           const isOutOfStock = product.inventory <= 0;
@@ -194,13 +194,13 @@ export function QuizResults({
               key={product.id}
               className={cn(
                 'group overflow-hidden transition-all duration-500',
-                'hover:shadow-lg hover:-translate-y-1',
+                'hover:-translate-y-1 hover:shadow-lg',
                 isAnimated
-                  ? 'opacity-100 translate-y-0'
-                  : 'opacity-0 translate-y-4'
+                  ? 'translate-y-0 opacity-100'
+                  : 'translate-y-4 opacity-0'
               )}
             >
-              <CardHeader className="p-0 relative">
+              <CardHeader className="relative p-0">
                 <Link href={`/products/${product.id}`}>
                   <AspectRatio ratio={1}>
                     <Image
@@ -212,13 +212,13 @@ export function QuizResults({
                   </AspectRatio>
                 </Link>
                 {isOnSale && (
-                  <Badge className="absolute top-2 left-2" variant="destructive">
+                  <Badge className="absolute left-2 top-2" variant="destructive">
                     Sale
                   </Badge>
                 )}
                 {isOutOfStock && (
                   <Badge
-                    className="absolute top-2 right-2"
+                    className="absolute right-2 top-2"
                     variant="secondary"
                   >
                     Out of Stock
@@ -235,18 +235,18 @@ export function QuizResults({
               <CardContent className="p-4">
                 <Link
                   href={`/products/${product.id}`}
-                  className="block hover:text-primary transition-colors"
+                  className="block transition-colors hover:text-primary"
                 >
-                  <h3 className="font-semibold line-clamp-2 mb-1">
+                  <h3 className="mb-1 line-clamp-2 font-semibold">
                     {product.title}
                   </h3>
                 </Link>
                 {product.description && (
-                  <p className="text-sm text-muted-foreground line-clamp-2">
+                  <p className="line-clamp-2 text-sm text-muted-foreground">
                     {product.description}
                   </p>
                 )}
-                <div className="flex items-baseline gap-2 mt-3">
+                <div className="mt-3 flex items-baseline gap-2">
                   <span className="text-lg font-bold">
                     ${(product.salePrice || product.price).toFixed(2)}
                   </span>
@@ -268,7 +268,7 @@ export function QuizResults({
                   {isLoading ? (
                     <span className="flex items-center">
                       <svg
-                        className="animate-spin -ml-1 mr-2 h-4 w-4"
+                        className="-ml-1 mr-2 size-4 animate-spin"
                         fill="none"
                         viewBox="0 0 24 24"
                       >
@@ -292,7 +292,7 @@ export function QuizResults({
                     'Out of Stock'
                   ) : (
                     <>
-                      <ShoppingCart className="w-4 h-4 mr-2" />
+                      <ShoppingCart className="mr-2 size-4" />
                       Add to Cart
                     </>
                   )}
@@ -304,8 +304,8 @@ export function QuizResults({
       </div>
 
       {/* Browse more */}
-      <div className="text-center pt-4">
-        <p className="text-muted-foreground mb-4">
+      <div className="pt-4 text-center">
+        <p className="mb-4 text-muted-foreground">
           Want to explore more sustainable products?
         </p>
         <Button asChild variant="outline" size="lg">

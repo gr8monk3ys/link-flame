@@ -202,7 +202,7 @@ export default function ProductPage() {
                 {product.isImperfect && product.imperfectDiscount ? (
                   <div className="space-y-2">
                     <div className="flex items-baseline gap-3">
-                      <p className="text-3xl tracking-tight text-amber-600 font-bold">
+                      <p className="text-3xl font-bold tracking-tight text-amber-600">
                         ${(displayPrice * (1 - product.imperfectDiscount / 100)).toFixed(2)}
                       </p>
                       <p className="text-xl text-gray-500 line-through">
@@ -247,11 +247,11 @@ export default function ProductPage() {
                   <div className="mt-3">
                     <span className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ${stockStatus.color}`}>
                       {stockStatus.isAvailable ? (
-                        <svg className="mr-1.5 h-2 w-2 text-current" fill="currentColor" viewBox="0 0 8 8">
+                        <svg className="mr-1.5 size-2 text-current" fill="currentColor" viewBox="0 0 8 8">
                           <circle cx={4} cy={4} r={3} />
                         </svg>
                       ) : (
-                        <svg className="mr-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="mr-1.5 size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
                       )}
@@ -303,7 +303,7 @@ export default function ProductPage() {
               {/* Certifications */}
               {product.certifications && product.certifications.length > 0 && (
                 <div className="mt-4">
-                  <h4 className="text-sm font-medium text-gray-900 mb-2">Certifications</h4>
+                  <h4 className="mb-2 text-sm font-medium text-gray-900">Certifications</h4>
                   <CertificationBadgesFull
                     certifications={product.certifications.map(pc => pc.certification)}
                   />
@@ -313,7 +313,7 @@ export default function ProductPage() {
               {/* Shop by Values */}
               {product.values && product.values.length > 0 && (
                 <div className="mt-4">
-                  <h4 className="text-sm font-medium text-gray-900 mb-2">Values</h4>
+                  <h4 className="mb-2 text-sm font-medium text-gray-900">Values</h4>
                   <ValueBadgeList
                     values={product.values}
                     size="md"
@@ -493,7 +493,7 @@ function AddToCartButton({
       <button
         type="button"
         disabled
-        className="flex max-w-xs flex-1 items-center justify-center rounded-md border border-transparent bg-gray-300 px-8 py-3 text-base font-medium text-gray-500 cursor-not-allowed sm:w-full"
+        className="flex max-w-xs flex-1 cursor-not-allowed items-center justify-center rounded-md border border-transparent bg-gray-300 px-8 py-3 text-base font-medium text-gray-500 sm:w-full"
       >
         Out of Stock
       </button>
@@ -505,7 +505,7 @@ function AddToCartButton({
       <button
         type="button"
         disabled
-        className="flex max-w-xs flex-1 items-center justify-center rounded-md border border-transparent bg-gray-300 px-8 py-3 text-base font-medium text-gray-500 cursor-not-allowed sm:w-full"
+        className="flex max-w-xs flex-1 cursor-not-allowed items-center justify-center rounded-md border border-transparent bg-gray-300 px-8 py-3 text-base font-medium text-gray-500 sm:w-full"
       >
         Select Options
       </button>

@@ -28,30 +28,30 @@ export function ReferralBanner({
   if (variant === "compact") {
     return (
       <div
-        className={`relative bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 rounded-lg p-4 ${className}`}
+        className={`relative rounded-lg border border-primary/20 bg-gradient-to-r from-primary/10 to-primary/5 p-4 ${className}`}
       >
         {dismissible && (
           <button
             onClick={() => setDismissed(true)}
-            className="absolute top-2 right-2 text-muted-foreground hover:text-foreground"
+            className="absolute right-2 top-2 text-muted-foreground hover:text-foreground"
             aria-label="Dismiss banner"
           >
-            <X className="h-4 w-4" />
+            <X className="size-4" />
           </button>
         )}
         <div className="flex items-start gap-3">
-          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-            <Gift className="h-5 w-5 text-primary" />
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
+            <Gift className="size-5 text-primary" />
           </div>
           <div className="space-y-2">
-            <h3 className="font-semibold text-sm">Refer a Friend</h3>
+            <h3 className="text-sm font-semibold">Refer a Friend</h3>
             <p className="text-xs text-muted-foreground">
               Give 10% off, get 200 points
             </p>
             <Link href={session ? "/account/referrals" : "/auth/signin"}>
               <Button size="sm" variant="outline" className="h-7 text-xs">
                 {session ? "Get Your Code" : "Sign In"}
-                <ChevronRight className="ml-1 h-3 w-3" />
+                <ChevronRight className="ml-1 size-3" />
               </Button>
             </Link>
           </div>
@@ -63,37 +63,37 @@ export function ReferralBanner({
   // Full variant - suitable for main content areas
   return (
     <div
-      className={`relative bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 rounded-xl overflow-hidden ${className}`}
+      className={`relative overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent ${className}`}
     >
       {dismissible && (
         <button
           onClick={() => setDismissed(true)}
-          className="absolute top-4 right-4 text-muted-foreground hover:text-foreground z-10"
+          className="absolute right-4 top-4 z-10 text-muted-foreground hover:text-foreground"
           aria-label="Dismiss banner"
         >
-          <X className="h-5 w-5" />
+          <X className="size-5" />
         </button>
       )}
 
-      <div className="flex flex-col md:flex-row items-center gap-6 p-6 md:p-8">
+      <div className="flex flex-col items-center gap-6 p-6 md:flex-row md:p-8">
         {/* Icon and illustration */}
         <div className="flex items-center gap-4">
           <div className="relative">
-            <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center">
-              <Gift className="h-8 w-8 text-primary" />
+            <div className="flex size-16 items-center justify-center rounded-full bg-primary/20">
+              <Gift className="size-8 text-primary" />
             </div>
-            <div className="absolute -right-2 -bottom-2 h-10 w-10 rounded-full bg-green-500/20 flex items-center justify-center">
-              <Users className="h-5 w-5 text-green-600" />
+            <div className="absolute -bottom-2 -right-2 flex size-10 items-center justify-center rounded-full bg-green-500/20">
+              <Users className="size-5 text-green-600" />
             </div>
           </div>
         </div>
 
         {/* Content */}
         <div className="flex-1 text-center md:text-left">
-          <h2 className="text-xl md:text-2xl font-bold">
+          <h2 className="text-xl font-bold md:text-2xl">
             Give 10%, Get 200 Points
           </h2>
-          <p className="text-muted-foreground mt-1 max-w-lg">
+          <p className="mt-1 max-w-lg text-muted-foreground">
             Share your unique referral code with friends. They get 10% off their first
             order, and you earn 200 loyalty points when they make a purchase.
           </p>
@@ -104,7 +104,7 @@ export function ReferralBanner({
           <Link href={session ? "/account/referrals" : "/auth/signin"}>
             <Button size="lg" className="min-w-[160px]">
               {session ? "Get Your Code" : "Sign Up to Share"}
-              <ChevronRight className="ml-2 h-4 w-4" />
+              <ChevronRight className="ml-2 size-4" />
             </Button>
           </Link>
           {!session && (
@@ -119,7 +119,7 @@ export function ReferralBanner({
       </div>
 
       {/* Decorative elements */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary/5 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+      <div className="pointer-events-none absolute right-0 top-0 size-64 -translate-y-1/2 translate-x-1/2 rounded-full bg-gradient-to-br from-primary/5 to-transparent blur-3xl" />
     </div>
   );
 }
@@ -132,9 +132,9 @@ export function ReferralInlineCTA({ className = "" }: { className?: string }) {
 
   return (
     <div
-      className={`flex items-center gap-3 p-3 bg-primary/5 rounded-lg border border-primary/10 ${className}`}
+      className={`flex items-center gap-3 rounded-lg border border-primary/10 bg-primary/5 p-3 ${className}`}
     >
-      <Gift className="h-5 w-5 text-primary shrink-0" />
+      <Gift className="size-5 shrink-0 text-primary" />
       <div className="flex-1 text-sm">
         <span className="font-medium">Refer a friend</span>
         <span className="text-muted-foreground">
@@ -145,7 +145,7 @@ export function ReferralInlineCTA({ className = "" }: { className?: string }) {
       <Link href={session ? "/account/referrals" : "/auth/signin"}>
         <Button variant="ghost" size="sm" className="shrink-0">
           Share
-          <ChevronRight className="ml-1 h-4 w-4" />
+          <ChevronRight className="ml-1 size-4" />
         </Button>
       </Link>
     </div>

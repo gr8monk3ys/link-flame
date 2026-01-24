@@ -182,7 +182,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
           >
             <ChevronRightIcon
               className={cn(
-                'h-5 w-5 transition-transform',
+                'size-5 transition-transform',
                 isExpanded ? 'rotate-90' : ''
               )}
             />
@@ -198,7 +198,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
             {subscription.items.slice(0, 3).map((item) => (
               <div
                 key={item.id}
-                className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-white bg-gray-100"
+                className="relative size-12 overflow-hidden rounded-full border-2 border-white bg-gray-100"
               >
                 <Image
                   src={item.variant?.image || item.product.image}
@@ -210,7 +210,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
               </div>
             ))}
             {subscription.items.length > 3 && (
-              <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-white bg-gray-100 text-xs font-medium text-gray-600">
+              <div className="flex size-12 items-center justify-center rounded-full border-2 border-white bg-gray-100 text-xs font-medium text-gray-600">
                 +{subscription.items.length - 3}
               </div>
             )}
@@ -236,7 +236,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
         {/* Next delivery info */}
         {isActive && (
           <div className="mt-4 flex items-center rounded-lg bg-green-50 px-3 py-2">
-            <TruckIcon className="mr-2 h-5 w-5 text-green-600" />
+            <TruckIcon className="mr-2 size-5 text-green-600" />
             <span className="text-sm text-green-800">
               Next delivery: {nextDeliveryDate.toLocaleDateString('en-US', {
                 weekday: 'short',
@@ -249,7 +249,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
 
         {isPaused && (
           <div className="mt-4 flex items-center rounded-lg bg-yellow-50 px-3 py-2">
-            <PauseIcon className="mr-2 h-5 w-5 text-yellow-600" />
+            <PauseIcon className="mr-2 size-5 text-yellow-600" />
             <span className="text-sm text-yellow-800">
               Subscription is paused. Resume to continue deliveries.
             </span>
@@ -266,7 +266,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
                 const discountedPrice = item.priceAtSubscription * (1 - item.discountPercent / 100);
                 return (
                   <li key={item.id} className="flex items-center gap-3 py-2">
-                    <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded bg-gray-100">
+                    <div className="relative size-10 shrink-0 overflow-hidden rounded bg-gray-100">
                       <Image
                         src={item.variant?.image || item.product.image}
                         alt={item.product.title}
@@ -275,7 +275,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
                         sizes="40px"
                       />
                     </div>
-                    <div className="flex-1 min-w-0">
+                    <div className="min-w-0 flex-1">
                       <Link
                         href={`/products/${item.product.id}`}
                         className="text-sm font-medium text-gray-900 hover:text-green-600"
@@ -334,7 +334,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
                   disabled={isLoading}
                   className="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <ArrowPathIcon className="mr-1.5 h-4 w-4" />
+                  <ArrowPathIcon className="mr-1.5 size-4" />
                   Skip next delivery
                 </button>
                 <button
@@ -343,7 +343,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
                   disabled={isLoading}
                   className="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <PauseIcon className="mr-1.5 h-4 w-4" />
+                  <PauseIcon className="mr-1.5 size-4" />
                   Pause
                 </button>
               </>
@@ -355,7 +355,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
                 disabled={isLoading}
                 className="inline-flex items-center rounded-md border border-green-600 bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <PlayIcon className="mr-1.5 h-4 w-4" />
+                <PlayIcon className="mr-1.5 size-4" />
                 Resume
               </button>
             )}
@@ -365,7 +365,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
               disabled={isLoading}
               className="inline-flex items-center rounded-md border border-red-300 bg-white px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <XMarkIcon className="mr-1.5 h-4 w-4" />
+              <XMarkIcon className="mr-1.5 size-4" />
               Cancel
             </button>
           </div>

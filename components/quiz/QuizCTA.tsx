@@ -36,13 +36,13 @@ export function QuizCTA({
         <button
           onClick={() => setIsModalOpen(true)}
           className={cn(
-            'group inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium transition-colors',
+            'group inline-flex items-center gap-2 font-medium text-primary transition-colors hover:text-primary/80',
             className
           )}
         >
-          <Sparkles className="w-4 h-4" />
+          <Sparkles className="size-4" />
           Find your perfect products
-          <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+          <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
         </button>
 
         <QuizModal
@@ -60,20 +60,20 @@ export function QuizCTA({
         <div
           className={cn(
             'relative overflow-hidden rounded-xl border bg-card p-6 shadow-sm',
-            'hover:shadow-md transition-shadow',
+            'transition-shadow hover:shadow-md',
             className
           )}
         >
-          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+          <div className="absolute right-0 top-0 size-32 -translate-y-1/2 translate-x-1/2 rounded-full bg-primary/5" />
+          <div className="absolute bottom-0 left-0 size-24 -translate-x-1/2 translate-y-1/2 rounded-full bg-primary/5" />
 
           <div className="relative space-y-4">
-            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-              <Sparkles className="w-6 h-6 text-primary" />
+            <div className="flex size-12 items-center justify-center rounded-full bg-primary/10">
+              <Sparkles className="size-6 text-primary" />
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold mb-1">
+              <h3 className="mb-1 text-lg font-semibold">
                 Not sure where to start?
               </h3>
               <p className="text-sm text-muted-foreground">
@@ -84,7 +84,7 @@ export function QuizCTA({
 
             <Button onClick={() => setIsModalOpen(true)} className="w-full">
               Take the Quiz
-              <ArrowRight className="w-4 h-4 ml-2" />
+              <ArrowRight className="ml-2 size-4" />
             </Button>
           </div>
         </div>
@@ -109,21 +109,21 @@ export function QuizCTA({
         )}
       >
         {/* Background decorations */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 left-1/4 w-64 h-64 bg-primary/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-          <Leaf className="absolute top-8 right-12 w-8 h-8 text-primary/10 rotate-45" />
-          <Leaf className="absolute bottom-8 left-12 w-12 h-12 text-primary/10 -rotate-12" />
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute left-1/4 top-0 size-64 rounded-full bg-primary/10 blur-3xl" />
+          <div className="absolute bottom-0 right-1/4 size-96 rounded-full bg-primary/5 blur-3xl" />
+          <Leaf className="absolute right-12 top-8 size-8 rotate-45 text-primary/10" />
+          <Leaf className="absolute bottom-8 left-12 size-12 -rotate-12 text-primary/10" />
         </div>
 
         <div className="container relative py-16 md:py-20">
-          <div className="max-w-2xl mx-auto text-center space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
-              <Sparkles className="w-4 h-4" />
+          <div className="mx-auto max-w-2xl space-y-6 text-center">
+            <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
+              <Sparkles className="size-4" />
               Personalized Recommendations
             </div>
 
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
+            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
               Find Your Perfect Eco-Friendly Products
             </h2>
 
@@ -132,13 +132,13 @@ export function QuizCTA({
               and we&apos;ll recommend sustainable products tailored just for you.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+            <div className="flex flex-col items-center justify-center gap-4 pt-4 sm:flex-row">
               <Button
                 size="lg"
                 onClick={() => setIsModalOpen(true)}
-                className="px-8 gap-2"
+                className="gap-2 px-8"
               >
-                <Sparkles className="w-5 h-5" />
+                <Sparkles className="size-5" />
                 Take the Quiz
               </Button>
               <p className="text-sm text-muted-foreground">

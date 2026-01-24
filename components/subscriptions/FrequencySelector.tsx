@@ -129,7 +129,7 @@ export function FrequencySelector({
                       Save {option.discount}%
                     </span>
                     {checked && (
-                      <CheckCircleIcon className="h-5 w-5 text-green-600" aria-hidden="true" />
+                      <CheckCircleIcon className="size-5 text-green-600" aria-hidden="true" />
                     )}
                   </div>
                 </div>

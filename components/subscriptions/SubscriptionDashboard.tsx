@@ -99,7 +99,7 @@ export function SubscriptionDashboard() {
   if (authStatus === 'loading') {
     return (
       <div className="flex items-center justify-center py-12">
-        <ArrowPathIcon className="h-8 w-8 animate-spin text-gray-400" />
+        <ArrowPathIcon className="size-8 animate-spin text-gray-400" />
       </div>
     );
   }
@@ -107,7 +107,7 @@ export function SubscriptionDashboard() {
   if (authStatus === 'unauthenticated') {
     return (
       <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
-        <SparklesIcon className="mx-auto h-12 w-12 text-gray-400" />
+        <SparklesIcon className="mx-auto size-12 text-gray-400" />
         <h3 className="mt-4 text-lg font-semibold text-gray-900">
           Sign in to manage subscriptions
         </h3>
@@ -160,7 +160,7 @@ export function SubscriptionDashboard() {
           href="/products"
           className="inline-flex items-center rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
         >
-          <PlusIcon className="mr-2 h-4 w-4" />
+          <PlusIcon className="mr-2 size-4" />
           Add subscription
         </Link>
       </div>
@@ -217,7 +217,7 @@ export function SubscriptionDashboard() {
           disabled={isLoading}
           className="ml-auto inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <ArrowPathIcon className={`mr-1.5 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+          <ArrowPathIcon className={`mr-1.5 size-4 ${isLoading ? 'animate-spin' : ''}`} />
           Refresh
         </button>
       </div>
@@ -225,7 +225,7 @@ export function SubscriptionDashboard() {
       {/* Subscriptions list */}
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
-          <ArrowPathIcon className="h-8 w-8 animate-spin text-gray-400" />
+          <ArrowPathIcon className="size-8 animate-spin text-gray-400" />
         </div>
       ) : filteredSubscriptions.length > 0 ? (
         <div className="space-y-4">
@@ -239,7 +239,7 @@ export function SubscriptionDashboard() {
         </div>
       ) : (
         <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-12 text-center">
-          <InboxIcon className="mx-auto h-12 w-12 text-gray-400" />
+          <InboxIcon className="mx-auto size-12 text-gray-400" />
           <h3 className="mt-4 text-lg font-semibold text-gray-900">
             {filter === 'all'
               ? 'No subscriptions yet'
@@ -256,7 +256,7 @@ export function SubscriptionDashboard() {
                 href="/products"
                 className="inline-flex items-center rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
               >
-                <SparklesIcon className="mr-2 h-4 w-4" />
+                <SparklesIcon className="mr-2 size-4" />
                 Browse products
               </Link>
             </div>
@@ -271,8 +271,8 @@ export function SubscriptionDashboard() {
         </h3>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="flex items-start gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-green-600">
-              <SparklesIcon className="h-4 w-4" />
+            <div className="flex size-8 items-center justify-center rounded-full bg-green-100 text-green-600">
+              <SparklesIcon className="size-4" />
             </div>
             <div>
               <p className="text-sm font-medium text-gray-900">Save up to 20%</p>
@@ -280,8 +280,8 @@ export function SubscriptionDashboard() {
             </div>
           </div>
           <div className="flex items-start gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-green-600">
-              <ArrowPathIcon className="h-4 w-4" />
+            <div className="flex size-8 items-center justify-center rounded-full bg-green-100 text-green-600">
+              <ArrowPathIcon className="size-4" />
             </div>
             <div>
               <p className="text-sm font-medium text-gray-900">Flexible schedule</p>
@@ -289,8 +289,8 @@ export function SubscriptionDashboard() {
             </div>
           </div>
           <div className="flex items-start gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-green-600">
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="flex size-8 items-center justify-center rounded-full bg-green-100 text-green-600">
+              <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
@@ -300,8 +300,8 @@ export function SubscriptionDashboard() {
             </div>
           </div>
           <div className="flex items-start gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-green-600">
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="flex size-8 items-center justify-center rounded-full bg-green-100 text-green-600">
+              <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>

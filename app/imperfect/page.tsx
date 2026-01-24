@@ -143,7 +143,7 @@ export default function ImperfectPage() {
         {/* Filters Section */}
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2">
-            <LeafIcon className="w-5 h-5 text-amber-600" />
+            <LeafIcon className="size-5 text-amber-600" />
             <p className="text-gray-700">
               <span className="font-semibold text-amber-600">{totalItems}</span> imperfect items available
             </p>
@@ -203,7 +203,7 @@ export default function ImperfectPage() {
 
         {/* Error State */}
         {error && (
-          <div className="mb-8 rounded-lg bg-red-50 border border-red-200 p-4 text-red-800">
+          <div className="mb-8 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800">
             <p>{error}</p>
             <button
               onClick={() => window.location.reload()}
@@ -223,7 +223,7 @@ export default function ImperfectPage() {
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Previous
             </button>
@@ -251,7 +251,7 @@ export default function ImperfectPage() {
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Next
             </button>

@@ -56,8 +56,8 @@ export function SubscribeOption({
       {/* Header with toggle */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
-            <SparklesIcon className="h-5 w-5 text-green-600" />
+          <div className="flex size-10 items-center justify-center rounded-full bg-green-100">
+            <SparklesIcon className="size-5 text-green-600" />
           </div>
           <div>
             <h3 className="text-sm font-semibold text-gray-900">Subscribe & Save</h3>
@@ -69,7 +69,7 @@ export function SubscribeOption({
           onChange={handleSubscriptionToggle}
           className={cn(
             isSubscription ? 'bg-green-600' : 'bg-gray-200',
-            'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2'
+            'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2'
           )}
         >
           <span className="sr-only">Enable subscription</span>
@@ -77,7 +77,7 @@ export function SubscribeOption({
             aria-hidden="true"
             className={cn(
               isSubscription ? 'translate-x-5' : 'translate-x-0',
-              'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out'
+              'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out'
             )}
           />
         </Switch>
@@ -98,7 +98,7 @@ export function SubscribeOption({
         >
           <div className="flex items-center">
             {!isSubscription && (
-              <CheckIcon className="mr-2 h-5 w-5 text-green-600" />
+              <CheckIcon className="mr-2 size-5 text-green-600" />
             )}
             <span className="text-sm font-medium text-gray-900">One-time purchase</span>
           </div>
@@ -121,7 +121,7 @@ export function SubscribeOption({
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center">
               {isSubscription && (
-                <CheckIcon className="mr-2 h-5 w-5 text-green-600" />
+                <CheckIcon className="mr-2 size-5 text-green-600" />
               )}
               <span className="text-sm font-medium text-gray-900">Subscribe & Save</span>
               <span className="ml-2 inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-800">
@@ -139,7 +139,7 @@ export function SubscribeOption({
           </div>
           {isSubscription && (
             <div className="mt-1 flex items-center text-xs text-green-700">
-              <CalendarDaysIcon className="mr-1 h-4 w-4" />
+              <CalendarDaysIcon className="mr-1 size-4" />
               <span>
                 You save ${savings.toFixed(2)} per delivery
               </span>
@@ -170,19 +170,19 @@ export function SubscribeOption({
           </h4>
           <ul className="mt-2 space-y-1 text-xs text-green-700">
             <li className="flex items-center">
-              <CheckIcon className="mr-2 h-4 w-4" />
+              <CheckIcon className="mr-2 size-4" />
               Save {discountPercent}% on every delivery
             </li>
             <li className="flex items-center">
-              <CheckIcon className="mr-2 h-4 w-4" />
+              <CheckIcon className="mr-2 size-4" />
               Free shipping on subscription orders
             </li>
             <li className="flex items-center">
-              <CheckIcon className="mr-2 h-4 w-4" />
+              <CheckIcon className="mr-2 size-4" />
               Skip, pause, or cancel anytime
             </li>
             <li className="flex items-center">
-              <CheckIcon className="mr-2 h-4 w-4" />
+              <CheckIcon className="mr-2 size-4" />
               Exclusive subscriber-only offers
             </li>
           </ul>

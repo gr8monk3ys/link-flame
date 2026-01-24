@@ -63,7 +63,7 @@ export function BundleCard({ bundle, className }: BundleCardProps) {
               />
             ) : (
               // Grid of product images if no bundle image
-              <div className="grid h-full w-full grid-cols-2 gap-1 p-2">
+              <div className="grid size-full grid-cols-2 gap-1 p-2">
                 {previewImages.map((img, idx) => (
                   <div key={idx} className="relative aspect-square overflow-hidden rounded-md">
                     <Image
@@ -94,7 +94,7 @@ export function BundleCard({ bundle, className }: BundleCardProps) {
         </CardHeader>
 
         <CardContent className="p-4">
-          <h3 className="mb-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+          <h3 className="mb-2 text-lg font-semibold text-foreground transition-colors group-hover:text-primary">
             {bundle.title}
           </h3>
 

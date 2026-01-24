@@ -63,7 +63,7 @@ export function ShareWishlistButton({
   return (
     <>
       <Button variant={variant} size={size} onClick={handleShare}>
-        <Share2 className="h-4 w-4 mr-2" />
+        <Share2 className="mr-2 size-4" />
         Share
       </Button>
 
@@ -82,20 +82,20 @@ export function ShareWishlistButton({
                 type="text"
                 value={shareUrl}
                 readOnly
-                className="flex-1 px-3 py-2 border rounded-md bg-muted text-sm"
+                className="flex-1 rounded-md border bg-muted px-3 py-2 text-sm"
               />
               <Button size="icon" onClick={handleCopy}>
                 {copied ? (
-                  <Check className="h-4 w-4 text-green-500" />
+                  <Check className="size-4 text-green-500" />
                 ) : (
-                  <Copy className="h-4 w-4" />
+                  <Copy className="size-4" />
                 )}
               </Button>
             </div>
 
             <div className="flex gap-2">
               <Button variant="outline" className="flex-1" onClick={handleCopy}>
-                <Copy className="h-4 w-4 mr-2" />
+                <Copy className="mr-2 size-4" />
                 Copy Link
               </Button>
               <a
@@ -105,7 +105,7 @@ export function ShareWishlistButton({
                 className="flex-1"
               >
                 <Button variant="outline" className="w-full">
-                  <ExternalLink className="h-4 w-4 mr-2" />
+                  <ExternalLink className="mr-2 size-4" />
                   Preview
                 </Button>
               </a>

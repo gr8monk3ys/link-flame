@@ -65,7 +65,7 @@ export function WishlistManager({
 
         {/* Wishlist Grid */}
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
@@ -75,17 +75,17 @@ export function WishlistManager({
           </div>
         ) : wishlists.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
-              <Plus className="h-8 w-8 text-muted-foreground" />
+            <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-muted">
+              <Plus className="size-8 text-muted-foreground" />
             </div>
-            <h3 className="font-semibold text-lg mb-2">No wishlists yet</h3>
-            <p className="text-muted-foreground mb-4">
+            <h3 className="mb-2 text-lg font-semibold">No wishlists yet</h3>
+            <p className="mb-4 text-muted-foreground">
               Create your first wishlist to start saving items
             </p>
             <CreateWishlistModal onSubmit={onCreateWishlist} />
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {wishlists.map((wishlist) => (
               <WishlistCard
                 key={wishlist.id}
@@ -101,8 +101,8 @@ export function WishlistManager({
             <CreateWishlistModal
               onSubmit={onCreateWishlist}
               trigger={
-                <button className="aspect-square rounded-lg border-2 border-dashed border-muted-foreground/25 flex flex-col items-center justify-center gap-2 text-muted-foreground hover:border-primary hover:text-primary transition-colors">
-                  <Plus className="h-8 w-8" />
+                <button className="flex aspect-square flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-muted-foreground/25 text-muted-foreground transition-colors hover:border-primary hover:text-primary">
+                  <Plus className="size-8" />
                   <span className="font-medium">New Wishlist</span>
                 </button>
               }
@@ -122,10 +122,10 @@ export function WishlistManager({
           <Button
             variant="ghost"
             size="sm"
-            className="mb-2 -ml-2"
+            className="-ml-2 mb-2"
             onClick={() => onSelectWishlist(null)}
           >
-            <ChevronLeft className="h-4 w-4 mr-1" />
+            <ChevronLeft className="mr-1 size-4" />
             All Wishlists
           </Button>
           <h1 className="text-2xl font-bold">{selectedWishlist.name}</h1>

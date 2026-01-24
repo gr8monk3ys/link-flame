@@ -4,11 +4,11 @@ import Link from "next/link";
 
 export default function OfflinePage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
       <div className="text-center">
         <div className="mb-8">
           <svg
-            className="mx-auto h-24 w-24 text-gray-400"
+            className="mx-auto size-24 text-gray-400"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -21,17 +21,17 @@ export default function OfflinePage() {
             />
           </svg>
         </div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">
+        <h1 className="mb-4 text-3xl font-bold text-gray-900">
           You&apos;re Offline
         </h1>
-        <p className="text-gray-600 mb-8 max-w-md mx-auto">
+        <p className="mx-auto mb-8 max-w-md text-gray-600">
           It looks like you&apos;ve lost your internet connection. Please check your
           network settings and try again.
         </p>
         <div className="space-y-4">
           <button
             onClick={() => window.location.reload()}
-            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+            className="inline-flex items-center rounded-md border border-transparent bg-green-600 px-6 py-3 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
           >
             Try Again
           </button>

@@ -36,8 +36,8 @@ function SavedItemsContent() {
 
   if (!isAuthLoaded) {
     return (
-      <div className="container py-10 flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="container flex items-center justify-center py-10">
+        <Loader2 className="size-8 animate-spin" />
       </div>
     );
   }
@@ -128,7 +128,7 @@ function SavedItemsContent() {
   };
 
   return (
-    <div className="container py-10 max-w-6xl">
+    <div className="container max-w-6xl py-10">
       <WishlistManager
         wishlists={wishlists}
         selectedWishlistId={selectedWishlistId}
@@ -150,8 +150,8 @@ function SavedItemsContent() {
 
 function SavedItemsLoading() {
   return (
-    <div className="container py-10 flex items-center justify-center">
-      <Loader2 className="h-8 w-8 animate-spin" />
+    <div className="container flex items-center justify-center py-10">
+      <Loader2 className="size-8 animate-spin" />
     </div>
   );
 }

@@ -99,11 +99,11 @@ const monthlyProgress = [
 function SimpleBarChart({ data }: { data: { month: string; offset: number }[] }) {
   const maxValue = Math.max(...data.map((d) => d.offset));
   return (
-    <div className="flex items-end gap-1 h-48">
+    <div className="flex h-48 items-end gap-1">
       {data.map((item) => (
-        <div key={item.month} className="flex-1 flex flex-col items-center gap-1">
+        <div key={item.month} className="flex flex-1 flex-col items-center gap-1">
           <div
-            className="w-full bg-green-500 dark:bg-green-600 rounded-t transition-all"
+            className="w-full rounded-t bg-green-500 transition-all dark:bg-green-600"
             style={{ height: `${(item.offset / maxValue) * 100}%` }}
             title={`${item.offset} kg CO2`}
           />
@@ -120,18 +120,18 @@ export default function ImpactPage() {
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-teal-50 to-white dark:from-teal-900/20 dark:to-background py-20">
+      <section className="relative bg-gradient-to-b from-teal-50 to-white py-20 dark:from-teal-900/20 dark:to-background">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-3xl text-center">
-            <div className="inline-flex items-center gap-2 rounded-full bg-teal-100 px-4 py-2 text-sm font-medium text-teal-800 dark:bg-teal-900/50 dark:text-teal-300 mb-6">
-              <LeafIcon className="h-4 w-4" />
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-teal-100 px-4 py-2 text-sm font-medium text-teal-800 dark:bg-teal-900/50 dark:text-teal-300">
+              <LeafIcon className="size-4" />
               {currentYear} Impact Report
             </div>
             <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl">
               Our Environmental{" "}
               <span className="text-teal-600 dark:text-teal-400">Impact</span>
             </h1>
-            <p className="mt-6 text-lg leading-8 text-muted-foreground max-w-2xl mx-auto">
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
               Transparency is key to accountability. Here's a detailed look at our environmental
               footprint and the positive impact we're making together.
             </p>
@@ -164,15 +164,15 @@ export default function ImpactPage() {
       </section>
 
       {/* Carbon Offset Details */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-900/50">
+      <section className="bg-gray-50 py-16 dark:bg-gray-900/50">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-8">
+          <h2 className="mb-8 text-2xl font-bold text-gray-900 dark:text-white">
             Carbon Offset Progress
           </h2>
           <div className="grid gap-8 lg:grid-cols-2">
             {/* Chart */}
-            <div className="rounded-xl border bg-white p-6 dark:bg-gray-900 dark:border-gray-800">
-              <h3 className="text-lg font-semibold mb-4">Monthly Carbon Offset (kg CO2)</h3>
+            <div className="rounded-xl border bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+              <h3 className="mb-4 text-lg font-semibold">Monthly Carbon Offset (kg CO2)</h3>
               <SimpleBarChart data={monthlyProgress} />
               <p className="mt-4 text-sm text-muted-foreground">
                 Showing monthly carbon offset for {currentYear}. We're on track to offset over
@@ -181,17 +181,17 @@ export default function ImpactPage() {
             </div>
 
             {/* Projects */}
-            <div className="rounded-xl border bg-white p-6 dark:bg-gray-900 dark:border-gray-800">
-              <h3 className="text-lg font-semibold mb-4">Offset Projects We Support</h3>
+            <div className="rounded-xl border bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+              <h3 className="mb-4 text-lg font-semibold">Offset Projects We Support</h3>
               <div className="space-y-4">
                 {carbonData.offsetProjects.map((project) => (
                   <div key={project.name} className="flex items-start gap-4">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/50">
-                      <LeafIcon className="h-5 w-5 text-green-600 dark:text-green-400" />
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/50">
+                      <LeafIcon className="size-5 text-green-600 dark:text-green-400" />
                     </div>
-                    <div className="flex-1 min-w-0">
+                    <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between">
-                        <h4 className="font-medium text-gray-900 dark:text-white truncate">
+                        <h4 className="truncate font-medium text-gray-900 dark:text-white">
                           {project.name}
                         </h4>
                         <span className="text-sm font-medium text-green-600 dark:text-green-400">
@@ -213,16 +213,16 @@ export default function ImpactPage() {
       {/* Detailed Stats */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-8">
+          <h2 className="mb-8 text-2xl font-bold text-gray-900 dark:text-white">
             Detailed Impact Metrics
           </h2>
           <div className="grid gap-8 md:grid-cols-3">
             {environmentalStats.map((category) => (
               <div
                 key={category.category}
-                className="rounded-xl border bg-white p-6 dark:bg-gray-900 dark:border-gray-800"
+                className="rounded-xl border bg-white p-6 dark:border-gray-800 dark:bg-gray-900"
               >
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
                   {category.category}
                 </h3>
                 <div className="space-y-4">
@@ -242,9 +242,9 @@ export default function ImpactPage() {
       </section>
 
       {/* Equivalencies */}
-      <section className="py-16 bg-green-50 dark:bg-green-900/20">
+      <section className="bg-green-50 py-16 dark:bg-green-900/20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
+          <div className="mb-12 text-center">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
               What Does {carbonData.totalOffset.toLocaleString()} kg of CO2 Look Like?
             </h2>
@@ -276,8 +276,8 @@ export default function ImpactPage() {
       {/* Goals Section */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-8 text-center">
+          <div className="mx-auto max-w-3xl">
+            <h2 className="mb-8 text-center text-2xl font-bold text-gray-900 dark:text-white">
               Our {currentYear + 1} Goals
             </h2>
             <div className="space-y-6">
@@ -310,7 +310,7 @@ export default function ImpactPage() {
                 const percentage = Math.min((item.current / item.target) * 100, 100);
                 return (
                   <div key={item.goal} className="rounded-lg border p-4 dark:border-gray-800">
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="mb-2 flex items-center justify-between">
                       <span className="font-medium text-gray-900 dark:text-white">{item.goal}</span>
                       <span className="text-sm text-muted-foreground">
                         {Math.round(percentage)}%
@@ -334,12 +334,12 @@ export default function ImpactPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-teal-600 dark:bg-teal-800">
+      <section className="bg-teal-600 py-16 dark:bg-teal-800">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold tracking-tight text-white">
             Be Part of the Solution
           </h2>
-          <p className="mt-4 text-lg text-teal-100 max-w-2xl mx-auto">
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-teal-100">
             Every purchase you make contributes to our environmental impact.
             Shop sustainably and help us reach our goals.
           </p>

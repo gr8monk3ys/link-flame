@@ -101,7 +101,7 @@ export function BundleSummary({
         <CardTitle className="flex items-center justify-between">
           <span>Your Bundle</span>
           <Badge variant="secondary" className="ml-2 text-green-600">
-            <Tag className="mr-1 h-3 w-3" />
+            <Tag className="mr-1 size-3" />
             {discountPercent}% Off
           </Badge>
         </CardTitle>
@@ -113,7 +113,7 @@ export function BundleSummary({
           <div className="space-y-3">
             {itemsWithDetails.map((item) => (
               <div key={item.productId} className="flex items-center gap-3">
-                <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-md">
+                <div className="relative size-12 shrink-0 overflow-hidden rounded-md">
                   <Image
                     src={item.product.image}
                     alt={item.product.title}
@@ -122,7 +122,7 @@ export function BundleSummary({
                     sizes="48px"
                   />
                 </div>
-                <div className="flex-1 min-w-0">
+                <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium">
                     {item.product.title}
                   </p>
@@ -139,7 +139,7 @@ export function BundleSummary({
         ) : (
           <div className="py-8 text-center text-muted-foreground">
             <p className="text-sm">No items selected yet.</p>
-            <p className="text-xs mt-1">
+            <p className="mt-1 text-xs">
               Select at least {min} item{min !== 1 ? "s" : ""} to build your bundle.
             </p>
           </div>
@@ -158,7 +158,7 @@ export function BundleSummary({
 
               <div className="flex justify-between text-sm text-green-600">
                 <span className="flex items-center">
-                  <Tag className="mr-1 h-3 w-3" />
+                  <Tag className="mr-1 size-3" />
                   Bundle Discount ({discountPercent}%)
                 </span>
                 <span>-${discountAmount.toFixed(2)}</span>
@@ -205,17 +205,17 @@ export function BundleSummary({
         >
           {isLoading ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="mr-2 size-4 animate-spin" />
               Adding to Cart...
             </>
           ) : meetsMinimum ? (
             <>
-              <ShoppingCart className="mr-2 h-4 w-4" />
+              <ShoppingCart className="mr-2 size-4" />
               Add Bundle to Cart - ${total.toFixed(2)}
             </>
           ) : (
             <>
-              <ShoppingCart className="mr-2 h-4 w-4" />
+              <ShoppingCart className="mr-2 size-4" />
               Complete Your Bundle
             </>
           )}
@@ -223,7 +223,7 @@ export function BundleSummary({
 
         {meetsMinimum && !exceedsMaximum && (
           <p className="flex items-center justify-center gap-1 text-xs text-green-600">
-            <Check className="h-3 w-3" />
+            <Check className="size-3" />
             Bundle requirements met
           </p>
         )}

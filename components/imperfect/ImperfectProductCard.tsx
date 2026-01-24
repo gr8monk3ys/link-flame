@@ -99,8 +99,8 @@ export const ImperfectProductCard = memo(function ImperfectProductCard({
         className={cn(
           'absolute right-4 top-4 z-10 rounded-full bg-white p-2 shadow-md transition-all',
           isWishlisted
-            ? 'opacity-100 text-red-500'
-            : 'opacity-0 text-gray-900 group-hover:opacity-100'
+            ? 'text-red-500 opacity-100'
+            : 'text-gray-900 opacity-0 group-hover:opacity-100'
         )}
         aria-label={
           isWishlisted
@@ -237,8 +237,8 @@ export function ImperfectProductGrid({
     return (
       <div className="flex min-h-[400px] items-center justify-center rounded-lg border-2 border-dashed border-amber-300 bg-amber-50 p-12 text-center">
         <div>
-          <div className="mx-auto w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4">
-            <LeafIcon className="w-8 h-8 text-amber-600" />
+          <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-amber-100">
+            <LeafIcon className="size-8 text-amber-600" />
           </div>
           <h3 className="text-lg font-medium text-amber-900">No imperfect items available</h3>
           <p className="mt-2 text-sm text-amber-700">

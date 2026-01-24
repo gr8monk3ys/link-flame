@@ -71,12 +71,12 @@ export default function ApiDocsPage() {
       />
 
       {/* Header */}
-      <header className="bg-green-600 text-white py-4 px-6">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
+      <header className="bg-green-600 px-6 py-4 text-white">
+        <div className="mx-auto flex max-w-7xl items-center justify-between">
           <h1 className="text-2xl font-bold">Link Flame API Documentation</h1>
           <a
             href="/"
-            className="text-white hover:text-green-100 transition-colors"
+            className="text-white transition-colors hover:text-green-100"
           >
             Back to Site
           </a>
@@ -84,7 +84,7 @@ export default function ApiDocsPage() {
       </header>
 
       {/* Swagger UI Container */}
-      <div id="swagger-ui" ref={containerRef} className="max-w-7xl mx-auto" />
+      <div id="swagger-ui" ref={containerRef} className="mx-auto max-w-7xl" />
 
       {/* Custom styles */}
       <style jsx global>{`

@@ -68,12 +68,12 @@ export function QuizQuestion({
         isAnimating && 'pointer-events-none'
       )}
     >
-      <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-foreground">
+      <h2 className="mb-6 text-xl font-semibold text-foreground sm:text-2xl">
         {question}
       </h2>
 
       {questionType === 'MULTIPLE_CHOICE' && (
-        <p className="text-sm text-muted-foreground mb-4">
+        <p className="mb-4 text-sm text-muted-foreground">
           Select all that apply
         </p>
       )}
@@ -87,7 +87,7 @@ export function QuizQuestion({
               key={option.value}
               onClick={() => handleOptionClick(option.value)}
               className={cn(
-                'group relative flex items-center gap-4 w-full p-4 rounded-lg border-2 transition-all duration-200 text-left',
+                'group relative flex w-full items-center gap-4 rounded-lg border-2 p-4 text-left transition-all duration-200',
                 'hover:border-primary/50 hover:bg-primary/5',
                 'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
                 isSelected
@@ -103,21 +103,21 @@ export function QuizQuestion({
               {/* Selection indicator */}
               <div
                 className={cn(
-                  'flex items-center justify-center w-6 h-6 rounded-full border-2 transition-all duration-200 shrink-0',
+                  'flex size-6 shrink-0 items-center justify-center rounded-full border-2 transition-all duration-200',
                   questionType === 'SINGLE_CHOICE' ? 'rounded-full' : 'rounded-md',
                   isSelected
                     ? 'border-primary bg-primary text-primary-foreground'
                     : 'border-muted-foreground/40 group-hover:border-primary/50'
                 )}
               >
-                {isSelected && <Check className="w-4 h-4" />}
+                {isSelected && <Check className="size-4" />}
               </div>
 
               {/* Option label */}
               <span
                 className={cn(
-                  'text-base sm:text-lg transition-colors',
-                  isSelected ? 'text-foreground font-medium' : 'text-muted-foreground'
+                  'text-base transition-colors sm:text-lg',
+                  isSelected ? 'font-medium text-foreground' : 'text-muted-foreground'
                 )}
               >
                 {option.label}

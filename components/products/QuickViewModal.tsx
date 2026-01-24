@@ -116,7 +116,7 @@ function ImageGallery({
               type="button"
               onClick={() => onIndexChange(index)}
               className={cn(
-                "relative flex-shrink-0 size-16 rounded-md overflow-hidden border-2 transition-all",
+                "relative size-16 shrink-0 overflow-hidden rounded-md border-2 transition-all",
                 selectedIndex === index
                   ? "border-green-600 ring-1 ring-green-600"
                   : "border-transparent hover:border-gray-300"
@@ -189,7 +189,7 @@ function QuantitySelector({
           }
         }}
         disabled={disabled}
-        className="h-9 w-14 text-center border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50"
+        className="h-9 w-14 rounded-md border text-center focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50"
         aria-label="Quantity"
       />
       <Button
@@ -408,10 +408,10 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
             "fixed z-50 bg-background shadow-xl focus:outline-none",
             // Desktop: Centered modal
             "sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2",
-            "sm:max-w-4xl sm:w-[95vw] sm:max-h-[90vh] sm:rounded-lg",
+            "sm:max-h-[90vh] sm:w-[95vw] sm:max-w-4xl sm:rounded-lg",
             // Mobile: Bottom sheet
             "inset-x-0 bottom-0 sm:inset-auto",
-            "max-h-[95vh] sm:max-h-[90vh] rounded-t-xl sm:rounded-lg",
+            "max-h-[95vh] rounded-t-xl sm:max-h-[90vh] sm:rounded-lg",
             // Animations
             "data-[state=open]:animate-in data-[state=closed]:animate-out",
             "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
@@ -428,8 +428,8 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
           aria-describedby="quick-view-description"
         >
           {/* Mobile drag handle indicator */}
-          <div className="sm:hidden flex justify-center py-2">
-            <div className="w-12 h-1 rounded-full bg-gray-300" />
+          <div className="flex justify-center py-2 sm:hidden">
+            <div className="h-1 w-12 rounded-full bg-gray-300" />
           </div>
 
           {/* Close button */}
@@ -446,13 +446,13 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
           </DialogPrimitive.Close>
 
           {/* Scrollable content */}
-          <div className="overflow-y-auto max-h-[calc(95vh-2rem)] sm:max-h-[calc(90vh-2rem)] p-4 sm:p-6">
+          <div className="max-h-[calc(95vh-2rem)] overflow-y-auto p-4 sm:max-h-[calc(90vh-2rem)] sm:p-6">
             {/* Screen reader announcement */}
             <div className="sr-only" role="status" aria-live="polite">
               Quick view for {product.title}
             </div>
 
-            <div className="grid sm:grid-cols-2 gap-6 lg:gap-8">
+            <div className="grid gap-6 sm:grid-cols-2 lg:gap-8">
               {/* Left Column: Image Gallery */}
               <div>
                 <ImageGallery
@@ -467,7 +467,7 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
               <div className="flex flex-col">
                 {/* Title and Category */}
                 <div>
-                  <p className="text-sm text-muted-foreground uppercase tracking-wide">
+                  <p className="text-sm uppercase tracking-wide text-muted-foreground">
                     {product.category}
                   </p>
                   <DialogPrimitive.Title className="mt-1 text-2xl font-bold text-gray-900">
@@ -509,7 +509,7 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
                 {/* Description */}
                 <DialogPrimitive.Description
                   id="quick-view-description"
-                  className="mt-4 text-sm text-gray-600 line-clamp-3"
+                  className="mt-4 line-clamp-3 text-sm text-gray-600"
                 >
                   {product.description || "No description available."}
                 </DialogPrimitive.Description>
@@ -541,12 +541,12 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="flex flex-col gap-3 sm:flex-row">
                     {/* Add to Cart */}
                     <Button
                       onClick={handleAddToCart}
                       disabled={isOutOfStock || needsVariant || isAddingToCart || cartLoading}
-                      className="flex-1 h-12 text-base bg-green-600 hover:bg-green-700"
+                      className="h-12 flex-1 bg-green-600 text-base hover:bg-green-700"
                       size="lg"
                     >
                       {isAddingToCart ? (
@@ -571,7 +571,7 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
                       disabled={isTogglingWishlist || savedItemsLoading}
                       className={cn(
                         "h-12 px-4",
-                        isWishlisted && "text-red-500 border-red-500 hover:bg-red-50"
+                        isWishlisted && "border-red-500 text-red-500 hover:bg-red-50"
                       )}
                       aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
                     >
@@ -590,7 +590,7 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
                   <Link
                     href={`/products/${product.id}`}
                     onClick={() => onOpenChange(false)}
-                    className="inline-flex items-center text-sm font-medium text-green-600 hover:text-green-700 hover:underline focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 rounded"
+                    className="inline-flex items-center rounded text-sm font-medium text-green-600 hover:text-green-700 hover:underline focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                   >
                     <Eye className="mr-2 size-4" />
                     View Full Details

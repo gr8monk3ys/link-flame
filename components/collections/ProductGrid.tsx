@@ -184,8 +184,8 @@ export default function ProductGrid({
                   {/* Imperfect price display - takes priority */}
                   {product.isImperfect && product.imperfectPrice ? (
                     <div className="flex flex-col items-end">
-                      <span className="text-amber-600 font-bold">${formatPrice(product.imperfectPrice)}</span>
-                      <span className="text-gray-500 line-through text-xs">${formatPrice(product.price)}</span>
+                      <span className="font-bold text-amber-600">${formatPrice(product.imperfectPrice)}</span>
+                      <span className="text-xs text-gray-500 line-through">${formatPrice(product.price)}</span>
                     </div>
                   ) : product.salePrice ? (
                     <div className="flex flex-col items-end">

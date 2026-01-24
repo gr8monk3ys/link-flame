@@ -95,7 +95,7 @@ export function CommunityImpact({
   if (isLoading) {
     return (
       <div className={cn("flex items-center justify-center py-12", className)}>
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <Loader2 className="size-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -115,17 +115,17 @@ export function CommunityImpact({
   return (
     <section className={cn("", className)}>
       {showHeader && (
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold mb-2">
+        <div className="mb-8 text-center">
+          <h2 className="mb-2 text-3xl font-bold">
             Our Community&apos;s Impact
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <p className="mx-auto max-w-2xl text-muted-foreground">
             Together, our community is making a real difference for the planet.
             Every sustainable purchase adds up to meaningful change.
           </p>
           {totalContributors > 0 && (
-            <div className="flex items-center justify-center gap-2 mt-4 text-green-600">
-              <Users className="h-5 w-5" />
+            <div className="mt-4 flex items-center justify-center gap-2 text-green-600">
+              <Users className="size-5" />
               <span className="font-medium">
                 {totalContributors.toLocaleString()} eco-conscious shoppers
               </span>
@@ -134,25 +134,25 @@ export function CommunityImpact({
         </div>
       )}
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
         {displayMetrics.map((metric) => {
           const Icon = ICON_MAP[metric.iconName] || Leaf;
 
           return (
             <Card
               key={metric.metricId}
-              className="text-center hover:shadow-md transition-shadow"
+              className="text-center transition-shadow hover:shadow-md"
             >
-              <CardContent className="pt-6 pb-4">
-                <div className="flex justify-center mb-3">
-                  <div className="h-12 w-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                    <Icon className="h-6 w-6 text-green-600 dark:text-green-400" />
+              <CardContent className="pb-4 pt-6">
+                <div className="mb-3 flex justify-center">
+                  <div className="flex size-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
+                    <Icon className="size-6 text-green-600 dark:text-green-400" />
                   </div>
                 </div>
                 <div className="text-2xl font-bold text-green-600 dark:text-green-400">
                   {formatValue(metric.totalValue)}
                 </div>
-                <div className="text-sm text-muted-foreground mb-1">
+                <div className="mb-1 text-sm text-muted-foreground">
                   {metric.unit}
                 </div>
                 <div className="text-xs font-medium">{metric.name}</div>

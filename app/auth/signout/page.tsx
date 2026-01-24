@@ -10,7 +10,7 @@ export default function SignOutPage() {
   }, []);
 
   return (
-    <div className="container flex items-center justify-center min-h-[calc(100vh-200px)]">
+    <div className="container flex min-h-[calc(100vh-200px)] items-center justify-center">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Signing Out</CardTitle>
@@ -18,7 +18,7 @@ export default function SignOutPage() {
         </CardHeader>
         <CardContent>
           <div className="flex justify-center">
-            <div className="animate-spin rounded-full size-8 border-b-2 border-primary"></div>
+            <div className="size-8 animate-spin rounded-full border-b-2 border-primary"></div>
           </div>
         </CardContent>
       </Card>

@@ -45,7 +45,7 @@ function SignInForm() {
   };
 
   return (
-    <div className="container flex items-center justify-center min-h-[calc(100vh-200px)]">
+    <div className="container flex min-h-[calc(100vh-200px)] items-center justify-center">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Sign In</CardTitle>
@@ -80,7 +80,7 @@ function SignInForm() {
               />
             </div>
             {error && (
-              <div className="text-sm text-red-600 bg-red-50 p-3 rounded">
+              <div className="rounded bg-red-50 p-3 text-sm text-red-600">
                 {error}
               </div>
             )}
@@ -102,7 +102,7 @@ function SignInForm() {
 
 export default function SignInPage() {
   return (
-    <Suspense fallback={<div className="container flex items-center justify-center min-h-[calc(100vh-200px)]">Loading...</div>}>
+    <Suspense fallback={<div className="container flex min-h-[calc(100vh-200px)] items-center justify-center">Loading...</div>}>
       <SignInForm />
     </Suspense>
   );

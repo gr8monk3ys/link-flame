@@ -52,7 +52,7 @@ const sustainabilityPillars = [
     title: "Carbon-Neutral Shipping",
     description: "Every order ships carbon-neutral. We calculate the carbon footprint of each shipment and purchase verified carbon credits to offset emissions completely.",
     icon: (
-      <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2" />
         <path d="M15 18H9" />
         <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14" />
@@ -66,7 +66,7 @@ const sustainabilityPillars = [
     title: "Plastic-Free Packaging",
     description: "We've eliminated single-use plastic from our supply chain. All packaging is made from recycled, recyclable, or compostable materials.",
     icon: (
-      <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5" />
         <path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12" />
         <path d="m14 16-3 3 3 3" />
@@ -78,7 +78,7 @@ const sustainabilityPillars = [
     title: "Ethical Sourcing",
     description: "We partner only with suppliers who share our commitment to fair labor practices, sustainable manufacturing, and environmental responsibility.",
     icon: (
-      <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M12 2a10 10 0 1 0 10 10H12V2Z" />
         <path d="M12 12 8 8" />
         <path d="M12 2v10h10" />
@@ -90,7 +90,7 @@ const sustainabilityPillars = [
     title: "Product Lifecycle",
     description: "We prioritize products that are durable, repairable, and recyclable. Our goal is to extend product lifespans and reduce waste.",
     icon: (
-      <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <circle cx="12" cy="12" r="10" />
         <polyline points="12 6 12 12 16 14" />
       </svg>
@@ -110,11 +110,11 @@ export default function SustainabilityPage() {
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-green-50 to-white dark:from-green-900/20 dark:to-background py-20 lg:py-28">
+      <section className="relative bg-gradient-to-b from-green-50 to-white py-20 dark:from-green-900/20 dark:to-background lg:py-28">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-3xl text-center">
-            <div className="inline-flex items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-sm font-medium text-green-800 dark:bg-green-900/50 dark:text-green-300 mb-6">
-              <LeafIcon className="h-4 w-4" />
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-sm font-medium text-green-800 dark:bg-green-900/50 dark:text-green-300">
+              <LeafIcon className="size-4" />
               Our Commitment
             </div>
             <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl lg:text-6xl">
@@ -122,7 +122,7 @@ export default function SustainabilityPage() {
               <span className="text-green-600 dark:text-green-400">Sustainable</span>{" "}
               Future
             </h1>
-            <p className="mt-6 text-lg leading-8 text-muted-foreground max-w-2xl mx-auto">
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
               At Link Flame, sustainability isn't just a buzzword - it's the foundation of everything
               we do. From the products we sell to how we ship them, we're committed to minimizing
               our environmental impact.
@@ -132,7 +132,7 @@ export default function SustainabilityPage() {
       </section>
 
       {/* Impact Stats */}
-      <section className="py-12 bg-green-600 dark:bg-green-800">
+      <section className="bg-green-600 py-12 dark:bg-green-800">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
             {impactStats.map((stat) => (
@@ -148,11 +148,11 @@ export default function SustainabilityPage() {
       {/* Pillars Section */}
       <section className="py-20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
+          <div className="mb-12 text-center">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
               Our Sustainability Pillars
             </h2>
-            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
               These four pillars guide every decision we make as a company.
             </p>
           </div>
@@ -161,10 +161,10 @@ export default function SustainabilityPage() {
             {sustainabilityPillars.map((pillar) => (
               <div
                 key={pillar.title}
-                className="rounded-2xl border bg-white p-8 shadow-sm dark:bg-gray-900 dark:border-gray-800"
+                className="rounded-2xl border bg-white p-8 shadow-sm dark:border-gray-800 dark:bg-gray-900"
               >
                 <div className="flex items-start gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400">
+                  <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400">
                     {pillar.icon}
                   </div>
                   <div className="flex-1">
@@ -186,7 +186,7 @@ export default function SustainabilityPage() {
       </section>
 
       {/* Carbon Neutral Section */}
-      <section className="py-20 bg-gray-50 dark:bg-gray-900/50">
+      <section className="bg-gray-50 py-20 dark:bg-gray-900/50">
         <div className="container mx-auto px-4">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <div>
@@ -205,7 +205,7 @@ export default function SustainabilityPage() {
                   "Transparent reporting on our carbon footprint",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3">
-                    <CheckIcon className="h-5 w-5 shrink-0 text-green-600 dark:text-green-400 mt-0.5" />
+                    <CheckIcon className="mt-0.5 size-5 shrink-0 text-green-600 dark:text-green-400" />
                     <span className="text-gray-700 dark:text-gray-300">{item}</span>
                   </li>
                 ))}
@@ -213,10 +213,10 @@ export default function SustainabilityPage() {
               <div className="mt-8">
                 <Link
                   href="/impact"
-                  className="inline-flex items-center gap-2 text-green-600 font-medium hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
+                  className="inline-flex items-center gap-2 font-medium text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
                 >
                   View our impact report
-                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
                 </Link>
@@ -229,14 +229,87 @@ export default function SustainabilityPage() {
         </div>
       </section>
 
+      {/* TerraCycle Partnership Section */}
+      <section className="bg-emerald-50 py-20 dark:bg-emerald-900/20">
+        <div className="container mx-auto px-4">
+          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+            <div>
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-2 text-sm font-medium text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300">
+                <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5" />
+                  <path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12" />
+                  <path d="m14 16-3 3 3 3" />
+                </svg>
+                Recycling Partnership
+              </div>
+              <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
+                TerraCycle Recycling Program
+              </h2>
+              <p className="mt-4 text-lg text-muted-foreground">
+                We have partnered with TerraCycle to ensure your empty product packaging does not end up
+                in landfills. Through our free recycling program, you can send back your empties to be
+                recycled and upcycled into new products.
+              </p>
+              <ul className="mt-6 space-y-3">
+                {[
+                  "Free prepaid shipping labels",
+                  "Earn loyalty points for recycling",
+                  "Track your environmental impact",
+                  "100% of materials recycled or upcycled",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-3">
+                    <CheckIcon className="mt-0.5 size-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                    <span className="text-gray-700 dark:text-gray-300">{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-8">
+                <Link
+                  href="/terracycle"
+                  className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-6 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-emerald-700"
+                >
+                  Learn About TerraCycle
+                  <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </div>
+            </div>
+            <div className="relative">
+              <div className="rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 p-8 text-white shadow-xl">
+                <h3 className="mb-6 text-2xl font-bold">Program Impact</h3>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between border-b border-emerald-400/30 py-3">
+                    <span className="text-emerald-100">Items Recycled</span>
+                    <span className="text-2xl font-bold">15,000+</span>
+                  </div>
+                  <div className="flex items-center justify-between border-b border-emerald-400/30 py-3">
+                    <span className="text-emerald-100">Waste Diverted</span>
+                    <span className="text-2xl font-bold">2,500 kg</span>
+                  </div>
+                  <div className="flex items-center justify-between border-b border-emerald-400/30 py-3">
+                    <span className="text-emerald-100">Participants</span>
+                    <span className="text-2xl font-bold">3,200+</span>
+                  </div>
+                  <div className="flex items-center justify-between py-3">
+                    <span className="text-emerald-100">Recycling Rate</span>
+                    <span className="text-2xl font-bold">98%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Certification Partners */}
       <section className="py-20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
+          <div className="mb-12 text-center">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
               Our Certification Partners
             </h2>
-            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
               We work with leading environmental organizations to verify and improve our practices.
             </p>
           </div>
@@ -245,10 +318,10 @@ export default function SustainabilityPage() {
             {certificationPartners.map((partner) => (
               <div
                 key={partner.name}
-                className="rounded-xl border bg-white p-6 text-center shadow-sm dark:bg-gray-900 dark:border-gray-800"
+                className="rounded-xl border bg-white p-6 text-center shadow-sm dark:border-gray-800 dark:bg-gray-900"
               >
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-50 dark:bg-green-900/30">
-                  <LeafIcon className="h-8 w-8 text-green-600 dark:text-green-400" />
+                <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-green-50 dark:bg-green-900/30">
+                  <LeafIcon className="size-8 text-green-600 dark:text-green-400" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                   {partner.name}
@@ -261,7 +334,7 @@ export default function SustainabilityPage() {
                   className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-green-600 hover:text-green-700 dark:text-green-400"
                 >
                   Learn more
-                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
                     <polyline points="15 3 21 3 21 9" />
                     <line x1="10" y1="14" x2="21" y2="3" />
@@ -274,12 +347,12 @@ export default function SustainabilityPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-green-600 dark:bg-green-800">
+      <section className="bg-green-600 py-20 dark:bg-green-800">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
             Join Us in Making a Difference
           </h2>
-          <p className="mt-4 text-lg text-green-100 max-w-2xl mx-auto">
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-green-100">
             Every purchase you make supports our mission to protect the planet.
             Shop sustainably and make your voice heard.
           </p>

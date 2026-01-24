@@ -16,6 +16,10 @@ export const siteConfig = {
       href: "/collections",
     },
     {
+      title: "Brands",
+      href: "/brands",
+    },
+    {
       title: "Company",
       items: [
         {

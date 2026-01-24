@@ -20,15 +20,15 @@ export default function AccountImpactPage() {
 
   if (!isLoaded) {
     return (
-      <div className="container py-10 flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="container flex items-center justify-center py-10">
+        <Loader2 className="size-8 animate-spin" />
       </div>
     );
   }
 
   if (!isSignedIn) {
     return (
-      <div className="container py-10 max-w-4xl">
+      <div className="container max-w-4xl py-10">
         <Card>
           <CardHeader>
             <CardTitle>Sign In Required</CardTitle>
@@ -50,12 +50,12 @@ export default function AccountImpactPage() {
   }
 
   return (
-    <div className="container py-10 max-w-6xl">
+    <div className="container max-w-6xl py-10">
       {/* Back link */}
       <div className="mb-6">
         <Link href="/account">
           <Button variant="ghost" size="sm">
-            <ArrowLeft className="h-4 w-4 mr-2" />
+            <ArrowLeft className="mr-2 size-4" />
             Back to Account
           </Button>
         </Link>

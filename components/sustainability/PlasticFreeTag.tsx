@@ -90,15 +90,15 @@ export function PlasticFreeTag({
     return (
       <div
         className={cn(
-          "absolute -right-8 top-4 rotate-45 bg-green-600 text-white font-semibold text-center leading-tight shadow-sm",
+          "absolute -right-8 top-4 rotate-45 bg-green-600 text-center font-semibold leading-tight text-white shadow-sm",
           config.corner,
           className
         )}
         style={{ width: size === "sm" ? 80 : size === "md" ? 100 : 120 }}
         title="Plastic-Free Product"
       >
-        <div className="flex items-center justify-center h-6">
-          <LeafIcon className="h-3 w-3 mr-0.5" />
+        <div className="flex h-6 items-center justify-center">
+          <LeafIcon className="mr-0.5 size-3" />
           <span>Plastic-Free</span>
         </div>
       </div>
@@ -110,7 +110,7 @@ export function PlasticFreeTag({
     <Badge
       variant="outline"
       className={cn(
-        "bg-green-50 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700",
+        "border-green-200 bg-green-50 text-green-700 dark:border-green-700 dark:bg-green-900/30 dark:text-green-300",
         "inline-flex items-center font-medium",
         config.badge,
         className

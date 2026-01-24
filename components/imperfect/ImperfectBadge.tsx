@@ -94,7 +94,7 @@ export function ImperfectLabel({ size = 'md', className }: ImperfectLabelProps) 
     <span
       className={cn(
         'inline-flex items-center gap-1.5 rounded-full font-medium',
-        'bg-amber-100 text-amber-800 border border-amber-200',
+        'border border-amber-200 bg-amber-100 text-amber-800',
         sizeClasses[size],
         className
       )}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Search, ExternalLink, Eye } from 'lucide-react';
+import { Search, ExternalLink, Eye, Gift } from 'lucide-react';
 
 interface Order {
   id: string;
@@ -13,6 +13,10 @@ interface Order {
   shippingStatus: string | null;
   trackingNumber: string | null;
   createdAt: string;
+  isGift: boolean;
+  giftRecipientName: string | null;
+  giftMessage: string | null;
+  hidePrice: boolean;
   user: {
     name: string;
     email: string;
@@ -87,7 +91,7 @@ export default function AdminOrdersPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
+      <div className="flex h-64 items-center justify-center">
         <div className="text-gray-600">Loading orders...</div>
       </div>
     );
@@ -98,27 +102,27 @@ export default function AdminOrdersPage() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Orders</h1>
-        <p className="text-gray-600 mt-2">Manage customer orders and shipping</p>
+        <p className="mt-2 text-gray-600">Manage customer orders and shipping</p>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow p-4">
+      <div className="rounded-lg bg-white p-4 shadow">
         <div className="flex flex-col gap-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 size-5 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
               placeholder="Search by customer name, email, or order ID..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-4 focus:border-transparent focus:ring-2 focus:ring-green-500"
             />
           </div>
           <div className="flex gap-4">
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
             >
               <option value="all">All Payment Statuses</option>
               <option value="pending">Pending</option>
@@ -128,7 +132,7 @@ export default function AdminOrdersPage() {
             <select
               value={shippingFilter}
               onChange={(e) => setShippingFilter(e.target.value)}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
             >
               <option value="all">All Shipping Statuses</option>
               <option value="pending">Pending</option>
@@ -141,38 +145,41 @@ export default function AdminOrdersPage() {
       </div>
 
       {/* Orders Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="overflow-hidden rounded-lg bg-white shadow">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 Order ID
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 Customer
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 Total
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 Payment
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 Shipping
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500">
+                Gift
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 Date
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="divide-y divide-gray-200 bg-white">
             {filteredOrders.length === 0 ? (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={8}
                   className="px-6 py-8 text-center text-gray-500"
                 >
                   No orders found
@@ -181,10 +188,10 @@ export default function AdminOrdersPage() {
             ) : (
               filteredOrders.map((order) => (
                 <tr key={order.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
                     #{order.id}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="whitespace-nowrap px-6 py-4">
                     <div className="text-sm font-medium text-gray-900">
                       {order.user?.name || order.customerName}
                     </div>
@@ -192,12 +199,12 @@ export default function AdminOrdersPage() {
                       {order.user?.email || order.customerEmail}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
                     ${order.amount.toFixed(2)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="whitespace-nowrap px-6 py-4">
                     <span
-                      className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                      className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold leading-5 ${
                         order.status === 'paid'
                           ? 'bg-green-100 text-green-800'
                           : order.status === 'failed'
@@ -208,13 +215,13 @@ export default function AdminOrdersPage() {
                       {order.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="whitespace-nowrap px-6 py-4">
                     <select
                       value={order.shippingStatus || 'pending'}
                       onChange={(e) =>
                         updateShippingStatus(order.id, e.target.value)
                       }
-                      className="text-sm border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="rounded border border-gray-300 px-2 py-1 text-sm focus:border-transparent focus:ring-2 focus:ring-green-500"
                     >
                       <option value="pending">Pending</option>
                       <option value="processing">Processing</option>
@@ -222,15 +229,49 @@ export default function AdminOrdersPage() {
                       <option value="delivered">Delivered</option>
                     </select>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="whitespace-nowrap px-6 py-4 text-center">
+                    {order.isGift ? (
+                      <div className="group relative inline-block">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-pink-100 px-2 py-1 text-xs font-medium text-pink-800">
+                          <Gift className="size-3" />
+                          Gift
+                        </span>
+                        {/* Tooltip with gift details */}
+                        {(order.giftRecipientName || order.giftMessage) && (
+                          <div className="absolute left-1/2 z-10 mt-2 hidden w-64 -translate-x-1/2 rounded-lg bg-gray-900 p-3 text-xs text-white shadow-lg group-hover:block">
+                            {order.giftRecipientName && (
+                              <div className="mb-1">
+                                <span className="font-semibold">To: </span>
+                                {order.giftRecipientName}
+                              </div>
+                            )}
+                            {order.giftMessage && (
+                              <div className="line-clamp-3 italic">
+                                &ldquo;{order.giftMessage}&rdquo;
+                              </div>
+                            )}
+                            {order.hidePrice && (
+                              <div className="mt-1 text-gray-300">
+                                Prices hidden on packing slip
+                              </div>
+                            )}
+                            <div className="absolute -top-2 left-1/2 size-0 -translate-x-1/2 border-x-8 border-b-8 border-transparent border-b-gray-900" />
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="text-gray-400">-</span>
+                    )}
+                  </td>
+                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                     {new Date(order.createdAt).toLocaleDateString()}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                     <Link
                       href={`/account/orders/${order.id}`}
-                      className="text-blue-600 hover:text-blue-900 inline-flex items-center gap-1"
+                      className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-900"
                     >
-                      <Eye className="h-4 w-4" />
+                      <Eye className="size-4" />
                       View
                     </Link>
                   </td>
@@ -242,29 +283,38 @@ export default function AdminOrdersPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg shadow p-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
+        <div className="rounded-lg bg-white p-4 shadow">
           <p className="text-sm text-gray-600">Total Orders</p>
-          <p className="text-2xl font-bold text-gray-900 mt-1">
+          <p className="mt-1 text-2xl font-bold text-gray-900">
             {orders.length}
           </p>
         </div>
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="rounded-lg bg-white p-4 shadow">
           <p className="text-sm text-gray-600">Pending</p>
-          <p className="text-2xl font-bold text-yellow-600 mt-1">
+          <p className="mt-1 text-2xl font-bold text-yellow-600">
             {orders.filter((o) => !o.shippingStatus).length}
           </p>
         </div>
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="rounded-lg bg-white p-4 shadow">
           <p className="text-sm text-gray-600">Shipped</p>
-          <p className="text-2xl font-bold text-blue-600 mt-1">
+          <p className="mt-1 text-2xl font-bold text-blue-600">
             {orders.filter((o) => o.shippingStatus === 'shipped').length}
           </p>
         </div>
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="rounded-lg bg-white p-4 shadow">
           <p className="text-sm text-gray-600">Delivered</p>
-          <p className="text-2xl font-bold text-green-600 mt-1">
+          <p className="mt-1 text-2xl font-bold text-green-600">
             {orders.filter((o) => o.shippingStatus === 'delivered').length}
+          </p>
+        </div>
+        <div className="rounded-lg bg-white p-4 shadow">
+          <div className="flex items-center gap-2">
+            <Gift className="size-4 text-pink-600" />
+            <p className="text-sm text-gray-600">Gift Orders</p>
+          </div>
+          <p className="mt-1 text-2xl font-bold text-pink-600">
+            {orders.filter((o) => o.isGift).length}
           </p>
         </div>
       </div>

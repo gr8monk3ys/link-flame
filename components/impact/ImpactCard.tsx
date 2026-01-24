@@ -92,7 +92,7 @@ export function ImpactCard({
         {/* Icon */}
         <div
           className={cn(
-            "rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-4",
+            "mb-4 flex items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30",
             classes.iconContainer
           )}
         >
@@ -108,18 +108,18 @@ export function ImpactCard({
         </div>
 
         {/* Title */}
-        <h3 className={cn("font-medium mb-2", classes.title)}>{name}</h3>
+        <h3 className={cn("mb-2 font-medium", classes.title)}>{name}</h3>
 
         {/* Progress bar toward next milestone */}
         {progress !== undefined && nextMilestone && (
-          <div className="w-full mt-2">
-            <div className="flex justify-between text-xs text-muted-foreground mb-1">
+          <div className="mt-2 w-full">
+            <div className="mb-1 flex justify-between text-xs text-muted-foreground">
               <span>Progress</span>
               <span>
                 {formatValue(value)} / {formatValue(nextMilestone)}
               </span>
             </div>
-            <div className="h-2 bg-muted rounded-full overflow-hidden">
+            <div className="h-2 overflow-hidden rounded-full bg-muted">
               <div
                 className="h-full bg-green-500 transition-all duration-500"
                 style={{ width: `${Math.min(progress, 100)}%` }}
@@ -130,7 +130,7 @@ export function ImpactCard({
 
         {/* Comparison text */}
         {comparison && (
-          <p className="text-xs text-muted-foreground mt-3 italic">{comparison}</p>
+          <p className="mt-3 text-xs italic text-muted-foreground">{comparison}</p>
         )}
       </CardContent>
     </Card>

@@ -85,7 +85,7 @@ export function ReferralDashboard() {
   if (sessionStatus === "loading" || loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="size-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -120,7 +120,7 @@ export function ReferralDashboard() {
         </CardHeader>
         <CardContent>
           <Button onClick={fetchData} variant="outline">
-            <RefreshCw className="mr-2 h-4 w-4" />
+            <RefreshCw className="mr-2 size-4" />
             Try Again
           </Button>
         </CardContent>
@@ -143,7 +143,7 @@ export function ReferralDashboard() {
           </p>
         </div>
         <Button onClick={fetchData} variant="ghost" size="sm" aria-label="Refresh referral data">
-          <RefreshCw className="h-4 w-4" aria-hidden="true" />
+          <RefreshCw className="size-4" aria-hidden="true" />
         </Button>
       </div>
 
@@ -159,8 +159,8 @@ export function ReferralDashboard() {
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardContent className="flex items-center gap-4 p-6">
-            <div className="h-12 w-12 rounded-lg bg-blue-500/10 flex items-center justify-center">
-              <Users className="h-6 w-6 text-blue-500" />
+            <div className="flex size-12 items-center justify-center rounded-lg bg-blue-500/10">
+              <Users className="size-6 text-blue-500" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Total Referred</p>
@@ -171,8 +171,8 @@ export function ReferralDashboard() {
 
         <Card>
           <CardContent className="flex items-center gap-4 p-6">
-            <div className="h-12 w-12 rounded-lg bg-yellow-500/10 flex items-center justify-center">
-              <Clock className="h-6 w-6 text-yellow-500" />
+            <div className="flex size-12 items-center justify-center rounded-lg bg-yellow-500/10">
+              <Clock className="size-6 text-yellow-500" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Pending</p>
@@ -183,8 +183,8 @@ export function ReferralDashboard() {
 
         <Card>
           <CardContent className="flex items-center gap-4 p-6">
-            <div className="h-12 w-12 rounded-lg bg-green-500/10 flex items-center justify-center">
-              <Gift className="h-6 w-6 text-green-500" />
+            <div className="flex size-12 items-center justify-center rounded-lg bg-green-500/10">
+              <Gift className="size-6 text-green-500" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Completed</p>
@@ -195,8 +195,8 @@ export function ReferralDashboard() {
 
         <Card>
           <CardContent className="flex items-center gap-4 p-6">
-            <div className="h-12 w-12 rounded-lg bg-purple-500/10 flex items-center justify-center">
-              <Star className="h-6 w-6 text-purple-500" />
+            <div className="flex size-12 items-center justify-center rounded-lg bg-purple-500/10">
+              <Star className="size-6 text-purple-500" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Points Earned</p>
@@ -216,10 +216,10 @@ export function ReferralDashboard() {
         </CardHeader>
         <CardContent>
           {referrals.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <Users className="mx-auto h-12 w-12 mb-4 opacity-50" />
+            <div className="py-8 text-center text-muted-foreground">
+              <Users className="mx-auto mb-4 size-12 opacity-50" />
               <p className="text-lg font-medium">No referrals yet</p>
-              <p className="text-sm mt-1">
+              <p className="mt-1 text-sm">
                 Share your referral code with friends to get started!
               </p>
             </div>
@@ -228,10 +228,10 @@ export function ReferralDashboard() {
               {referrals.map((referral) => (
                 <div
                   key={referral.id}
-                  className="flex items-center justify-between py-4 border-b last:border-0"
+                  className="flex items-center justify-between border-b py-4 last:border-0"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <div className="flex size-10 items-center justify-center rounded-full bg-primary/10">
                       <span className="text-sm font-semibold text-primary">
                         {referral.refereeName?.charAt(0).toUpperCase() || "?"}
                       </span>
@@ -266,7 +266,7 @@ export function ReferralDashboard() {
         <CardContent>
           <div className="grid gap-6 md:grid-cols-3">
             <div className="flex gap-4">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-bold">
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
                 1
               </div>
               <div>
@@ -277,7 +277,7 @@ export function ReferralDashboard() {
               </div>
             </div>
             <div className="flex gap-4">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-bold">
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
                 2
               </div>
               <div>
@@ -288,7 +288,7 @@ export function ReferralDashboard() {
               </div>
             </div>
             <div className="flex gap-4">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-bold">
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
                 3
               </div>
               <div>

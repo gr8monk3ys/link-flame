@@ -144,13 +144,13 @@ export function VariantSelector({
                   onClick={() => setSelectedSize(value as string)}
                   disabled={!isAvailable}
                   className={`
-                    relative min-w-[3rem] px-4 py-2 text-sm font-medium rounded-md border
+                    relative min-w-12 rounded-md border px-4 py-2 text-sm font-medium
                     transition-all duration-150
                     ${isSelected
                       ? "border-green-600 bg-green-600 text-white"
                       : isAvailable
                         ? "border-gray-300 bg-white text-gray-900 hover:border-gray-400"
-                        : "border-gray-200 bg-gray-50 text-gray-300 cursor-not-allowed"
+                        : "cursor-not-allowed border-gray-200 bg-gray-50 text-gray-300"
                     }
                     ${!isAvailable && !isSelected ? "line-through" : ""}
                   `}
@@ -186,23 +186,23 @@ export function VariantSelector({
                   disabled={!isAvailable}
                   className={`
                     relative flex items-center justify-center rounded-full
-                    ${isSelected ? "ring-2 ring-offset-2 ring-green-600" : ""}
-                    ${!isAvailable ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}
+                    ${isSelected ? "ring-2 ring-green-600 ring-offset-2" : ""}
+                    ${!isAvailable ? "cursor-not-allowed opacity-40" : "cursor-pointer"}
                   `}
                   title={value as string}
                 >
                   {colorCode ? (
                     <span
-                      className="h-8 w-8 rounded-full border border-gray-300"
+                      className="size-8 rounded-full border border-gray-300"
                       style={{ backgroundColor: colorCode }}
                     >
                       {isSelected && (
-                        <Check className={`h-5 w-5 m-1.5 ${isLightColor(colorCode) ? "text-gray-800" : "text-white"}`} />
+                        <Check className={`m-1.5 size-5 ${isLightColor(colorCode) ? "text-gray-800" : "text-white"}`} />
                       )}
                     </span>
                   ) : (
                     <span className={`
-                      px-3 py-1 text-sm rounded-full border
+                      rounded-full border px-3 py-1 text-sm
                       ${isSelected
                         ? "border-green-600 bg-green-600 text-white"
                         : "border-gray-300 bg-white text-gray-900"
@@ -213,7 +213,7 @@ export function VariantSelector({
                   )}
                   {!isAvailable && (
                     <span className="absolute inset-0 flex items-center justify-center">
-                      <span className="h-px w-8 bg-gray-400 rotate-45 absolute" />
+                      <span className="absolute h-px w-8 rotate-45 bg-gray-400" />
                     </span>
                   )}
                 </button>
@@ -244,13 +244,13 @@ export function VariantSelector({
                   onClick={() => setSelectedMaterial(value as string)}
                   disabled={!isAvailable}
                   className={`
-                    relative px-4 py-2 text-sm font-medium rounded-md border
+                    relative rounded-md border px-4 py-2 text-sm font-medium
                     transition-all duration-150
                     ${isSelected
                       ? "border-green-600 bg-green-600 text-white"
                       : isAvailable
                         ? "border-gray-300 bg-white text-gray-900 hover:border-gray-400"
-                        : "border-gray-200 bg-gray-50 text-gray-300 cursor-not-allowed"
+                        : "cursor-not-allowed border-gray-200 bg-gray-50 text-gray-300"
                     }
                     ${!isAvailable && !isSelected ? "line-through" : ""}
                   `}

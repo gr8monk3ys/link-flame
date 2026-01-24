@@ -16,13 +16,13 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
     return (
       <div
         className={cn(
-          'bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-6 border border-amber-200',
+          'rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 p-6',
           className
         )}
       >
         <div className="flex items-start gap-4">
-          <div className="flex-shrink-0 w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
-            <QuestionMarkIcon className="w-6 h-6 text-amber-700" />
+          <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-amber-100">
+            <QuestionMarkIcon className="size-6 text-amber-700" />
           </div>
           <div>
             <h3 className="font-semibold text-amber-900">What does "Perfectly Imperfect" mean?</h3>
@@ -48,11 +48,11 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
           {FAQ_ITEMS.map((faq, index) => (
             <details
               key={index}
-              className="group bg-white rounded-xl border border-gray-200 overflow-hidden"
+              className="group overflow-hidden rounded-xl border border-gray-200 bg-white"
             >
-              <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
+              <summary className="flex cursor-pointer list-none items-center justify-between p-6">
                 <span className="font-medium text-gray-900">{faq.question}</span>
-                <ChevronDownIcon className="w-5 h-5 text-gray-500 transition-transform group-open:rotate-180" />
+                <ChevronDownIcon className="size-5 text-gray-500 transition-transform group-open:rotate-180" />
               </summary>
               <div className="px-6 pb-6">
                 <p className="text-gray-600">{faq.answer}</p>
@@ -67,47 +67,47 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
   // Full variant (default)
   return (
     <section className={cn('py-16', className)} id="how-it-works">
-      <div className="text-center mb-12">
-        <span className="inline-flex items-center gap-2 px-4 py-2 bg-amber-100 rounded-full text-amber-800 text-sm font-medium">
-          <LeafIcon className="w-4 h-4" />
+      <div className="mb-12 text-center">
+        <span className="inline-flex items-center gap-2 rounded-full bg-amber-100 px-4 py-2 text-sm font-medium text-amber-800">
+          <LeafIcon className="size-4" />
           Reduce Waste, Save More
         </span>
         <h2 className="mt-6 text-3xl font-bold text-gray-900 sm:text-4xl">
           How Perfectly Imperfect Works
         </h2>
-        <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+        <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
           Same quality products at lower prices. Here's why choosing imperfect is the smart
           (and sustainable) choice.
         </p>
       </div>
 
       {/* How it works steps */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+      <div className="mb-16 grid grid-cols-1 gap-8 md:grid-cols-3">
         {STEPS.map((step, index) => (
           <div key={index} className="text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-amber-100 rounded-2xl mb-6">
-              <step.icon className="w-8 h-8 text-amber-600" />
+            <div className="mb-6 inline-flex size-16 items-center justify-center rounded-2xl bg-amber-100">
+              <step.icon className="size-8 text-amber-600" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-3">{step.title}</h3>
+            <h3 className="mb-3 text-xl font-semibold text-gray-900">{step.title}</h3>
             <p className="text-gray-600">{step.description}</p>
           </div>
         ))}
       </div>
 
       {/* Common imperfections */}
-      <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-8 md:p-12">
-        <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">
+      <div className="rounded-3xl border border-gray-100 bg-white p-8 shadow-lg md:p-12">
+        <h3 className="mb-8 text-center text-2xl font-bold text-gray-900">
           What makes something "Imperfect"?
         </h3>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {IMPERFECT_TYPES.map((type, index) => (
             <div
               key={index}
-              className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl"
+              className="flex items-start gap-4 rounded-xl bg-gray-50 p-4"
             >
-              <div className="flex-shrink-0 w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-                <type.icon className="w-5 h-5 text-amber-600" />
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-amber-100">
+                <type.icon className="size-5 text-amber-600" />
               </div>
               <div>
                 <p className="font-medium text-gray-900">{type.label}</p>
@@ -118,9 +118,9 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
         </div>
 
         {/* Quality guarantee */}
-        <div className="mt-12 bg-green-50 rounded-2xl p-6 flex items-center gap-6">
-          <div className="flex-shrink-0 w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-            <CheckCircleIcon className="w-8 h-8 text-green-600" />
+        <div className="mt-12 flex items-center gap-6 rounded-2xl bg-green-50 p-6">
+          <div className="flex size-16 shrink-0 items-center justify-center rounded-full bg-green-100">
+            <CheckCircleIcon className="size-8 text-green-600" />
           </div>
           <div>
             <h4 className="text-lg font-semibold text-green-900">
@@ -135,8 +135,8 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
       </div>
 
       {/* Environmental impact */}
-      <div className="mt-16 bg-gradient-to-br from-green-50 to-emerald-50 rounded-3xl p-8 md:p-12">
-        <div className="text-center mb-10">
+      <div className="mt-16 rounded-3xl bg-gradient-to-br from-green-50 to-emerald-50 p-8 md:p-12">
+        <div className="mb-10 text-center">
           <h3 className="text-2xl font-bold text-green-900">
             Your Impact
           </h3>
@@ -145,7 +145,7 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           {IMPACT_STATS.map((stat, index) => (
             <div key={index} className="text-center">
               <p className="text-4xl font-bold text-green-900">{stat.value}</p>

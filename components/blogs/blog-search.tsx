@@ -104,8 +104,8 @@ export function BlogSearch({ categories = [], tags = [] }: BlogSearchProps) {
         <div className="flex flex-wrap gap-4 rounded-lg border p-4">
           {/* Category Filter */}
           {categories.length > 0 && (
-            <div className="flex-1 min-w-[200px]">
-              <label className="text-sm font-medium mb-2 block">Category</label>
+            <div className="min-w-[200px] flex-1">
+              <label className="mb-2 block text-sm font-medium">Category</label>
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
@@ -123,8 +123,8 @@ export function BlogSearch({ categories = [], tags = [] }: BlogSearchProps) {
 
           {/* Tag Filter */}
           {tags.length > 0 && (
-            <div className="flex-1 min-w-[200px]">
-              <label className="text-sm font-medium mb-2 block">Tag</label>
+            <div className="min-w-[200px] flex-1">
+              <label className="mb-2 block text-sm font-medium">Tag</label>
               <select
                 value={selectedTag}
                 onChange={(e) => setSelectedTag(e.target.value)}
@@ -189,7 +189,7 @@ export function BlogSearch({ categories = [], tags = [] }: BlogSearchProps) {
       {hasActiveFilters && (
         <div className="space-y-4">
           {isSearching ? (
-            <p className="text-center text-muted-foreground py-8">Searching...</p>
+            <p className="py-8 text-center text-muted-foreground">Searching...</p>
           ) : results.length > 0 ? (
             <>
               <h2 className="text-lg font-semibold">
@@ -202,7 +202,7 @@ export function BlogSearch({ categories = [], tags = [] }: BlogSearchProps) {
               </div>
             </>
           ) : (
-            <p className="text-center text-muted-foreground py-8">
+            <p className="py-8 text-center text-muted-foreground">
               No articles found matching your search criteria
             </p>
           )}

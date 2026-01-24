@@ -35,15 +35,15 @@ export default async function AdminLayout({
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Admin Navbar */}
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
+      <nav className="sticky top-0 z-10 border-b border-gray-200 bg-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 justify-between">
             <div className="flex">
               <Link href="/admin" className="flex items-center">
                 <span className="text-xl font-bold text-green-600">
                   Link Flame
                 </span>
-                <span className="ml-2 px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded">
+                <span className="ml-2 rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
                   Admin
                 </span>
               </Link>
@@ -60,9 +60,9 @@ export default async function AdminLayout({
               </Link>
               <Link
                 href="/auth/signout"
-                className="text-sm text-red-600 hover:text-red-700 flex items-center gap-1"
+                className="flex items-center gap-1 text-sm text-red-600 hover:text-red-700"
               >
-                <LogOut className="h-4 w-4" />
+                <LogOut className="size-4" />
                 Sign Out
               </Link>
             </div>
@@ -70,10 +70,10 @@ export default async function AdminLayout({
         </div>
       </nav>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="flex gap-8">
           {/* Sidebar */}
-          <aside className="w-64 flex-shrink-0">
+          <aside className="w-64 shrink-0">
             <nav className="space-y-1">
               {navigation.map((item) => {
                 const Icon = item.icon;
@@ -81,9 +81,9 @@ export default async function AdminLayout({
                   <Link
                     key={item.name}
                     href={item.href}
-                    className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                    className="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900"
                   >
-                    <Icon className="h-5 w-5" />
+                    <Icon className="size-5" />
                     {item.name}
                   </Link>
                 );
@@ -92,7 +92,7 @@ export default async function AdminLayout({
           </aside>
 
           {/* Main Content */}
-          <main className="flex-1 min-w-0">
+          <main className="min-w-0 flex-1">
             {children}
           </main>
         </div>

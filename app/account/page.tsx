@@ -61,8 +61,8 @@ export default function AccountPage() {
 
   if (!isLoaded) {
     return (
-      <div className="container py-10 flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="container flex items-center justify-center py-10">
+        <Loader2 className="size-8 animate-spin" />
       </div>
     );
   }
@@ -91,20 +91,20 @@ export default function AccountPage() {
   }
 
   return (
-    <div className="container py-10 max-w-4xl">
+    <div className="container max-w-4xl py-10">
       {/* Header with user info */}
       <Card className="mb-8">
         <CardHeader>
           <div className="flex items-center gap-4">
-            <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
+            <div className="flex size-16 items-center justify-center rounded-full bg-primary/10">
               {session.user?.image ? (
                 <img
                   src={session.user.image}
                   alt={session.user.name || "User"}
-                  className="h-16 w-16 rounded-full object-cover"
+                  className="size-16 rounded-full object-cover"
                 />
               ) : (
-                <User className="h-8 w-8 text-primary" />
+                <User className="size-8 text-primary" />
               )}
             </div>
             <div>
@@ -125,11 +125,11 @@ export default function AccountPage() {
           const Icon = link.icon;
           return (
             <Link key={link.href} href={link.href}>
-              <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
+              <Card className="cursor-pointer transition-colors hover:bg-muted/50">
                 <CardContent className="flex items-center justify-between p-6">
                   <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <Icon className="h-6 w-6 text-primary" />
+                    <div className="flex size-12 items-center justify-center rounded-lg bg-primary/10">
+                      <Icon className="size-6 text-primary" />
                     </div>
                     <div>
                       <h3 className="font-semibold">{link.title}</h3>
@@ -138,7 +138,7 @@ export default function AccountPage() {
                       </p>
                     </div>
                   </div>
-                  <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                  <ChevronRight className="size-5 text-muted-foreground" />
                 </CardContent>
               </Card>
             </Link>

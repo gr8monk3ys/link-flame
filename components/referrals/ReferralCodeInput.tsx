@@ -96,11 +96,11 @@ export function ReferralCodeInput({
     return (
       <div className={`space-y-2 ${className}`}>
         <Label className="flex items-center gap-2">
-          <Tag className="h-4 w-4" />
+          <Tag className="size-4" />
           Referral Code Applied
         </Label>
-        <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-md">
-          <Check className="h-5 w-5 text-green-600" />
+        <div className="flex items-center gap-2 rounded-md border border-green-200 bg-green-50 p-3">
+          <Check className="size-5 text-green-600" />
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <span className="font-mono font-semibold">{applied.code}</span>
@@ -115,9 +115,9 @@ export function ReferralCodeInput({
             size="sm"
             onClick={removeCode}
             disabled={disabled}
-            className="text-green-700 hover:text-green-900 hover:bg-green-100"
+            className="text-green-700 hover:bg-green-100 hover:text-green-900"
           >
-            <X className="h-4 w-4" />
+            <X className="size-4" />
           </Button>
         </div>
       </div>
@@ -127,11 +127,11 @@ export function ReferralCodeInput({
   return (
     <div className={`space-y-2 ${className}`}>
       <Label htmlFor="referral-code" className="flex items-center gap-2">
-        <Gift className="h-4 w-4" />
+        <Gift className="size-4" />
         Have a referral code?
       </Label>
       <div className="flex gap-2">
-        <div className="flex-1 relative">
+        <div className="relative flex-1">
           <Input
             id="referral-code"
             type="text"
@@ -155,7 +155,7 @@ export function ReferralCodeInput({
           disabled={disabled || loading || !code.trim()}
         >
           {loading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <Loader2 className="size-4 animate-spin" />
           ) : (
             "Apply"
           )}

@@ -109,7 +109,7 @@ const ProductCard = (props: ProductCardProps) => {
           {stockBadge && (
             <Badge
               variant={stockBadge.variant}
-              className="absolute top-2 right-2"
+              className="absolute right-2 top-2"
             >
               {stockBadge.label}
             </Badge>

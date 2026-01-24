@@ -103,10 +103,10 @@ export function ImperfectReasonTooltip({
       {/* Trigger */}
       <button
         type="button"
-        className="inline-flex items-center gap-1.5 text-sm text-amber-700 hover:text-amber-800 transition-colors cursor-help"
+        className="inline-flex cursor-help items-center gap-1.5 text-sm text-amber-700 transition-colors hover:text-amber-800"
         aria-describedby="imperfect-reason-tooltip"
       >
-        <InfoIcon className="w-4 h-4" />
+        <InfoIcon className="size-4" />
         <span>{displayLabel}</span>
       </button>
 
@@ -116,14 +116,14 @@ export function ImperfectReasonTooltip({
           id="imperfect-reason-tooltip"
           role="tooltip"
           className={cn(
-            'absolute z-50 w-64 p-4 bg-gray-900 text-white rounded-lg shadow-xl',
-            'animate-in fade-in-0 zoom-in-95 duration-200',
+            'absolute z-50 w-64 rounded-lg bg-gray-900 p-4 text-white shadow-xl',
+            'duration-200 animate-in fade-in-0 zoom-in-95',
             positionClasses[position]
           )}
         >
           <div className="flex items-start gap-3">
-            <div className="flex-shrink-0 w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center">
-              <LeafIcon className="w-4 h-4 text-white" />
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-amber-500">
+              <LeafIcon className="size-4 text-white" />
             </div>
             <div>
               <p className="font-semibold text-white">{displayLabel}</p>
@@ -132,9 +132,9 @@ export function ImperfectReasonTooltip({
           </div>
 
           {/* Quality guarantee */}
-          <div className="mt-3 pt-3 border-t border-gray-700">
-            <p className="text-xs text-gray-400 flex items-center gap-1.5">
-              <CheckIcon className="w-3 h-3 text-green-400" />
+          <div className="mt-3 border-t border-gray-700 pt-3">
+            <p className="flex items-center gap-1.5 text-xs text-gray-400">
+              <CheckIcon className="size-3 text-green-400" />
               Same quality guarantee as regular products
             </p>
           </div>
@@ -142,7 +142,7 @@ export function ImperfectReasonTooltip({
           {/* Arrow */}
           <div
             className={cn(
-              'absolute w-0 h-0',
+              'absolute size-0',
               'border-4 border-transparent',
               arrowClasses[position]
             )}
@@ -175,11 +175,11 @@ export function ImperfectReasonBadge({
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 text-amber-700 text-xs font-medium rounded-full',
+        'inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700',
         className
       )}
     >
-      <InfoIcon className="w-3 h-3" />
+      <InfoIcon className="size-3" />
       {displayLabel}
     </span>
   );

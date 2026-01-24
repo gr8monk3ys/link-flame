@@ -1,4 +1,5 @@
 import "@/styles/globals.css"
+import { Suspense } from "react"
 import { Metadata, Viewport } from "next"
 import { siteConfig } from "@/config/site"
 import { fontSans } from "@/lib/fonts"
@@ -11,6 +12,7 @@ import { SiteFooter } from "@/components/site-footer"
 import { CartProvider } from "@/lib/providers/CartProvider"
 import ErrorBoundary from "@/components/layout/error-boundary"
 import { ServiceWorkerRegistration } from "@/components/shared/service-worker-registration"
+import { WelcomeBonusNotification } from "@/components/shared/welcome-bonus-notification"
 
 export function getMetadata(): Metadata {
   const metadata: Metadata = {
@@ -103,6 +105,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 </div>
                 {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && <Analytics />}
                 <ServiceWorkerRegistration />
+                <Suspense fallback={null}>
+                  <WelcomeBonusNotification />
+                </Suspense>
               </ErrorBoundary>
             </CartProvider>
           </ThemeProvider>

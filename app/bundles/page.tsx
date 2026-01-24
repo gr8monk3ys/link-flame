@@ -109,10 +109,10 @@ export default async function BundlesPage() {
         </h2>
         <div className="grid gap-6 md:grid-cols-3">
           <div className="text-center">
-            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600">
+            <div className="mb-4 inline-flex size-12 items-center justify-center rounded-full bg-green-100 text-green-600">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
+                className="size-6"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -132,10 +132,10 @@ export default async function BundlesPage() {
             </p>
           </div>
           <div className="text-center">
-            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+            <div className="mb-4 inline-flex size-12 items-center justify-center rounded-full bg-blue-100 text-blue-600">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
+                className="size-6"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -155,10 +155,10 @@ export default async function BundlesPage() {
             </p>
           </div>
           <div className="text-center">
-            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-purple-100 text-purple-600">
+            <div className="mb-4 inline-flex size-12 items-center justify-center rounded-full bg-purple-100 text-purple-600">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
+                className="size-6"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"

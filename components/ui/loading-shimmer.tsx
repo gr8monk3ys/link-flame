@@ -1,15 +1,16 @@
 'use client'
 
 import React from 'react'
+import { cn } from '@/lib/utils'
 
 interface LoadingShimmerProps {
   number?: number
   className?: string
 }
 
-export const LoadingShimmer: React.FC<LoadingShimmerProps> = ({ 
-  number = 1, 
-  className = '' 
+export const LoadingShimmer: React.FC<LoadingShimmerProps> = ({
+  number = 1,
+  className = ''
 }) => {
   return (
     <>
@@ -27,5 +28,24 @@ export const LoadingShimmer: React.FC<LoadingShimmerProps> = ({
         </div>
       ))}
     </>
+  )
+}
+
+/**
+ * Generic skeleton component for loading states
+ * Use for code-split component loading fallbacks
+ */
+interface SkeletonProps {
+  className?: string
+}
+
+export const Skeleton: React.FC<SkeletonProps> = ({ className }) => {
+  return (
+    <div
+      className={cn(
+        'animate-pulse rounded-md bg-gray-200',
+        className
+      )}
+    />
   )
 }

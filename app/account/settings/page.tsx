@@ -212,8 +212,8 @@ export default function AccountSettingsPage() {
 
   if (!isLoaded) {
     return (
-      <div className="container py-10 flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="container flex items-center justify-center py-10">
+        <Loader2 className="size-8 animate-spin" />
       </div>
     );
   }
@@ -242,17 +242,17 @@ export default function AccountSettingsPage() {
   }
 
   return (
-    <div className="container py-10 max-w-4xl">
+    <div className="container max-w-4xl py-10">
       <div className="mb-6">
-        <Link href="/account/orders" className="text-sm text-primary hover:underline inline-flex items-center gap-1">
-          <ArrowLeft className="h-4 w-4" />
+        <Link href="/account/orders" className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
+          <ArrowLeft className="size-4" />
           Back to Orders
         </Link>
       </div>
 
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Account Settings</h1>
-        <p className="text-muted-foreground mt-2">
+        <p className="mt-2 text-muted-foreground">
           Manage your profile, security, and account preferences
         </p>
       </div>
@@ -260,15 +260,15 @@ export default function AccountSettingsPage() {
       <Tabs defaultValue="profile" className="space-y-6">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="profile" className="flex items-center gap-2">
-            <User className="h-4 w-4" />
+            <User className="size-4" />
             Profile
           </TabsTrigger>
           <TabsTrigger value="security" className="flex items-center gap-2">
-            <Lock className="h-4 w-4" />
+            <Lock className="size-4" />
             Security
           </TabsTrigger>
           <TabsTrigger value="danger" className="flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4" />
+            <AlertTriangle className="size-4" />
             Danger Zone
           </TabsTrigger>
         </TabsList>
@@ -285,7 +285,7 @@ export default function AccountSettingsPage() {
             <CardContent>
               {loadingProfile ? (
                 <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-6 w-6 animate-spin" />
+                  <Loader2 className="size-6 animate-spin" />
                 </div>
               ) : (
                 <form onSubmit={handleUpdateProfile} className="space-y-6">
@@ -315,7 +315,7 @@ export default function AccountSettingsPage() {
                     </div>
 
                     {profile && (
-                      <div className="pt-4 border-t">
+                      <div className="border-t pt-4">
                         <div className="grid grid-cols-2 gap-4 text-sm">
                           <div>
                             <span className="text-muted-foreground">Account created:</span>
@@ -335,12 +335,12 @@ export default function AccountSettingsPage() {
                   <Button type="submit" disabled={savingProfile}>
                     {savingProfile ? (
                       <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        <Loader2 className="mr-2 size-4 animate-spin" />
                         Saving...
                       </>
                     ) : (
                       <>
-                        <Check className="h-4 w-4 mr-2" />
+                        <Check className="mr-2 size-4" />
                         Save Changes
                       </>
                     )}
@@ -403,7 +403,7 @@ export default function AccountSettingsPage() {
                 <Button type="submit" disabled={changingPassword}>
                   {changingPassword ? (
                     <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      <Loader2 className="mr-2 size-4 animate-spin" />
                       Changing Password...
                     </>
                   ) : (
@@ -425,9 +425,9 @@ export default function AccountSettingsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="rounded-md bg-destructive/10 p-4 mb-6">
+              <div className="mb-6 rounded-md bg-destructive/10 p-4">
                 <div className="flex items-start gap-3">
-                  <AlertTriangle className="h-5 w-5 text-destructive mt-0.5" />
+                  <AlertTriangle className="mt-0.5 size-5 text-destructive" />
                   <div className="text-sm">
                     <p className="font-semibold text-destructive">Warning: This is irreversible</p>
                     <ul className="mt-2 space-y-1 text-muted-foreground">
@@ -473,7 +473,7 @@ export default function AccountSettingsPage() {
                 >
                   {deletingAccount ? (
                     <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      <Loader2 className="mr-2 size-4 animate-spin" />
                       Deleting Account...
                     </>
                   ) : (

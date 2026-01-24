@@ -158,58 +158,58 @@ export function QuizPageClient() {
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12">
+    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center py-12">
       <div className="container max-w-3xl px-4">
         {/* Intro Screen */}
         {state === 'intro' && (
           <div
             className={cn(
-              'text-center space-y-8',
-              'animate-in fade-in-0 slide-in-from-bottom-4 duration-500'
+              'space-y-8 text-center',
+              'duration-500 animate-in fade-in-0 slide-in-from-bottom-4'
             )}
           >
             {/* Hero section */}
             <div className="space-y-4">
-              <div className="mx-auto mb-6 w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
-                <Leaf className="w-10 h-10 text-primary" />
+              <div className="mx-auto mb-6 flex size-20 items-center justify-center rounded-full bg-primary/10">
+                <Leaf className="size-10 text-primary" />
               </div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
+              <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
                 Find Your Perfect
                 <br />
                 <span className="text-primary">Eco-Friendly Products</span>
               </h1>
-              <p className="text-lg sm:text-xl text-muted-foreground max-w-lg mx-auto">
+              <p className="mx-auto max-w-lg text-lg text-muted-foreground sm:text-xl">
                 Answer a few quick questions about your lifestyle and preferences,
                 and we&apos;ll recommend sustainable products tailored just for you.
               </p>
             </div>
 
             {/* How it works */}
-            <div className="grid sm:grid-cols-3 gap-6 py-8 max-w-2xl mx-auto">
+            <div className="mx-auto grid max-w-2xl gap-6 py-8 sm:grid-cols-3">
               <div className="flex flex-col items-center gap-3 p-4">
-                <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-xl font-semibold">
+                <div className="flex size-12 items-center justify-center rounded-full bg-secondary text-xl font-semibold">
                   1
                 </div>
                 <h3 className="font-medium">Tell Us About You</h3>
-                <p className="text-sm text-muted-foreground text-center">
+                <p className="text-center text-sm text-muted-foreground">
                   Share your sustainability goals and preferences
                 </p>
               </div>
               <div className="flex flex-col items-center gap-3 p-4">
-                <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-xl font-semibold">
+                <div className="flex size-12 items-center justify-center rounded-full bg-secondary text-xl font-semibold">
                   2
                 </div>
                 <h3 className="font-medium">We Analyze</h3>
-                <p className="text-sm text-muted-foreground text-center">
+                <p className="text-center text-sm text-muted-foreground">
                   Our algorithm finds products that match your needs
                 </p>
               </div>
               <div className="flex flex-col items-center gap-3 p-4">
-                <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-xl font-semibold">
+                <div className="flex size-12 items-center justify-center rounded-full bg-secondary text-xl font-semibold">
                   3
                 </div>
                 <h3 className="font-medium">Get Recommendations</h3>
-                <p className="text-sm text-muted-foreground text-center">
+                <p className="text-center text-sm text-muted-foreground">
                   Discover personalized eco-friendly products
                 </p>
               </div>
@@ -221,16 +221,16 @@ export function QuizPageClient() {
                 size="lg"
                 onClick={handleStartQuiz}
                 disabled={isLoadingQuestions}
-                className="px-12 py-6 text-lg gap-2"
+                className="gap-2 px-12 py-6 text-lg"
               >
                 {isLoadingQuestions ? (
                   <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <Loader2 className="size-5 animate-spin" />
                     Loading...
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-5 h-5" />
+                    <Sparkles className="size-5" />
                     Start Quiz
                   </>
                 )}
@@ -241,20 +241,20 @@ export function QuizPageClient() {
             </div>
 
             {error && (
-              <p className="text-sm text-destructive mt-4">{error}</p>
+              <p className="mt-4 text-sm text-destructive">{error}</p>
             )}
           </div>
         )}
 
         {/* Questions Screen */}
         {state === 'questions' && currentQuestion && (
-          <div className="space-y-8 animate-in fade-in-0 duration-300">
+          <div className="space-y-8 duration-300 animate-in fade-in-0">
             <QuizProgress
               currentStep={currentQuestionIndex + 1}
               totalSteps={questions.length}
             />
 
-            <div className="bg-card border rounded-xl p-6 sm:p-8 shadow-sm">
+            <div className="rounded-xl border bg-card p-6 shadow-sm sm:p-8">
               <QuizQuestion
                 question={currentQuestion.question}
                 options={currentQuestion.options}
@@ -265,7 +265,7 @@ export function QuizPageClient() {
             </div>
 
             {error && (
-              <p className="text-sm text-destructive text-center">{error}</p>
+              <p className="text-center text-sm text-destructive">{error}</p>
             )}
 
             <div className="flex items-center justify-between">
@@ -273,7 +273,7 @@ export function QuizPageClient() {
                 variant="ghost"
                 onClick={handleBack}
               >
-                <ArrowLeft className="w-4 h-4 mr-2" />
+                <ArrowLeft className="mr-2 size-4" />
                 Back
               </Button>
 
@@ -285,13 +285,13 @@ export function QuizPageClient() {
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      <Loader2 className="mr-2 size-4 animate-spin" />
                       Getting Results...
                     </>
                   ) : (
                     <>
                       Get My Recommendations
-                      <Sparkles className="w-4 h-4 ml-2" />
+                      <Sparkles className="ml-2 size-4" />
                     </>
                   )}
                 </Button>
@@ -302,7 +302,7 @@ export function QuizPageClient() {
                   disabled={!canProceed()}
                 >
                   Next
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                  <ArrowRight className="ml-2 size-4" />
                 </Button>
               )}
             </div>
@@ -311,9 +311,9 @@ export function QuizPageClient() {
 
         {/* Loading Screen */}
         {state === 'loading' && (
-          <div className="py-16 text-center animate-in fade-in-0 duration-300">
-            <Loader2 className="w-16 h-16 mx-auto text-primary animate-spin mb-6" />
-            <h2 className="text-2xl font-semibold mb-2">
+          <div className="py-16 text-center duration-300 animate-in fade-in-0">
+            <Loader2 className="mx-auto mb-6 size-16 animate-spin text-primary" />
+            <h2 className="mb-2 text-2xl font-semibold">
               Finding Your Perfect Products
             </h2>
             <p className="text-muted-foreground">
@@ -324,7 +324,7 @@ export function QuizPageClient() {
 
         {/* Results Screen */}
         {state === 'results' && results && (
-          <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-500">
+          <div className="duration-500 animate-in fade-in-0 slide-in-from-bottom-4">
             <QuizResults
               visibleId={results.visibleId}
               products={results.products}

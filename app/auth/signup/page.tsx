@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Gift } from "lucide-react";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -18,6 +19,7 @@ export default function SignUpPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [bonusAwarded, setBonusAwarded] = useState<{ points: number; message: string } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,6 +52,15 @@ export default function SignUpPage() {
         return;
       }
 
+      // Check if bonus points were awarded
+      const bonusWasAwarded = data.loyaltyBonus?.awarded;
+      if (bonusWasAwarded) {
+        setBonusAwarded({
+          points: data.loyaltyBonus.points,
+          message: data.loyaltyBonus.message,
+        });
+      }
+
       // Auto sign in after successful registration
       const result = await signIn("credentials", {
         email,
@@ -61,7 +72,9 @@ export default function SignUpPage() {
         setError("Account created but sign in failed. Please try signing in.");
         setLoading(false);
       } else {
-        router.push("/");
+        // Redirect with welcome bonus parameter if points were awarded
+        const redirectUrl = bonusWasAwarded ? `/?welcome=true&bonus=${data.loyaltyBonus.points}` : "/";
+        router.push(redirectUrl);
         router.refresh();
       }
     } catch (err) {
@@ -71,13 +84,20 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="container flex items-center justify-center min-h-[calc(100vh-200px)]">
+    <div className="container flex min-h-[calc(100vh-200px)] items-center justify-center">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Create Account</CardTitle>
           <CardDescription>
             Enter your information to create an account
           </CardDescription>
+          {/* Signup bonus banner */}
+          <div className="mt-3 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700">
+            <Gift className="size-5 shrink-0" />
+            <span>
+              <strong>Earn 200 points</strong> when you sign up! Start saving on your eco-friendly purchases.
+            </span>
+          </div>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -132,7 +152,7 @@ export default function SignUpPage() {
               />
             </div>
             {error && (
-              <div className="text-sm text-red-600 bg-red-50 p-3 rounded">
+              <div className="rounded bg-red-50 p-3 text-sm text-red-600">
                 {error}
               </div>
             )}

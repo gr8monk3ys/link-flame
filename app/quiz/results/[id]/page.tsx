@@ -87,7 +87,7 @@ export default async function QuizResultsPage({ params }: QuizResultsPageProps) 
       <div className="mb-8">
         <Button variant="ghost" asChild>
           <Link href="/quiz">
-            <ArrowLeft className="w-4 h-4 mr-2" />
+            <ArrowLeft className="mr-2 size-4" />
             Take the Quiz Again
           </Link>
         </Button>

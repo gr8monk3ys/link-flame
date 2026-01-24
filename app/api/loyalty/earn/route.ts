@@ -23,6 +23,7 @@ import {
   awardReferralPoints,
   awardSignupBonus,
   POINT_SOURCES,
+  LOYALTY_CONFIG,
   type PointSource,
 } from "@/lib/loyalty";
 import { validateCsrfToken } from "@/lib/csrf";
@@ -154,7 +155,7 @@ export async function POST(req: Request) {
         const signupSuccess = await awardSignupBonus(userId);
         result = {
           success: signupSuccess,
-          pointsAwarded: signupSuccess ? 100 : 0,
+          pointsAwarded: signupSuccess ? LOYALTY_CONFIG.signupBonus : 0,
           error: signupSuccess ? undefined : "Signup bonus already claimed",
         };
         break;

@@ -213,10 +213,10 @@ export default function FilterSidebar({
       </div>
 
       {/* Perfectly Imperfect Section */}
-      <div className="rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 p-4 border border-amber-200">
-        <div className="flex items-center gap-2 mb-3">
+      <div className="rounded-xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 p-4">
+        <div className="mb-3 flex items-center gap-2">
           <svg
-            className="w-5 h-5 text-amber-600"
+            className="size-5 text-amber-600"
             viewBox="0 0 24 24"
             fill="currentColor"
             aria-hidden="true"
@@ -225,10 +225,10 @@ export default function FilterSidebar({
           </svg>
           <h3 className="text-lg font-medium text-amber-900">Perfectly Imperfect</h3>
         </div>
-        <p className="text-sm text-amber-800 mb-4">
+        <p className="mb-4 text-sm text-amber-800">
           Save up to 47% on items with minor cosmetic imperfections. Same quality, less waste.
         </p>
-        <div className="flex items-center gap-3 mb-3">
+        <div className="mb-3 flex items-center gap-3">
           <input
             id="imperfect-filter"
             type="checkbox"
@@ -250,7 +250,7 @@ export default function FilterSidebar({
         >
           View all imperfect items
           <svg
-            className="w-4 h-4"
+            className="size-4"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"

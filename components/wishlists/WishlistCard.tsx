@@ -104,22 +104,22 @@ export function WishlistCard({
 
   return (
     <>
-      <div className="group relative rounded-lg border bg-card overflow-hidden transition-shadow hover:shadow-md">
+      <div className="group relative overflow-hidden rounded-lg border bg-card transition-shadow hover:shadow-md">
         {/* Preview Grid */}
         <Link href={`/account/saved?wishlist=${wishlist.id}`}>
-          <div className="aspect-square relative bg-muted">
+          <div className="relative aspect-square bg-muted">
             {previewItems.length === 0 ? (
               <div className="absolute inset-0 flex items-center justify-center">
-                <Heart className="h-12 w-12 text-muted-foreground/30" />
+                <Heart className="size-12 text-muted-foreground/30" />
               </div>
             ) : (
-              <div className="grid grid-cols-2 h-full">
+              <div className="grid h-full grid-cols-2">
                 {[0, 1, 2, 3].map((index) => (
                   <div
                     key={index}
                     className={cn(
                       'relative bg-muted',
-                      index === 0 && 'border-r border-b',
+                      index === 0 && 'border-b border-r',
                       index === 1 && 'border-b',
                       index === 2 && 'border-r'
                     )}
@@ -134,8 +134,8 @@ export function WishlistCard({
                       />
                     ) : null}
                     {index === 3 && hasMore && (
-                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                        <span className="text-white font-medium">
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                        <span className="font-medium text-white">
                           +{wishlist.itemCount - 3}
                         </span>
                       </div>
@@ -152,14 +152,14 @@ export function WishlistCard({
           <div className="flex items-start justify-between gap-2">
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-semibold line-clamp-1">{wishlist.name}</h3>
+                <h3 className="line-clamp-1 font-semibold">{wishlist.name}</h3>
                 {wishlist.isDefault && (
-                  <Heart className="h-4 w-4 fill-red-500 text-red-500 flex-shrink-0" />
+                  <Heart className="size-4 shrink-0 fill-red-500 text-red-500" />
                 )}
                 {wishlist.isPublic ? (
-                  <Globe className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  <Globe className="size-4 shrink-0 text-green-500" />
                 ) : (
-                  <Lock className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  <Lock className="size-4 shrink-0 text-muted-foreground" />
                 )}
               </div>
               <p className="text-sm text-muted-foreground">
@@ -172,10 +172,10 @@ export function WishlistCard({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8"
+                className="size-8"
                 onClick={() => setShowMenu(!showMenu)}
               >
-                <MoreVertical className="h-4 w-4" />
+                <MoreVertical className="size-4" />
                 <span className="sr-only">Actions</span>
               </Button>
 
@@ -185,7 +185,7 @@ export function WishlistCard({
                     className="fixed inset-0 z-10"
                     onClick={() => setShowMenu(false)}
                   />
-                  <div className="absolute right-0 top-full mt-1 w-48 rounded-md border bg-popover shadow-md z-20">
+                  <div className="absolute right-0 top-full z-20 mt-1 w-48 rounded-md border bg-popover shadow-md">
                     {!wishlist.isDefault && (
                       <button
                         className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-muted"
@@ -194,7 +194,7 @@ export function WishlistCard({
                           setShowRenameDialog(true);
                         }}
                       >
-                        <Pencil className="h-4 w-4" />
+                        <Pencil className="size-4" />
                         Rename
                       </button>
                     )}
@@ -205,12 +205,12 @@ export function WishlistCard({
                     >
                       {wishlist.isPublic ? (
                         <>
-                          <Lock className="h-4 w-4" />
+                          <Lock className="size-4" />
                           Make Private
                         </>
                       ) : (
                         <>
-                          <Globe className="h-4 w-4" />
+                          <Globe className="size-4" />
                           Make Public
                         </>
                       )}
@@ -223,7 +223,7 @@ export function WishlistCard({
                           setShowMenu(false);
                         }}
                       >
-                        <Share2 className="h-4 w-4" />
+                        <Share2 className="size-4" />
                         Copy Share Link
                       </button>
                     )}
@@ -235,7 +235,7 @@ export function WishlistCard({
                           setShowDeleteDialog(true);
                         }}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="size-4" />
                         Delete
                       </button>
                     )}
@@ -260,7 +260,7 @@ export function WishlistCard({
             type="text"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
             placeholder="Wishlist name"
             autoFocus
             onKeyDown={(e) => {

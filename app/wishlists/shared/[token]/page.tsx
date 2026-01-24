@@ -20,11 +20,11 @@ export default async function SharedWishlistPage({ params }: SharedWishlistPageP
   }
 
   return (
-    <div className="container py-10 max-w-4xl">
+    <div className="container max-w-4xl py-10">
       {/* Header */}
       <div className="mb-8 text-center">
-        <div className="flex items-center justify-center gap-2 mb-2">
-          <Heart className="h-6 w-6 text-red-500 fill-red-500" />
+        <div className="mb-2 flex items-center justify-center gap-2">
+          <Heart className="size-6 fill-red-500 text-red-500" />
           <h1 className="text-3xl font-bold">{wishlist.name}</h1>
         </div>
         <p className="text-muted-foreground">
@@ -35,25 +35,25 @@ export default async function SharedWishlistPage({ params }: SharedWishlistPageP
       {/* Items Grid */}
       {wishlist.items.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-center">
-          <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
-            <Heart className="h-8 w-8 text-muted-foreground" />
+          <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-muted">
+            <Heart className="size-8 text-muted-foreground" />
           </div>
-          <h3 className="font-semibold text-lg mb-2">This wishlist is empty</h3>
+          <h3 className="mb-2 text-lg font-semibold">This wishlist is empty</h3>
           <p className="text-muted-foreground">
             No items have been added to this wishlist yet
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {wishlist.items.map((item) => (
             <div
               key={item.id}
-              className="group rounded-lg border bg-card overflow-hidden"
+              className="group overflow-hidden rounded-lg border bg-card"
             >
               {/* Product Image */}
               <Link
                 href={`/products/${item.productId}`}
-                className="block aspect-square relative overflow-hidden bg-muted"
+                className="relative block aspect-square overflow-hidden bg-muted"
               >
                 <Image
                   src={item.product.image}
@@ -68,7 +68,7 @@ export default async function SharedWishlistPage({ params }: SharedWishlistPageP
               <div className="p-4">
                 <Link
                   href={`/products/${item.productId}`}
-                  className="font-medium hover:underline line-clamp-2"
+                  className="line-clamp-2 font-medium hover:underline"
                 >
                   {item.product.title}
                 </Link>
@@ -91,7 +91,7 @@ export default async function SharedWishlistPage({ params }: SharedWishlistPageP
                 </div>
 
                 {item.note && (
-                  <p className="mt-2 text-sm text-muted-foreground italic line-clamp-2">
+                  <p className="mt-2 line-clamp-2 text-sm italic text-muted-foreground">
                     "{item.note}"
                   </p>
                 )}
@@ -99,7 +99,7 @@ export default async function SharedWishlistPage({ params }: SharedWishlistPageP
                 <div className="mt-4 flex gap-2">
                   <Link href={`/products/${item.productId}`} className="flex-1">
                     <Button variant="outline" className="w-full" size="sm">
-                      <ExternalLink className="h-4 w-4 mr-2" />
+                      <ExternalLink className="mr-2 size-4" />
                       View Product
                     </Button>
                   </Link>
@@ -112,12 +112,12 @@ export default async function SharedWishlistPage({ params }: SharedWishlistPageP
 
       {/* Footer */}
       <div className="mt-12 text-center">
-        <p className="text-muted-foreground mb-4">
+        <p className="mb-4 text-muted-foreground">
           Want to create your own wishlist?
         </p>
         <Link href="/auth/signin">
           <Button>
-            <Heart className="h-4 w-4 mr-2" />
+            <Heart className="mr-2 size-4" />
             Sign Up
           </Button>
         </Link>

@@ -145,7 +145,7 @@ export function BundleBuilder({ bundle }: BundleBuilderProps) {
                 priority
                 sizes="(max-width: 1024px) 100vw, 33vw"
               />
-              <Badge className="absolute left-4 top-4 bg-green-600 text-white text-lg px-4 py-1">
+              <Badge className="absolute left-4 top-4 bg-green-600 px-4 py-1 text-lg text-white">
                 Save {bundle.discountPercent}%
               </Badge>
             </div>

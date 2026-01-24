@@ -26,14 +26,14 @@ export function ImperfectBanner({
     return (
       <div
         className={cn(
-          'bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-4',
+          'rounded-lg border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 p-4',
           className
         )}
       >
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="flex-shrink-0 w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
-              <LeafIcon className="w-5 h-5 text-amber-600" />
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-amber-100">
+              <LeafIcon className="size-5 text-amber-600" />
             </div>
             <div>
               <p className="font-medium text-amber-900">Perfectly Imperfect Deals</p>
@@ -43,7 +43,7 @@ export function ImperfectBanner({
           {showCTA && (
             <Link
               href={ctaLink}
-              className="shrink-0 inline-flex items-center px-4 py-2 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700 transition-colors"
+              className="inline-flex shrink-0 items-center rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-amber-700"
             >
               {ctaText}
             </Link>
@@ -63,7 +63,7 @@ export function ImperfectBanner({
       >
         {/* Background pattern */}
         <div className="absolute inset-0 opacity-10">
-          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+          <svg className="size-full" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <pattern id="leaf-pattern" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
                 <path
@@ -79,8 +79,8 @@ export function ImperfectBanner({
 
         <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
           <div className="text-center">
-            <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full text-amber-800 text-sm font-medium mb-6">
-              <LeafIcon className="w-4 h-4" />
+            <span className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-sm font-medium text-amber-800 backdrop-blur-sm">
+              <LeafIcon className="size-4" />
               Reduce Waste, Save More
             </span>
 
@@ -93,36 +93,36 @@ export function ImperfectBanner({
               and save up to <span className="font-bold">47%</span> while reducing waste.
             </p>
 
-            <div className="mt-10 flex items-center justify-center gap-4 flex-wrap">
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
               {showCTA && (
                 <Link
                   href={ctaLink}
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-amber-600 text-white font-semibold rounded-xl hover:bg-amber-700 transition-colors shadow-lg shadow-amber-600/20"
+                  className="inline-flex items-center gap-2 rounded-xl bg-amber-600 px-8 py-4 font-semibold text-white shadow-lg shadow-amber-600/20 transition-colors hover:bg-amber-700"
                 >
-                  <ShoppingBagIcon className="w-5 h-5" />
+                  <ShoppingBagIcon className="size-5" />
                   {ctaText}
                 </Link>
               )}
               <Link
                 href="/imperfect#how-it-works"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-white/80 backdrop-blur-sm text-amber-800 font-semibold rounded-xl hover:bg-white transition-colors"
+                className="inline-flex items-center gap-2 rounded-xl bg-white/80 px-8 py-4 font-semibold text-amber-800 backdrop-blur-sm transition-colors hover:bg-white"
               >
                 Learn More
-                <ArrowRightIcon className="w-5 h-5" />
+                <ArrowRightIcon className="size-5" />
               </Link>
             </div>
 
             {/* Stats */}
             <div className="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-3">
-              <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6">
+              <div className="rounded-2xl bg-white/60 p-6 backdrop-blur-sm">
                 <p className="text-3xl font-bold text-amber-900">47%</p>
                 <p className="mt-1 text-sm text-amber-700">Average Savings</p>
               </div>
-              <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6">
+              <div className="rounded-2xl bg-white/60 p-6 backdrop-blur-sm">
                 <p className="text-3xl font-bold text-amber-900">100%</p>
                 <p className="mt-1 text-sm text-amber-700">Same Quality</p>
               </div>
-              <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6">
+              <div className="rounded-2xl bg-white/60 p-6 backdrop-blur-sm">
                 <p className="text-3xl font-bold text-amber-900">Zero</p>
                 <p className="mt-1 text-sm text-amber-700">Waste Created</p>
               </div>
@@ -137,51 +137,51 @@ export function ImperfectBanner({
   return (
     <div
       className={cn(
-        'bg-gradient-to-r from-amber-100 to-orange-100 rounded-2xl p-8 lg:p-12',
+        'rounded-2xl bg-gradient-to-r from-amber-100 to-orange-100 p-8 lg:p-12',
         className
       )}
     >
-      <div className="flex flex-col lg:flex-row items-center gap-8">
-        <div className="flex-shrink-0">
-          <div className="w-24 h-24 bg-amber-200 rounded-full flex items-center justify-center">
-            <LeafIcon className="w-12 h-12 text-amber-700" />
+      <div className="flex flex-col items-center gap-8 lg:flex-row">
+        <div className="shrink-0">
+          <div className="flex size-24 items-center justify-center rounded-full bg-amber-200">
+            <LeafIcon className="size-12 text-amber-700" />
           </div>
         </div>
 
         <div className="flex-1 text-center lg:text-left">
-          <h2 className="text-2xl lg:text-3xl font-bold text-amber-900">
+          <h2 className="text-2xl font-bold text-amber-900 lg:text-3xl">
             Perfectly Imperfect Collection
           </h2>
-          <p className="mt-3 text-amber-800 max-w-2xl">
+          <p className="mt-3 max-w-2xl text-amber-800">
             These products have minor cosmetic imperfections but work just as well.
             By choosing imperfect items, you help reduce waste and get amazing deals
             with savings up to <span className="font-semibold">47% off</span>.
           </p>
 
-          <div className="mt-6 flex flex-wrap items-center justify-center lg:justify-start gap-4">
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-4 lg:justify-start">
             <div className="flex items-center gap-2 text-sm text-amber-700">
-              <CheckCircleIcon className="w-5 h-5 text-amber-600" />
+              <CheckCircleIcon className="size-5 text-amber-600" />
               <span>Same quality guaranteed</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-amber-700">
-              <CheckCircleIcon className="w-5 h-5 text-amber-600" />
+              <CheckCircleIcon className="size-5 text-amber-600" />
               <span>Reduces landfill waste</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-amber-700">
-              <CheckCircleIcon className="w-5 h-5 text-amber-600" />
+              <CheckCircleIcon className="size-5 text-amber-600" />
               <span>Full warranty included</span>
             </div>
           </div>
         </div>
 
         {showCTA && (
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <Link
               href={ctaLink}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-amber-600 text-white font-semibold rounded-xl hover:bg-amber-700 transition-colors"
+              className="inline-flex items-center gap-2 rounded-xl bg-amber-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-amber-700"
             >
               {ctaText}
-              <ArrowRightIcon className="w-5 h-5" />
+              <ArrowRightIcon className="size-5" />
             </Link>
           </div>
         )}

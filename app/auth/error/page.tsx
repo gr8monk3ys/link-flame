@@ -20,7 +20,7 @@ function ErrorContent() {
   const errorMessage = error ? errorMessages[error] || errorMessages.Default : errorMessages.Default;
 
   return (
-    <div className="container flex items-center justify-center min-h-[calc(100vh-200px)]">
+    <div className="container flex min-h-[calc(100vh-200px)] items-center justify-center">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Authentication Error</CardTitle>
@@ -46,7 +46,7 @@ function ErrorContent() {
 
 export default function AuthErrorPage() {
   return (
-    <Suspense fallback={<div className="container flex items-center justify-center min-h-[calc(100vh-200px)]">Loading...</div>}>
+    <Suspense fallback={<div className="container flex min-h-[calc(100vh-200px)] items-center justify-center">Loading...</div>}>
       <ErrorContent />
     </Suspense>
   );

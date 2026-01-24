@@ -217,8 +217,8 @@ export default function CartPage() {
 
   if (status === "loading") {
     return (
-      <div className="container flex items-center justify-center min-h-[calc(100vh-200px)]">
-        <div className="animate-spin rounded-full size-8 border-b-2 border-primary"></div>
+      <div className="container flex min-h-[calc(100vh-200px)] items-center justify-center">
+        <div className="size-8 animate-spin rounded-full border-b-2 border-primary"></div>
       </div>
     );
   }

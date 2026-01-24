@@ -113,7 +113,7 @@ export default function AdminBlogPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
+      <div className="flex h-64 items-center justify-center">
         <div className="text-gray-600">Loading blog posts...</div>
       </div>
     );
@@ -122,37 +122,37 @@ export default function AdminBlogPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Blog Posts</h1>
-          <p className="text-gray-600 mt-2">Manage your blog content</p>
+          <p className="mt-2 text-gray-600">Manage your blog content</p>
         </div>
         <Link
           href="/admin/blog/new"
-          className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+          className="flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-white transition-colors hover:bg-green-700"
         >
-          <Plus className="h-5 w-5" />
+          <Plus className="size-5" />
           New Post
         </Link>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow p-4">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+      <div className="rounded-lg bg-white p-4 shadow">
+        <div className="flex flex-col gap-4 sm:flex-row">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 size-5 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
               placeholder="Search posts..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-4 focus:border-transparent focus:ring-2 focus:ring-green-500"
             />
           </div>
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
           >
             <option value="all">All Posts</option>
             <option value="published">Published</option>
@@ -163,31 +163,31 @@ export default function AdminBlogPage() {
       </div>
 
       {/* Posts Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="overflow-hidden rounded-lg bg-white shadow">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 Title
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 Category
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 Author
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 Status
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 Published
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="divide-y divide-gray-200 bg-white">
             {filteredPosts.length === 0 ? (
               <tr>
                 <td
@@ -210,16 +210,16 @@ export default function AdminBlogPage() {
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
                     {post.category}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
                     {post.author?.name || 'Unknown'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="whitespace-nowrap px-6 py-4">
                     <div className="flex items-center gap-2">
                       <span
-                        className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold leading-5 ${
                           post.published
                             ? 'bg-green-100 text-green-800'
                             : 'bg-gray-100 text-gray-800'
@@ -228,35 +228,35 @@ export default function AdminBlogPage() {
                         {post.published ? 'Published' : 'Draft'}
                       </span>
                       {post.featured && (
-                        <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                        <span className="inline-flex rounded-full bg-yellow-100 px-2 py-1 text-xs font-semibold leading-5 text-yellow-800">
                           Featured
                         </span>
                       )}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                     {post.publishedAt
                       ? new Date(post.publishedAt).toLocaleDateString()
                       : '-'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                     <div className="flex justify-end gap-2">
                       <Link
                         href={`/blogs/${post.slug}`}
                         target="_blank"
-                        className="text-gray-600 hover:text-gray-900 p-1"
+                        className="p-1 text-gray-600 hover:text-gray-900"
                       >
-                        <Eye className="h-5 w-5" />
+                        <Eye className="size-5" />
                       </Link>
                       <Link
                         href={`/admin/blog/${post.id}/edit`}
-                        className="text-blue-600 hover:text-blue-900 p-1"
+                        className="p-1 text-blue-600 hover:text-blue-900"
                       >
-                        <Edit className="h-5 w-5" />
+                        <Edit className="size-5" />
                       </Link>
                       <button
                         onClick={() => togglePublished(post.id, post.published)}
-                        className={`px-2 py-1 text-xs font-medium rounded ${
+                        className={`rounded px-2 py-1 text-xs font-medium ${
                           post.published
                             ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                             : 'bg-green-100 text-green-700 hover:bg-green-200'
@@ -266,9 +266,9 @@ export default function AdminBlogPage() {
                       </button>
                       <button
                         onClick={() => handleDelete(post.id)}
-                        className="text-red-600 hover:text-red-900 p-1"
+                        className="p-1 text-red-600 hover:text-red-900"
                       >
-                        <Trash2 className="h-5 w-5" />
+                        <Trash2 className="size-5" />
                       </button>
                     </div>
                   </td>
@@ -280,26 +280,26 @@ export default function AdminBlogPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg shadow p-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+        <div className="rounded-lg bg-white p-4 shadow">
           <p className="text-sm text-gray-600">Total Posts</p>
-          <p className="text-2xl font-bold text-gray-900 mt-1">{posts.length}</p>
+          <p className="mt-1 text-2xl font-bold text-gray-900">{posts.length}</p>
         </div>
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="rounded-lg bg-white p-4 shadow">
           <p className="text-sm text-gray-600">Published</p>
-          <p className="text-2xl font-bold text-green-600 mt-1">
+          <p className="mt-1 text-2xl font-bold text-green-600">
             {posts.filter((p) => p.published).length}
           </p>
         </div>
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="rounded-lg bg-white p-4 shadow">
           <p className="text-sm text-gray-600">Drafts</p>
-          <p className="text-2xl font-bold text-gray-600 mt-1">
+          <p className="mt-1 text-2xl font-bold text-gray-600">
             {posts.filter((p) => !p.published).length}
           </p>
         </div>
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="rounded-lg bg-white p-4 shadow">
           <p className="text-sm text-gray-600">Featured</p>
-          <p className="text-2xl font-bold text-yellow-600 mt-1">
+          <p className="mt-1 text-2xl font-bold text-yellow-600">
             {posts.filter((p) => p.featured).length}
           </p>
         </div>

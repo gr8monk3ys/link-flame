@@ -13,15 +13,15 @@ export default function LoyaltyPage() {
 
   if (!isLoaded) {
     return (
-      <div className="container py-10 flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="container flex items-center justify-center py-10">
+        <Loader2 className="size-8 animate-spin" />
       </div>
     );
   }
 
   if (!isSignedIn) {
     return (
-      <div className="container py-10 max-w-4xl">
+      <div className="container max-w-4xl py-10">
         <Card>
           <CardHeader>
             <CardTitle>Sign In Required</CardTitle>
@@ -43,20 +43,20 @@ export default function LoyaltyPage() {
   }
 
   return (
-    <div className="container py-10 max-w-4xl">
+    <div className="container max-w-4xl py-10">
       {/* Back navigation */}
       <Link
         href="/account"
-        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6"
+        className="mb-6 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
       >
-        <ChevronLeft className="h-4 w-4" />
+        <ChevronLeft className="size-4" />
         Back to Account
       </Link>
 
       {/* Page header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Loyalty Rewards</h1>
-        <p className="text-muted-foreground mt-2">
+        <p className="mt-2 text-muted-foreground">
           Earn points on every purchase and redeem them for discounts.
           The more you shop sustainably, the more you save!
         </p>

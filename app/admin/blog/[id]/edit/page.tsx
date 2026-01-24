@@ -113,7 +113,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
+      <div className="flex h-64 items-center justify-center">
         <div className="text-gray-600">Loading blog post...</div>
       </div>
     );
@@ -121,8 +121,8 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
 
   if (notFound) {
     return (
-      <div className="text-center py-12">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">
+      <div className="py-12 text-center">
+        <h1 className="mb-4 text-2xl font-bold text-gray-900">
           Blog Post Not Found
         </h1>
         <Link
@@ -140,13 +140,13 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
       <div className="mb-6">
         <Link
           href="/admin/blog"
-          className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 mb-4"
+          className="mb-4 inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="size-4" />
           Back to Blog Posts
         </Link>
         <h1 className="text-3xl font-bold text-gray-900">Edit Blog Post</h1>
-        <p className="text-gray-600 mt-2">
+        <p className="mt-2 text-gray-600">
           Update your blog post with MDX support
         </p>
       </div>
@@ -156,7 +156,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
         <div>
           <label
             htmlFor="title"
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className="mb-2 block text-sm font-medium text-gray-700"
           >
             Title *
           </label>
@@ -166,7 +166,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
             required
             value={formData.title}
             onChange={(e) => handleTitleChange(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
             placeholder="Enter post title..."
           />
         </div>
@@ -175,7 +175,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
         <div>
           <label
             htmlFor="slug"
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className="mb-2 block text-sm font-medium text-gray-700"
           >
             Slug *
           </label>
@@ -185,10 +185,10 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
             required
             value={formData.slug}
             onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent font-mono text-sm"
+            className="w-full rounded-lg border border-gray-300 px-4 py-2 font-mono text-sm focus:border-transparent focus:ring-2 focus:ring-green-500"
             placeholder="post-url-slug"
           />
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="mt-1 text-sm text-gray-500">
             URL: /blogs/{formData.slug || 'post-url-slug'}
           </p>
         </div>
@@ -197,7 +197,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
         <div>
           <label
             htmlFor="description"
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className="mb-2 block text-sm font-medium text-gray-700"
           >
             Description * (SEO meta description)
           </label>
@@ -209,7 +209,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
             onChange={(e) =>
               setFormData({ ...formData, description: e.target.value })
             }
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
             placeholder="Brief description for search engines..."
           />
         </div>
@@ -219,7 +219,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
           <div>
             <label
               htmlFor="category"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="mb-2 block text-sm font-medium text-gray-700"
             >
               Category *
             </label>
@@ -231,14 +231,14 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
               onChange={(e) =>
                 setFormData({ ...formData, category: e.target.value })
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
               placeholder="e.g., Sustainability"
             />
           </div>
           <div>
             <label
               htmlFor="tags"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="mb-2 block text-sm font-medium text-gray-700"
             >
               Tags (comma-separated)
             </label>
@@ -249,7 +249,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
               onChange={(e) =>
                 setFormData({ ...formData, tags: e.target.value })
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
               placeholder="eco-friendly, green-living"
             />
           </div>
@@ -259,7 +259,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
         <div>
           <label
             htmlFor="coverImage"
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className="mb-2 block text-sm font-medium text-gray-700"
           >
             Cover Image URL *
           </label>
@@ -271,21 +271,21 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
             onChange={(e) =>
               setFormData({ ...formData, coverImage: e.target.value })
             }
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
             placeholder="https://images.unsplash.com/..."
           />
           {formData.coverImage && (
             <img
               src={formData.coverImage}
               alt="Cover preview"
-              className="mt-3 rounded-lg max-h-48 object-cover"
+              className="mt-3 max-h-48 rounded-lg object-cover"
             />
           )}
         </div>
 
         {/* Content Editor */}
         <div>
-          <div className="flex justify-between items-center mb-2">
+          <div className="mb-2 flex items-center justify-between">
             <label
               htmlFor="content"
               className="block text-sm font-medium text-gray-700"
@@ -297,13 +297,13 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
               onClick={() => setPreview(!preview)}
               className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700"
             >
-              <Eye className="h-4 w-4" />
+              <Eye className="size-4" />
               {preview ? 'Edit' : 'Preview'}
             </button>
           </div>
 
           {preview ? (
-            <div className="w-full min-h-[400px] px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 prose prose-green max-w-none">
+            <div className="prose prose-green min-h-[400px] w-full max-w-none rounded-lg border border-gray-300 bg-gray-50 px-4 py-3">
               <div
                 dangerouslySetInnerHTML={{
                   __html: formData.content
@@ -323,11 +323,11 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
               onChange={(e) =>
                 setFormData({ ...formData, content: e.target.value })
               }
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent font-mono text-sm"
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 font-mono text-sm focus:border-transparent focus:ring-2 focus:ring-green-500"
               placeholder="# Your Blog Post Content..."
             />
           )}
-          <p className="text-sm text-gray-500 mt-2">
+          <p className="mt-2 text-sm text-gray-500">
             Supports Markdown formatting: **bold**, *italic*, # headings, code blocks, etc.
           </p>
         </div>
@@ -341,7 +341,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
               onChange={(e) =>
                 setFormData({ ...formData, featured: e.target.checked })
               }
-              className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+              className="size-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
             />
             <span className="text-sm font-medium text-gray-700">
               Featured Post
@@ -350,23 +350,23 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-4 pt-4 border-t">
+        <div className="flex gap-4 border-t pt-4">
           {formData.published ? (
             <>
               <button
                 type="button"
                 onClick={(e) => handleSubmit(e)}
                 disabled={saving}
-                className="flex-1 flex items-center justify-center gap-2 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-600 px-6 py-3 text-white transition-colors hover:bg-green-700 disabled:opacity-50"
               >
-                <Save className="h-5 w-5" />
+                <Save className="size-5" />
                 {saving ? 'Saving...' : 'Save Changes'}
               </button>
               <button
                 type="button"
                 onClick={(e) => handleSubmit(e, false)}
                 disabled={saving}
-                className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                className="rounded-lg border border-gray-300 px-6 py-3 text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50"
               >
                 Unpublish
               </button>
@@ -377,7 +377,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
                 type="button"
                 onClick={(e) => handleSubmit(e)}
                 disabled={saving}
-                className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                className="flex-1 rounded-lg border border-gray-300 px-6 py-3 text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50"
               >
                 {saving ? 'Saving...' : 'Save as Draft'}
               </button>
@@ -385,9 +385,9 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
                 type="button"
                 onClick={(e) => handleSubmit(e, true)}
                 disabled={saving}
-                className="flex-1 flex items-center justify-center gap-2 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-600 px-6 py-3 text-white transition-colors hover:bg-green-700 disabled:opacity-50"
               >
-                <Save className="h-5 w-5" />
+                <Save className="size-5" />
                 {saving ? 'Publishing...' : 'Publish'}
               </button>
             </>

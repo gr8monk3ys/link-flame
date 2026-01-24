@@ -132,10 +132,10 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
   return (
     <div className="space-y-8">
       {/* Rating Summary */}
-      <div className="flex flex-col md:flex-row gap-8">
+      <div className="flex flex-col gap-8 md:flex-row">
         <div className="flex flex-col items-center md:items-start">
           <div className="text-5xl font-bold">{averageRating.toFixed(1)}</div>
-          <div className="flex items-center gap-1 my-2">
+          <div className="my-2 flex items-center gap-1">
             {[1, 2, 3, 4, 5].map((star) => (
               <Star
                 key={star}
@@ -160,14 +160,14 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
 
             return (
               <div key={rating} className="flex items-center gap-2">
-                <span className="text-sm w-16">{rating} star</span>
-                <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                <span className="w-16 text-sm">{rating} star</span>
+                <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
                   <div
                     className="h-full bg-yellow-400 transition-all"
                     style={{ width: `${percentage}%` }}
                   />
                 </div>
-                <span className="text-sm text-muted-foreground w-12 text-right">
+                <span className="w-12 text-right text-sm text-muted-foreground">
                   {count}
                 </span>
               </div>
@@ -184,12 +184,12 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
               Write a Review
             </Button>
           ) : (
-            <form onSubmit={handleSubmitReview} className="space-y-4 border rounded-lg p-6">
-              <h3 className="font-semibold text-lg">Write Your Review</h3>
+            <form onSubmit={handleSubmitReview} className="space-y-4 rounded-lg border p-6">
+              <h3 className="text-lg font-semibold">Write Your Review</h3>
 
               {/* Star Rating */}
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label className="mb-2 block text-sm font-medium">
                   Rating *
                 </label>
                 <div className="flex items-center gap-1">
@@ -200,7 +200,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
                       onClick={() => setRating(star)}
                       onMouseEnter={() => setHoverRating(star)}
                       onMouseLeave={() => setHoverRating(0)}
-                      className="p-1 hover:scale-110 transition-transform"
+                      className="p-1 transition-transform hover:scale-110"
                     >
                       <Star
                         className={`size-8 ${
@@ -216,7 +216,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
 
               {/* Comment */}
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label className="mb-2 block text-sm font-medium">
                   Comment (optional)
                 </label>
                 <Textarea
@@ -227,7 +227,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
                   maxLength={1000}
                 />
                 {comment.length > 0 && (
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <p className="mt-1 text-xs text-muted-foreground">
                     {comment.length}/1000 characters
                   </p>
                 )}
@@ -263,10 +263,10 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
 
       {/* Reviews List */}
       <div className="space-y-6">
-        <h3 className="font-semibold text-xl">Customer Reviews</h3>
+        <h3 className="text-xl font-semibold">Customer Reviews</h3>
 
         {reviews.length === 0 ? (
-          <p className="text-center text-muted-foreground py-8">
+          <p className="py-8 text-center text-muted-foreground">
             No reviews yet. Be the first to review this product!
           </p>
         ) : (
@@ -279,11 +279,11 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
                     <img
                       src={review.user.image}
                       alt={review.user.name || 'User'}
-                      className="w-10 h-10 rounded-full"
+                      className="size-10 rounded-full"
                     />
                   ) : (
-                    <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-                      <span className="text-gray-600 font-medium">
+                    <div className="flex size-10 items-center justify-center rounded-full bg-gray-200">
+                      <span className="font-medium text-gray-600">
                         {review.user.name?.charAt(0) || 'U'}
                       </span>
                     </div>
@@ -291,7 +291,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
 
                   {/* Review Content */}
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
+                    <div className="mb-1 flex items-center gap-2">
                       <span className="font-medium">
                         {review.user.name || 'Anonymous'}
                       </span>
@@ -300,7 +300,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-1 mb-2">
+                    <div className="mb-2 flex items-center gap-1">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <Star
                           key={star}
@@ -314,7 +314,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
                     </div>
 
                     {review.comment && (
-                      <p className="text-gray-700 whitespace-pre-wrap">
+                      <p className="whitespace-pre-wrap text-gray-700">
                         {review.comment}
                       </p>
                     )}

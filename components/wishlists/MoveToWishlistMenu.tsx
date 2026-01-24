@@ -84,9 +84,9 @@ export function MoveToWishlistMenu({
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-2 max-h-64 overflow-y-auto">
+          <div className="max-h-64 space-y-2 overflow-y-auto">
             {otherWishlists.length === 0 ? (
-              <p className="text-center text-muted-foreground py-4">
+              <p className="py-4 text-center text-muted-foreground">
                 No other wishlists available
               </p>
             ) : (
@@ -96,14 +96,14 @@ export function MoveToWishlistMenu({
                   onClick={() => handleMove(wishlist.id)}
                   disabled={isSubmitting}
                   className={cn(
-                    'w-full flex items-center justify-between p-3 rounded-lg border transition-colors',
+                    'flex w-full items-center justify-between rounded-lg border p-3 transition-colors',
                     'hover:bg-muted disabled:opacity-50'
                   )}
                 >
                   <div className="flex items-center gap-3">
                     <Heart
                       className={cn(
-                        'h-5 w-5',
+                        'size-5',
                         wishlist.isDefault
                           ? 'fill-red-500 text-red-500'
                           : 'text-muted-foreground'
@@ -117,9 +117,9 @@ export function MoveToWishlistMenu({
                     </div>
                   </div>
                   {selectedId === wishlist.id ? (
-                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                    <span className="size-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
                   ) : (
-                    <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                    <ChevronRight className="size-5 text-muted-foreground" />
                   )}
                 </button>
               ))
@@ -129,13 +129,13 @@ export function MoveToWishlistMenu({
           {onCreateNew && (
             <>
               {isCreating ? (
-                <div className="space-y-3 pt-2 border-t">
+                <div className="space-y-3 border-t pt-2">
                   <input
                     type="text"
                     value={newListName}
                     onChange={(e) => setNewListName(e.target.value)}
                     placeholder="New wishlist name"
-                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
                     autoFocus
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') handleCreateAndMove();
@@ -168,9 +168,9 @@ export function MoveToWishlistMenu({
                 <Button
                   variant="outline"
                   onClick={() => setIsCreating(true)}
-                  className="w-full mt-2"
+                  className="mt-2 w-full"
                 >
-                  <Plus className="h-4 w-4 mr-2" />
+                  <Plus className="mr-2 size-4" />
                   Create New Wishlist
                 </Button>
               )}

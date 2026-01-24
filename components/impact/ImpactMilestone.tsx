@@ -69,14 +69,14 @@ export function ImpactMilestone({
   return (
     <div
       className={cn(
-        "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-opacity duration-300",
+        "fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm transition-opacity duration-300",
         isExiting ? "opacity-0" : "opacity-100"
       )}
       onClick={handleClose}
     >
       <div
         className={cn(
-          "relative bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-950 dark:to-emerald-900 rounded-2xl p-8 max-w-md w-full shadow-2xl transition-all duration-300",
+          "relative w-full max-w-md rounded-2xl bg-gradient-to-br from-green-50 to-emerald-100 p-8 shadow-2xl transition-all duration-300 dark:from-green-950 dark:to-emerald-900",
           isExiting ? "scale-95 opacity-0" : "scale-100 opacity-100"
         )}
         onClick={(e) => e.stopPropagation()}
@@ -84,43 +84,43 @@ export function ImpactMilestone({
         {/* Close button */}
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
+          className="absolute right-4 top-4 text-muted-foreground transition-colors hover:text-foreground"
           aria-label="Close"
         >
-          <X className="h-5 w-5" />
+          <X className="size-5" />
         </button>
 
         {/* Celebration icon */}
-        <div className="flex justify-center mb-4">
+        <div className="mb-4 flex justify-center">
           <div className="relative">
-            <PartyPopper className="h-16 w-16 text-yellow-500 animate-bounce" />
-            <div className="absolute -top-2 -right-2">
+            <PartyPopper className="size-16 animate-bounce text-yellow-500" />
+            <div className="absolute -right-2 -top-2">
               <span className="text-2xl">🎉</span>
             </div>
           </div>
         </div>
 
         {/* Milestone message */}
-        <h2 className="text-2xl font-bold text-center text-green-800 dark:text-green-200 mb-2">
+        <h2 className="mb-2 text-center text-2xl font-bold text-green-800 dark:text-green-200">
           Milestone Achieved!
         </h2>
 
-        <p className="text-center text-green-700 dark:text-green-300 mb-6">
+        <p className="mb-6 text-center text-green-700 dark:text-green-300">
           You&apos;ve reached an amazing goal!
         </p>
 
         {/* Metric display */}
-        <div className="bg-white/50 dark:bg-black/20 rounded-xl p-6 text-center">
-          <div className="flex justify-center mb-3">
-            <div className="h-16 w-16 rounded-full bg-green-500/20 flex items-center justify-center">
-              <Icon className="h-8 w-8 text-green-600 dark:text-green-400" />
+        <div className="rounded-xl bg-white/50 p-6 text-center dark:bg-black/20">
+          <div className="mb-3 flex justify-center">
+            <div className="flex size-16 items-center justify-center rounded-full bg-green-500/20">
+              <Icon className="size-8 text-green-600 dark:text-green-400" />
             </div>
           </div>
 
-          <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-1">
+          <div className="mb-1 text-4xl font-bold text-green-600 dark:text-green-400">
             {milestone.milestone}
           </div>
-          <div className="text-lg text-muted-foreground mb-2">
+          <div className="mb-2 text-lg text-muted-foreground">
             {milestone.unit}
           </div>
           <div className="font-medium text-green-800 dark:text-green-200">
@@ -129,7 +129,7 @@ export function ImpactMilestone({
         </div>
 
         {/* Encouragement */}
-        <p className="text-center text-sm text-muted-foreground mt-6">
+        <p className="mt-6 text-center text-sm text-muted-foreground">
           Thank you for making a difference! Keep up the amazing work.
         </p>
       </div>

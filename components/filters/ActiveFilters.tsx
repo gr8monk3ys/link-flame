@@ -140,20 +140,20 @@ export function ActiveFilters({ className }: ActiveFiltersProps) {
 
   return (
     <div className={cn('flex flex-wrap items-center gap-2', className)}>
-      <span className="text-sm text-gray-500 mr-1">Active filters:</span>
+      <span className="mr-1 text-sm text-gray-500">Active filters:</span>
 
       {activeFilters.map((filter, index) => (
         <span
           key={`${filter.type}-${index}`}
-          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-sm bg-gray-100 text-gray-700"
+          className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 text-sm text-gray-700"
         >
           {filter.label}
           <button
             onClick={filter.onRemove}
-            className="ml-1 p-0.5 rounded-full hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="ml-1 rounded-full p-0.5 transition-colors hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500"
             aria-label={`Remove ${filter.label} filter`}
           >
-            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="size-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -163,7 +163,7 @@ export function ActiveFilters({ className }: ActiveFiltersProps) {
       {activeFilters.length > 1 && (
         <button
           onClick={clearAllFilters}
-          className="text-sm text-gray-500 hover:text-gray-700 underline ml-2"
+          className="ml-2 text-sm text-gray-500 underline hover:text-gray-700"
         >
           Clear all
         </button>

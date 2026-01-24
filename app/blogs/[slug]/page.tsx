@@ -188,13 +188,13 @@ export default async function BlogPost({ params }: PageProps<{ slug: string }>) 
       <article className="prose lg:prose-xl mx-auto px-4 py-8">
         <header className="mb-8">
           <h1>{post.title}</h1>
-          <div className="flex items-center gap-4 text-gray-500 not-prose">
+          <div className="not-prose flex items-center gap-4 text-gray-500">
             <div className="flex items-center gap-2">
               {post.author.image && (
                 <img
                   src={post.author.image}
                   alt={post.author.name}
-                  className="w-10 h-10 rounded-full"
+                  className="size-10 rounded-full"
                 />
               )}
               <div>
@@ -219,16 +219,16 @@ export default async function BlogPost({ params }: PageProps<{ slug: string }>) 
             <img
               src={post.coverImage}
               alt={post.title}
-              className="w-full rounded-lg mt-6"
+              className="mt-6 w-full rounded-lg"
             />
           )}
 
           {/* Category and Tags */}
-          <div className="flex flex-wrap gap-2 mt-4 not-prose">
+          <div className="not-prose mt-4 flex flex-wrap gap-2">
             {post.category && (
               <a
                 href={`/blogs/categories/${post.category.toLowerCase()}`}
-                className="inline-block px-3 py-1 text-sm font-medium bg-primary/10 text-primary rounded-full hover:bg-primary/20"
+                className="inline-block rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary hover:bg-primary/20"
               >
                 {post.category}
               </a>
@@ -237,7 +237,7 @@ export default async function BlogPost({ params }: PageProps<{ slug: string }>) 
               <a
                 key={tag}
                 href={`/blogs/tags/${tag.toLowerCase()}`}
-                className="inline-block px-3 py-1 text-sm text-gray-600 bg-gray-100 rounded-full hover:bg-gray-200"
+                className="inline-block rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-600 hover:bg-gray-200"
               >
                 #{tag}
               </a>
@@ -249,7 +249,7 @@ export default async function BlogPost({ params }: PageProps<{ slug: string }>) 
         <div dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
 
         {/* Article Footer */}
-        <footer className="mt-12 pt-8 border-t not-prose">
+        <footer className="not-prose mt-12 border-t pt-8">
           <p className="text-sm text-gray-500">
             Last updated: {format(typeof updatedAt === 'string' ? parseISO(updatedAt) : new Date(updatedAt), 'MMMM d, yyyy')}
           </p>

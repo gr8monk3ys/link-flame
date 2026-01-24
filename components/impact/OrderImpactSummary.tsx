@@ -85,8 +85,8 @@ export function OrderImpactSummary({
   if (isLoading) {
     return (
       <Card className={cn("", className)}>
-        <CardContent className="py-8 flex items-center justify-center">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        <CardContent className="flex items-center justify-center py-8">
+          <Loader2 className="size-6 animate-spin text-muted-foreground" />
         </CardContent>
       </Card>
     );
@@ -97,10 +97,10 @@ export function OrderImpactSummary({
   }
 
   return (
-    <Card className={cn("bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950 dark:to-emerald-950 border-green-200 dark:border-green-800", className)}>
+    <Card className={cn("border-green-200 bg-gradient-to-br from-green-50 to-emerald-50 dark:border-green-800 dark:from-green-950 dark:to-emerald-950", className)}>
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 text-green-800 dark:text-green-200">
-          <Sparkles className="h-5 w-5" />
+          <Sparkles className="size-5" />
           Your Order&apos;s Impact
         </CardTitle>
         <CardDescription className="text-green-600 dark:text-green-400">
@@ -108,25 +108,25 @@ export function OrderImpactSummary({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
           {metrics.map((metric) => {
             const Icon = ICON_MAP[metric.iconName] || Leaf;
 
             return (
               <div
                 key={metric.metricId}
-                className="bg-white/60 dark:bg-black/20 rounded-xl p-4 text-center"
+                className="rounded-xl bg-white/60 p-4 text-center dark:bg-black/20"
               >
-                <div className="flex justify-center mb-2">
-                  <div className="h-10 w-10 rounded-full bg-green-500/20 flex items-center justify-center">
-                    <Icon className="h-5 w-5 text-green-600 dark:text-green-400" />
+                <div className="mb-2 flex justify-center">
+                  <div className="flex size-10 items-center justify-center rounded-full bg-green-500/20">
+                    <Icon className="size-5 text-green-600 dark:text-green-400" />
                   </div>
                 </div>
                 <div className="text-xl font-bold text-green-600 dark:text-green-400">
                   {formatValue(metric.value)}
                 </div>
                 <div className="text-xs text-muted-foreground">{metric.unit}</div>
-                <div className="text-sm font-medium mt-1">{metric.name}</div>
+                <div className="mt-1 text-sm font-medium">{metric.name}</div>
               </div>
             );
           })}
@@ -134,7 +134,7 @@ export function OrderImpactSummary({
 
         {/* Show first comparison if available */}
         {metrics[0]?.comparison && (
-          <p className="text-center text-sm text-green-700 dark:text-green-300 mt-4 italic">
+          <p className="mt-4 text-center text-sm italic text-green-700 dark:text-green-300">
             {metrics[0].comparison}
           </p>
         )}

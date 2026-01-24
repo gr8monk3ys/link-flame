@@ -202,21 +202,21 @@ export function QuizModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
         className={cn(
-          'sm:max-w-2xl max-h-[90vh] overflow-y-auto',
+          'max-h-[90vh] overflow-y-auto sm:max-w-2xl',
           state === 'results' && 'sm:max-w-4xl'
         )}
       >
         {/* Intro Screen */}
         {state === 'intro' && (
           <>
-            <DialogHeader className="text-center pb-4">
-              <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                <Leaf className="w-8 h-8 text-primary" />
+            <DialogHeader className="pb-4 text-center">
+              <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-primary/10">
+                <Leaf className="size-8 text-primary" />
               </div>
               <DialogTitle className="text-2xl">
                 Find Your Perfect Products
               </DialogTitle>
-              <DialogDescription className="text-base mt-2">
+              <DialogDescription className="mt-2 text-base">
                 Answer a few quick questions about your lifestyle and preferences,
                 and we&apos;ll recommend eco-friendly products tailored just for you.
               </DialogDescription>
@@ -225,26 +225,26 @@ export function QuizModal({
             <div className="space-y-4 py-4">
               <div className="grid gap-3 text-sm">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-sm font-medium">
+                  <div className="flex size-8 items-center justify-center rounded-full bg-secondary text-sm font-medium">
                     1
                   </div>
                   <span>Tell us about your sustainability goals</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-sm font-medium">
+                  <div className="flex size-8 items-center justify-center rounded-full bg-secondary text-sm font-medium">
                     2
                   </div>
                   <span>Share your preferences and values</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-sm font-medium">
+                  <div className="flex size-8 items-center justify-center rounded-full bg-secondary text-sm font-medium">
                     3
                   </div>
                   <span>Get personalized product recommendations</span>
                 </div>
               </div>
 
-              <p className="text-sm text-muted-foreground text-center pt-2">
+              <p className="pt-2 text-center text-sm text-muted-foreground">
                 Takes about 2 minutes
               </p>
             </div>
@@ -258,7 +258,7 @@ export function QuizModal({
               >
                 {isLoadingQuestions ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Loader2 className="mr-2 size-4 animate-spin" />
                     Loading...
                   </>
                 ) : (
@@ -268,7 +268,7 @@ export function QuizModal({
             </div>
 
             {error && (
-              <p className="text-sm text-destructive text-center mt-4">{error}</p>
+              <p className="mt-4 text-center text-sm text-destructive">{error}</p>
             )}
           </>
         )}
@@ -283,7 +283,7 @@ export function QuizModal({
               />
             </DialogHeader>
 
-            <div className="py-6 min-h-[300px]">
+            <div className="min-h-[300px] py-6">
               <QuizQuestion
                 question={currentQuestion.question}
                 options={currentQuestion.options}
@@ -294,16 +294,16 @@ export function QuizModal({
             </div>
 
             {error && (
-              <p className="text-sm text-destructive text-center mb-4">{error}</p>
+              <p className="mb-4 text-center text-sm text-destructive">{error}</p>
             )}
 
-            <div className="flex items-center justify-between pt-4 border-t">
+            <div className="flex items-center justify-between border-t pt-4">
               <Button
                 variant="ghost"
                 onClick={handleBack}
                 disabled={currentQuestionIndex === 0}
               >
-                <ArrowLeft className="w-4 h-4 mr-2" />
+                <ArrowLeft className="mr-2 size-4" />
                 Back
               </Button>
 
@@ -314,7 +314,7 @@ export function QuizModal({
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      <Loader2 className="mr-2 size-4 animate-spin" />
                       Getting Results...
                     </>
                   ) : (
@@ -324,7 +324,7 @@ export function QuizModal({
               ) : (
                 <Button onClick={handleNext} disabled={!canProceed()}>
                   Next
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                  <ArrowRight className="ml-2 size-4" />
                 </Button>
               )}
             </div>
@@ -334,8 +334,8 @@ export function QuizModal({
         {/* Loading Screen */}
         {state === 'loading' && (
           <div className="py-12 text-center">
-            <Loader2 className="w-12 h-12 mx-auto text-primary animate-spin mb-4" />
-            <h3 className="text-xl font-semibold mb-2">
+            <Loader2 className="mx-auto mb-4 size-12 animate-spin text-primary" />
+            <h3 className="mb-2 text-xl font-semibold">
               Finding Your Perfect Products
             </h3>
             <p className="text-muted-foreground">
@@ -351,7 +351,7 @@ export function QuizModal({
               onClick={onClose}
               className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
             >
-              <X className="h-4 w-4" />
+              <X className="size-4" />
               <span className="sr-only">Close</span>
             </button>
 
@@ -363,7 +363,7 @@ export function QuizModal({
                 showShareButton={true}
               />
 
-              <div className="flex justify-center mt-6 pt-4 border-t">
+              <div className="mt-6 flex justify-center border-t pt-4">
                 <Button onClick={handleViewResults} variant="outline">
                   View Full Results Page
                 </Button>

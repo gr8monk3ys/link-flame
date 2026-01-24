@@ -4,7 +4,7 @@ import { SubscriptionDashboard } from '@/components/subscriptions';
 
 export default function SubscriptionsPage() {
   return (
-    <div className="container py-10 max-w-4xl">
+    <div className="container max-w-4xl py-10">
       <SubscriptionDashboard />
     </div>
   );

@@ -119,9 +119,9 @@ export function CertificationBadges({
             key={cert.id}
             variant="outline"
             className={cn(
-              "flex items-center cursor-default transition-colors",
+              "flex cursor-default items-center transition-colors",
               badgeSizeClasses[size],
-              certificationColors[cert.name] || "bg-gray-100 text-gray-800 border-gray-200"
+              certificationColors[cert.name] || "border-gray-200 bg-gray-100 text-gray-800"
             )}
             title={cert.description || cert.name}
           >
@@ -149,9 +149,9 @@ export function CertificationBadges({
           <div
             key={cert.id}
             className={cn(
-              "flex items-center justify-center rounded-full border cursor-default transition-colors",
+              "flex cursor-default items-center justify-center rounded-full border transition-colors",
               iconContainerSizeClasses[size],
-              certificationColors[cert.name] || "bg-gray-100 text-gray-800 border-gray-200"
+              certificationColors[cert.name] || "border-gray-200 bg-gray-100 text-gray-800"
             )}
             role="img"
             aria-label={cert.name}

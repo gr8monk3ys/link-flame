@@ -39,7 +39,7 @@ export function QuizLauncher({
         className={cn(className)}
         {...buttonProps}
       >
-        {showIcon && <Sparkles className="w-4 h-4 mr-2" />}
+        {showIcon && <Sparkles className="mr-2 size-4" />}
         {text}
       </Button>
 

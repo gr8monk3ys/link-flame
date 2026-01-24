@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function ReferralsPage() {
   return (
-    <div className="container py-10 max-w-4xl">
+    <div className="container max-w-4xl py-10">
       <ReferralDashboard />
     </div>
   );

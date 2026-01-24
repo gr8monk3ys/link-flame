@@ -492,7 +492,7 @@ export function InlineRedeemWidget({
           variant="ghost"
           size="sm"
           onClick={handleRemoveDiscount}
-          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+          className="text-red-600 hover:bg-red-50 hover:text-red-700"
         >
           Remove
         </Button>

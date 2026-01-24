@@ -66,10 +66,10 @@ export function WishlistSelector({
           disabled={isLoading}
         >
           <span className="flex items-center gap-2">
-            <Heart className="h-4 w-4" />
+            <Heart className="size-4" />
             {selectedWishlist ? selectedWishlist.name : 'Select wishlist'}
           </span>
-          <ChevronDown className="h-4 w-4 opacity-50" />
+          <ChevronDown className="size-4 opacity-50" />
         </Button>
       </div>
 
@@ -82,7 +82,7 @@ export function WishlistSelector({
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-2 max-h-64 overflow-y-auto">
+          <div className="max-h-64 space-y-2 overflow-y-auto">
             {wishlists.map((wishlist) => (
               <button
                 key={wishlist.id}
@@ -91,7 +91,7 @@ export function WishlistSelector({
                   setIsOpen(false);
                 }}
                 className={cn(
-                  'w-full flex items-center justify-between p-3 rounded-lg border transition-colors',
+                  'flex w-full items-center justify-between rounded-lg border p-3 transition-colors',
                   selectedWishlistId === wishlist.id
                     ? 'border-primary bg-primary/5'
                     : 'border-border hover:bg-muted'
@@ -100,7 +100,7 @@ export function WishlistSelector({
                 <div className="flex items-center gap-3">
                   <Heart
                     className={cn(
-                      'h-5 w-5',
+                      'size-5',
                       wishlist.isDefault ? 'fill-red-500 text-red-500' : 'text-muted-foreground'
                     )}
                   />
@@ -112,20 +112,20 @@ export function WishlistSelector({
                   </div>
                 </div>
                 {selectedWishlistId === wishlist.id && (
-                  <Check className="h-5 w-5 text-primary" />
+                  <Check className="size-5 text-primary" />
                 )}
               </button>
             ))}
           </div>
 
           {isCreating ? (
-            <div className="space-y-3 pt-2 border-t">
+            <div className="space-y-3 border-t pt-2">
               <input
                 type="text"
                 value={newListName}
                 onChange={(e) => setNewListName(e.target.value)}
                 placeholder="New wishlist name"
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
                 autoFocus
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') handleCreateNew();
@@ -158,9 +158,9 @@ export function WishlistSelector({
             <Button
               variant="outline"
               onClick={() => setIsCreating(true)}
-              className="w-full mt-2"
+              className="mt-2 w-full"
             >
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="mr-2 size-4" />
               Create New Wishlist
             </Button>
           )}

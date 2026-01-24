@@ -78,9 +78,9 @@ export function BundleProgress({
               className="flex flex-col items-center"
             >
               {currentItems >= step ? (
-                <CheckCircle2 className="h-5 w-5 text-green-500" />
+                <CheckCircle2 className="size-5 text-green-500" />
               ) : (
-                <Circle className="h-5 w-5 text-muted-foreground/50" />
+                <Circle className="size-5 text-muted-foreground/50" />
               )}
               <span className="mt-1 text-xs text-muted-foreground">{step}</span>
             </div>

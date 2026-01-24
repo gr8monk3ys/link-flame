@@ -107,30 +107,30 @@ export function ImpactShareCard({ metrics, onClose }: ImpactShareCardProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className="relative bg-background rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden"
+        className="relative w-full max-w-lg overflow-hidden rounded-2xl bg-background shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 text-muted-foreground hover:text-foreground transition-colors"
+          className="absolute right-4 top-4 z-10 text-muted-foreground transition-colors hover:text-foreground"
           aria-label="Close"
         >
-          <X className="h-5 w-5" />
+          <X className="size-5" />
         </button>
 
         {/* Share Card Preview */}
         <div
           ref={cardRef}
-          className="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950 dark:via-emerald-950 dark:to-teal-950 p-8"
+          className="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 p-8 dark:from-green-950 dark:via-emerald-950 dark:to-teal-950"
         >
           {/* Header */}
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-green-800 dark:text-green-200 mb-1">
+          <div className="mb-6 text-center">
+            <h2 className="mb-1 text-2xl font-bold text-green-800 dark:text-green-200">
               My Environmental Impact
             </h2>
             <p className="text-sm text-green-600 dark:text-green-400">
@@ -139,16 +139,16 @@ export function ImpactShareCard({ metrics, onClose }: ImpactShareCardProps) {
           </div>
 
           {/* Metrics Grid */}
-          <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="mb-6 grid grid-cols-3 gap-4">
             {topMetrics.map((metric) => {
               const Icon = ICON_MAP[metric.iconName] || Leaf;
               return (
                 <div
                   key={metric.metricId}
-                  className="bg-white/60 dark:bg-black/20 rounded-xl p-4 text-center"
+                  className="rounded-xl bg-white/60 p-4 text-center dark:bg-black/20"
                 >
-                  <div className="flex justify-center mb-2">
-                    <Icon className="h-8 w-8 text-green-600 dark:text-green-400" />
+                  <div className="mb-2 flex justify-center">
+                    <Icon className="size-8 text-green-600 dark:text-green-400" />
                   </div>
                   <div className="text-2xl font-bold text-green-600 dark:text-green-400">
                     {formatValue(metric.totalValue)}
@@ -168,8 +168,8 @@ export function ImpactShareCard({ metrics, onClose }: ImpactShareCardProps) {
         </div>
 
         {/* Share Actions */}
-        <div className="p-6 space-y-4">
-          <h3 className="font-semibold text-center">Share Your Impact</h3>
+        <div className="space-y-4 p-6">
+          <h3 className="text-center font-semibold">Share Your Impact</h3>
 
           {/* Share Buttons */}
           <div className="flex justify-center gap-3">
@@ -179,7 +179,7 @@ export function ImpactShareCard({ metrics, onClose }: ImpactShareCardProps) {
               className="flex-1"
               onClick={handleTwitterShare}
             >
-              <Twitter className="h-5 w-5 mr-2" />
+              <Twitter className="mr-2 size-5" />
               Twitter
             </Button>
             <Button
@@ -188,7 +188,7 @@ export function ImpactShareCard({ metrics, onClose }: ImpactShareCardProps) {
               className="flex-1"
               onClick={handleFacebookShare}
             >
-              <Facebook className="h-5 w-5 mr-2" />
+              <Facebook className="mr-2 size-5" />
               Facebook
             </Button>
           </div>
@@ -198,19 +198,19 @@ export function ImpactShareCard({ metrics, onClose }: ImpactShareCardProps) {
             <textarea
               readOnly
               value={shareText}
-              className="w-full p-3 pr-12 text-sm bg-muted rounded-lg resize-none"
+              className="w-full resize-none rounded-lg bg-muted p-3 pr-12 text-sm"
               rows={3}
             />
             <Button
               variant="ghost"
               size="sm"
-              className="absolute top-2 right-2"
+              className="absolute right-2 top-2"
               onClick={handleCopy}
             >
               {copied ? (
-                <Check className="h-4 w-4 text-green-600" />
+                <Check className="size-4 text-green-600" />
               ) : (
-                <Copy className="h-4 w-4" />
+                <Copy className="size-4" />
               )}
             </Button>
           </div>

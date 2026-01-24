@@ -13,7 +13,7 @@ export function QuizProgress({ currentStep, totalSteps, className }: QuizProgres
 
   return (
     <div className={cn('w-full', className)}>
-      <div className="flex items-center justify-between mb-2">
+      <div className="mb-2 flex items-center justify-between">
         <span className="text-sm text-muted-foreground">
           Question {currentStep} of {totalSteps}
         </span>
@@ -21,9 +21,9 @@ export function QuizProgress({ currentStep, totalSteps, className }: QuizProgres
           {Math.round(progress)}%
         </span>
       </div>
-      <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+      <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
         <div
-          className="h-full bg-primary transition-all duration-500 ease-out rounded-full"
+          className="h-full rounded-full bg-primary transition-all duration-500 ease-out"
           style={{ width: `${progress}%` }}
           role="progressbar"
           aria-valuenow={currentStep}

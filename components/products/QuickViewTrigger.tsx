@@ -218,14 +218,14 @@ export function QuickViewTrigger({
           "border border-gray-200",
           "transition-all duration-200 ease-in-out",
           // Hover/Focus states
-          "hover:bg-white hover:shadow-lg hover:scale-105",
+          "hover:scale-105 hover:bg-white hover:shadow-lg",
           "focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2",
           // Active state
           "active:scale-95",
           // Visibility transition
           showOnHover && [
-            "opacity-0 translate-y-1 pointer-events-none",
-            "group-hover/card:opacity-100 group-hover/card:translate-y-0 group-hover/card:pointer-events-auto",
+            "pointer-events-none translate-y-1 opacity-0",
+            "group-hover/card:pointer-events-auto group-hover/card:translate-y-0 group-hover/card:opacity-100",
           ],
           // Size
           sizeClasses[size],
@@ -253,7 +253,7 @@ export function QuickViewTrigger({
           className={cn(
             "absolute -bottom-8 left-1/2 -translate-x-1/2",
             "whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white",
-            "opacity-0 transition-opacity pointer-events-none",
+            "pointer-events-none opacity-0 transition-opacity",
             "group-hover:opacity-100"
           )}
           role="tooltip"

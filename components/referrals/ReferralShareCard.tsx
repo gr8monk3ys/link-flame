@@ -71,10 +71,10 @@ export function ReferralShareCard({
   }
 
   return (
-    <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
+    <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Share2 className="h-5 w-5" />
+          <Share2 className="size-5" />
           Share and Earn
         </CardTitle>
         <CardDescription>
@@ -90,7 +90,7 @@ export function ReferralShareCard({
               <Input
                 value={referralCode}
                 readOnly
-                className="pr-10 font-mono text-lg font-bold tracking-wider bg-background"
+                className="bg-background pr-10 font-mono text-lg font-bold tracking-wider"
                 aria-label="Your referral code"
               />
             </div>
@@ -101,9 +101,9 @@ export function ReferralShareCard({
               aria-label="Copy referral code"
             >
               {copied === "code" ? (
-                <Check className="h-4 w-4 text-green-500" />
+                <Check className="size-4 text-green-500" />
               ) : (
-                <Copy className="h-4 w-4" />
+                <Copy className="size-4" />
               )}
             </Button>
           </div>
@@ -116,7 +116,7 @@ export function ReferralShareCard({
             <Input
               value={referralLink}
               readOnly
-              className="font-mono text-sm bg-background"
+              className="bg-background font-mono text-sm"
               aria-label="Your referral link"
             />
             <Button
@@ -126,9 +126,9 @@ export function ReferralShareCard({
               aria-label="Copy referral link"
             >
               {copied === "link" ? (
-                <Check className="h-4 w-4 text-green-500" />
+                <Check className="size-4 text-green-500" />
               ) : (
-                <Copy className="h-4 w-4" />
+                <Copy className="size-4" />
               )}
             </Button>
           </div>
@@ -144,7 +144,7 @@ export function ReferralShareCard({
               onClick={shareViaEmail}
               className="flex items-center gap-2"
             >
-              <Mail className="h-4 w-4" />
+              <Mail className="size-4" />
               Email
             </Button>
             <Button
@@ -154,7 +154,7 @@ export function ReferralShareCard({
               className="flex items-center gap-2"
             >
               <svg
-                className="h-4 w-4"
+                className="size-4"
                 fill="currentColor"
                 viewBox="0 0 24 24"
                 aria-hidden="true"
@@ -170,7 +170,7 @@ export function ReferralShareCard({
               className="flex items-center gap-2"
             >
               <svg
-                className="h-4 w-4"
+                className="size-4"
                 fill="currentColor"
                 viewBox="0 0 24 24"
                 aria-hidden="true"
@@ -183,7 +183,7 @@ export function ReferralShareCard({
         </div>
 
         {/* Reward Summary */}
-        <div className="flex items-center justify-between pt-4 border-t">
+        <div className="flex items-center justify-between border-t pt-4">
           <div className="text-sm">
             <span className="text-muted-foreground">They get:</span>{" "}
             <span className="font-semibold">{discountPercent}% off first order</span>

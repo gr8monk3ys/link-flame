@@ -82,11 +82,11 @@ export function WishlistItems({
   if (items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
-        <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
-          <ShoppingCart className="h-8 w-8 text-muted-foreground" />
+        <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-muted">
+          <ShoppingCart className="size-8 text-muted-foreground" />
         </div>
-        <h3 className="font-semibold text-lg mb-2">No items yet</h3>
-        <p className="text-muted-foreground mb-4">
+        <h3 className="mb-2 text-lg font-semibold">No items yet</h3>
+        <p className="mb-4 text-muted-foreground">
           Start adding products to this wishlist
         </p>
         <Link href="/products">
@@ -133,12 +133,12 @@ export function WishlistItems({
         {items.map((item) => (
           <div
             key={item.id}
-            className="flex gap-4 rounded-lg border p-4 bg-card"
+            className="flex gap-4 rounded-lg border bg-card p-4"
           >
             {/* Product Image */}
             <Link
               href={`/products/${item.productId}`}
-              className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-md"
+              className="relative size-24 shrink-0 overflow-hidden rounded-md"
             >
               <Image
                 src={item.product.image}
@@ -150,10 +150,10 @@ export function WishlistItems({
             </Link>
 
             {/* Product Details */}
-            <div className="flex-1 min-w-0">
+            <div className="min-w-0 flex-1">
               <Link
                 href={`/products/${item.productId}`}
-                className="font-medium hover:underline line-clamp-2"
+                className="line-clamp-2 font-medium hover:underline"
               >
                 {item.product.title}
               </Link>
@@ -176,7 +176,7 @@ export function WishlistItems({
               </div>
 
               {item.note && (
-                <p className="mt-2 text-sm text-muted-foreground italic">
+                <p className="mt-2 text-sm italic text-muted-foreground">
                   "{item.note}"
                 </p>
               )}
@@ -195,12 +195,12 @@ export function WishlistItems({
               >
                 {movingToCart[item.productId] ? (
                   <span className="flex items-center gap-1">
-                    <span className="h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    <span className="size-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
                     Adding...
                   </span>
                 ) : (
                   <>
-                    <ShoppingCart className="h-4 w-4 mr-1" />
+                    <ShoppingCart className="mr-1 size-4" />
                     Add to Cart
                   </>
                 )}
@@ -211,14 +211,14 @@ export function WishlistItems({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8"
+                    className="size-8"
                     onClick={() => {
                       setNoteText(item.note || '');
                       setNoteDialogItem(item);
                     }}
                     title="Add note"
                   >
-                    <MessageSquare className="h-4 w-4" />
+                    <MessageSquare className="size-4" />
                   </Button>
                 )}
 
@@ -226,26 +226,26 @@ export function WishlistItems({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8"
+                    className="size-8"
                     onClick={() => setMoveDialogItem(item)}
                     title="Move to another list"
                   >
-                    <MoveRight className="h-4 w-4" />
+                    <MoveRight className="size-4" />
                   </Button>
                 )}
 
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-destructive hover:text-destructive"
+                  className="size-8 text-destructive hover:text-destructive"
                   onClick={() => handleRemove(item.productId)}
                   disabled={removing[item.productId]}
                   title="Remove"
                 >
                   {removing[item.productId] ? (
-                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
                   ) : (
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="size-4" />
                   )}
                 </Button>
               </div>
@@ -267,11 +267,11 @@ export function WishlistItems({
             {otherWishlists.map((wishlist) => (
               <button
                 key={wishlist.id}
-                className="w-full flex items-center justify-between p-3 rounded-lg border hover:bg-muted transition-colors"
+                className="flex w-full items-center justify-between rounded-lg border p-3 transition-colors hover:bg-muted"
                 onClick={() => handleMoveTo(wishlist.id)}
               >
                 <span className="font-medium">{wishlist.name}</span>
-                <MoveRight className="h-4 w-4 text-muted-foreground" />
+                <MoveRight className="size-4 text-muted-foreground" />
               </button>
             ))}
           </div>
@@ -291,7 +291,7 @@ export function WishlistItems({
             value={noteText}
             onChange={(e) => setNoteText(e.target.value)}
             placeholder="e.g., Gift for mom's birthday"
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary min-h-[100px] resize-none"
+            className="min-h-[100px] w-full resize-none rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
             maxLength={500}
           />
           <DialogFooter>
@@ -304,7 +304,7 @@ export function WishlistItems({
                 }}
                 className="mr-auto"
               >
-                <X className="h-4 w-4 mr-1" />
+                <X className="mr-1 size-4" />
                 Remove Note
               </Button>
             )}

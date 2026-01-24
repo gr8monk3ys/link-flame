@@ -103,12 +103,12 @@ export function CartImpactPreview({
   return (
     <div
       className={cn(
-        "bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/50 dark:to-emerald-950/50 rounded-lg p-4 border border-green-200 dark:border-green-800",
+        "rounded-lg border border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 p-4 dark:border-green-800 dark:from-green-950/50 dark:to-emerald-950/50",
         className
       )}
     >
-      <div className="flex items-center gap-2 mb-3">
-        <Sparkles className="h-4 w-4 text-green-600" />
+      <div className="mb-3 flex items-center gap-2">
+        <Sparkles className="size-4 text-green-600" />
         <span className="text-sm font-medium text-green-800 dark:text-green-200">
           Your cart will make a difference!
         </span>
@@ -121,14 +121,14 @@ export function CartImpactPreview({
           return (
             <div
               key={impact.metricId}
-              className="flex items-center gap-2 bg-white/60 dark:bg-black/20 rounded-full px-3 py-1.5"
+              className="flex items-center gap-2 rounded-full bg-white/60 px-3 py-1.5 dark:bg-black/20"
             >
-              <Icon className="h-4 w-4 text-green-600 dark:text-green-400" />
+              <Icon className="size-4 text-green-600 dark:text-green-400" />
               <span className="text-sm">
                 <span className="font-semibold text-green-600 dark:text-green-400">
                   {formatValue(impact.estimatedValue)}
                 </span>
-                <span className="text-muted-foreground ml-1">
+                <span className="ml-1 text-muted-foreground">
                   {impact.unit}
                 </span>
               </span>

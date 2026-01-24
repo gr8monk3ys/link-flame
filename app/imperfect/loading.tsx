@@ -4,10 +4,10 @@ export default function ImperfectLoading() {
       {/* Hero skeleton */}
       <div className="bg-gradient-to-br from-amber-100 via-orange-50 to-yellow-100 py-16 lg:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center animate-pulse">
-            <div className="mx-auto h-10 w-48 rounded-full bg-white/60 mb-6" />
-            <div className="mx-auto h-12 w-96 rounded-lg bg-white/60 mb-4" />
-            <div className="mx-auto h-6 w-[600px] max-w-full rounded-lg bg-white/60 mb-10" />
+          <div className="animate-pulse text-center">
+            <div className="mx-auto mb-6 h-10 w-48 rounded-full bg-white/60" />
+            <div className="mx-auto mb-4 h-12 w-96 rounded-lg bg-white/60" />
+            <div className="mx-auto mb-10 h-6 w-[600px] max-w-full rounded-lg bg-white/60" />
             <div className="flex justify-center gap-4">
               <div className="h-14 w-48 rounded-xl bg-white/60" />
               <div className="h-14 w-32 rounded-xl bg-white/60" />
@@ -19,7 +19,7 @@ export default function ImperfectLoading() {
       {/* Content skeleton */}
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         {/* Filters skeleton */}
-        <div className="mb-8 flex items-center justify-between animate-pulse">
+        <div className="mb-8 flex animate-pulse items-center justify-between">
           <div className="h-6 w-48 rounded bg-gray-200" />
           <div className="flex gap-4">
             <div className="h-10 w-36 rounded-lg bg-gray-200" />
