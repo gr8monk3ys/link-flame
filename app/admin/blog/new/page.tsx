@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Save, Eye } from 'lucide-react';
+import Image from 'next/image';
+import DOMPurify from 'isomorphic-dompurify';
 
 export default function NewBlogPostPage() {
   const router = useRouter();
@@ -96,7 +98,7 @@ export default function NewBlogPostPage() {
             required
             value={formData.title}
             onChange={(e) => handleTitleChange(e.target.value)}
-            className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+            className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
             placeholder="Enter post title..."
           />
         </div>
@@ -115,7 +117,7 @@ export default function NewBlogPostPage() {
             required
             value={formData.slug}
             onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-            className="w-full rounded-lg border border-gray-300 px-4 py-2 font-mono text-sm focus:border-transparent focus:ring-2 focus:ring-green-500"
+            className="w-full rounded-lg border border-gray-300 px-4 py-2 font-mono text-sm focus:border-transparent focus:ring-2 focus:ring-ring"
             placeholder="post-url-slug"
           />
           <p className="mt-1 text-sm text-gray-500">
@@ -139,7 +141,7 @@ export default function NewBlogPostPage() {
             onChange={(e) =>
               setFormData({ ...formData, description: e.target.value })
             }
-            className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+            className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
             placeholder="Brief description for search engines..."
           />
         </div>
@@ -161,7 +163,7 @@ export default function NewBlogPostPage() {
               onChange={(e) =>
                 setFormData({ ...formData, category: e.target.value })
               }
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
               placeholder="e.g., Sustainability"
             />
           </div>
@@ -179,7 +181,7 @@ export default function NewBlogPostPage() {
               onChange={(e) =>
                 setFormData({ ...formData, tags: e.target.value })
               }
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
               placeholder="eco-friendly, green-living"
             />
           </div>
@@ -201,15 +203,20 @@ export default function NewBlogPostPage() {
             onChange={(e) =>
               setFormData({ ...formData, coverImage: e.target.value })
             }
-            className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+            className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
             placeholder="https://images.unsplash.com/..."
           />
           {formData.coverImage && (
-            <img
-              src={formData.coverImage}
-              alt="Cover preview"
-              className="mt-3 max-h-48 rounded-lg object-cover"
-            />
+            <div className="relative mt-3 h-48 w-full max-w-md overflow-hidden rounded-lg">
+              <Image
+                src={formData.coverImage}
+                alt="Cover preview"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 448px"
+                unoptimized
+              />
+            </div>
           )}
         </div>
 
@@ -236,11 +243,13 @@ export default function NewBlogPostPage() {
             <div className="prose prose-green min-h-[400px] w-full max-w-none rounded-lg border border-gray-300 bg-gray-50 px-4 py-3">
               <div
                 dangerouslySetInnerHTML={{
-                  __html: formData.content
-                    .replace(/\n/g, '<br />')
-                    .replace(/#{1,6} (.+)/g, '<h3>$1</h3>')
-                    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-                    .replace(/\*(.+?)\*/g, '<em>$1</em>'),
+                  __html: DOMPurify.sanitize(
+                    formData.content
+                      .replace(/\n/g, '<br />')
+                      .replace(/#{1,6} (.+)/g, '<h3>$1</h3>')
+                      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                  ),
                 }}
               />
             </div>
@@ -253,7 +262,7 @@ export default function NewBlogPostPage() {
               onChange={(e) =>
                 setFormData({ ...formData, content: e.target.value })
               }
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 font-mono text-sm focus:border-transparent focus:ring-2 focus:ring-green-500"
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 font-mono text-sm focus:border-transparent focus:ring-2 focus:ring-ring"
               placeholder="# Your Blog Post Content
 
 Write your content in Markdown/MDX format...
@@ -282,7 +291,7 @@ const example = 'value';
               onChange={(e) =>
                 setFormData({ ...formData, featured: e.target.checked })
               }
-              className="size-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+              className="size-4 rounded border-gray-300 text-green-600 focus:ring-ring"
             />
             <span className="text-sm font-medium text-gray-700">
               Featured Post
