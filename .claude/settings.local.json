@@ -39,7 +39,27 @@
       "Bash(npx next lint:*)",
       "Bash(npx eslint:*)",
       "Bash(npx prisma migrate dev:*)",
-      "Bash(npx prisma migrate:*)"
+      "Bash(npx prisma migrate:*)",
+      "Bash(npm run test:e2e:*)",
+      "Bash(npm run test:unit:coverage:*)",
+      "Bash(npx vitest:*)",
+      "Bash(npx playwright test:*)",
+      "Bash(lsof:*)",
+      "Bash(xargs:*)",
+      "Bash(curl:*)",
+      "Bash(kill:*)",
+      "Bash(npm audit:*)",
+      "Bash(npx prisma validate:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx prisma format:*)",
+      "Bash(npm install:*)",
+      "Bash(ls:*)",
+      "Bash(npx prisma db push:*)",
+      "mcp__filesystem__directory_tree",
+      "mcp__filesystem__list_directory",
+      "mcp__filesystem__search_files",
+      "Bash(find:*)",
+      "Bash(grep:*)"
     ]
   },
   "enabledMcpjsonServers": [
