@@ -1,5 +1,6 @@
 'use client';
 
+import { memo, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCart } from "@/lib/providers/CartProvider";
@@ -33,8 +34,25 @@ interface ProductGridProps {
   onPageSizeChange: (size: number) => void;
 }
 
-export default function ProductGrid({ 
-  products, 
+// Helper functions moved outside component to prevent recreation
+const getAverageRating = (reviews: { rating: number }[]) => {
+  if (reviews.length === 0) return null;
+  const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
+  return (sum / reviews.length).toFixed(1);
+};
+
+const isNewProduct = (date: Date) => {
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  return new Date(date) > thirtyDaysAgo;
+};
+
+const formatPrice = (price: number) => {
+  return price.toFixed(2);
+};
+
+function ProductGrid({
+  products,
   isLoading,
   currentPage,
   totalPages,
@@ -43,6 +61,30 @@ export default function ProductGrid({
   onPageSizeChange
 }: ProductGridProps) {
   const { addItemToCart } = useCart();
+
+  // Memoized add to cart handler
+  const handleAddToCart = useCallback(async (product: Product) => {
+    try {
+      const cartItem = {
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        image: product.image,
+        quantity: 1
+      };
+
+      await addItemToCart(cartItem);
+      toast.success("Product added to cart!");
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      toast.error("Failed to add product to cart. Please try again.");
+    }
+  }, [addItemToCart]);
+
+  // Memoized wishlist handler
+  const handleWishlist = useCallback(() => {
+    toast.info("Wishlist feature coming soon!");
+  }, []);
 
   if (isLoading) {
     return (
@@ -73,27 +115,11 @@ export default function ProductGrid({
     );
   }
 
-  const getAverageRating = (reviews: { rating: number }[]) => {
-    if (reviews.length === 0) return null;
-    const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
-    return (sum / reviews.length).toFixed(1);
-  };
-
-  const isNewProduct = (date: Date) => {
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    return new Date(date) > thirtyDaysAgo;
-  };
-
-  const formatPrice = (price: number) => {
-    return price.toFixed(2);
-  };
-
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {products.map((product) => (
-          <div key={product.id} className="group relative">
+        {products.map((product, index) => (
+          <div key={product.id} className="group relative" data-testid="product-card">
             {/* Quick view link */}
             <Link
               href={`/products/${product.id}`}
@@ -108,25 +134,10 @@ export default function ProductGrid({
 
             {/* Add to cart button */}
             <button
+              data-testid="add-to-cart-button"
               className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-full bg-green-600 px-4 py-2 text-sm font-semibold text-white opacity-0 shadow-md transition-opacity hover:bg-green-500 group-hover:opacity-100"
               aria-label={`Add ${product.title} to cart`}
-              onClick={async () => {
-                try {
-                  const cartItem = {
-                    id: product.id,
-                    title: product.title,
-                    price: product.price,
-                    image: product.image,
-                    quantity: 1
-                  };
-
-                  await addItemToCart(cartItem);
-                  toast.success("Product added to cart!");
-                } catch (error) {
-                  console.error("Error adding to cart:", error);
-                  toast.error("Failed to add product to cart. Please try again.");
-                }
-              }}
+              onClick={() => handleAddToCart(product)}
             >
               Add to Cart
             </button>
@@ -151,10 +162,7 @@ export default function ProductGrid({
             <button
               className="absolute right-4 top-16 z-10 rounded-full bg-white p-2 opacity-0 shadow-md transition-opacity group-hover:opacity-100"
               aria-label={`Add ${product.title} to wishlist`}
-              onClick={() => {
-                // TODO: Implement wishlist
-                toast.info("Wishlist feature coming soon!");
-              }}
+              onClick={handleWishlist}
             >
               <svg className="size-5 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -168,7 +176,7 @@ export default function ProductGrid({
                 width={400}
                 height={400}
                 className="size-full object-cover object-center transition-opacity group-hover:opacity-75"
-                priority={currentPage === 1}
+                priority={currentPage === 1 && index < 4}
                 sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
               />
             </div>
@@ -326,3 +334,6 @@ export default function ProductGrid({
     </div>
   );
 }
+
+// Export memoized component to prevent unnecessary re-renders
+export default memo(ProductGrid);
