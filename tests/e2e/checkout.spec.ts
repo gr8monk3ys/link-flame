@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { createTestUser, getCsrfToken, waitForCartUpdate, addItemToCart } from './fixtures'
 
 /**
  * Checkout Flow E2E Tests
@@ -29,25 +30,6 @@ const validCheckoutData = {
   zipCode: '10001',
 }
 
-// Helper to wait for cart API response
-const waitForCartUpdate = async (page: import('@playwright/test').Page) => {
-  await Promise.race([
-    page.waitForResponse(
-      (response) => response.url().includes('/api/cart') && response.status() === 200,
-      { timeout: 5000 }
-    ),
-    page.waitForLoadState('networkidle', { timeout: 5000 }),
-  ]).catch(() => {})
-}
-
-// Helper to add item to cart
-const addItemToCart = async (page: import('@playwright/test').Page) => {
-  await page.goto('/collections')
-  await page.waitForSelector('.group.relative, [data-testid="product-card"]', { timeout: 10000 })
-  await page.locator('button:has-text("Add to Cart")').first().click()
-  await waitForCartUpdate(page)
-}
-
 test.describe('Checkout Page Access', () => {
   test('should redirect unauthenticated users to signin when accessing checkout', async ({ page }) => {
     // Try to access checkout without authentication
@@ -62,29 +44,32 @@ test.describe('Checkout Page Access', () => {
   test('should allow authenticated users to access checkout page', async ({ page }) => {
     const testUser = generateTestUser()
 
-    // Create and login user
-    await page.request.post('/api/auth/signup', {
-      data: {
-        name: testUser.name,
-        email: testUser.email,
-        password: testUser.password,
-      },
-    })
+    // Create user via API with CSRF token
+    const signupResponse = await createTestUser(page, testUser)
+    expect(signupResponse.ok()).toBeTruthy()
 
+    // Navigate to signin and login
     await page.goto('/auth/signin')
+    await page.waitForLoadState('networkidle')
+
     await page.fill('#email', testUser.email)
     await page.fill('#password', testUser.password)
     await page.click('button[type="submit"]')
 
-    // Wait for auth to complete
-    await page.waitForURL(/\/(?!auth)/, { timeout: 10000 }).catch(() => {})
+    // Wait for auth to complete - wait for either home page or successful navigation away from auth
+    await page.waitForURL((url) => !url.pathname.startsWith('/auth/signin'), { timeout: 15000 })
+    await page.waitForLoadState('networkidle')
 
     // Now access checkout
     await page.goto('/checkout')
     await page.waitForLoadState('networkidle')
 
-    // Should be on checkout page
-    expect(page.url()).toContain('/checkout')
+    // Should be on checkout page (not redirected to signin)
+    // The URL should contain /checkout, even if it has a callbackUrl parameter
+    const currentUrl = page.url()
+    expect(currentUrl).toContain('/checkout')
+    // Make sure we're not on the signin page
+    expect(currentUrl).not.toContain('/auth/signin')
   })
 })
 
@@ -92,14 +77,8 @@ test.describe('Checkout Form Validation', () => {
   test.beforeEach(async ({ page }) => {
     const testUser = generateTestUser()
 
-    // Create and login user
-    await page.request.post('/api/auth/signup', {
-      data: {
-        name: testUser.name,
-        email: testUser.email,
-        password: testUser.password,
-      },
-    })
+    // Create and login user with CSRF token
+    await createTestUser(page, testUser)
 
     await page.goto('/auth/signin')
     await page.fill('#email', testUser.email)
@@ -177,14 +156,8 @@ test.describe('Checkout API', () => {
   test('should reject checkout with empty cart', async ({ page }) => {
     const testUser = generateTestUser()
 
-    // Create and login user (but don't add items to cart)
-    await page.request.post('/api/auth/signup', {
-      data: {
-        name: testUser.name,
-        email: testUser.email,
-        password: testUser.password,
-      },
-    })
+    // Create and login user (but don't add items to cart) with CSRF token
+    await createTestUser(page, testUser)
 
     await page.goto('/auth/signin')
     await page.fill('#email', testUser.email)
@@ -215,14 +188,8 @@ test.describe('Checkout API', () => {
   test('should reject checkout without CSRF token', async ({ page }) => {
     const testUser = generateTestUser()
 
-    // Create and login user
-    await page.request.post('/api/auth/signup', {
-      data: {
-        name: testUser.name,
-        email: testUser.email,
-        password: testUser.password,
-      },
-    })
+    // Create and login user with CSRF token
+    await createTestUser(page, testUser)
 
     await page.goto('/auth/signin')
     await page.fill('#email', testUser.email)
@@ -249,14 +216,8 @@ test.describe('Checkout API', () => {
   test('should reject checkout with invalid form data', async ({ page }) => {
     const testUser = generateTestUser()
 
-    // Create and login user
-    await page.request.post('/api/auth/signup', {
-      data: {
-        name: testUser.name,
-        email: testUser.email,
-        password: testUser.password,
-      },
-    })
+    // Create and login user with CSRF token
+    await createTestUser(page, testUser)
 
     await page.goto('/auth/signin')
     await page.fill('#email', testUser.email)
@@ -298,14 +259,8 @@ test.describe('Checkout API', () => {
   test('should accept valid checkout request with items in cart', async ({ page }) => {
     const testUser = generateTestUser()
 
-    // Create and login user
-    await page.request.post('/api/auth/signup', {
-      data: {
-        name: testUser.name,
-        email: testUser.email,
-        password: testUser.password,
-      },
-    })
+    // Create and login user with CSRF token
+    await createTestUser(page, testUser)
 
     await page.goto('/auth/signin')
     await page.fill('#email', testUser.email)
@@ -348,14 +303,8 @@ test.describe('Checkout Flow - End to End', () => {
   test('should complete checkout flow from cart to payment', async ({ page }) => {
     const testUser = generateTestUser()
 
-    // Create and login user
-    await page.request.post('/api/auth/signup', {
-      data: {
-        name: testUser.name,
-        email: testUser.email,
-        password: testUser.password,
-      },
-    })
+    // Create and login user with CSRF token
+    await createTestUser(page, testUser)
 
     await page.goto('/auth/signin')
     await page.fill('#email', testUser.email)
@@ -437,14 +386,8 @@ test.describe('Checkout Flow - End to End', () => {
   test('should show cart summary on checkout page', async ({ page }) => {
     const testUser = generateTestUser()
 
-    // Create and login user
-    await page.request.post('/api/auth/signup', {
-      data: {
-        name: testUser.name,
-        email: testUser.email,
-        password: testUser.password,
-      },
-    })
+    // Create and login user with CSRF token
+    await createTestUser(page, testUser)
 
     await page.goto('/auth/signin')
     await page.fill('#email', testUser.email)
@@ -477,14 +420,8 @@ test.describe('Checkout Security', () => {
   test('should not expose product prices to client manipulation', async ({ page }) => {
     const testUser = generateTestUser()
 
-    // Create and login user
-    await page.request.post('/api/auth/signup', {
-      data: {
-        name: testUser.name,
-        email: testUser.email,
-        password: testUser.password,
-      },
-    })
+    // Create and login user with CSRF token
+    await createTestUser(page, testUser)
 
     await page.goto('/auth/signin')
     await page.fill('#email', testUser.email)

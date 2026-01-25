@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { createTestUser, waitForCartUpdate } from './fixtures'
 
 /**
  * Shopping Cart E2E Tests
@@ -18,18 +19,6 @@ const generateTestUser = () => ({
   email: `cart${Date.now()}@example.com`,
   password: 'TestPassword123!',
 })
-
-// Helper to wait for cart API response
-const waitForCartUpdate = async (page: import('@playwright/test').Page) => {
-  await Promise.race([
-    page.waitForResponse((response) => response.url().includes('/api/cart') && response.status() === 200, {
-      timeout: 5000,
-    }),
-    page.waitForLoadState('networkidle', { timeout: 5000 }),
-  ]).catch(() => {
-    // Cart update may have completed already
-  })
-}
 
 test.describe('Guest Cart Operations', () => {
   test('should add item to cart as guest user', async ({ page }) => {
@@ -139,10 +128,8 @@ test.describe('Authenticated Cart Operations', () => {
   test('should add item to cart as authenticated user', async ({ page }) => {
     const testUser = generateTestUser()
 
-    // Create and login user
-    await page.request.post('/api/auth/signup', {
-      data: testUser,
-    })
+    // Create and login user with CSRF token
+    await createTestUser(page, testUser)
 
     await page.goto('/auth/signin')
     await page.fill('input[name="email"], #email', testUser.email)
@@ -172,10 +159,8 @@ test.describe('Authenticated Cart Operations', () => {
   test('should persist authenticated user cart in database', async ({ page }) => {
     const testUser = generateTestUser()
 
-    // Create and login user
-    await page.request.post('/api/auth/signup', {
-      data: testUser,
-    })
+    // Create and login user with CSRF token
+    await createTestUser(page, testUser)
 
     await page.goto('/auth/signin')
     await page.fill('input[name="email"], #email', testUser.email)
@@ -222,10 +207,8 @@ test.describe('Cart Migration', () => {
   test('should migrate guest cart when user logs in', async ({ page }) => {
     const testUser = generateTestUser()
 
-    // Create user first
-    await page.request.post('/api/auth/signup', {
-      data: testUser,
-    })
+    // Create user first with CSRF token
+    await createTestUser(page, testUser)
 
     // Add item to cart as guest
     await page.goto('/collections')
@@ -274,9 +257,11 @@ test.describe('Cart API', () => {
     expect(response.ok()).toBeTruthy()
 
     const cart = await response.json()
-    expect(cart).toHaveProperty('items')
-    expect(Array.isArray(cart.items)).toBeTruthy()
-    expect(cart.items.length).toBeGreaterThan(0)
+    // API returns { success: true, data: [...] } format
+    expect(cart).toHaveProperty('success', true)
+    expect(cart).toHaveProperty('data')
+    expect(Array.isArray(cart.data)).toBeTruthy()
+    expect(cart.data.length).toBeGreaterThan(0)
   })
 
   test('should add item via cart API', async ({ page }) => {

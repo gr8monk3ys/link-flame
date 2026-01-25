@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { getCsrfToken, createTestUser } from './fixtures'
 
 /**
  * Authentication E2E Tests
@@ -53,14 +54,8 @@ test.describe('Authentication Flow', () => {
   test('should sign in an existing user', async ({ page }) => {
     const testUser = generateTestUser()
 
-    // First, create the user via API
-    const signupResponse = await page.request.post('/api/auth/signup', {
-      data: {
-        name: testUser.name,
-        email: testUser.email,
-        password: testUser.password,
-      },
-    })
+    // First, create the user via API with CSRF token
+    const signupResponse = await createTestUser(page, testUser)
     expect(signupResponse.ok()).toBeTruthy()
 
     // Navigate to signin page
@@ -91,14 +86,8 @@ test.describe('Authentication Flow', () => {
   test('should reject signin with incorrect password', async ({ page }) => {
     const testUser = generateTestUser()
 
-    // Create user first
-    await page.request.post('/api/auth/signup', {
-      data: {
-        name: testUser.name,
-        email: testUser.email,
-        password: testUser.password,
-      },
-    })
+    // Create user first with CSRF token
+    await createTestUser(page, testUser)
 
     // Navigate to signin page
     await page.goto('/auth/signin')
@@ -134,14 +123,8 @@ test.describe('Authentication Flow', () => {
   test('should allow access to /account when authenticated', async ({ page }) => {
     const testUser = generateTestUser()
 
-    // Create and login user
-    await page.request.post('/api/auth/signup', {
-      data: {
-        name: testUser.name,
-        email: testUser.email,
-        password: testUser.password,
-      },
-    })
+    // Create and login user with CSRF token
+    await createTestUser(page, testUser)
 
     // Sign in via UI
     await page.goto('/auth/signin')
@@ -167,14 +150,8 @@ test.describe('Authentication Flow', () => {
   test('should sign out successfully', async ({ page }) => {
     const testUser = generateTestUser()
 
-    // Create and login user
-    await page.request.post('/api/auth/signup', {
-      data: {
-        name: testUser.name,
-        email: testUser.email,
-        password: testUser.password,
-      },
-    })
+    // Create and login user with CSRF token
+    await createTestUser(page, testUser)
 
     await page.goto('/auth/signin')
     await page.fill('#email', testUser.email)
@@ -233,11 +210,17 @@ test.describe('Validation', () => {
   })
 
   test('should reject signup with short password', async ({ page }) => {
+    // Get CSRF token first
+    const csrfToken = await getCsrfToken(page)
+
     const response = await page.request.post('/api/auth/signup', {
       data: {
         name: 'Test User',
         email: `test${Date.now()}@example.com`,
         password: '123', // Too short (min 6)
+      },
+      headers: {
+        'X-CSRF-Token': csrfToken,
       },
     })
 
@@ -251,15 +234,17 @@ test.describe('Validation', () => {
   test('should reject duplicate email signup', async ({ page }) => {
     const testUser = generateTestUser()
 
-    // Create user first time
-    const firstSignup = await page.request.post('/api/auth/signup', {
-      data: testUser,
-    })
+    // Create user first time with CSRF token
+    const firstSignup = await createTestUser(page, testUser)
     expect(firstSignup.ok()).toBeTruthy()
 
-    // Try to create same user again
+    // Try to create same user again with new CSRF token
+    const csrfToken = await getCsrfToken(page)
     const duplicateSignup = await page.request.post('/api/auth/signup', {
       data: testUser,
+      headers: {
+        'X-CSRF-Token': csrfToken,
+      },
     })
 
     // Should fail with 409 Conflict
