@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import { z } from "zod";
 import { checkStrictRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { validateCsrfToken } from "@/lib/csrf";
@@ -8,7 +7,8 @@ import {
   handleApiError,
   rateLimitErrorResponse,
   validationErrorResponse,
-  errorResponse
+  errorResponse,
+  successResponse,
 } from "@/lib/api-response";
 import { logger } from "@/lib/logger";
 
@@ -69,14 +69,14 @@ export async function POST(req: Request) {
       logger.warn('Email service not configured - skipping notification emails');
     }
 
-    return NextResponse.json(
+    return successResponse(
       {
-        success: true,
         message: "Thank you for contacting us! We'll get back to you soon.",
         id: contact.id,
       },
-      { status: 201 }
-    );
+      undefined,
+      201
+    )
   } catch (error) {
     logger.error("Contact form submission failed", error);
     return handleApiError(error);

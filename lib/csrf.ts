@@ -39,9 +39,27 @@ import { logger } from '@/lib/logger';
 import { SECURITY } from '@/config/constants';
 
 const CSRF_COOKIE_NAME = SECURITY.csrf.cookieName;
-const CSRF_SECRET = process.env.NEXTAUTH_SECRET || 'fallback-secret-for-csrf';
 const CSRF_TOKEN_LENGTH = SECURITY.csrf.tokenLength;
 const CSRF_TOKEN_EXPIRY = SECURITY.csrf.tokenExpiry;
+
+// CSRF secret must be set in production - never use fallback in production
+function getCsrfSecret(): string {
+  const secret = process.env.NEXTAUTH_SECRET;
+  if (!secret) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error(
+        'CRITICAL SECURITY ERROR: NEXTAUTH_SECRET environment variable is required in production. ' +
+        'CSRF protection cannot function securely without a proper secret.'
+      );
+    }
+    // Only allow fallback in development/test environments
+    logger.warn('Using fallback CSRF secret - this is only acceptable in development/test environments');
+    return 'fallback-secret-for-csrf-dev-only';
+  }
+  return secret;
+}
+
+const CSRF_SECRET = getCsrfSecret();
 
 /**
  * Generate a cryptographically secure CSRF token

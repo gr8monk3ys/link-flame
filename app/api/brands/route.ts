@@ -1,13 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 import {
   handleApiError,
   rateLimitErrorResponse,
   validationErrorResponse,
+  paginatedResponse,
 } from '@/lib/api-response'
 import { logger } from '@/lib/logger'
 import { checkRateLimit, getIdentifier } from '@/lib/rate-limit'
+import { calculatePaginationMeta } from '@/lib/api/pagination'
 
 // Schema for brand filtering
 const filterSchema = z.object({
@@ -75,8 +77,7 @@ export async function GET(request: NextRequest) {
     const { certification, value, featured, page, pageSize } = validation.data
 
     // Build where clause
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const where: any = {
+    const where: Record<string, unknown> = {
       isActive: true,
     }
 
@@ -130,13 +131,10 @@ export async function GET(request: NextRequest) {
       _count: undefined,
     }))
 
-    return NextResponse.json({
-      brands: normalizedBrands,
-      total,
-      page,
-      pageSize,
-      totalPages: Math.ceil(total / pageSize),
-    })
+    // Use standardized paginated response format
+    const pagination = calculatePaginationMeta(total, page, pageSize)
+
+    return paginatedResponse(normalizedBrands, pagination)
   } catch (error) {
     logger.error('Failed to fetch brands', error)
     return handleApiError(error)

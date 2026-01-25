@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 import { getUserIdForCart } from '@/lib/session'
 import { checkStrictRateLimit, getIdentifier } from '@/lib/rate-limit'
+import { validateCsrfToken } from '@/lib/csrf'
 import {
   handleApiError,
   rateLimitErrorResponse,
@@ -46,6 +47,17 @@ const ExpressCheckoutSchema = z.object({
  */
 export async function POST(request: Request) {
   try {
+    // CSRF protection
+    const csrfValid = await validateCsrfToken(request)
+    if (!csrfValid) {
+      return errorResponse(
+        'Invalid or missing CSRF token',
+        'CSRF_VALIDATION_FAILED',
+        undefined,
+        403
+      )
+    }
+
     const { userId } = await getServerAuth()
 
     // Apply strict rate limiting for checkout

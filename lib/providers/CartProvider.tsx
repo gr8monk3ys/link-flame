@@ -16,6 +16,20 @@ import { cartReducer } from './cartReducer'
 import { toast } from 'sonner'
 import { useDebouncedCallback } from 'use-debounce'
 
+// Helper to fetch CSRF token
+async function getCsrfToken(): Promise<string> {
+  try {
+    const response = await fetch('/api/csrf')
+    if (response.ok) {
+      const { token } = await response.json()
+      return token || ''
+    }
+  } catch (error) {
+    console.error('Error fetching CSRF token:', error)
+  }
+  return ''
+}
+
 export type CartContext = {
   cart: {
     items: CartItem[]
@@ -126,11 +140,13 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       const response = await fetch('/api/cart')
 
       if (response.ok) {
-        const items = await response.json()
+        const result = await response.json()
+        // Handle both wrapped response { success, data } and direct array response
+        const items = result.data || result
         dispatchCart({
           type: 'SET_CART',
           payload: {
-            items,
+            items: Array.isArray(items) ? items : [],
           },
         })
       } else {
@@ -231,10 +247,14 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(true)
     try {
       const userId = await getUserId()
+      const csrfToken = await getCsrfToken()
 
       const response = await fetch('/api/cart', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken,
+        },
         body: JSON.stringify({
           userId,
           productId: item.id,
@@ -272,9 +292,13 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     try {
+      const csrfToken = await getCsrfToken()
       const response = await fetch('/api/cart', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken,
+        },
         body: JSON.stringify({ productId, variantId, quantity }),
       })
 
@@ -349,8 +373,12 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         }
       }
 
+      const csrfToken = await getCsrfToken()
       const response = await fetch(`/api/cart?${params.toString()}`, {
         method: 'DELETE',
+        headers: {
+          'X-CSRF-Token': csrfToken,
+        },
       })
 
       if (!response.ok) {

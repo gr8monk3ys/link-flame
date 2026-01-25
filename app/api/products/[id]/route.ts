@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { handleApiError, errorResponse, notFoundResponse, rateLimitErrorResponse } from '@/lib/api-response';
+import { handleApiError, errorResponse, notFoundResponse, rateLimitErrorResponse, successResponse } from '@/lib/api-response';
 import { checkRateLimit, getIdentifier } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger';
 
@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
       values: product.values?.map((pva) => pva.value) || [],
     };
 
-    return NextResponse.json(normalizedProduct);
+    return successResponse(normalizedProduct)
   } catch (error) {
     logger.error('Failed to fetch product', error);
     return handleApiError(error);

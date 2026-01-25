@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server"
+import { NextRequest } from "next/server"
 import { getServerAuth, requireRole } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { Prisma } from "@prisma/client"
@@ -10,11 +10,14 @@ import {
   validationErrorResponse,
   rateLimitErrorResponse,
   errorResponse,
+  successResponse,
+  paginatedResponse,
 } from "@/lib/api-response"
 import { logger } from "@/lib/logger"
 import { invalidateProductCaches } from "@/lib/cache"
 import { checkRateLimit, getIdentifier } from "@/lib/rate-limit"
 import { validateCsrfToken } from "@/lib/csrf"
+import { calculatePaginationMeta } from "@/lib/api/pagination"
 
 // Schema for product filtering
 const filterSchema = z.object({
@@ -132,35 +135,35 @@ export async function GET(request: NextRequest) {
       };
     }
 
-    // Get total count for pagination
-    const total = await prisma.product.count({ where });
-
-    // Get products with pagination
-    const products = await prisma.product.findMany({
-      where,
-      include: {
-        reviews: {
-          select: {
-            rating: true,
+    // Use transaction to execute count and findMany in parallel for better performance
+    const [total, products] = await prisma.$transaction([
+      prisma.product.count({ where }),
+      prisma.product.findMany({
+        where,
+        include: {
+          reviews: {
+            select: {
+              rating: true,
+            },
           },
-        },
-        // Include product values for "Shop by Values" badges
-        values: {
-          include: {
-            value: {
-              select: {
-                id: true,
-                name: true,
-                slug: true,
-                iconName: true,
+          // Include product values for "Shop by Values" badges
+          values: {
+            include: {
+              value: {
+                select: {
+                  id: true,
+                  name: true,
+                  slug: true,
+                  iconName: true,
+                },
               },
             },
           },
         },
-      },
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-    });
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+    ]);
 
     // Filter by rating after fetching (since we need to calculate average)
     const filteredProducts = rating
@@ -196,13 +199,10 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    return NextResponse.json({
-      products: normalizedProducts,
-      total: total,
-      page,
-      pageSize,
-      totalPages: Math.ceil(total / pageSize),
-    });
+    // Use standardized paginated response format
+    const pagination = calculatePaginationMeta(total, page, pageSize)
+
+    return paginatedResponse(normalizedProducts, pagination)
   } catch (error) {
     logger.error('Failed to fetch products', error);
     return handleApiError(error);
@@ -259,7 +259,7 @@ export async function POST(request: NextRequest) {
     // Invalidate product caches
     await invalidateProductCaches();
 
-    return NextResponse.json(product);
+    return successResponse(product, undefined, 201)
   } catch (error) {
     logger.error('Failed to create product', error);
     return handleApiError(error);

@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
@@ -8,6 +7,7 @@ import {
   conflictResponse,
   rateLimitErrorResponse,
   errorResponse,
+  successResponse,
 } from "@/lib/api-response";
 import { checkStrictRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { validateCsrfToken } from "@/lib/csrf";
@@ -91,7 +91,7 @@ export async function POST(request: Request) {
       });
     }
 
-    return NextResponse.json(
+    return successResponse(
       {
         user: {
           id: user.id,
@@ -107,8 +107,9 @@ export async function POST(request: Request) {
             }
           : null,
       },
-      { status: 201 }
-    );
+      undefined,
+      201
+    )
   } catch (error) {
     logger.error("Signup failed", error);
     return handleApiError(error);
