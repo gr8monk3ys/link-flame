@@ -59,7 +59,8 @@ const CartItemRow = memo(({
   return (
     <div
       key={item.id}
-      className="flex items-center space-x-4 rounded-lg border p-4"
+      data-testid="cart-item"
+      className="cart-item flex items-center space-x-4 rounded-lg border p-4"
     >
       <div className="relative size-24 overflow-hidden rounded-md">
         <Image
@@ -67,6 +68,7 @@ const CartItemRow = memo(({
           alt={item.title}
           fill
           className="object-cover"
+          sizes="96px"
         />
       </div>
       <div className="flex-1 space-y-1">
@@ -112,7 +114,6 @@ const CartItemRow = memo(({
           aria-label="Remove item"
           className="h-8 px-2"
         >
-          <span className="sr-only">Remove item</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -123,12 +124,13 @@ const CartItemRow = memo(({
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="size-4"
+            className="mr-1 size-4"
           >
             <path d="M3 6h18" />
             <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
             <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
           </svg>
+          <span className="text-xs">Remove</span>
         </Button>
         <Button
           variant="ghost"
@@ -208,12 +210,8 @@ export default function CartPage() {
     fetchCartItems();
   }, [fetchCartItems]);
 
-  // Redirect to sign in if not authenticated
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/auth/signin?callbackUrl=/cart");
-    }
-  }, [status, router]);
+  // Note: Guest users can view cart but will need to sign in at checkout
+  // This allows cart persistence for guests which improves conversion
 
   if (status === "loading") {
     return (
@@ -221,10 +219,6 @@ export default function CartPage() {
         <div className="size-8 animate-spin rounded-full border-b-2 border-primary"></div>
       </div>
     );
-  }
-
-  if (!session) {
-    return null;
   }
 
   return (

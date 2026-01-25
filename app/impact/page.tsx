@@ -132,8 +132,8 @@ export default function ImpactPage() {
               <span className="text-teal-600 dark:text-teal-400">Impact</span>
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
-              Transparency is key to accountability. Here's a detailed look at our environmental
-              footprint and the positive impact we're making together.
+              Transparency is key to accountability. Here&apos;s a detailed look at our environmental
+              footprint and the positive impact we&apos;re making together.
             </p>
           </div>
         </div>
@@ -175,7 +175,7 @@ export default function ImpactPage() {
               <h3 className="mb-4 text-lg font-semibold">Monthly Carbon Offset (kg CO2)</h3>
               <SimpleBarChart data={monthlyProgress} />
               <p className="mt-4 text-sm text-muted-foreground">
-                Showing monthly carbon offset for {currentYear}. We're on track to offset over
+                Showing monthly carbon offset for {currentYear}. We&apos;re on track to offset over
                 60,000 kg of CO2 this year.
               </p>
             </div>

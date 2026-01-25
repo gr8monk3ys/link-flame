@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Script from "next/script";
+import '@/types/swagger-ui';
 
 export default function ApiDocsPage() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -9,15 +10,15 @@ export default function ApiDocsPage() {
 
   useEffect(() => {
     // Initialize Swagger UI after scripts are loaded
-    const initSwagger = () => {
-      if (typeof window !== "undefined" && (window as any).SwaggerUIBundle && !initialized.current) {
+    const initSwagger = (): void => {
+      if (typeof window !== "undefined" && window.SwaggerUIBundle && !initialized.current) {
         initialized.current = true;
-        (window as any).SwaggerUIBundle({
+        window.SwaggerUIBundle({
           url: "/api/docs",
           dom_id: "#swagger-ui",
           presets: [
-            (window as any).SwaggerUIBundle.presets.apis,
-            (window as any).SwaggerUIStandalonePreset,
+            window.SwaggerUIBundle.presets.apis,
+            window.SwaggerUIStandalonePreset,
           ],
           layout: "StandaloneLayout",
           deepLinking: true,
@@ -48,14 +49,14 @@ export default function ApiDocsPage() {
         src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-bundle.js"
         strategy="afterInteractive"
         onLoad={() => {
-          if (typeof window !== "undefined" && (window as any).SwaggerUIBundle && !initialized.current) {
+          if (typeof window !== "undefined" && window.SwaggerUIBundle && !initialized.current) {
             initialized.current = true;
-            (window as any).SwaggerUIBundle({
+            window.SwaggerUIBundle({
               url: "/api/docs",
               dom_id: "#swagger-ui",
               presets: [
-                (window as any).SwaggerUIBundle.presets.apis,
-                (window as any).SwaggerUIStandalonePreset,
+                window.SwaggerUIBundle.presets.apis,
+                window.SwaggerUIStandalonePreset,
               ],
               layout: "StandaloneLayout",
               deepLinking: true,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { format } from "date-fns";
 import Link from "next/link";
@@ -78,13 +78,7 @@ export default function OrdersPage() {
   const [error, setError] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  useEffect(() => {
-    if (isLoaded && isSignedIn) {
-      fetchOrders();
-    }
-  }, [isLoaded, isSignedIn, statusFilter]);
-
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
@@ -102,7 +96,13 @@ export default function OrdersPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [statusFilter]);
+
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      fetchOrders();
+    }
+  }, [isLoaded, isSignedIn, fetchOrders]);
 
   if (!isLoaded) {
     return <div className="container py-10">Loading...</div>;

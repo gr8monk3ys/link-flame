@@ -157,7 +157,7 @@ export default function TerraCyclePage() {
               </h2>
               <p className="mt-4 text-lg text-muted-foreground">
                 Traditional recycling programs cannot process many types of product
-                packaging. TerraCycle's innovative approach ensures that your empties
+                packaging. TerraCycle&apos;s innovative approach ensures that your empties
                 do not end up in landfills or our oceans.
               </p>
 

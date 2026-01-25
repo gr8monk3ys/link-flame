@@ -123,8 +123,8 @@ export default function SustainabilityPage() {
               Future
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
-              At Link Flame, sustainability isn't just a buzzword - it's the foundation of everything
-              we do. From the products we sell to how we ship them, we're committed to minimizing
+              At Link Flame, sustainability isn&apos;t just a buzzword - it&apos;s the foundation of everything
+              we do. From the products we sell to how we ship them, we&apos;re committed to minimizing
               our environmental impact.
             </p>
           </div>
@@ -194,7 +194,7 @@ export default function SustainabilityPage() {
                 Carbon-Neutral From Day One
               </h2>
               <p className="mt-4 text-lg text-muted-foreground">
-                Climate change is the defining challenge of our time. That's why we've committed
+                Climate change is the defining challenge of our time. That&apos;s why we&apos;ve committed
                 to carbon-neutral operations since our founding.
               </p>
               <ul className="mt-8 space-y-4">

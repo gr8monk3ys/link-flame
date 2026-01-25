@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import Image from 'next/image'
 import { PageProps } from '@/types/next'
 import { getAllPosts, getPost } from '@/lib/blog'
 import { notFound } from 'next/navigation'
@@ -191,9 +192,11 @@ export default async function BlogPost({ params }: PageProps<{ slug: string }>) 
           <div className="not-prose flex items-center gap-4 text-gray-500">
             <div className="flex items-center gap-2">
               {post.author.image && (
-                <img
+                <Image
                   src={post.author.image}
                   alt={post.author.name}
+                  width={40}
+                  height={40}
                   className="size-10 rounded-full"
                 />
               )}
@@ -216,11 +219,16 @@ export default async function BlogPost({ params }: PageProps<{ slug: string }>) 
 
           {/* Cover Image */}
           {post.coverImage && (
-            <img
-              src={post.coverImage}
-              alt={post.title}
-              className="mt-6 w-full rounded-lg"
-            />
+            <div className="relative mt-6 aspect-video w-full overflow-hidden rounded-lg">
+              <Image
+                src={post.coverImage}
+                alt={post.title}
+                fill
+                priority
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+              />
+            </div>
           )}
 
           {/* Category and Tags */}

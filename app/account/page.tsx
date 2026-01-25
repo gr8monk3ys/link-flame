@@ -2,6 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import Image from "next/image";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   User,
@@ -96,11 +97,13 @@ export default function AccountPage() {
       <Card className="mb-8">
         <CardHeader>
           <div className="flex items-center gap-4">
-            <div className="flex size-16 items-center justify-center rounded-full bg-primary/10">
+            <div className="relative flex size-16 items-center justify-center rounded-full bg-primary/10">
               {session.user?.image ? (
-                <img
+                <Image
                   src={session.user.image}
                   alt={session.user.name || "User"}
+                  width={64}
+                  height={64}
                   className="size-16 rounded-full object-cover"
                 />
               ) : (

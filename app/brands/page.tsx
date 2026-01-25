@@ -4,6 +4,9 @@ import { prisma } from '@/lib/prisma'
 import { BrandGrid, BrandFilters } from '@/components/brands'
 import { Building2 } from 'lucide-react'
 
+// Revalidate brand pages every hour
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: 'Brand Directory | Link Flame',
   description: 'Discover our curated collection of eco-friendly and sustainable partner brands. Shop with purpose and support businesses that share your values.',
@@ -33,8 +36,7 @@ async function getBrands(searchParams: {
   const pageSize = parseInt(searchParams.pageSize || '12')
 
   // Build where clause
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const where: any = {
+  const where: Record<string, unknown> = {
     isActive: true,
   }
 
