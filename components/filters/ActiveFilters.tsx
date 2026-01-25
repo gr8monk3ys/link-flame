@@ -24,8 +24,10 @@ export function ActiveFilters({ className }: ActiveFiltersProps) {
 
   const [allValues, setAllValues] = useState<ProductValue[]>([]);
 
-  // Get currently selected values from URL
-  const selectedValueSlugs = searchParams.get('values')?.split(',').filter(Boolean) || [];
+  // Get currently selected values from URL - memoized to prevent recalculation
+  const selectedValueSlugs = useMemo(() => {
+    return searchParams.get('values')?.split(',').filter(Boolean) || [];
+  }, [searchParams]);
   const selectedCategory = searchParams.get('category');
   const minPrice = searchParams.get('minPrice');
   const maxPrice = searchParams.get('maxPrice');
@@ -37,7 +39,9 @@ export function ActiveFilters({ className }: ActiveFiltersProps) {
         const response = await fetch('/api/products/values');
         if (response.ok) {
           const data = await response.json();
-          setAllValues(data);
+          // Handle both wrapped response { data: [...] } and direct array
+          const valuesArray = Array.isArray(data) ? data : (data.data || []);
+          setAllValues(valuesArray);
         }
       } catch (error) {
         console.error('Failed to fetch product values:', error);
@@ -150,7 +154,7 @@ export function ActiveFilters({ className }: ActiveFiltersProps) {
           {filter.label}
           <button
             onClick={filter.onRemove}
-            className="ml-1 rounded-full p-0.5 transition-colors hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="ml-1 rounded-full p-0.5 transition-colors hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-ring"
             aria-label={`Remove ${filter.label} filter`}
           >
             <svg className="size-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
 
 interface Product {
@@ -107,13 +108,13 @@ export default function AdminProductsPage() {
               placeholder="Search products..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-4 focus:border-transparent focus:ring-2 focus:ring-green-500"
+              className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-4 focus:border-transparent focus:ring-2 focus:ring-ring"
             />
           </div>
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+            className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
           >
             <option value="all">All Products</option>
             <option value="low-stock">Low Stock</option>
@@ -159,11 +160,16 @@ export default function AdminProductsPage() {
                 <tr key={product.id} className="hover:bg-gray-50">
                   <td className="whitespace-nowrap px-6 py-4">
                     <div className="flex items-center">
-                      <img
-                        src={product.image}
-                        alt={product.title}
-                        className="size-10 rounded object-cover"
-                      />
+                      <div className="relative size-10 overflow-hidden rounded">
+                        <Image
+                          src={product.image}
+                          alt={product.title}
+                          width={40}
+                          height={40}
+                          className="object-cover"
+                          unoptimized
+                        />
+                      </div>
                       <div className="ml-4">
                         <div className="text-sm font-medium text-gray-900">
                           {product.title}

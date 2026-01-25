@@ -64,7 +64,7 @@ export function FrequencySelector({
           id="frequency-select"
           value={selectedFrequency}
           onChange={(e) => onFrequencyChange(e.target.value as SubscriptionFrequency)}
-          className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-green-500 focus:outline-none focus:ring-green-500 sm:text-sm"
+          className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-primary focus:outline-none focus:ring-ring sm:text-sm"
         >
           {frequencyOptions.map((option) => (
             <option key={option.value} value={option.value}>

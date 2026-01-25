@@ -47,7 +47,7 @@ export default function FilterSidebar({
             value={filters.search}
             onChange={(e) => onFilterChange({ search: e.target.value })}
             placeholder="Search products..."
-            className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+            className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-ring"
           />
         </div>
       </div>
@@ -68,7 +68,7 @@ export default function FilterSidebar({
                     : [...filters.categories, category.id];
                   onFilterChange({ categories: newCategories });
                 }}
-                className="size-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                className="size-4 rounded border-gray-300 text-green-600 focus:ring-ring"
               />
               <label
                 htmlFor={`category-${category.id}`}
@@ -141,7 +141,7 @@ export default function FilterSidebar({
                   },
                 })
               }
-              className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+              className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-ring"
             />
           </div>
           <div>
@@ -161,7 +161,7 @@ export default function FilterSidebar({
                   },
                 })
               }
-              className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+              className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-ring"
             />
           </div>
         </div>
@@ -187,7 +187,7 @@ export default function FilterSidebar({
                   },
                 })
               }
-              className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+              className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-ring"
             />
           </div>
           <div>
@@ -206,7 +206,7 @@ export default function FilterSidebar({
                   },
                 })
               }
-              className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+              className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-ring"
             />
           </div>
         </div>

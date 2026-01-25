@@ -115,14 +115,14 @@ export default function AdminOrdersPage() {
               placeholder="Search by customer name, email, or order ID..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-4 focus:border-transparent focus:ring-2 focus:ring-green-500"
+              className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-4 focus:border-transparent focus:ring-2 focus:ring-ring"
             />
           </div>
           <div className="flex gap-4">
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+              className="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
             >
               <option value="all">All Payment Statuses</option>
               <option value="pending">Pending</option>
@@ -132,7 +132,7 @@ export default function AdminOrdersPage() {
             <select
               value={shippingFilter}
               onChange={(e) => setShippingFilter(e.target.value)}
-              className="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
+              className="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
             >
               <option value="all">All Shipping Statuses</option>
               <option value="pending">Pending</option>
@@ -221,7 +221,7 @@ export default function AdminOrdersPage() {
                       onChange={(e) =>
                         updateShippingStatus(order.id, e.target.value)
                       }
-                      className="rounded border border-gray-300 px-2 py-1 text-sm focus:border-transparent focus:ring-2 focus:ring-green-500"
+                      className="rounded border border-gray-300 px-2 py-1 text-sm focus:border-transparent focus:ring-2 focus:ring-ring"
                     >
                       <option value="pending">Pending</option>
                       <option value="processing">Processing</option>

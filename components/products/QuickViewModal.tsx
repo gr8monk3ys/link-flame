@@ -90,7 +90,7 @@ function ImageGallery({
             <button
               type="button"
               onClick={handlePrevious}
-              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-2 shadow-md transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-2 shadow-md transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-ring"
               aria-label="Previous image"
             >
               <ChevronLeft className="size-4" />
@@ -98,7 +98,7 @@ function ImageGallery({
             <button
               type="button"
               onClick={handleNext}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-2 shadow-md transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-2 shadow-md transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-ring"
               aria-label="Next image"
             >
               <ChevronRight className="size-4" />
@@ -189,7 +189,7 @@ function QuantitySelector({
           }
         }}
         disabled={disabled}
-        className="h-9 w-14 rounded-md border text-center focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50"
+        className="h-9 w-14 rounded-md border text-center focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
         aria-label="Quantity"
       />
       <Button
@@ -408,8 +408,8 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
             "fixed z-50 bg-background shadow-xl focus:outline-none",
             // Desktop: Centered modal
             "sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2",
-            "sm:max-h-[90vh] sm:w-[95vw] sm:max-w-4xl sm:rounded-lg",
-            // Mobile: Bottom sheet
+            "sm:w-[95vw] sm:max-w-4xl",
+            // Mobile: Bottom sheet, desktop: centered modal
             "inset-x-0 bottom-0 sm:inset-auto",
             "max-h-[95vh] rounded-t-xl sm:max-h-[90vh] sm:rounded-lg",
             // Animations
@@ -438,7 +438,7 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
             className={cn(
               "absolute right-4 top-4 z-10 rounded-full bg-white/90 p-2 shadow-md",
               "transition-colors hover:bg-gray-100",
-              "focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+              "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
             )}
             aria-label="Close quick view"
           >
@@ -590,7 +590,7 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
                   <Link
                     href={`/products/${product.id}`}
                     onClick={() => onOpenChange(false)}
-                    className="inline-flex items-center rounded text-sm font-medium text-green-600 hover:text-green-700 hover:underline focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                    className="inline-flex items-center rounded text-sm font-medium text-green-600 hover:text-green-700 hover:underline focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                   >
                     <Eye className="mr-2 size-4" />
                     View Full Details

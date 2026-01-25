@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
@@ -34,8 +34,10 @@ export function ValueFilterSidebar({
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(defaultExpanded);
 
-  // Get currently selected values from URL
-  const selectedValues = searchParams.get('values')?.split(',').filter(Boolean) || [];
+  // Get currently selected values from URL - memoized to prevent recalculation
+  const selectedValues = useMemo(() => {
+    return searchParams.get('values')?.split(',').filter(Boolean) || [];
+  }, [searchParams]);
 
   // Fetch available values
   useEffect(() => {
@@ -44,7 +46,9 @@ export function ValueFilterSidebar({
         const response = await fetch('/api/products/values');
         if (response.ok) {
           const data = await response.json();
-          setValues(data);
+          // Handle both wrapped response { data: [...] } and direct array
+          const valuesArray = Array.isArray(data) ? data : (data.data || []);
+          setValues(valuesArray);
         }
       } catch (error) {
         console.error('Failed to fetch product values:', error);
@@ -170,7 +174,7 @@ export function ValueFilterSidebar({
                   disabled={!hasProducts}
                   className={cn(
                     'size-4 rounded border-gray-300',
-                    'focus:ring-green-500 focus:ring-offset-0',
+                    'focus:ring-ring focus:ring-offset-0',
                     'text-green-600',
                     !hasProducts && 'cursor-not-allowed'
                   )}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState, useRef } from 'react';
+import { useCallback, useEffect, useState, useRef, useMemo } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
@@ -105,8 +105,10 @@ export function ValueFilterBar({ className }: ValueFilterBarProps) {
   const [showLeftScroll, setShowLeftScroll] = useState(false);
   const [showRightScroll, setShowRightScroll] = useState(false);
 
-  // Get currently selected values from URL
-  const selectedValues = searchParams.get('values')?.split(',').filter(Boolean) || [];
+  // Get currently selected values from URL - memoized to prevent recalculation
+  const selectedValues = useMemo(() => {
+    return searchParams.get('values')?.split(',').filter(Boolean) || [];
+  }, [searchParams]);
 
   // Fetch available values
   useEffect(() => {
@@ -115,7 +117,9 @@ export function ValueFilterBar({ className }: ValueFilterBarProps) {
         const response = await fetch('/api/products/values');
         if (response.ok) {
           const data = await response.json();
-          setValues(data);
+          // Handle both wrapped response { data: [...] } and direct array
+          const valuesArray = Array.isArray(data) ? data : (data.data || []);
+          setValues(valuesArray);
         }
       } catch (error) {
         console.error('Failed to fetch product values:', error);
@@ -214,7 +218,7 @@ export function ValueFilterBar({ className }: ValueFilterBarProps) {
               className={cn(
                 'inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all',
                 'shrink-0 whitespace-nowrap border',
-                'focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2',
+                'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
                 isSelected
                   ? 'border-green-600 bg-green-600 text-white hover:bg-green-700'
                   : 'border-gray-200 bg-white text-gray-700 hover:border-green-300 hover:bg-green-50'
