@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +28,7 @@ export default function CheckoutForm() {
   const [loyaltyDiscount, setLoyaltyDiscount] = useState<number>(0);
   const [referralCode, setReferralCode] = useState<string | null>(null);
   const [referralDiscount, setReferralDiscount] = useState<number>(0);
+  const [csrfToken, setCsrfToken] = useState<string | null>(null);
   const [giftOptions, setGiftOptions] = useState<GiftOptionsData>({
     isGift: false,
     giftMessage: "",
@@ -53,6 +54,23 @@ export default function CheckoutForm() {
 
   // Disable checkout button if cart is empty
   const isCheckoutDisabled = cart.items.length === 0 || isLoading;
+
+  // Fetch CSRF token on mount
+  const fetchCsrfToken = useCallback(async () => {
+    try {
+      const response = await fetch('/api/csrf');
+      const data = await response.json();
+      if (data.token) {
+        setCsrfToken(data.token);
+      }
+    } catch (error) {
+      console.error('Failed to fetch CSRF token:', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCsrfToken();
+  }, [fetchCsrfToken]);
 
   // Clear form errors when input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -132,11 +150,17 @@ export default function CheckoutForm() {
         hidePrice: giftOptions.hidePrice,
       };
 
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+
+      if (csrfToken) {
+        headers["X-CSRF-Token"] = csrfToken;
+      }
+
       const response = await fetch("/api/checkout", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers,
         body: JSON.stringify(orderData),
       });
 

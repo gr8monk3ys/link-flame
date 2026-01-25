@@ -1,9 +1,20 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import { Icons } from '@/components/shared/icons'
-import { SearchDialog } from './SearchDialog'
 import { cn } from '@/lib/utils'
+
+// Dynamically import SearchDialog to reduce initial bundle size
+// The search dialog and its dependencies (PredictiveSearch, useSearch hook)
+// are only loaded when the user clicks the search button
+const SearchDialog = dynamic(
+  () => import('./SearchDialog').then(mod => ({ default: mod.SearchDialog })),
+  {
+    ssr: false,
+    loading: () => null, // No loading state needed since dialog opens on user action
+  }
+)
 
 interface HeaderSearchProps {
   className?: string

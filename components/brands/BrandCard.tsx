@@ -1,6 +1,6 @@
 'use client'
 
-import * as React from 'react'
+import { memo } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
@@ -37,7 +37,7 @@ function getValueDetails(slug: string): BrandValue | undefined {
   return BRAND_VALUES.find((v) => v.slug === slug)
 }
 
-export function BrandCard({ brand, variant = 'default', className }: BrandCardProps) {
+export const BrandCard = memo(function BrandCard({ brand, variant = 'default', className }: BrandCardProps) {
   const certificationDetails = brand.certifications
     .map(getCertificationDetails)
     .filter(Boolean) as BrandCertification[]
@@ -266,6 +266,8 @@ export function BrandCard({ brand, variant = 'default', className }: BrandCardPr
       </div>
     </Link>
   )
-}
+})
+
+BrandCard.displayName = 'BrandCard'
 
 export default BrandCard

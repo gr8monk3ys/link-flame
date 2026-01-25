@@ -202,7 +202,12 @@ interface ExtendedPointsEarnedToastProps extends PointsEarnedToastProps {
 // Re-export with style support
 export function PointsEarnedToastWithStyle({
   style,
-  ...props
+  onClose,
+  duration = 5000,
+  points,
+  message,
+  source,
+  className,
 }: ExtendedPointsEarnedToastProps) {
   const [isVisible, setIsVisible] = useState(true)
   const [isLeaving, setIsLeaving] = useState(false)
@@ -212,14 +217,14 @@ export function PointsEarnedToastWithStyle({
     setIsLeaving(true)
     leaveTimeoutRef.current = setTimeout(() => {
       setIsVisible(false)
-      props.onClose?.()
+      onClose?.()
     }, 300)
-  }, [props.onClose])
+  }, [onClose])
 
   useEffect(() => {
     const timer = setTimeout(() => {
       handleClose()
-    }, props.duration || 5000)
+    }, duration)
 
     return () => {
       clearTimeout(timer)
@@ -227,18 +232,18 @@ export function PointsEarnedToastWithStyle({
         clearTimeout(leaveTimeoutRef.current)
       }
     }
-  }, [props.duration, handleClose])
+  }, [duration, handleClose])
 
   if (!isVisible) return null
 
-  const defaultMessage = getDefaultMessage(props.source)
+  const defaultMessage = getDefaultMessage(source)
 
   return (
     <div
       className={cn(
         'fixed z-50 max-w-sm overflow-hidden rounded-lg border bg-background shadow-lg transition-all duration-300',
         isLeaving ? 'translate-x-full opacity-0' : 'translate-x-0 opacity-100',
-        props.className
+        className
       )}
       style={{ right: '1rem', ...style }}
       role="alert"
@@ -265,11 +270,11 @@ export function PointsEarnedToastWithStyle({
       <div className="p-4">
         <div className="flex items-center gap-4">
           <div className="flex size-12 items-center justify-center rounded-full bg-green-100">
-            <span className="text-xl font-bold text-green-600">+{props.points}</span>
+            <span className="text-xl font-bold text-green-600">+{points}</span>
           </div>
           <div className="flex-1">
             <p className="font-medium text-foreground">
-              {props.message || defaultMessage}
+              {message || defaultMessage}
             </p>
             <p className="text-sm text-muted-foreground">
               Keep earning to unlock more rewards!
@@ -297,7 +302,7 @@ export function PointsEarnedToastWithStyle({
         <div
           className="h-full bg-green-500"
           style={{
-            animation: `shrink ${props.duration || 5000}ms linear forwards`,
+            animation: `shrink ${duration}ms linear forwards`,
           }}
         />
       </div>

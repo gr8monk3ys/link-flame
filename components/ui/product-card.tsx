@@ -1,5 +1,6 @@
 "use client"
 
+import { memo } from "react"
 import Image from "next/image"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 import { Badge } from "@/components/ui/badge"
@@ -72,7 +73,7 @@ interface AdminProductCardProps {
 
 type ProductCardProps = TopPickProductCardProps | AdminProductCardProps
 
-const ProductCard = (props: ProductCardProps) => {
+const ProductCard = memo(function ProductCard(props: ProductCardProps) {
   const { data: session } = useSession();
   const userId = session?.user?.id;
   const { addItemToCart } = useCart()
@@ -104,6 +105,7 @@ const ProductCard = (props: ProductCardProps) => {
               alt={product.title}
               fill
               className="rounded-md object-cover"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
             />
           </AspectRatio>
           {stockBadge && (
@@ -178,6 +180,7 @@ const ProductCard = (props: ProductCardProps) => {
             alt={product.title}
             fill
             className="rounded-md object-cover"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
           />
         </AspectRatio>
       </CardHeader>
@@ -215,6 +218,8 @@ const ProductCard = (props: ProductCardProps) => {
       </CardFooter>
     </Card>
   )
-}
+})
+
+ProductCard.displayName = 'ProductCard'
 
 export default ProductCard

@@ -70,46 +70,6 @@ export function PredictiveSearch({
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // Handle keyboard navigation
-  const handleKeyDown = useCallback(
-    (event: React.KeyboardEvent) => {
-      const totalItems = getTotalItems()
-
-      switch (event.key) {
-        case 'ArrowDown':
-          event.preventDefault()
-          setSelectedIndex((prev) =>
-            prev < totalItems - 1 ? prev + 1 : 0
-          )
-          break
-        case 'ArrowUp':
-          event.preventDefault()
-          setSelectedIndex((prev) =>
-            prev > 0 ? prev - 1 : totalItems - 1
-          )
-          break
-        case 'Enter':
-          event.preventDefault()
-          if (selectedIndex >= 0) {
-            handleSelectByIndex(selectedIndex)
-          } else if (query.trim()) {
-            handleSearch()
-          }
-          break
-        case 'Escape':
-          event.preventDefault()
-          setIsOpen(false)
-          inputRef.current?.blur()
-          onClose?.()
-          break
-        case 'Tab':
-          setIsOpen(false)
-          break
-      }
-    },
-    [getTotalItems, selectedIndex, query, onClose]
-  )
-
   // Handle selecting an item by index (for keyboard navigation)
   const handleSelectByIndex = useCallback(
     (index: number) => {
@@ -179,6 +139,46 @@ export function PredictiveSearch({
       onClose?.()
     }
   }, [query, addRecentSearch, router, onClose])
+
+  // Handle keyboard navigation
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      const totalItems = getTotalItems()
+
+      switch (event.key) {
+        case 'ArrowDown':
+          event.preventDefault()
+          setSelectedIndex((prev) =>
+            prev < totalItems - 1 ? prev + 1 : 0
+          )
+          break
+        case 'ArrowUp':
+          event.preventDefault()
+          setSelectedIndex((prev) =>
+            prev > 0 ? prev - 1 : totalItems - 1
+          )
+          break
+        case 'Enter':
+          event.preventDefault()
+          if (selectedIndex >= 0) {
+            handleSelectByIndex(selectedIndex)
+          } else if (query.trim()) {
+            handleSearch()
+          }
+          break
+        case 'Escape':
+          event.preventDefault()
+          setIsOpen(false)
+          inputRef.current?.blur()
+          onClose?.()
+          break
+        case 'Tab':
+          setIsOpen(false)
+          break
+      }
+    },
+    [getTotalItems, selectedIndex, query, onClose, handleSelectByIndex, handleSearch]
+  )
 
   // Handle input change
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {

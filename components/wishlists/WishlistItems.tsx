@@ -69,34 +69,8 @@ export function WishlistItems({
     [wishlists, currentWishlistId]
   );
 
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="h-24 animate-pulse rounded-lg bg-muted" />
-        ))}
-      </div>
-    );
-  }
-
-  if (items.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-muted">
-          <ShoppingCart className="size-8 text-muted-foreground" />
-        </div>
-        <h3 className="mb-2 text-lg font-semibold">No items yet</h3>
-        <p className="mb-4 text-muted-foreground">
-          Start adding products to this wishlist
-        </p>
-        <Link href="/products">
-          <Button>Browse Products</Button>
-        </Link>
-      </div>
-    );
-  }
-
   // Memoize event handlers to prevent unnecessary re-renders
+  // Must be defined before any conditional returns to follow Rules of Hooks
   const handleMoveToCart = useCallback(async (item: WishlistItem) => {
     setMovingToCart((prev) => ({ ...prev, [item.productId]: true }));
     try {
@@ -126,6 +100,33 @@ export function WishlistItems({
     await onUpdateNote(noteDialogItem.id, noteText || null);
     setNoteDialogItem(null);
   }, [noteDialogItem, onUpdateNote, noteText]);
+
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="h-24 animate-pulse rounded-lg bg-muted" />
+        ))}
+      </div>
+    );
+  }
+
+  if (items.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-muted">
+          <ShoppingCart className="size-8 text-muted-foreground" />
+        </div>
+        <h3 className="mb-2 text-lg font-semibold">No items yet</h3>
+        <p className="mb-4 text-muted-foreground">
+          Start adding products to this wishlist
+        </p>
+        <Link href="/products">
+          <Button>Browse Products</Button>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -177,7 +178,7 @@ export function WishlistItems({
 
               {item.note && (
                 <p className="mt-2 text-sm italic text-muted-foreground">
-                  "{item.note}"
+                  &quot;{item.note}&quot;
                 </p>
               )}
 
@@ -260,7 +261,7 @@ export function WishlistItems({
           <DialogHeader>
             <DialogTitle>Move to Wishlist</DialogTitle>
             <DialogDescription>
-              Select a wishlist to move "{moveDialogItem?.product.title}" to
+              Select a wishlist to move &quot;{moveDialogItem?.product.title}&quot; to
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
@@ -284,7 +285,7 @@ export function WishlistItems({
           <DialogHeader>
             <DialogTitle>Add Note</DialogTitle>
             <DialogDescription>
-              Add a personal note for "{noteDialogItem?.product.title}"
+              Add a personal note for &quot;{noteDialogItem?.product.title}&quot;
             </DialogDescription>
           </DialogHeader>
           <textarea

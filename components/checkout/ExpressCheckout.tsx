@@ -32,11 +32,7 @@ export function ExpressCheckout({ disabled = false, className = '' }: ExpressChe
   const { cart, clearCart, cartTotal } = useCart()
   const [isProcessing, setIsProcessing] = useState(false)
 
-  // Don't render if Stripe is not configured or cart is empty
-  if (!isStripeConfigured() || cart.items.length === 0) {
-    return null
-  }
-
+  // Define all hooks before any conditional returns to follow Rules of Hooks
   const handlePaymentSuccess = useCallback(
     async (paymentMethodId: string) => {
       setIsProcessing(true)
@@ -89,6 +85,11 @@ export function ExpressCheckout({ disabled = false, className = '' }: ExpressChe
     console.error('Payment error:', error)
     toast.error(error.message || 'Payment failed. Please try again.')
   }, [])
+
+  // Don't render if Stripe is not configured or cart is empty
+  if (!isStripeConfigured() || cart.items.length === 0) {
+    return null
+  }
 
   return (
     <div className={`space-y-4 ${className}`}>

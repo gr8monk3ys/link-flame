@@ -25,7 +25,7 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
             <QuestionMarkIcon className="size-6 text-amber-700" />
           </div>
           <div>
-            <h3 className="font-semibold text-amber-900">What does "Perfectly Imperfect" mean?</h3>
+            <h3 className="font-semibold text-amber-900">What does &quot;Perfectly Imperfect&quot; mean?</h3>
             <p className="mt-2 text-sm text-amber-800">
               These products have minor cosmetic issues like dented packaging or label misprints,
               but the quality inside is 100% the same. You get the same great product at a
@@ -76,7 +76,7 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
           How Perfectly Imperfect Works
         </h2>
         <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
-          Same quality products at lower prices. Here's why choosing imperfect is the smart
+          Same quality products at lower prices. Here&apos;s why choosing imperfect is the smart
           (and sustainable) choice.
         </p>
       </div>
@@ -97,7 +97,7 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
       {/* Common imperfections */}
       <div className="rounded-3xl border border-gray-100 bg-white p-8 shadow-lg md:p-12">
         <h3 className="mb-8 text-center text-2xl font-bold text-gray-900">
-          What makes something "Imperfect"?
+          What makes something &quot;Imperfect&quot;?
         </h3>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -128,7 +128,7 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
             </h4>
             <p className="mt-1 text-green-800">
               Every imperfect item comes with the same quality guarantee as our regular products.
-              If you're not satisfied for any reason, return it for a full refund.
+              If you&apos;re not satisfied for any reason, return it for a full refund.
             </p>
           </div>
         </div>
@@ -141,7 +141,7 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
             Your Impact
           </h3>
           <p className="mt-2 text-green-800">
-            By choosing imperfect, you're helping make a difference
+            By choosing imperfect, you&apos;re helping make a difference
           </p>
         </div>
 

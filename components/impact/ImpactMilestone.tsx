@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import {
   Droplet,
@@ -48,21 +48,21 @@ export function ImpactMilestone({
 
   const Icon = ICON_MAP[milestone.iconName] || Leaf;
 
+  const handleClose = useCallback(() => {
+    setIsExiting(true);
+    setTimeout(() => {
+      setIsVisible(false);
+      onClose();
+    }, 300);
+  }, [onClose]);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       handleClose();
     }, autoCloseMs);
 
     return () => clearTimeout(timer);
-  }, [autoCloseMs]);
-
-  const handleClose = () => {
-    setIsExiting(true);
-    setTimeout(() => {
-      setIsVisible(false);
-      onClose();
-    }, 300);
-  };
+  }, [autoCloseMs, handleClose]);
 
   if (!isVisible) return null;
 
@@ -144,29 +144,32 @@ export function useMilestoneNotifications() {
   const [pendingMilestones, setPendingMilestones] = useState<MilestoneData[]>([]);
   const [currentMilestone, setCurrentMilestone] = useState<MilestoneData | null>(null);
 
-  const addMilestones = (milestones: MilestoneData[]) => {
+  const addMilestones = useCallback((milestones: MilestoneData[]) => {
     setPendingMilestones((prev) => [...prev, ...milestones]);
-  };
+  }, []);
 
-  const showNextMilestone = () => {
-    if (pendingMilestones.length > 0) {
-      setCurrentMilestone(pendingMilestones[0]);
-      setPendingMilestones((prev) => prev.slice(1));
-    } else {
-      setCurrentMilestone(null);
-    }
-  };
+  const showNextMilestone = useCallback(() => {
+    setPendingMilestones((prev) => {
+      if (prev.length > 0) {
+        setCurrentMilestone(prev[0]);
+        return prev.slice(1);
+      } else {
+        setCurrentMilestone(null);
+        return prev;
+      }
+    });
+  }, []);
 
-  const dismissCurrent = () => {
+  const dismissCurrent = useCallback(() => {
     showNextMilestone();
-  };
+  }, [showNextMilestone]);
 
   // Auto-show first milestone when added
   useEffect(() => {
     if (!currentMilestone && pendingMilestones.length > 0) {
       showNextMilestone();
     }
-  }, [pendingMilestones, currentMilestone]);
+  }, [pendingMilestones, currentMilestone, showNextMilestone]);
 
   return {
     currentMilestone,

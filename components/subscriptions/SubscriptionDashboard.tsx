@@ -95,6 +95,25 @@ export function SubscriptionDashboard() {
     }
   }, [authStatus, fetchSubscriptions]);
 
+  // Filter subscriptions - memoized to prevent recalculation on every render
+  // Must be defined before any conditional returns to follow Rules of Hooks
+  const filteredSubscriptions = useMemo(
+    () => filter === 'all'
+      ? subscriptions
+      : subscriptions.filter(sub => sub.status === filter),
+    [subscriptions, filter]
+  );
+
+  // Calculate stats - memoized to prevent recalculation on every render
+  const activeCount = useMemo(
+    () => subscriptions.filter(s => s.status === 'ACTIVE').length,
+    [subscriptions]
+  );
+  const pausedCount = useMemo(
+    () => subscriptions.filter(s => s.status === 'PAUSED').length,
+    [subscriptions]
+  );
+
   // Show sign-in prompt if not authenticated
   if (authStatus === 'loading') {
     return (
@@ -112,7 +131,7 @@ export function SubscriptionDashboard() {
           Sign in to manage subscriptions
         </h3>
         <p className="mt-2 text-sm text-gray-500">
-          Create an account or sign in to view and manage your Subscribe & Save subscriptions.
+          Create an account or sign in to view and manage your Subscribe &amp; Save subscriptions.
         </p>
         <div className="mt-6">
           <Link
@@ -125,24 +144,6 @@ export function SubscriptionDashboard() {
       </div>
     );
   }
-
-  // Filter subscriptions - memoized to prevent recalculation on every render
-  const filteredSubscriptions = useMemo(
-    () => filter === 'all'
-      ? subscriptions
-      : subscriptions.filter(sub => sub.status === filter),
-    [subscriptions, filter]
-  );
-
-  // Calculate stats - memoized to prevent recalculation on every render
-  const activeCount = useMemo(
-    () => subscriptions.filter(s => s.status === 'ACTIVE').length,
-    [subscriptions]
-  );
-  const pausedCount = useMemo(
-    () => subscriptions.filter(s => s.status === 'PAUSED').length,
-    [subscriptions]
-  );
 
   return (
     <div className="space-y-6">

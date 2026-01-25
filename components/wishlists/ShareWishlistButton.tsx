@@ -72,7 +72,7 @@ export function ShareWishlistButton({
           <DialogHeader>
             <DialogTitle>Share Wishlist</DialogTitle>
             <DialogDescription>
-              Anyone with this link can view your "{wishlistName}" wishlist
+              Anyone with this link can view your &quot;{wishlistName}&quot; wishlist
             </DialogDescription>
           </DialogHeader>
 
