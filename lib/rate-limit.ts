@@ -238,3 +238,153 @@ export async function checkStrictRateLimit(identifier: string): Promise<{
     reset,
   };
 }
+
+/**
+ * Rate limit namespace prefixes for consistent key naming across API routes.
+ *
+ * Using consistent namespaces helps:
+ * - Organize rate limit keys in Redis
+ * - Enable per-resource rate limiting
+ * - Make debugging and monitoring easier
+ * - Prevent key collisions between different endpoints
+ *
+ * @example
+ * ```typescript
+ * import { RATE_LIMIT_NAMESPACES, getRateLimitKey, getIdentifier } from '@/lib/rate-limit'
+ *
+ * const identifier = getIdentifier(request)
+ * const key = getRateLimitKey(RATE_LIMIT_NAMESPACES.PRODUCTS, identifier)
+ * const { success, reset } = await checkRateLimit(key)
+ * ```
+ */
+export const RATE_LIMIT_NAMESPACES = {
+  // Product endpoints
+  PRODUCTS: 'products',
+  PRODUCT: 'product',
+  PRODUCT_REVIEWS: 'product-reviews',
+  PRODUCT_VALUES: 'values',
+  PRODUCTS_IMPERFECT: 'products-imperfect',
+
+  // Brand endpoints
+  BRANDS: 'brands',
+  BRAND: 'brand',
+
+  // Cart endpoints
+  CART: 'cart',
+  CART_MIGRATE: 'cart-migrate',
+
+  // Checkout endpoints
+  CHECKOUT: 'checkout',
+  CHECKOUT_EXPRESS: 'checkout-express',
+
+  // Order endpoints
+  ORDERS: 'orders',
+  ORDER: 'order',
+  ORDERS_BY_SESSION: 'orders-by-session',
+
+  // Authentication endpoints
+  AUTH_SIGNUP: 'auth-signup',
+  AUTH_LOGIN: 'auth-login',
+  AUTH_USER: 'auth-user',
+
+  // Account endpoints
+  ACCOUNT_PROFILE: 'account-profile',
+  ACCOUNT_PASSWORD: 'account-password',
+  ACCOUNT_DELETE: 'account-delete',
+
+  // Contact and newsletter
+  CONTACT: 'contact',
+  NEWSLETTER: 'newsletter',
+
+  // Search endpoints
+  SEARCH: 'search',
+  SEARCH_SUGGESTIONS: 'search-suggestions',
+
+  // Blog endpoints
+  BLOG_SEARCH: 'blog-search',
+
+  // Wishlist endpoints
+  WISHLISTS: 'wishlists',
+  WISHLIST: 'wishlist',
+  WISHLIST_ITEMS: 'wishlist-items',
+  WISHLIST_MOVE: 'wishlist-move',
+  WISHLIST_SHARED: 'wishlist-shared',
+
+  // Saved items endpoints
+  SAVED_ITEMS: 'saved-items',
+  SAVED_ITEMS_MIGRATE: 'saved-items-migrate',
+
+  // Bundle endpoints
+  BUNDLES: 'bundles',
+  BUNDLE: 'bundle',
+  BUNDLE_CART: 'bundle-cart',
+  BUNDLE_CALC: 'bundle-calc',
+
+  // Loyalty endpoints
+  LOYALTY_BALANCE: 'loyalty-balance',
+  LOYALTY_HISTORY: 'loyalty-history',
+  LOYALTY_EARN: 'loyalty-earn',
+  LOYALTY_REDEEM: 'loyalty-redeem',
+
+  // Gift card endpoints
+  GIFT_CARDS: 'gift-cards',
+  GIFT_CARD: 'gift-card',
+  GIFT_CARD_REDEEM: 'gift-card-redeem',
+  GIFT_CARDS_MY: 'gift-cards-my',
+
+  // Referral endpoints
+  REFERRAL_CODE: 'referral-code',
+  REFERRAL_STATS: 'referral-stats',
+  REFERRAL_VALIDATE: 'referral-validate',
+  REFERRAL_LIST: 'referral-list',
+
+  // Subscription endpoints
+  SUBSCRIPTIONS: 'subscriptions',
+  SUBSCRIPTION: 'subscription',
+  SUBSCRIPTION_SKIP: 'subscription-skip',
+  SUBSCRIPTION_UPCOMING: 'subscription-upcoming',
+
+  // Quiz endpoints
+  QUIZ_QUESTIONS: 'quiz-questions',
+  QUIZ_SUBMIT: 'quiz-submit',
+  QUIZ_RESULTS: 'quiz-results',
+
+  // Impact endpoints
+  IMPACT_PERSONAL: 'impact-personal',
+  IMPACT_COMMUNITY: 'impact-community',
+  IMPACT_PREVIEW: 'impact-preview',
+  IMPACT_ORDER: 'impact-order',
+
+  // Team management endpoints
+  TEAM_INVITE: 'team-invite',
+  TEAM_MEMBER: 'team-member',
+  TEAM_ACCEPT: 'team-accept',
+} as const;
+
+export type RateLimitNamespace = typeof RATE_LIMIT_NAMESPACES[keyof typeof RATE_LIMIT_NAMESPACES];
+
+/**
+ * Creates a standardized rate limit key with namespace prefix.
+ *
+ * This function combines a namespace prefix with the request identifier
+ * to create a consistent and organized rate limit key.
+ *
+ * @param namespace - The rate limit namespace (e.g., 'products', 'cart')
+ * @param identifier - The request identifier from getIdentifier()
+ * @returns Formatted rate limit key (e.g., 'products:user:abc123')
+ *
+ * @example
+ * ```typescript
+ * const identifier = getIdentifier(request, userId)
+ * const key = getRateLimitKey(RATE_LIMIT_NAMESPACES.PRODUCTS, identifier)
+ * // Returns: 'products:user:abc123' or 'products:ip:192.168.1.1'
+ *
+ * const { success, reset } = await checkRateLimit(key)
+ * ```
+ */
+export function getRateLimitKey(
+  namespace: RateLimitNamespace | string,
+  identifier: string
+): string {
+  return `${namespace}:${identifier}`;
+}
