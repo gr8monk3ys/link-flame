@@ -1,7 +1,8 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useSession } from "next-auth/react"
+import Image from "next/image"
 import { Star, ThumbsUp, ThumbsDown, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -48,11 +49,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
   const [comment, setComment] = useState("")
   const [hoverRating, setHoverRating] = useState(0)
 
-  useEffect(() => {
-    fetchReviews()
-  }, [productId])
-
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch(`/api/products/${productId}/reviews`)
@@ -67,7 +64,11 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [productId])
+
+  useEffect(() => {
+    fetchReviews()
+  }, [fetchReviews])
 
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -107,9 +108,10 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
       setRating(5)
       setComment("")
       fetchReviews() // Refresh reviews
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error submitting review:', error)
-      toast.error(error.message || 'Failed to submit review')
+      const message = error instanceof Error ? error.message : 'Failed to submit review'
+      toast.error(message)
     } finally {
       setSubmitting(false)
     }
@@ -276,9 +278,11 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
                 <div className="flex items-start gap-4">
                   {/* User Avatar */}
                   {review.user.image ? (
-                    <img
+                    <Image
                       src={review.user.image}
                       alt={review.user.name || 'User'}
+                      width={40}
+                      height={40}
                       className="size-10 rounded-full"
                     />
                   ) : (
