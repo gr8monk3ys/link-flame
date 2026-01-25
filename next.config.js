@@ -18,6 +18,38 @@ const nextConfig = {
         hostname: 'img.clerk.com',
         pathname: '/**',
       },
+      // OAuth provider avatars
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'avatars.githubusercontent.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'platform-lookaside.fbsbx.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'pbs.twimg.com',
+        pathname: '/**',
+      },
+      // Gravatar for fallback avatars
+      {
+        protocol: 'https',
+        hostname: 'www.gravatar.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'gravatar.com',
+        pathname: '/**',
+      },
     ],
     // Enable modern image formats for better compression and quality
     formats: ['image/avif', 'image/webp'],
@@ -48,7 +80,7 @@ const nextConfig = {
       default-src 'self';
       script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com https://www.googletagmanager.com https://www.google-analytics.com;
       style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-      img-src 'self' https://images.unsplash.com https://img.clerk.com https://*.stripe.com data: blob:;
+      img-src 'self' https://images.unsplash.com https://img.clerk.com https://*.stripe.com https://lh3.googleusercontent.com https://avatars.githubusercontent.com https://platform-lookaside.fbsbx.com https://pbs.twimg.com https://www.gravatar.com https://gravatar.com data: blob:;
       font-src 'self' https://fonts.gstatic.com;
       connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://analytics.google.com;
       frame-src 'self' https://js.stripe.com https://hooks.stripe.com;

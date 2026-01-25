@@ -131,7 +131,7 @@ export const SECURITY = {
 
   // Password requirements
   password: {
-    minLength: 6,
+    minLength: 8,
     maxLength: 100,
   },
 

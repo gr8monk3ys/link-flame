@@ -64,7 +64,7 @@ export default auth((req) => {
   const nonce = generateNonce()
 
   // Protected routes that require authentication
-  const protectedRoutes = ['/account', '/checkout']
+  const protectedRoutes = ['/account', '/checkout', '/admin']
   const isProtectedRoute = protectedRoutes.some((route) =>
     pathname.startsWith(route)
   )
