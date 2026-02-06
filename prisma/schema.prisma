@@ -1,30 +1,24 @@
 // This is your Prisma schema file
 generator client {
   provider = "prisma-client-js"
+  engineType = "binary"
 }
 
 // ===========================================
 // DATABASE CONFIGURATION
 // ===========================================
-// Currently using SQLite for development. For production, switch to PostgreSQL:
+// PostgreSQL is the primary database for production and multi-user workloads.
+// Update DATABASE_URL in .env to your PostgreSQL connection string:
+// DATABASE_URL="postgresql://user:password@localhost:5432/linkflame?schema=public"
 //
-// 1. Update provider to "postgresql"
-// 2. Update DATABASE_URL in .env to PostgreSQL connection string:
-//    DATABASE_URL="postgresql://user:password@localhost:5432/linkflame?schema=public"
-// 3. Run `npx prisma migrate dev` to create PostgreSQL migrations
-//
-// PostgreSQL provides additional features:
+// PostgreSQL provides:
+// - Better concurrency and connection pooling
 // - Full-text search (@@fulltext indexes)
 // - JSON/JSONB native types (replace String JSON fields)
 // - Array types for multi-value fields
-// - Better concurrency and connection pooling
 // - Row-level security for multi-tenant isolation
-//
-// Schema is designed to be compatible with both SQLite and PostgreSQL.
-// JSON fields use String type (works with both), but can be changed to
-// Json type when migrating to PostgreSQL for better querying.
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
