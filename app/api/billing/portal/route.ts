@@ -19,6 +19,7 @@ import {
   validationErrorResponse,
 } from '@/lib/api-response'
 import { logger } from '@/lib/logger'
+import { getBaseUrl } from '@/lib/url'
 import {
   createCustomerPortalSession,
   SubscriptionError,
@@ -76,7 +77,7 @@ export async function POST(request: Request) {
     const { customerId, returnUrl } = validation.data
 
     // Build return URL (default to billing page)
-    const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'
+    const baseUrl = getBaseUrl()
     const finalReturnUrl = returnUrl || `${baseUrl}/billing`
 
     // CRITICAL: Verify customer belongs to user's organization

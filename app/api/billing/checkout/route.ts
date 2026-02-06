@@ -18,6 +18,7 @@ import {
   validationErrorResponse,
 } from '@/lib/api-response'
 import { logger } from '@/lib/logger'
+import { getBaseUrl } from '@/lib/url'
 import {
   type PlanId,
   type BillingInterval,
@@ -132,7 +133,7 @@ export async function POST(request: Request) {
     )
 
     // Build success/cancel URLs
-    const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'
+    const baseUrl = getBaseUrl()
     const successUrl = `${baseUrl}/billing/success?session_id={CHECKOUT_SESSION_ID}`
     const cancelUrl = `${baseUrl}/billing/plans?cancelled=true`
 

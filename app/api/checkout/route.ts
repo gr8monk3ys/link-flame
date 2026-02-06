@@ -12,6 +12,7 @@ import {
   errorResponse
 } from "@/lib/api-response";
 import { logger } from "@/lib/logger";
+import { getBaseUrl } from "@/lib/url";
 import Stripe from "stripe";
 
 // Initialize Stripe lazily to allow build without secret key
@@ -206,8 +207,8 @@ export async function POST(request: Request) {
         customer_email: data.email,
         // Billing address collection for better fraud prevention
         billing_address_collection: 'auto',
-        success_url: `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/order-confirmation?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/checkout`,
+        success_url: `${getBaseUrl()}/order-confirmation?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${getBaseUrl()}/checkout`,
         // Expire after 30 minutes
         expires_at: Math.floor(Date.now() / 1000) + (30 * 60),
       });

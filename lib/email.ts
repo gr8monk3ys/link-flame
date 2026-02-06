@@ -12,6 +12,7 @@
 
 import { Resend } from 'resend';
 import { logger } from '@/lib/logger';
+import { getBaseUrl } from '@/lib/url';
 
 // Initialize Resend client
 const resend = process.env.RESEND_API_KEY
@@ -297,7 +298,7 @@ function generateNewsletterConfirmationHTML(email: string): string {
             </p>
 
             <div style="text-align: center; margin: 32px 0;">
-              <a href="${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}" style="display: inline-block; background-color: #10b981; color: #ffffff; padding: 12px 32px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">
+              <a href="${getBaseUrl()}" style="display: inline-block; background-color: #10b981; color: #ffffff; padding: 12px 32px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">
                 Explore Products
               </a>
             </div>
@@ -427,7 +428,7 @@ function generateContactConfirmationHTML(contactData: {
           <!-- Footer -->
           <div style="background-color: #f9fafb; padding: 24px 30px; text-align: center; border-top: 1px solid #e5e7eb;">
             <p style="margin: 0 0 8px 0; font-size: 14px; color: #6b7280;">
-              Visit our website: <a href="${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}" style="color: #10b981; text-decoration: none;">linkflame.com</a>
+              Visit our website: <a href="${getBaseUrl()}" style="color: #10b981; text-decoration: none;">linkflame.com</a>
             </p>
             <p style="margin: 0; font-size: 12px; color: #9ca3af;">
               © 2026 Link Flame. All rights reserved.

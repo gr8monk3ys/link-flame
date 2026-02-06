@@ -8,6 +8,7 @@ import {
 } from "@/lib/api-response";
 import { checkRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
+import { getBaseUrl } from "@/lib/url";
 
 /**
  * GET /api/referrals/code
@@ -37,7 +38,7 @@ export async function GET(request: Request) {
       return handleApiError(new Error("Failed to generate referral code"));
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
+    const baseUrl = getBaseUrl();
     const referralLink = `${baseUrl}?ref=${referralCode}`;
 
     // Generate share links

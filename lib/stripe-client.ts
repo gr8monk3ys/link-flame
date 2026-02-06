@@ -12,7 +12,7 @@ export function getStripeClient(): Promise<Stripe | null> {
   if (!stripePromise) {
     const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 
-    if (!publishableKey) {
+    if (!publishableKey || isPlaceholderKey(publishableKey)) {
       console.warn(
         'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not configured. ' +
         'Apple Pay and Google Pay will not be available.'
@@ -32,5 +32,15 @@ export function getStripeClient(): Promise<Stripe | null> {
  * @returns boolean indicating if the publishable key is present
  */
 export function isStripeConfigured(): boolean {
-  return Boolean(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
+  const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+  return Boolean(key && !isPlaceholderKey(key))
+}
+
+function isPlaceholderKey(key: string): boolean {
+  const normalized = key.trim().toLowerCase()
+  return (
+    normalized.includes('placeholder') ||
+    normalized.includes('your_stripe_publishable_key') ||
+    normalized === 'pk_test_placeholder'
+  )
 }

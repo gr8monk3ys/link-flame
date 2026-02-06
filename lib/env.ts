@@ -20,11 +20,14 @@ const envSchema = z.object({
 
   // Stripe (Required for payment processing, optional in build-time)
   STRIPE_SECRET_KEY: z.string().startsWith('sk_', 'STRIPE_SECRET_KEY must start with sk_').optional(),
-  STRIPE_PUBLISHABLE_KEY: z.string().startsWith('pk_', 'STRIPE_PUBLISHABLE_KEY must start with pk_').optional(),
   STRIPE_WEBHOOK_SECRET: z.string().startsWith('whsec_', 'STRIPE_WEBHOOK_SECRET must start with whsec_').optional(),
 
   // Public Environment Variables
-  NEXT_PUBLIC_URL: z.string().url('NEXT_PUBLIC_URL must be a valid URL').default('http://localhost:3000'),
+  NEXT_PUBLIC_APP_URL: z.string().url('NEXT_PUBLIC_APP_URL must be a valid URL').optional(),
+  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z
+    .string()
+    .startsWith('pk_', 'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY must start with pk_')
+    .optional(),
 
   // Node Environment
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
@@ -46,9 +49,9 @@ function validateEnv() {
       NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
       NEXTAUTH_URL: process.env.NEXTAUTH_URL,
       STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
-      STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
       STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
-      NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL,
+      NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
       NODE_ENV: process.env.NODE_ENV,
       UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
       UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
@@ -74,6 +77,16 @@ function validateEnv() {
 
 // Export validated environment variables
 export const env = validateEnv();
+
+// Additional production-only checks that require cross-field validation
+if (env.NODE_ENV === 'production') {
+  if (!env.NEXT_PUBLIC_APP_URL) {
+    throw new Error('NEXT_PUBLIC_APP_URL is required in production');
+  }
+  if (env.STRIPE_SECRET_KEY && !env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
+    throw new Error('NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is required when Stripe is enabled');
+  }
+}
 
 // Type-safe environment variables
 export type Env = z.infer<typeof envSchema>;

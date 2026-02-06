@@ -6,6 +6,7 @@
 import { prisma } from '@/lib/prisma'
 import { randomBytes } from 'crypto'
 import { hasPermission, isValidRole, type Role } from './permissions'
+import { getBaseUrl } from '@/lib/url'
 
 /**
  * Invitation expiration time in milliseconds (7 days)
@@ -541,6 +542,6 @@ export async function getPendingInvitations(
  * @returns The full invitation URL
  */
 export function generateInvitationLink(token: string): string {
-  const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'
+  const baseUrl = getBaseUrl()
   return `${baseUrl}/invitations/${token}`
 }

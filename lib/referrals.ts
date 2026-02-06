@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { getBaseUrl } from '@/lib/url';
 import { randomBytes } from 'crypto';
 
 /**
@@ -344,7 +345,7 @@ export async function getReferralStats(userId: string): Promise<{
     .reduce((sum, r) => sum + r.rewardPoints, 0);
 
   const referralCode = user?.referralCode || await getUserReferralCode(userId);
-  const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
+  const baseUrl = getBaseUrl();
 
   return {
     referralCode,
