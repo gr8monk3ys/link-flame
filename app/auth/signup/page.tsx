@@ -38,16 +38,30 @@ export default function SignUpPage() {
     setLoading(true);
 
     try {
+      const csrfResponse = await fetch("/api/csrf")
+      const csrfData = await csrfResponse.json().catch(() => ({}))
+      const csrfToken = typeof csrfData?.token === "string" ? csrfData.token : undefined
+
       const response = await fetch("/api/auth/signup", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(csrfToken ? { "X-CSRF-Token": csrfToken } : {}),
+        },
         body: JSON.stringify({ name, email, password }),
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        setError(data.error || "Failed to create account");
+        const details = data?.error?.details;
+        const detailMessage =
+          Array.isArray(details) && details.length > 0 ? details[0]?.message : undefined;
+        const errorMessage =
+          (typeof data?.error === "string" ? data.error : data?.error?.message) ||
+          detailMessage ||
+          "Failed to create account";
+        setError(errorMessage);
         setLoading(false);
         return;
       }

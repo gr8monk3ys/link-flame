@@ -1,4 +1,5 @@
 import "@/styles/globals.css"
+import "@/lib/env"
 import { Suspense } from "react"
 import { Metadata, Viewport } from "next"
 import { siteConfig } from "@/config/site"

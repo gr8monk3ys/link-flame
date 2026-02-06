@@ -32,7 +32,7 @@ export function useProducts(options: UseProductsOptions = {}) {
   const queryString = queryParams.toString();
   const url = `/api/products${queryString ? `?${queryString}` : ''}`;
   
-  const { data, error, isLoading, mutate } = useSWR<Product[]>(
+  const { data, error, isLoading, mutate } = useSWR<unknown>(
     url,
     fetcher,
     {
@@ -41,9 +41,17 @@ export function useProducts(options: UseProductsOptions = {}) {
       dedupingInterval: 60000, // 1 minute
     }
   );
+
+  const products = Array.isArray(data)
+    ? data
+    : Array.isArray((data as { data?: Product[] })?.data)
+      ? (data as { data?: Product[] }).data!
+      : Array.isArray((data as { products?: Product[] })?.products)
+        ? (data as { products?: Product[] }).products!
+        : [];
   
   return {
-    products: data || [],
+    products,
     isLoading,
     isError: error,
     mutate,

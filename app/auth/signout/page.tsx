@@ -1,27 +1,29 @@
-"use client";
-
-import { signOut } from "next-auth/react";
-import { useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
+import { signOut } from "@/auth";
+import { Button } from "@/components/ui/button";
 
 export default function SignOutPage() {
-  useEffect(() => {
-    signOut({ callbackUrl: "/" });
-  }, []);
-
   return (
-    <div className="container flex min-h-[calc(100vh-200px)] items-center justify-center">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Signing Out</CardTitle>
-          <CardDescription>Please wait while we sign you out...</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex justify-center">
-            <div className="size-8 animate-spin rounded-full border-b-2 border-primary"></div>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="container flex min-h-[60vh] flex-col items-center justify-center gap-4 py-12 text-center">
+      <h1 className="text-2xl font-semibold">Ready to sign out?</h1>
+      <p className="text-sm text-muted-foreground">
+        Click below to end your session.
+      </p>
+      <div className="flex items-center gap-2">
+        <form
+          action={async () => {
+            "use server";
+            await signOut({ redirectTo: "/" });
+          }}
+        >
+          <Button type="submit" variant="default">
+            Sign Out
+          </Button>
+        </form>
+        <Button asChild variant="ghost">
+          <Link href="/">Go home</Link>
+        </Button>
+      </div>
     </div>
   );
 }

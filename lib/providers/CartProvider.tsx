@@ -93,7 +93,11 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
                 try {
                   const res = await fetch(`/api/products/${id}`)
                   if (!res.ok) throw new Error('Failed to fetch product')
-                  const product = await res.json()
+                  const payload = await res.json()
+                  const product = payload?.data ?? payload
+                  if (!product?.id) {
+                    throw new Error('Invalid product payload')
+                  }
                   return {
                     id: product.id,
                     title: product.title,
@@ -165,8 +169,12 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       // Check if user just logged in (transition from unauthenticated to authenticated)
       if (prevAuthStatus.current === 'unauthenticated' && status === 'authenticated' && session?.user?.id) {
         try {
+          const csrfToken = await getCsrfToken()
           const response = await fetch('/api/cart/migrate', {
             method: 'POST',
+            headers: {
+              'X-CSRF-Token': csrfToken,
+            },
           })
 
           if (response.ok) {

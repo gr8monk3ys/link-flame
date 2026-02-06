@@ -1,10 +1,9 @@
+import { getBaseUrl } from "@/lib/url"
+
 export type SiteConfig = typeof siteConfig
 
 // Determine the base URL based on the environment
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
-  || (process.env.NODE_ENV === 'development' 
-    ? 'http://localhost:3000' 
-    : 'https://linkflame.com')
+const baseUrl = getBaseUrl()
 
 export const siteConfig = {
   name: "LinkFlame",

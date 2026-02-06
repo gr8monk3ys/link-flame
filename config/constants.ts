@@ -1,3 +1,6 @@
+
+import { getBaseUrl } from '@/lib/url'
+
 /**
  * Application-wide constants
  *
@@ -82,8 +85,9 @@ export const FEATURES = {
 /**
  * API configuration
  */
+
 export const API = {
-  baseUrl: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+  baseUrl: getBaseUrl(),
   timeout: 30000, // 30 seconds
 } as const
 

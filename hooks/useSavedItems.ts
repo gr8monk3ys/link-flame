@@ -27,7 +27,12 @@ export function useSavedItems() {
       const response = await fetch('/api/saved-items');
 
       if (response.ok) {
-        const items = await response.json();
+        const payload = await response.json();
+        const items = Array.isArray(payload)
+          ? payload
+          : Array.isArray(payload?.data)
+            ? payload.data
+            : [];
         setSavedItems(items);
         // Also update localStorage as cache
         localStorage.setItem('savedItems', JSON.stringify(items));

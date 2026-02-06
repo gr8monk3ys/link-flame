@@ -136,10 +136,20 @@ export default function CollectionsPage() {
         const response = await fetch(`/api/products?${queryParams.toString()}`);
         if (!response.ok) throw new Error('Failed to fetch products');
         const data = await response.json();
-        setProducts(data.products);
-        setTotalPages(Math.ceil(data.total / pageSize));
+        if (data?.success && Array.isArray(data.data)) {
+          setProducts(data.data);
+          setTotalPages(data.meta?.pagination?.totalPages ?? 1);
+        } else if (Array.isArray(data.products)) {
+          setProducts(data.products);
+          setTotalPages(Math.ceil((data.total || 0) / pageSize));
+        } else {
+          setProducts([]);
+          setTotalPages(1);
+        }
       } catch (error) {
         console.error('Error fetching products:', error);
+        setProducts([]);
+        setTotalPages(1);
       } finally {
         setIsLoading(false);
       }

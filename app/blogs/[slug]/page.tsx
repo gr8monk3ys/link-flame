@@ -5,6 +5,7 @@ import { getAllPosts, getPost } from '@/lib/blog'
 import { notFound } from 'next/navigation'
 import { format, parseISO } from 'date-fns'
 import DOMPurify from 'isomorphic-dompurify'
+import { getBaseUrl } from '@/lib/url'
 
 export async function generateStaticParams() {
   const posts = await getAllPosts()
@@ -23,7 +24,7 @@ export async function generateMetadata({
     return {}
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const siteUrl = getBaseUrl()
   const postUrl = `${siteUrl}/blogs/${post.slug}`
   const imageUrl = post.coverImage?.startsWith('http')
     ? post.coverImage
@@ -104,7 +105,7 @@ export default async function BlogPost({ params }: PageProps<{ slug: string }>) 
   })
 
   // Build JSON-LD structured data
-  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const siteUrl = getBaseUrl()
   const postUrl = `${siteUrl}/blogs/${post.slug}`
   const imageUrl = post.coverImage?.startsWith('http')
     ? post.coverImage

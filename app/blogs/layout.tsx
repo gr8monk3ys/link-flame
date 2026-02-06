@@ -28,22 +28,22 @@ export default function BlogLayout({
               <h3 className="mb-4 font-semibold">Popular Categories</h3>
               <ul className="space-y-2">
                 <li>
-                  <a href="/blogs/green-home" className="text-muted-foreground hover:text-primary">
+                  <a href="/blogs/categories/green-home" className="text-muted-foreground hover:text-primary">
                     Green Home & Garden
                   </a>
                 </li>
                 <li>
-                  <a href="/blogs/eco-fashion" className="text-muted-foreground hover:text-primary">
+                  <a href="/blogs/categories/eco-fashion" className="text-muted-foreground hover:text-primary">
                     Eco Fashion & Beauty
                   </a>
                 </li>
                 <li>
-                  <a href="/blogs/zero-waste" className="text-muted-foreground hover:text-primary">
+                  <a href="/blogs/categories/zero-waste" className="text-muted-foreground hover:text-primary">
                     Zero Waste Living
                   </a>
                 </li>
                 <li>
-                  <a href="/blogs/sustainable-travel" className="text-muted-foreground hover:text-primary">
+                  <a href="/blogs/categories/sustainable-travel" className="text-muted-foreground hover:text-primary">
                     Sustainable Travel
                   </a>
                 </li>
