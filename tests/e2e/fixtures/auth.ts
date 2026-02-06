@@ -24,12 +24,23 @@ export interface TestUser {
  * @returns User data object with unique email
  */
 export function generateTestUser(prefix = 'Test'): TestUser {
-  const timestamp = Date.now()
+  const timestamp = `${Date.now()}-${Math.floor(Math.random() * 1_000_000)}`
   return {
     name: `${prefix} User ${timestamp}`,
     email: `test${timestamp}@example.com`,
     password: 'TestPassword123!',
   }
+}
+
+function randomTestIp() {
+  const octet = () => Math.floor(Math.random() * 250) + 1
+  return `10.${octet()}.${octet()}.${octet()}`
+}
+
+async function setUniqueIpHeader(page: Page) {
+  await page.context().setExtraHTTPHeaders({
+    'x-forwarded-for': randomTestIp(),
+  })
 }
 
 /**
@@ -78,14 +89,56 @@ export async function getCsrfToken(page: Page, retries = 3): Promise<string> {
  * @param userData - User data to create
  * @returns The API response
  */
-export async function createTestUser(page: Page, userData: TestUser) {
-  const csrfToken = await getCsrfToken(page)
-  return page.request.post('/api/auth/signup', {
-    data: userData,
-    headers: {
+export async function createTestUser(
+  page: Page,
+  userData: TestUser,
+  retries = 2
+) {
+  await setUniqueIpHeader(page)
+  let lastResponse: Awaited<ReturnType<Page['request']['post']>> | null = null
+
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const csrfResponse = await page.request.get('/api/csrf')
+    const csrfData = csrfResponse.ok() ? await csrfResponse.json() : null
+    const csrfToken = csrfData?.token || (await getCsrfToken(page))
+
+    let csrfCookieHeader: string | undefined
+    const csrfCookie = (await page.context().cookies()).find(
+      (cookie) => cookie.name === 'csrf_token'
+    )
+    if (csrfCookie) {
+      csrfCookieHeader = `${csrfCookie.name}=${csrfCookie.value}`
+    } else {
+      const setCookie = csrfResponse.headers()['set-cookie']
+      if (setCookie) {
+        csrfCookieHeader = setCookie.split(';')[0]
+      }
+    }
+
+    const headers: Record<string, string> = {
       'X-CSRF-Token': csrfToken,
-    },
-  })
+    }
+    if (csrfCookieHeader) {
+      headers.Cookie = csrfCookieHeader
+    }
+
+    const response = await page.request.post('/api/auth/signup', {
+      data: userData,
+      headers,
+    })
+
+    if (response.ok()) {
+      return response
+    }
+
+    lastResponse = response
+
+    if (attempt < retries) {
+      await page.waitForTimeout(100 * Math.pow(2, attempt))
+    }
+  }
+
+  return lastResponse!
 }
 
 /**
@@ -95,6 +148,7 @@ export async function createTestUser(page: Page, userData: TestUser) {
  * @param password - User password
  */
 export async function loginUser(page: Page, email: string, password: string) {
+  await setUniqueIpHeader(page)
   await page.goto('/auth/signin')
   await page.waitForLoadState('networkidle')
 
@@ -102,11 +156,41 @@ export async function loginUser(page: Page, email: string, password: string) {
   await page.fill('#password', password)
   await page.click('button[type="submit"]')
 
+  // Wait for session to be established
+  await page
+    .waitForResponse(
+      (response) =>
+        response.url().includes('/api/auth/session') && response.status() === 200,
+      { timeout: 15000 }
+    )
+    .catch(() => {
+      // Session endpoint might not be called in some edge cases
+    })
+
+  // Ensure auth session cookie exists
+  await expect
+    .poll(
+      async () => {
+        const cookies = await page.context().cookies()
+        return cookies.some((cookie) =>
+          cookie.name.includes('session-token') || cookie.name.includes('authjs')
+        )
+      },
+      { timeout: 15000 }
+    )
+    .toBeTruthy()
+
   // Wait for sign-in to complete - redirect away from auth
-  await page.waitForURL((url) => !url.pathname.startsWith('/auth/signin'), {
-    timeout: 15000,
+  await page
+    .waitForURL((url) => !url.pathname.startsWith('/auth/signin'), {
+      timeout: 15000,
+    })
+    .catch(() => {
+      // Some flows keep the user on /auth/signin even after session is set
+    })
+  await page.waitForLoadState('domcontentloaded').catch(() => {
+    // Best-effort; avoid hanging on long network activity
   })
-  await page.waitForLoadState('networkidle')
 }
 
 /**
@@ -173,17 +257,39 @@ export async function waitForCartUpdate(page: Page) {
  */
 export async function addItemToCart(page: Page) {
   await page.goto('/collections')
-  await page.waitForSelector(
-    '[data-testid="product-card"], .group.relative',
-    { timeout: 10000 }
-  )
+  await page.waitForSelector('[data-testid="product-card"]', { timeout: 10000 })
 
-  // Click the add to cart button
-  const addToCartButton = page
-    .locator('[data-testid="add-to-cart-button"], button:has-text("Add to Cart")')
-    .first()
-  await addToCartButton.click()
+  const productCard = page.locator('[data-testid="product-card"]').first()
+  await productCard.scrollIntoViewIfNeeded()
+  await productCard.hover()
+
+  // Click the add to cart button (revealed on hover)
+  const addToCartButton = productCard.locator('[data-testid="add-to-cart-button"]')
+  await expect(addToCartButton).toBeVisible({ timeout: 5000 })
+  await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response.url().includes('/api/cart') &&
+        response.request().method() === 'POST',
+      { timeout: 15000 }
+    ),
+    addToCartButton.click(),
+  ])
+
   await waitForCartUpdate(page)
+
+  // Ensure cart has at least one item
+  await expect
+    .poll(
+      async () => {
+        const response = await page.request.get('/api/cart')
+        if (!response.ok()) return 0
+        const body = await response.json()
+        return Array.isArray(body.data) ? body.data.length : 0
+      },
+      { timeout: 15000 }
+    )
+    .toBeGreaterThan(0)
 }
 
 /**

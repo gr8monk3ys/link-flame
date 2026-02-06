@@ -1,6 +1,34 @@
 import { test, expect } from '@playwright/test';
 import { getCsrfToken } from './fixtures';
 
+type RateLimitInfo = {
+  code?: string;
+  message?: string;
+  retryAfter?: number | string;
+  resetAt?: string;
+};
+
+function extractRateLimitInfo(body: any): RateLimitInfo | null {
+  if (!body || typeof body !== 'object') return null;
+  if (body.code || body.retryAfter || body.resetAt) {
+    return {
+      code: body.code,
+      message: body.message,
+      retryAfter: body.retryAfter,
+      resetAt: body.resetAt,
+    };
+  }
+  if (body.error) {
+    return {
+      code: body.error.code,
+      message: body.error.message,
+      retryAfter: body.error.details?.retryAfter,
+      resetAt: body.error.details?.resetAt,
+    };
+  }
+  return null;
+}
+
 /**
  * Rate Limiting E2E Tests
  *
@@ -54,10 +82,11 @@ test.describe('Rate Limiting - Signup Endpoint', () => {
       // Verify rate limit response format
       const rateLimitedResponse = responses.find((r) => r.status() === 429);
       const body = await rateLimitedResponse?.json();
+      const info = extractRateLimitInfo(body);
 
-      expect(body).toHaveProperty('code', 'RATE_LIMIT_EXCEEDED');
-      expect(body).toHaveProperty('message');
-      expect(body).toHaveProperty('retryAfter');
+      expect(info?.code).toBe('RATE_LIMIT_EXCEEDED');
+      expect(info?.message).toBeTruthy();
+      expect(info?.retryAfter ?? info?.resetAt).toBeDefined();
     } else {
       // Redis not configured - all requests succeed
       console.log('Warning: Rate limiting not enforced (Redis not configured)');
@@ -91,14 +120,21 @@ test.describe('Rate Limiting - Signup Endpoint', () => {
 
     if (rateLimitedResponse) {
       const body = await rateLimitedResponse.json();
+      const info = extractRateLimitInfo(body);
 
-      // Should have retryAfter timestamp
-      expect(body.retryAfter).toBeDefined();
+      // Should have retry-after info
+      expect(info?.retryAfter ?? info?.resetAt).toBeDefined();
 
-      // retryAfter should be a future timestamp
-      const retryAfter = new Date(body.retryAfter).getTime();
       const now = Date.now();
-      expect(retryAfter).toBeGreaterThan(now);
+      if (typeof info?.resetAt === 'string') {
+        const retryAt = new Date(info.resetAt).getTime();
+        expect(retryAt).toBeGreaterThan(now);
+      } else if (typeof info?.retryAfter === 'string') {
+        const retryAt = new Date(info.retryAfter).getTime();
+        expect(retryAt).toBeGreaterThan(now);
+      } else if (typeof info?.retryAfter === 'number') {
+        expect(info.retryAfter).toBeGreaterThan(0);
+      }
     } else {
       test.skip();
     }
@@ -249,12 +285,13 @@ test.describe('Rate Limiting - Edge Cases', () => {
     if (rateLimitedResponse) {
       // Should return valid JSON
       const body = await rateLimitedResponse.json();
+      const info = extractRateLimitInfo(body);
 
       expect(body).toBeDefined();
       expect(typeof body).toBe('object');
-      expect(body.code).toBe('RATE_LIMIT_EXCEEDED');
-      expect(body.message).toBeDefined();
-      expect(body.retryAfter).toBeDefined();
+      expect(info?.code).toBe('RATE_LIMIT_EXCEEDED');
+      expect(info?.message).toBeTruthy();
+      expect(info?.retryAfter ?? info?.resetAt).toBeDefined();
     }
   });
 });

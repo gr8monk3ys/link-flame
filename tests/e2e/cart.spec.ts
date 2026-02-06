@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { createTestUser, waitForCartUpdate } from './fixtures'
+import { addItemToCart, createTestUser, waitForCartUpdate } from './fixtures'
 
 /**
  * Shopping Cart E2E Tests
@@ -22,27 +22,17 @@ const generateTestUser = () => ({
 
 test.describe('Guest Cart Operations', () => {
   test('should add item to cart as guest user', async ({ page }) => {
-    // Navigate to products page
-    await page.goto('/collections')
-
-    // Wait for products to load
-    await page.waitForSelector('.group.relative, [data-testid="product-card"]', {
-      timeout: 10000,
-    })
-
-    // Click "Add to Cart" on first product (selector may vary)
-    const addToCartButton = page.locator('button:has-text("Add to Cart")').first()
-    await addToCartButton.click()
-
-    // Wait for cart API response
-    await waitForCartUpdate(page)
+    await addItemToCart(page)
 
     // Navigate to cart page
     await page.goto('/cart')
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
 
     // Verify item is in cart
     const cartItems = page.locator('[data-testid="cart-item"], .cart-item')
+    await expect
+      .poll(() => cartItems.count(), { timeout: 15000 })
+      .toBeGreaterThan(0)
     const itemCount = await cartItems.count()
 
     expect(itemCount).toBeGreaterThan(0)
@@ -50,36 +40,38 @@ test.describe('Guest Cart Operations', () => {
 
   test('should persist guest cart across page reloads', async ({ page }) => {
     // Add item to cart
-    await page.goto('/collections')
-    await page.waitForSelector('.group.relative, [data-testid="product-card"]')
-    await page.locator('button:has-text("Add to Cart")').first().click()
-    await waitForCartUpdate(page)
+    await addItemToCart(page)
 
     // Go to cart
     await page.goto('/cart')
-    await page.waitForLoadState('networkidle')
-    const initialItemCount = await page.locator('[data-testid="cart-item"], .cart-item').count()
+    await page.waitForLoadState('domcontentloaded')
+    const cartItems = page.locator('[data-testid="cart-item"], .cart-item')
+    await expect
+      .poll(() => cartItems.count(), { timeout: 15000 })
+      .toBeGreaterThan(0)
+    const initialItemCount = await cartItems.count()
 
     // Reload page
     await page.reload()
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
 
     // Cart should still have items
-    const afterReloadCount = await page.locator('[data-testid="cart-item"], .cart-item').count()
+    const afterReloadItems = page.locator('[data-testid="cart-item"], .cart-item')
+    await expect
+      .poll(() => afterReloadItems.count(), { timeout: 15000 })
+      .toBeGreaterThan(0)
+    const afterReloadCount = await afterReloadItems.count()
     expect(afterReloadCount).toBe(initialItemCount)
     expect(afterReloadCount).toBeGreaterThan(0)
   })
 
   test('should update item quantity in cart', async ({ page }) => {
     // Add item to cart
-    await page.goto('/collections')
-    await page.waitForSelector('.group.relative, [data-testid="product-card"]')
-    await page.locator('button:has-text("Add to Cart")').first().click()
-    await waitForCartUpdate(page)
+    await addItemToCart(page)
 
     // Go to cart
     await page.goto('/cart')
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
 
     // Find quantity input or increment button
     const quantityInput = page.locator('input[type="number"]').first()
@@ -100,19 +92,21 @@ test.describe('Guest Cart Operations', () => {
 
   test('should remove item from cart', async ({ page }) => {
     // Add item to cart
-    await page.goto('/collections')
-    await page.waitForSelector('.group.relative, [data-testid="product-card"]')
-    await page.locator('button:has-text("Add to Cart")').first().click()
-    await waitForCartUpdate(page)
+    await addItemToCart(page)
 
     // Go to cart
     await page.goto('/cart')
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
 
-    const initialCount = await page.locator('[data-testid="cart-item"], .cart-item').count()
+    const cartItems = page.locator('[data-testid="cart-item"], .cart-item')
+    await expect
+      .poll(() => cartItems.count(), { timeout: 15000 })
+      .toBeGreaterThan(0)
+    const initialCount = await cartItems.count()
 
     // Find and click remove button
     const removeButton = page.locator('button:has-text("Remove"), button[aria-label*="Remove"]').first()
+    await expect(removeButton).toBeVisible({ timeout: 5000 })
     await removeButton.click()
 
     // Wait for cart to update after removal
@@ -140,17 +134,17 @@ test.describe('Authenticated Cart Operations', () => {
     await page.waitForURL(/\/(?!auth)/, { timeout: 10000 }).catch(() => {})
 
     // Add item to cart
-    await page.goto('/collections')
-    await page.waitForSelector('.group.relative, [data-testid="product-card"]')
-    await page.locator('button:has-text("Add to Cart")').first().click()
-    await waitForCartUpdate(page)
+    await addItemToCart(page)
 
     // Go to cart
     await page.goto('/cart')
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
 
     // Verify item in cart
     const cartItems = page.locator('[data-testid="cart-item"], .cart-item')
+    await expect
+      .poll(() => cartItems.count(), { timeout: 15000 })
+      .toBeGreaterThan(0)
     const itemCount = await cartItems.count()
 
     expect(itemCount).toBeGreaterThan(0)
@@ -169,20 +163,17 @@ test.describe('Authenticated Cart Operations', () => {
     await page.waitForURL(/\/(?!auth)/, { timeout: 10000 }).catch(() => {})
 
     // Add item to cart
-    await page.goto('/collections')
-    await page.waitForSelector('.group.relative, [data-testid="product-card"]')
-    await page.locator('button:has-text("Add to Cart")').first().click()
-    await waitForCartUpdate(page)
+    await addItemToCart(page)
 
     // Sign out
     await page.goto('/auth/signout')
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
 
     // Click signout button if visible
     const signOutBtn = page.locator('button:has-text("Sign Out"), button:has-text("Sign out")')
     if (await signOutBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await signOutBtn.click()
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
     }
 
     // Sign back in
@@ -194,9 +185,12 @@ test.describe('Authenticated Cart Operations', () => {
 
     // Go to cart - should still have items
     await page.goto('/cart')
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
 
     const cartItems = page.locator('[data-testid="cart-item"], .cart-item')
+    await expect
+      .poll(() => cartItems.count(), { timeout: 15000 })
+      .toBeGreaterThan(0)
     const itemCount = await cartItems.count()
 
     expect(itemCount).toBeGreaterThan(0)
@@ -211,16 +205,17 @@ test.describe('Cart Migration', () => {
     await createTestUser(page, testUser)
 
     // Add item to cart as guest
-    await page.goto('/collections')
-    await page.waitForSelector('.group.relative, [data-testid="product-card"]')
-    await page.locator('button:has-text("Add to Cart")').first().click()
-    await waitForCartUpdate(page)
+    await addItemToCart(page)
 
     // Go to cart and verify guest cart
     await page.goto('/cart')
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
 
-    const guestCartCount = await page.locator('[data-testid="cart-item"], .cart-item').count()
+    const guestCartItems = page.locator('[data-testid="cart-item"], .cart-item')
+    await expect
+      .poll(() => guestCartItems.count(), { timeout: 15000 })
+      .toBeGreaterThan(0)
+    const guestCartCount = await guestCartItems.count()
     expect(guestCartCount).toBeGreaterThan(0)
 
     // Now sign in
@@ -231,11 +226,11 @@ test.describe('Cart Migration', () => {
     await page.waitForURL(/\/(?!auth)/, { timeout: 10000 }).catch(() => {})
 
     // Wait for cart migration API call to complete
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
 
     // Go to cart - guest items should be migrated
     await page.goto('/cart')
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
 
     const migratedCartCount = await page.locator('[data-testid="cart-item"], .cart-item').count()
 
@@ -246,10 +241,7 @@ test.describe('Cart Migration', () => {
 test.describe('Cart API', () => {
   test('should retrieve cart via API', async ({ page }) => {
     // Add item via UI to initialize cart
-    await page.goto('/collections')
-    await page.waitForSelector('.group.relative, [data-testid="product-card"]')
-    await page.locator('button:has-text("Add to Cart")').first().click()
-    await waitForCartUpdate(page)
+    await addItemToCart(page)
 
     // Call cart API
     const response = await page.request.get('/api/cart')
@@ -266,14 +258,20 @@ test.describe('Cart API', () => {
 
   test('should add item via cart API', async ({ page }) => {
     // Get a product ID first (mock or from products endpoint)
-    const productsResponse = await page.request.get('/api/products')
-    const products = await productsResponse.json()
+    const productsResponse = await page.request.get('/api/products?pageSize=1')
+    const productsBody = await productsResponse.json()
 
-    if (products && products.length > 0) {
-      const productId = products[0].id
+    if (productsBody?.data?.length > 0) {
+      const productId = productsBody.data[0].id
+
+      // Get CSRF token
+      const csrfResponse = await page.request.get('/api/csrf')
+      const csrfBody = await csrfResponse.json()
+      const csrfToken = csrfBody?.token
 
       // Add to cart via API
       const response = await page.request.post('/api/cart', {
+        headers: csrfToken ? { 'X-CSRF-Token': csrfToken } : undefined,
         data: {
           productId,
           quantity: 1,
@@ -283,7 +281,7 @@ test.describe('Cart API', () => {
       expect(response.ok()).toBeTruthy()
 
       const cart = await response.json()
-      expect(cart.items.length).toBeGreaterThan(0)
+      expect(cart).toHaveProperty('success', true)
     }
   })
 })

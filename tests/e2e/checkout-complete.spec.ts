@@ -48,8 +48,8 @@ test.describe('Complete Checkout Flow', () => {
       await waitForCartUpdate(page)
 
       // Navigate to cart
-      await page.goto('/cart')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/cart', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
       // Try to proceed to checkout
       await page.goto('/checkout')
@@ -78,8 +78,8 @@ test.describe('Complete Checkout Flow', () => {
       await waitForCartUpdate(page)
 
       // Go to cart and count items
-      await page.goto('/cart')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/cart', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
       const guestCartItems = page.locator(
         '[data-testid="cart-item"], .cart-item, [class*="cart"] [class*="item"]'

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { createTestUser, getCsrfToken, waitForCartUpdate, addItemToCart } from './fixtures'
+import { createTestUser, getCsrfToken, waitForCartUpdate, addItemToCart, loginUser } from './fixtures'
 
 /**
  * Checkout Flow E2E Tests
@@ -48,17 +48,7 @@ test.describe('Checkout Page Access', () => {
     const signupResponse = await createTestUser(page, testUser)
     expect(signupResponse.ok()).toBeTruthy()
 
-    // Navigate to signin and login
-    await page.goto('/auth/signin')
-    await page.waitForLoadState('networkidle')
-
-    await page.fill('#email', testUser.email)
-    await page.fill('#password', testUser.password)
-    await page.click('button[type="submit"]')
-
-    // Wait for auth to complete - wait for either home page or successful navigation away from auth
-    await page.waitForURL((url) => !url.pathname.startsWith('/auth/signin'), { timeout: 15000 })
-    await page.waitForLoadState('networkidle')
+    await loginUser(page, testUser.email, testUser.password)
 
     // Now access checkout
     await page.goto('/checkout')
@@ -80,11 +70,7 @@ test.describe('Checkout Form Validation', () => {
     // Create and login user with CSRF token
     await createTestUser(page, testUser)
 
-    await page.goto('/auth/signin')
-    await page.fill('#email', testUser.email)
-    await page.fill('#password', testUser.password)
-    await page.click('button[type="submit"]')
-    await page.waitForURL(/\/(?!auth)/, { timeout: 10000 }).catch(() => {})
+    await loginUser(page, testUser.email, testUser.password)
 
     // Add item to cart
     await addItemToCart(page)
@@ -159,11 +145,7 @@ test.describe('Checkout API', () => {
     // Create and login user (but don't add items to cart) with CSRF token
     await createTestUser(page, testUser)
 
-    await page.goto('/auth/signin')
-    await page.fill('#email', testUser.email)
-    await page.fill('#password', testUser.password)
-    await page.click('button[type="submit"]')
-    await page.waitForURL(/\/(?!auth)/, { timeout: 10000 }).catch(() => {})
+    await loginUser(page, testUser.email, testUser.password)
 
     // Get CSRF token first
     const csrfResponse = await page.request.get('/api/csrf')
@@ -191,11 +173,7 @@ test.describe('Checkout API', () => {
     // Create and login user with CSRF token
     await createTestUser(page, testUser)
 
-    await page.goto('/auth/signin')
-    await page.fill('#email', testUser.email)
-    await page.fill('#password', testUser.password)
-    await page.click('button[type="submit"]')
-    await page.waitForURL(/\/(?!auth)/, { timeout: 10000 }).catch(() => {})
+    await loginUser(page, testUser.email, testUser.password)
 
     // Add item to cart
     await addItemToCart(page)
@@ -219,11 +197,7 @@ test.describe('Checkout API', () => {
     // Create and login user with CSRF token
     await createTestUser(page, testUser)
 
-    await page.goto('/auth/signin')
-    await page.fill('#email', testUser.email)
-    await page.fill('#password', testUser.password)
-    await page.click('button[type="submit"]')
-    await page.waitForURL(/\/(?!auth)/, { timeout: 10000 }).catch(() => {})
+    await loginUser(page, testUser.email, testUser.password)
 
     // Add item to cart
     await addItemToCart(page)
@@ -262,11 +236,7 @@ test.describe('Checkout API', () => {
     // Create and login user with CSRF token
     await createTestUser(page, testUser)
 
-    await page.goto('/auth/signin')
-    await page.fill('#email', testUser.email)
-    await page.fill('#password', testUser.password)
-    await page.click('button[type="submit"]')
-    await page.waitForURL(/\/(?!auth)/, { timeout: 10000 }).catch(() => {})
+    await loginUser(page, testUser.email, testUser.password)
 
     // Add item to cart
     await addItemToCart(page)
@@ -306,11 +276,7 @@ test.describe('Checkout Flow - End to End', () => {
     // Create and login user with CSRF token
     await createTestUser(page, testUser)
 
-    await page.goto('/auth/signin')
-    await page.fill('#email', testUser.email)
-    await page.fill('#password', testUser.password)
-    await page.click('button[type="submit"]')
-    await page.waitForURL(/\/(?!auth)/, { timeout: 10000 }).catch(() => {})
+    await loginUser(page, testUser.email, testUser.password)
 
     // Add item to cart
     await addItemToCart(page)
@@ -389,11 +355,7 @@ test.describe('Checkout Flow - End to End', () => {
     // Create and login user with CSRF token
     await createTestUser(page, testUser)
 
-    await page.goto('/auth/signin')
-    await page.fill('#email', testUser.email)
-    await page.fill('#password', testUser.password)
-    await page.click('button[type="submit"]')
-    await page.waitForURL(/\/(?!auth)/, { timeout: 10000 }).catch(() => {})
+    await loginUser(page, testUser.email, testUser.password)
 
     // Add item to cart
     await addItemToCart(page)
@@ -423,11 +385,7 @@ test.describe('Checkout Security', () => {
     // Create and login user with CSRF token
     await createTestUser(page, testUser)
 
-    await page.goto('/auth/signin')
-    await page.fill('#email', testUser.email)
-    await page.fill('#password', testUser.password)
-    await page.click('button[type="submit"]')
-    await page.waitForURL(/\/(?!auth)/, { timeout: 10000 }).catch(() => {})
+    await loginUser(page, testUser.email, testUser.password)
 
     // Add item to cart
     await addItemToCart(page)

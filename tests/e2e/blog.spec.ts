@@ -16,8 +16,8 @@ import { test, expect } from '@playwright/test'
 test.describe('Blog', () => {
   test.describe('Blog Listing Page', () => {
     test('blog listing shows posts', async ({ page }) => {
-      await page.goto('/blogs')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
       // Should have blog posts (articles or cards)
       const blogPost = page.locator(
@@ -29,8 +29,8 @@ test.describe('Blog', () => {
     })
 
     test('blog page has proper heading', async ({ page }) => {
-      await page.goto('/blogs')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
       // Should have main heading
       const heading = page.locator('h1')
@@ -39,8 +39,8 @@ test.describe('Blog', () => {
     })
 
     test('blog posts display correct information', async ({ page }) => {
-      await page.goto('/blogs')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
       // Wait for posts
       await page.waitForSelector('article, [data-testid="blog-card"]', {
@@ -76,8 +76,8 @@ test.describe('Blog', () => {
     })
 
     test('blog posts have read more links', async ({ page }) => {
-      await page.goto('/blogs')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
       // Wait for posts
       await page.waitForSelector('article, [data-testid="blog-card"]', {
@@ -93,8 +93,8 @@ test.describe('Blog', () => {
     })
 
     test('featured posts section is displayed', async ({ page }) => {
-      await page.goto('/blogs')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
       // Look for featured section
       const featuredSection = page.locator(
@@ -111,40 +111,48 @@ test.describe('Blog', () => {
 
   test.describe('Individual Blog Post', () => {
     test('individual post renders correctly', async ({ page }) => {
-      await page.goto('/blogs')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
       // Wait for posts
-      await page.waitForSelector('article a, [data-testid="blog-card"] a', {
+      await page.waitForSelector('[data-testid="blog-post-link"]', {
         timeout: 10000,
       })
 
       // Click on first post
       const postLink = page
-        .locator('article a, [data-testid="blog-card"] a')
+        .locator('[data-testid="blog-card"]')
         .first()
+        .locator('[data-testid="blog-post-link"]')
+        .first()
+      await postLink.scrollIntoViewIfNeeded()
       await postLink.click()
-      await page.waitForLoadState('networkidle')
+      await page.waitForURL(/\/blogs\/[^/]+$/, {
+        timeout: 10000,
+        waitUntil: 'domcontentloaded',
+      })
 
       // Should be on individual post page
-      expect(page.url()).toMatch(/\/blogs\/[a-zA-Z0-9-\/]+/)
+      expect(page.url()).toMatch(/\/blogs\/[^/]+$/)
 
       // Should have article content
       const article = page.locator('article')
-      await expect(article).toBeVisible({ timeout: 5000 })
+      await expect(article).toBeVisible({ timeout: 10000 })
     })
 
     test('blog post shows title', async ({ page }) => {
-      await page.goto('/blogs')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
-      await page.waitForSelector('article a, [data-testid="blog-card"] a', {
+      await page.waitForSelector('[data-testid="blog-post-link"]', {
         timeout: 10000,
       })
 
       // Navigate to post
-      await page.locator('article a, [data-testid="blog-card"] a').first().click()
-      await page.waitForLoadState('networkidle')
+      await Promise.all([
+        page.waitForURL(/\/blogs\/[^/]+$/, { timeout: 10000 }),
+        page.locator('[data-testid="blog-post-link"]').first().click(),
+      ])
 
       // Should have h1 title
       const title = page.locator('h1')
@@ -152,16 +160,18 @@ test.describe('Blog', () => {
     })
 
     test('blog post shows author information', async ({ page }) => {
-      await page.goto('/blogs')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
-      await page.waitForSelector('article a, [data-testid="blog-card"] a', {
+      await page.waitForSelector('[data-testid="blog-post-link"]', {
         timeout: 10000,
       })
 
       // Navigate to post
-      await page.locator('article a, [data-testid="blog-card"] a').first().click()
-      await page.waitForLoadState('networkidle')
+      await Promise.all([
+        page.waitForURL(/\/blogs\/[^/]+$/, { timeout: 10000 }),
+        page.locator('[data-testid="blog-post-link"]').first().click(),
+      ])
 
       // Should show author info
       const authorInfo = page.locator(
@@ -176,16 +186,18 @@ test.describe('Blog', () => {
     })
 
     test('blog post shows publish date', async ({ page }) => {
-      await page.goto('/blogs')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
-      await page.waitForSelector('article a, [data-testid="blog-card"] a', {
+      await page.waitForSelector('[data-testid="blog-post-link"]', {
         timeout: 10000,
       })
 
       // Navigate to post
-      await page.locator('article a, [data-testid="blog-card"] a').first().click()
-      await page.waitForLoadState('networkidle')
+      await Promise.all([
+        page.waitForURL(/\/blogs\/[^/]+$/, { timeout: 10000 }),
+        page.locator('[data-testid="blog-post-link"]').first().click(),
+      ])
 
       // Should show date
       const dateElement = page.locator('time, text=/\\d{4}/i')
@@ -198,16 +210,19 @@ test.describe('Blog', () => {
     })
 
     test('blog post shows reading time', async ({ page }) => {
-      await page.goto('/blogs')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
-      await page.waitForSelector('article a, [data-testid="blog-card"] a', {
+      await page.waitForSelector('[data-testid="blog-post-link"]', {
         timeout: 10000,
       })
 
       // Navigate to post
-      await page.locator('article a, [data-testid="blog-card"] a').first().click()
-      await page.waitForLoadState('networkidle')
+      await Promise.all([
+        page.waitForURL(/\/blogs\/[^/]+$/, { timeout: 10000 }),
+        page.locator('[data-testid="blog-post-link"]').first().click(),
+      ])
+      await page.waitForSelector('article', { timeout: 10000 })
 
       // Should show reading time
       const readingTime = page.locator('text=/min read/i, text=/minute/i')
@@ -220,16 +235,19 @@ test.describe('Blog', () => {
     })
 
     test('blog post shows cover image', async ({ page }) => {
-      await page.goto('/blogs')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
-      await page.waitForSelector('article a, [data-testid="blog-card"] a', {
+      await page.waitForSelector('[data-testid="blog-post-link"]', {
         timeout: 10000,
       })
 
       // Navigate to post
-      await page.locator('article a, [data-testid="blog-card"] a').first().click()
-      await page.waitForLoadState('networkidle')
+      await Promise.all([
+        page.waitForURL(/\/blogs\/[^/]+$/, { timeout: 10000 }),
+        page.locator('[data-testid="blog-post-link"]').first().click(),
+      ])
+      await page.waitForSelector('article', { timeout: 10000 })
 
       // Should have cover image
       const image = page.locator('img')
@@ -237,16 +255,19 @@ test.describe('Blog', () => {
     })
 
     test('blog post shows category and tags', async ({ page }) => {
-      await page.goto('/blogs')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
-      await page.waitForSelector('article a, [data-testid="blog-card"] a', {
+      await page.waitForSelector('[data-testid="blog-post-link"]', {
         timeout: 10000,
       })
 
       // Navigate to post
-      await page.locator('article a, [data-testid="blog-card"] a').first().click()
-      await page.waitForLoadState('networkidle')
+      await Promise.all([
+        page.waitForURL(/\/blogs\/[^/]+$/, { timeout: 10000 }),
+        page.locator('[data-testid="blog-post-link"]').first().click(),
+      ])
+      await page.waitForSelector('article', { timeout: 10000 })
 
       // Should show category or tags
       const categoryTags = page.locator(
@@ -263,8 +284,8 @@ test.describe('Blog', () => {
 
   test.describe('Category Filtering', () => {
     test('can navigate to category page', async ({ page }) => {
-      await page.goto('/blogs')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
       // Find category link
       const categoryLink = page.locator(
@@ -272,17 +293,19 @@ test.describe('Blog', () => {
       )
 
       if (await categoryLink.first().isVisible({ timeout: 5000 }).catch(() => false)) {
-        await categoryLink.first().click()
-        await page.waitForLoadState('networkidle')
+        await Promise.all([
+          page.waitForURL(/\/blogs\/categories\/[a-zA-Z0-9-]+/, { timeout: 10000 }),
+          categoryLink.first().click(),
+        ])
 
         // Should be on category page
-        expect(page.url()).toMatch(/\/blogs\/(categories\/)?[a-zA-Z0-9-]+/)
+        expect(page.url()).toMatch(/\/blogs\/categories\/[a-zA-Z0-9-]+/)
       }
     })
 
     test('category page shows filtered posts', async ({ page }) => {
-      await page.goto('/blogs')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
       // Find and click category link
       const categoryLink = page
@@ -292,7 +315,7 @@ test.describe('Blog', () => {
       if (await categoryLink.isVisible({ timeout: 5000 }).catch(() => false)) {
         const categoryHref = await categoryLink.getAttribute('href')
         await categoryLink.click()
-        await page.waitForLoadState('networkidle')
+        await page.waitForLoadState('domcontentloaded')
 
         // Should show posts
         const posts = page.locator('article, [data-testid="blog-card"]')
@@ -305,8 +328,8 @@ test.describe('Blog', () => {
 
     test('category page shows category heading', async ({ page }) => {
       // Navigate directly to a category page
-      await page.goto('/blogs/categories/lifestyle')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs/categories/lifestyle', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
       // Should have category heading or handle 404
       const heading = page.locator('h1, h2')
@@ -325,8 +348,8 @@ test.describe('Blog', () => {
 
   test.describe('Tag Filtering', () => {
     test('can navigate to tag page', async ({ page }) => {
-      await page.goto('/blogs')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
       // Find tag link
       const tagLink = page.locator(
@@ -334,8 +357,10 @@ test.describe('Blog', () => {
       )
 
       if (await tagLink.first().isVisible({ timeout: 5000 }).catch(() => false)) {
-        await tagLink.first().click()
-        await page.waitForLoadState('networkidle')
+        await Promise.all([
+          page.waitForURL(/\/blogs\/tags\/[a-zA-Z0-9-]+/, { timeout: 10000 }),
+          tagLink.first().click(),
+        ])
 
         // Should be on tag page
         expect(page.url()).toContain('/tags/')
@@ -343,8 +368,8 @@ test.describe('Blog', () => {
     })
 
     test('tag page shows filtered posts', async ({ page }) => {
-      await page.goto('/blogs')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
       // Find and click tag link
       const tagLink = page
@@ -353,7 +378,7 @@ test.describe('Blog', () => {
 
       if (await tagLink.isVisible({ timeout: 5000 }).catch(() => false)) {
         await tagLink.click()
-        await page.waitForLoadState('networkidle')
+        await page.waitForLoadState('domcontentloaded')
 
         // Should show posts or empty state
         const posts = page.locator('article, [data-testid="blog-card"]')
@@ -366,8 +391,8 @@ test.describe('Blog', () => {
 
   test.describe('Blog Search', () => {
     test('blog search is available', async ({ page }) => {
-      await page.goto('/blogs')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
       // Look for search input
       const searchInput = page.locator(
@@ -381,8 +406,8 @@ test.describe('Blog', () => {
     })
 
     test('blog search returns results', async ({ page }) => {
-      await page.goto('/blogs')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
       // Find search input
       const searchInput = page.locator(
@@ -392,19 +417,26 @@ test.describe('Blog', () => {
       if (await searchInput.isVisible({ timeout: 5000 }).catch(() => false)) {
         await searchInput.fill('eco')
         await page.keyboard.press('Enter')
-        await page.waitForLoadState('networkidle')
+        await page.waitForLoadState('domcontentloaded')
 
         // Should show results or no results message
-        await page.waitForSelector(
-          'article, [data-testid="blog-card"], text=/no results/i',
-          { timeout: 10000 }
-        )
+        const results = page.locator('article, [data-testid="blog-card"]')
+        const hasResults = await results
+          .first()
+          .isVisible({ timeout: 5000 })
+          .catch(() => false)
+        const hasNoResults = await page
+          .getByText(/no results/i)
+          .isVisible({ timeout: 3000 })
+          .catch(() => false)
+
+        expect(hasResults || hasNoResults).toBeTruthy()
       }
     })
 
     test('blog search handles empty results', async ({ page }) => {
-      await page.goto('/blogs')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
       // Find search input
       const searchInput = page.locator(
@@ -414,7 +446,7 @@ test.describe('Blog', () => {
       if (await searchInput.isVisible({ timeout: 5000 }).catch(() => false)) {
         await searchInput.fill('xyznonexistentterm123')
         await page.keyboard.press('Enter')
-        await page.waitForLoadState('networkidle')
+        await page.waitForLoadState('domcontentloaded')
 
         // Should show empty state
         const emptyState = page.locator('text=/no results|not found|no posts/i')
@@ -429,8 +461,8 @@ test.describe('Blog', () => {
 
   test.describe('SEO Metadata', () => {
     test('blog page has proper meta tags', async ({ page }) => {
-      await page.goto('/blogs')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
       // Check for title tag
       const title = await page.title()
@@ -438,20 +470,24 @@ test.describe('Blog', () => {
     })
 
     test('blog post has proper meta description', async ({ page }) => {
-      await page.goto('/blogs')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
-      await page.waitForSelector('article a, [data-testid="blog-card"] a', {
+      await page.waitForSelector('[data-testid="blog-post-link"]', {
         timeout: 10000,
       })
 
       // Navigate to post
-      await page.locator('article a, [data-testid="blog-card"] a').first().click()
-      await page.waitForLoadState('networkidle')
+      await Promise.all([
+        page.waitForURL(/\/blogs\/[^/]+$/, { timeout: 10000 }),
+        page.locator('[data-testid="blog-post-link"]').first().click(),
+      ])
+      await page.waitForSelector('article', { timeout: 10000 })
 
       // Check for meta description
       const metaDescription = await page
         .locator('meta[name="description"]')
+        .first()
         .getAttribute('content')
 
       // Meta description should exist and have content
@@ -459,16 +495,19 @@ test.describe('Blog', () => {
     })
 
     test('blog post has Open Graph tags', async ({ page }) => {
-      await page.goto('/blogs')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
-      await page.waitForSelector('article a, [data-testid="blog-card"] a', {
+      await page.waitForSelector('[data-testid="blog-post-link"]', {
         timeout: 10000,
       })
 
       // Navigate to post
-      await page.locator('article a, [data-testid="blog-card"] a').first().click()
-      await page.waitForLoadState('networkidle')
+      await Promise.all([
+        page.waitForURL(/\/blogs\/[^/]+$/, { timeout: 10000 }),
+        page.locator('[data-testid="blog-post-link"]').first().click(),
+      ])
+      await page.waitForSelector('article', { timeout: 10000 })
 
       // Check for OG tags
       const ogTitle = await page
@@ -491,18 +530,25 @@ test.describe('Blog', () => {
     })
 
     test('blog post has JSON-LD structured data', async ({ page }) => {
-      await page.goto('/blogs')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
-      await page.waitForSelector('article a, [data-testid="blog-card"] a', {
+      await page.waitForSelector('[data-testid="blog-post-link"]', {
         timeout: 10000,
       })
 
       // Navigate to post
-      await page.locator('article a, [data-testid="blog-card"] a').first().click()
-      await page.waitForLoadState('networkidle')
+      await Promise.all([
+        page.waitForURL(/\/blogs\/[^/]+$/, { timeout: 10000 }),
+        page.locator('[data-testid="blog-post-link"]').first().click(),
+      ])
+      await page.waitForSelector('article', { timeout: 10000 })
 
       // Check for JSON-LD
+      await page.waitForSelector('script[type="application/ld+json"]', {
+        timeout: 10000,
+        state: 'attached',
+      })
       const jsonLd = await page
         .locator('script[type="application/ld+json"]')
         .first()
@@ -518,16 +564,19 @@ test.describe('Blog', () => {
 
   test.describe('Navigation', () => {
     test('can navigate back from post to blog listing', async ({ page }) => {
-      await page.goto('/blogs')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
-      await page.waitForSelector('article a, [data-testid="blog-card"] a', {
+      await page.waitForSelector('[data-testid="blog-post-link"]', {
         timeout: 10000,
       })
 
       // Navigate to post
-      await page.locator('article a, [data-testid="blog-card"] a').first().click()
-      await page.waitForLoadState('networkidle')
+      await Promise.all([
+        page.waitForURL(/\/blogs\/[^/]+$/, { timeout: 10000 }),
+        page.locator('[data-testid="blog-post-link"]').first().click(),
+      ])
+      await page.waitForSelector('article', { timeout: 10000 })
 
       // Find back link or use browser back
       const backLink = page.locator(
@@ -536,37 +585,42 @@ test.describe('Blog', () => {
 
       if (await backLink.first().isVisible({ timeout: 3000 }).catch(() => false)) {
         await backLink.first().click()
-        await page.waitForLoadState('networkidle')
+        await page.waitForURL(/\/blogs\/?$/, { timeout: 10000 })
 
         // Should be back on blog listing
         expect(page.url()).toMatch(/\/blogs\/?$/)
       } else {
         // Use browser back
         await page.goBack()
-        await page.waitForLoadState('networkidle')
+        await page.waitForURL(/\/blogs\/?$/, { timeout: 10000 })
 
         expect(page.url()).toContain('/blogs')
       }
     })
 
     test('category links from post work', async ({ page }) => {
-      await page.goto('/blogs')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
-      await page.waitForSelector('article a, [data-testid="blog-card"] a', {
+      await page.waitForSelector('[data-testid="blog-post-link"]', {
         timeout: 10000,
       })
 
       // Navigate to post
-      await page.locator('article a, [data-testid="blog-card"] a').first().click()
-      await page.waitForLoadState('networkidle')
+      await Promise.all([
+        page.waitForURL(/\/blogs\/[^/]+$/, { timeout: 10000 }),
+        page.locator('[data-testid="blog-post-link"]').first().click(),
+      ])
+      await page.waitForSelector('article', { timeout: 10000 })
 
       // Find category link on post
       const categoryLink = page.locator('a[href*="/categories/"]')
 
       if (await categoryLink.first().isVisible({ timeout: 3000 }).catch(() => false)) {
-        await categoryLink.first().click()
-        await page.waitForLoadState('networkidle')
+        await Promise.all([
+          page.waitForURL(/\/blogs\/categories\/[a-zA-Z0-9-]+/, { timeout: 10000 }),
+          categoryLink.first().click(),
+        ])
 
         // Should be on category page
         expect(page.url()).toContain('/categories/')
@@ -574,23 +628,28 @@ test.describe('Blog', () => {
     })
 
     test('tag links from post work', async ({ page }) => {
-      await page.goto('/blogs')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
 
-      await page.waitForSelector('article a, [data-testid="blog-card"] a', {
+      await page.waitForSelector('[data-testid="blog-post-link"]', {
         timeout: 10000,
       })
 
       // Navigate to post
-      await page.locator('article a, [data-testid="blog-card"] a').first().click()
-      await page.waitForLoadState('networkidle')
+      await Promise.all([
+        page.waitForURL(/\/blogs\/[^/]+$/, { timeout: 10000 }),
+        page.locator('[data-testid="blog-post-link"]').first().click(),
+      ])
+      await page.waitForSelector('article', { timeout: 10000 })
 
       // Find tag link on post
       const tagLink = page.locator('a[href*="/tags/"]')
 
       if (await tagLink.first().isVisible({ timeout: 3000 }).catch(() => false)) {
-        await tagLink.first().click()
-        await page.waitForLoadState('networkidle')
+        await Promise.all([
+          page.waitForURL(/\/blogs\/tags\/[a-zA-Z0-9-]+/, { timeout: 10000 }),
+          tagLink.first().click(),
+        ])
 
         // Should be on tag page
         expect(page.url()).toContain('/tags/')
@@ -600,42 +659,53 @@ test.describe('Blog', () => {
 
   test.describe('Blog API', () => {
     test('blog API returns posts', async ({ page }) => {
-      const response = await page.request.get('/api/blog')
+      const response = await page.request.get('/api/blog/posts')
 
       expect(response.ok()).toBeTruthy()
 
       const body = await response.json()
-      expect(Array.isArray(body)).toBeTruthy()
+      expect(body.success).toBeTruthy()
+      expect(Array.isArray(body.data)).toBeTruthy()
     })
 
     test('blog API supports search', async ({ page }) => {
-      const response = await page.request.get('/api/blog?search=eco')
+      const response = await page.request.get('/api/blog/search?q=eco')
 
       expect(response.ok()).toBeTruthy()
 
       const body = await response.json()
-      expect(Array.isArray(body)).toBeTruthy()
+      expect(body.success).toBeTruthy()
+      expect(Array.isArray(body.data)).toBeTruthy()
     })
 
     test('blog API supports category filter', async ({ page }) => {
-      const response = await page.request.get('/api/blog?category=lifestyle')
+      const listResponse = await page.request.get('/api/blog/posts')
+      const listBody = await listResponse.json()
 
-      expect(response.ok()).toBeTruthy()
+      expect(listResponse.ok()).toBeTruthy()
+      expect(listBody.success).toBeTruthy()
 
-      const body = await response.json()
-      expect(Array.isArray(body)).toBeTruthy()
+      const category = listBody.data?.[0]?.category
+      if (category) {
+        const response = await page.request.get(`/api/blog/posts?category=${encodeURIComponent(category)}`)
+        expect(response.ok()).toBeTruthy()
+
+        const body = await response.json()
+        expect(body.success).toBeTruthy()
+        expect(Array.isArray(body.data)).toBeTruthy()
+      }
     })
 
     test('single blog post API returns post details', async ({ page }) => {
       // First get list of posts
-      const listResponse = await page.request.get('/api/blog')
-      const posts = await listResponse.json()
+      const listResponse = await page.request.get('/api/blog/posts')
+      const listBody = await listResponse.json()
 
-      if (posts.length > 0) {
-        const slug = posts[0].slug
+      if (listBody.data?.length > 0) {
+        const slug = listBody.data[0].slug
 
         // Get specific post
-        const response = await page.request.get(`/api/blog/${slug}`)
+        const response = await page.request.get(`/api/blog/post/${slug}`)
 
         expect(response.ok()).toBeTruthy()
 

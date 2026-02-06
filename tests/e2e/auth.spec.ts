@@ -1,5 +1,10 @@
 import { test, expect } from '@playwright/test'
-import { getCsrfToken, createTestUser } from './fixtures'
+import {
+  getCsrfToken,
+  createTestUser,
+  createAndLoginUser,
+  loginUser,
+} from './fixtures'
 
 /**
  * Authentication E2E Tests
@@ -13,18 +18,26 @@ import { getCsrfToken, createTestUser } from './fixtures'
  */
 
 // Generate unique test user for each test run
-const generateTestUser = () => ({
-  name: `Test User ${Date.now()}`,
-  email: `test${Date.now()}@example.com`,
-  password: 'TestPassword123!',
-})
+const generateTestUser = () => {
+  const timestamp = `${Date.now()}-${Math.floor(Math.random() * 1_000_000)}`
+  return {
+    name: `Test User ${timestamp}`,
+    email: `test${timestamp}@example.com`,
+    password: 'TestPassword123!',
+  }
+}
 
 test.describe('Authentication Flow', () => {
   test('should sign up a new user successfully', async ({ page }) => {
     const testUser = generateTestUser()
 
-    // Navigate to signup page
-    await page.goto('/auth/signup')
+    // Navigate to signup page (retry once if route isn't ready)
+    await page.goto('/auth/signup', { waitUntil: 'domcontentloaded' })
+    const notFoundHeading = page.getByRole('heading', { name: '404' })
+    if (await notFoundHeading.isVisible({ timeout: 1000 }).catch(() => false)) {
+      await page.reload({ waitUntil: 'domcontentloaded' })
+    }
+    await page.locator('#name').waitFor({ timeout: 10000 })
 
     // Fill out signup form (form uses id selectors, not name)
     await page.fill('#name', testUser.name)
@@ -124,24 +137,13 @@ test.describe('Authentication Flow', () => {
     const testUser = generateTestUser()
 
     // Create and login user with CSRF token
-    await createTestUser(page, testUser)
-
-    // Sign in via UI
-    await page.goto('/auth/signin')
-    await page.fill('#email', testUser.email)
-    await page.fill('#password', testUser.password)
-    await page.click('button[type="submit"]')
-
-    // Wait for sign-in to complete - redirect away from auth
-    await page.waitForURL(/\/(?!auth)/, { timeout: 10000 }).catch(() => {
-      // May stay on auth page momentarily
-    })
+    await createAndLoginUser(page, testUser)
 
     // Now try to access protected route
     await page.goto('/account')
 
-    // Wait for either the account page to load or redirect to signin
-    await page.waitForLoadState('networkidle', { timeout: 10000 })
+    // Wait for account page content to render
+    await page.getByRole('heading', { name: /welcome/i }).waitFor({ timeout: 10000 })
 
     // Should be able to access account page (not redirected to signin)
     expect(page.url()).toContain('/account')
@@ -152,14 +154,7 @@ test.describe('Authentication Flow', () => {
 
     // Create and login user with CSRF token
     await createTestUser(page, testUser)
-
-    await page.goto('/auth/signin')
-    await page.fill('#email', testUser.email)
-    await page.fill('#password', testUser.password)
-    await page.click('button[type="submit"]')
-
-    // Wait for sign-in to complete
-    await page.waitForURL(/\/(?!auth)/, { timeout: 10000 }).catch(() => {})
+    await loginUser(page, testUser.email, testUser.password)
 
     // Go to sign out page
     await page.goto('/auth/signout')
@@ -172,6 +167,50 @@ test.describe('Authentication Flow', () => {
       // Wait for signout to process
       await page.waitForLoadState('networkidle')
     }
+
+    // Fallback: explicitly call NextAuth signout if session still exists
+    let sessionResponse
+    try {
+      sessionResponse = await page.request.get('/api/auth/session')
+    } catch {
+      sessionResponse = null
+    }
+    if (sessionResponse?.ok()) {
+      const sessionData = await sessionResponse.json()
+      if (sessionData?.user) {
+        const csrfResponse = await page.request.get('/api/auth/csrf')
+        const csrfData = csrfResponse.ok() ? await csrfResponse.json() : null
+        const csrfToken = csrfData?.csrfToken
+        if (csrfToken) {
+          await page.request.post('/api/auth/signout', {
+            form: {
+              csrfToken,
+              callbackUrl: '/',
+            },
+            headers: {
+              'X-Auth-Return-Redirect': '1',
+            },
+          })
+        }
+      }
+    }
+
+    // Ensure session is cleared before continuing
+    await expect
+      .poll(
+        async () => {
+          try {
+            const response = await page.request.get('/api/auth/session')
+            if (!response.ok()) return false
+            const data = await response.json()
+            return !!data?.user
+          } catch {
+            return false
+          }
+        },
+        { timeout: 10000 }
+      )
+      .toBeFalsy()
 
     // Try to access protected route - should be redirected
     await page.goto('/account')
