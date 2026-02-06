@@ -69,6 +69,20 @@ jobs:
     name: Unit Tests
     runs-on: ubuntu-latest
     needs: validate
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: linkflame
+          POSTGRES_PASSWORD: linkflame
+          POSTGRES_DB: linkflame_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U linkflame -d linkflame_test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -86,6 +100,7 @@ jobs:
         run: npm run test:unit
         env:
           CI: true
+          DATABASE_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
 
       - name: Upload coverage reports
         uses: codecov/codecov-action@v5
@@ -99,6 +114,20 @@ jobs:
     name: E2E Tests
     runs-on: ubuntu-latest
     needs: [lint, unit-tests]
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: linkflame
+          POSTGRES_PASSWORD: linkflame
+          POSTGRES_DB: linkflame_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U linkflame -d linkflame_test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -121,21 +150,21 @@ jobs:
       - name: Setup test database
         run: npx prisma db push
         env:
-          DATABASE_URL: file:./test.db
+          DATABASE_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
 
       - name: Seed test database
         run: npx prisma db seed
         env:
-          DATABASE_URL: file:./test.db
+          DATABASE_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
 
       - name: Run E2E tests
         run: npm run test:e2e
         env:
-          DATABASE_URL: file:./test.db
+          DATABASE_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
           NEXTAUTH_URL: http://localhost:3000
           NEXTAUTH_SECRET: test-secret-for-ci-only-not-production
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
-          STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
           CI: true
 
       - name: Upload Playwright report
@@ -178,9 +207,10 @@ jobs:
       - name: Build application
         run: npm run build
         env:
-          DATABASE_URL: file:./dev.db
+          DATABASE_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
           NEXTAUTH_URL: http://localhost:3000
           NEXTAUTH_SECRET: build-secret-for-ci-only
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v6
@@ -215,4 +245,4 @@ jobs:
             --to-schema-datamodel prisma/schema.prisma \
             --exit-code || echo "Schema changes detected - migration may be needed"
         env:
-          DATABASE_URL: file:./dev.db
+          DATABASE_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public

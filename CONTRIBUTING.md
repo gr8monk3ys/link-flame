@@ -63,8 +63,8 @@ cp .env.example .env.local
 Edit `.env.local` with your development credentials:
 
 ```bash
-# Database (SQLite for development)
-DATABASE_URL="file:./dev.db"
+# Database (PostgreSQL)
+DATABASE_URL="postgresql://user:password@localhost:5432/linkflame?schema=public"
 
 # NextAuth
 NEXTAUTH_URL="http://localhost:3000"
@@ -72,7 +72,7 @@ NEXTAUTH_SECRET="your-dev-secret-at-least-32-characters"
 
 # Stripe (use test keys)
 STRIPE_SECRET_KEY="sk_test_..."
-STRIPE_PUBLISHABLE_KEY="pk_test_..."
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_..."
 STRIPE_WEBHOOK_SECRET="whsec_test_..."
 
 # Upstash Redis (optional for development)

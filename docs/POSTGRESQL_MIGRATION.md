@@ -1,6 +1,6 @@
 # PostgreSQL Migration Guide
 
-This guide walks you through migrating Link Flame from SQLite (development) to PostgreSQL (production).
+This guide covers migrating legacy SQLite data to PostgreSQL. PostgreSQL is the default database for development and production.
 
 ## Table of Contents
 - [Why PostgreSQL?](#why-postgresql)

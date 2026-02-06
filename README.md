@@ -8,16 +8,15 @@ A Next.js 16 full-stack application demonstrating modern web development pattern
 - Modern Next.js App Router architecture
 - Stripe payment integration
 - NextAuth v5 authentication with JWT strategy
-- Prisma ORM with SQLite/PostgreSQL
+- Prisma ORM with PostgreSQL
 - TypeScript throughout
 - API design patterns
 
 **Known Limitations:**
-- No production deployment configuration
+- Production deployment requires infrastructure + secrets configuration
 - Business model undefined
 - Branding/naming needs refinement for production use
-- No CSRF protection implemented
-- No email delivery service (newsletter/contact forms store data only)
+- Email delivery service optional (contact/newsletter features degrade without Resend)
 
 ## Tech Stack
 
@@ -30,7 +29,7 @@ A Next.js 16 full-stack application demonstrating modern web development pattern
 
 ### Backend
 - **Prisma ORM** - Database modeling and migrations
-- **SQLite** (dev) / **PostgreSQL** (production-ready)
+- **PostgreSQL** - Primary database for production and multi-user workloads
 - **NextAuth v5** - Authentication with JWT strategy and credentials provider
 - **Stripe** - Payment processing and webhooks
 
@@ -76,7 +75,7 @@ A Next.js 16 full-stack application demonstrating modern web development pattern
 ### Prerequisites
 - **Node.js 18+**
 - **npm** or **yarn**
-- **SQLite** (for local development)
+- **PostgreSQL** (for local development)
 
 ### Environment Setup
 
@@ -94,8 +93,8 @@ cp .env.example .env
 
 Edit `.env` with your credentials:
 ```env
-# Database
-DATABASE_URL="file:./prisma/dev.db"
+# Database (PostgreSQL)
+DATABASE_URL="postgresql://user:password@localhost:5432/linkflame?schema=public"
 
 # NextAuth v5 (https://next-auth.js.org)
 # Generate secret with: openssl rand -base64 32
@@ -104,7 +103,7 @@ NEXTAUTH_URL="http://localhost:3000"
 
 # Stripe (https://stripe.com)
 STRIPE_SECRET_KEY="sk_test_..."
-STRIPE_PUBLISHABLE_KEY="pk_test_..."
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_..."
 STRIPE_WEBHOOK_SECRET="whsec_..."
 
 # Upstash Redis (https://upstash.com) - Optional for rate limiting
@@ -288,7 +287,7 @@ Open [http://localhost:3000](http://localhost:3000)
 2. Get test API keys from **Developers > API Keys**:
    ```env
    STRIPE_SECRET_KEY=sk_test_...
-   STRIPE_PUBLISHABLE_KEY=pk_test_...
+   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
    ```
 3. **Configure webhooks** (important for order processing):
 
