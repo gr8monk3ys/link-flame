@@ -153,7 +153,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
         })
       }
 
-      const effectivePrice = product.salePrice || product.price
+      const effectivePrice = Number(product.salePrice || product.price)
       itemsWithPrices.push({
         productId: product.id,
         title: product.title,

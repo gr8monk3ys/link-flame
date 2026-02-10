@@ -56,6 +56,8 @@ async function getBrand(slug: string) {
     values: brand.values ? JSON.parse(brand.values) : [],
     products: brand.products.map((product): BrandProduct => ({
       ...product,
+      price: Number(product.price),
+      salePrice: product.salePrice ? Number(product.salePrice) : null,
       averageRating:
         product.reviews.length > 0
           ? product.reviews.reduce((sum, r) => sum + r.rating, 0) / product.reviews.length

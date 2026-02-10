@@ -13,44 +13,9 @@ import {
 } from "@/lib/api-response";
 import { logger } from "@/lib/logger";
 import { getBaseUrl } from "@/lib/url";
+import { getStripe } from "@/lib/stripe-server";
 import Stripe from "stripe";
-
-// Initialize Stripe lazily to allow build without secret key
-let stripe: Stripe | null = null;
-
-function getStripe(): Stripe {
-  if (!stripe) {
-    if (!process.env.STRIPE_SECRET_KEY) {
-      throw new Error("Missing STRIPE_SECRET_KEY");
-    }
-    stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2025-01-27.acacia",
-    });
-  }
-  return stripe;
-}
-
-// Gift options schema for conditional validation
-const GiftOptionsSchema = z.object({
-  isGift: z.boolean().default(false),
-  giftMessage: z.string().max(500, "Gift message must be 500 characters or less").optional(),
-  giftRecipientName: z.string().max(100, "Recipient name must be 100 characters or less").optional(),
-  giftRecipientEmail: z.string().email("Invalid recipient email address").optional().or(z.literal("")),
-  hidePrice: z.boolean().default(false),
-});
-
-// Define validation schema for checkout data
-const CheckoutSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  address: z.string().min(1, "Address is required"),
-  city: z.string().min(1, "City is required"),
-  state: z.string().min(1, "State is required"),
-  zipCode: z.string().regex(/^\d{5}(-\d{4})?$/, "Invalid ZIP code format"),
-  // Gift options (optional)
-  ...GiftOptionsSchema.shape,
-});
+import { CheckoutSchema, GiftOptionsSchema } from "@/lib/validations/checkout";
 
 export async function POST(request: Request) {
   try {
@@ -127,7 +92,7 @@ export async function POST(request: Request) {
 
       // Use server-side prices (NEVER trust client-provided prices)
       // Priority: variant sale price > variant price > product sale price > product price
-      const actualPrice = variant?.salePrice ?? variant?.price ?? product.salePrice ?? product.price;
+      const actualPrice = Number(variant?.salePrice ?? variant?.price ?? product.salePrice ?? product.price);
       serverTotal += actualPrice * item.quantity;
 
       // Build product name with variant info

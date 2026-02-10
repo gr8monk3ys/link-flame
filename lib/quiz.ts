@@ -149,7 +149,7 @@ export async function getProductRecommendations(
       }
 
       // Budget-friendly bonus for lower-priced items
-      if (value === 'budget-friendly' && product.price < 20) {
+      if (value === 'budget-friendly' && Number(product.price) < 20) {
         score += 15;
       }
 
@@ -164,7 +164,7 @@ export async function getProductRecommendations(
       const expConfig = EXPERIENCE_PRIORITIES[experience];
       if (expConfig) {
         // Price range filter for beginners
-        if (expConfig.priceRange && product.price <= expConfig.priceRange.max) {
+        if (expConfig.priceRange && Number(product.price) <= expConfig.priceRange.max) {
           score += 8;
         }
 

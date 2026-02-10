@@ -46,19 +46,7 @@ export async function GET(request: Request) {
     const giftCards = await getUserPurchasedGiftCards(userId)
 
     // Format the response
-    const formattedCards = giftCards.map((card: {
-      id: string
-      code: string
-      initialBalance: number
-      currentBalance: number
-      status: string
-      recipientEmail: string | null
-      recipientName: string | null
-      message: string | null
-      expiresAt: Date | null
-      purchasedAt: Date
-      createdAt: Date
-    }) => {
+    const formattedCards = giftCards.map((card) => {
       // Check if expired but not yet updated in database
       const expired = isExpired(card.expiresAt)
       const effectiveStatus = expired && card.status === GIFT_CARD_CONFIG.STATUS.ACTIVE
@@ -68,8 +56,8 @@ export async function GET(request: Request) {
       return {
         id: card.id,
         code: formatGiftCardCode(card.code),
-        initialBalance: card.initialBalance,
-        currentBalance: card.currentBalance,
+        initialBalance: Number(card.initialBalance),
+        currentBalance: Number(card.currentBalance),
         status: effectiveStatus,
         recipientEmail: card.recipientEmail,
         recipientName: card.recipientName,

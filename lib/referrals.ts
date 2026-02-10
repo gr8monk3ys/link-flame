@@ -401,7 +401,7 @@ export async function getUserReferrals(
       refereeName: r.referee.name || r.referee.email.split('@')[0],
       status: r.status,
       rewardPoints: r.rewardPoints,
-      discountApplied: r.discountApplied,
+      discountApplied: r.discountApplied ? Number(r.discountApplied) : null,
       createdAt: r.createdAt,
       completedAt: r.completedAt,
     })),

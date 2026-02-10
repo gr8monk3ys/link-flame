@@ -8,21 +8,8 @@ import { logger } from "@/lib/logger";
 import { sendOrderConfirmation, isEmailConfigured } from "@/lib/email";
 import { awardPurchasePoints } from "@/lib/loyalty";
 import { storeOrderImpact } from "@/lib/impact";
-
-// Initialize Stripe lazily to allow build without secret key
-let stripe: Stripe | null = null;
-
-function getStripe(): Stripe {
-  if (!stripe) {
-    if (!process.env.STRIPE_SECRET_KEY) {
-      throw new Error("Missing STRIPE_SECRET_KEY");
-    }
-    stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2025-01-27.acacia",
-    });
-  }
-  return stripe;
-}
+import { getStripe } from "@/lib/stripe-server";
+import { extractGiftOptions } from "@/lib/validations/webhook";
 
 function getWebhookSecret(): string {
   if (!process.env.STRIPE_WEBHOOK_SECRET) {
@@ -49,28 +36,7 @@ type CartItemWithRelations = Prisma.CartItemGetPayload<{
   include: { product: true; variant: true };
 }>;
 
-/**
- * Extracts gift options from Stripe session metadata
- */
-function extractGiftOptions(metadata: Stripe.Metadata | null) {
-  if (!metadata) {
-    return {
-      isGift: false,
-      giftMessage: null,
-      giftRecipientName: null,
-      giftRecipientEmail: null,
-      hidePrice: false,
-    };
-  }
-
-  return {
-    isGift: metadata.isGift === 'true',
-    giftMessage: metadata.giftMessage || null,
-    giftRecipientName: metadata.giftRecipientName || null,
-    giftRecipientEmail: metadata.giftRecipientEmail || null,
-    hidePrice: metadata.hidePrice === 'true',
-  };
-}
+// extractGiftOptions imported from @/lib/validations/webhook
 
 /**
  * Creates an order from checkout session and decrements inventory
@@ -213,9 +179,9 @@ async function sendOrderConfirmationEmail(orderId: string, customerEmail: string
         items: orderWithItems.items.map((item) => ({
           title: item.title,
           quantity: item.quantity,
-          price: item.price,
+          price: Number(item.price),
         })),
-        total: orderWithItems.amount,
+        total: Number(orderWithItems.amount),
         customerName: orderWithItems.customerName || 'Customer',
       }
     );
@@ -348,7 +314,7 @@ export async function POST(req: Request) {
       // Only award points for authenticated users (not guest sessions)
       if (userId && !userId.startsWith('guest_')) {
         try {
-          const loyaltyResult = await awardPurchasePoints(userId, order.id, order.amount);
+          const loyaltyResult = await awardPurchasePoints(userId, order.id, Number(order.amount));
           if (loyaltyResult.success) {
             logger.info('Loyalty points awarded for purchase', {
               userId,

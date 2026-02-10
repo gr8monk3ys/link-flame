@@ -165,7 +165,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
     // Calculate prices
     const itemsWithPrices = selectedItems.map((item) => {
       const product = productMap.get(item.productId)!
-      const effectivePrice = product.salePrice || product.price
+      const effectivePrice = Number(product.salePrice || product.price)
       return {
         productId: product.id,
         title: product.title,

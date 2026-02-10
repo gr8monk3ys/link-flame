@@ -80,7 +80,7 @@ export default async function AdminDashboard() {
   ]);
 
   // Calculate stats
-  const revenue = totalRevenue._sum.amount || 0;
+  const revenue = Number(totalRevenue._sum.amount) || 0;
   const avgOrderValue = totalOrders > 0 ? revenue / totalOrders : 0;
 
   return (

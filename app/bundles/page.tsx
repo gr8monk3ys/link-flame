@@ -40,7 +40,11 @@ async function getBundles() {
 
   // Calculate pricing for each bundle
   return bundles.map((bundle) => {
-    const basePrice = bundle.products.reduce((sum, bp) => {
+    const products = bundle.products.map(bp => ({
+      ...bp,
+      product: { ...bp.product, price: Number(bp.product.price), salePrice: bp.product.salePrice ? Number(bp.product.salePrice) : null },
+    }))
+    const basePrice = products.reduce((sum, bp) => {
       const productPrice = bp.product.salePrice || bp.product.price
       return sum + productPrice * bp.maxQuantity
     }, 0)
@@ -50,6 +54,7 @@ async function getBundles() {
 
     return {
       ...bundle,
+      products,
       calculatedPricing: {
         basePrice: Number(basePrice.toFixed(2)),
         discountedPrice: Number(discountedPrice.toFixed(2)),

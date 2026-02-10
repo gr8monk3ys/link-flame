@@ -242,7 +242,14 @@ export async function getGiftCardByCode(code: string): Promise<{
     },
   })
 
-  return giftCard
+  if (!giftCard) return null
+
+  return {
+    ...giftCard,
+    initialBalance: Number(giftCard.initialBalance),
+    currentBalance: Number(giftCard.currentBalance),
+    transactions: giftCard.transactions.map(t => ({ ...t, amount: Number(t.amount) })),
+  }
 }
 
 /**
@@ -300,7 +307,11 @@ export async function createGiftCard(params: {
 
   logger.info('Gift card created', { giftCardId: giftCard.id, amount: params.amount })
 
-  return giftCard
+  return {
+    ...giftCard,
+    initialBalance: Number(giftCard.initialBalance),
+    currentBalance: Number(giftCard.currentBalance),
+  }
 }
 
 /**
@@ -331,14 +342,14 @@ export async function redeemGiftCard(
     }
 
     // Validate the gift card
-    const validation = validateGiftCardForUse(giftCard)
+    const validation = validateGiftCardForUse({ ...giftCard, currentBalance: Number(giftCard.currentBalance) })
     if (!validation.valid) {
       return { success: false, error: validation.reason || 'Gift card is not valid' }
     }
 
     // Calculate the amount to apply (cannot exceed balance)
-    const amountToApply = Math.min(amount, giftCard.currentBalance)
-    const newBalance = giftCard.currentBalance - amountToApply
+    const amountToApply = Math.min(amount, Number(giftCard.currentBalance))
+    const newBalance = Number(giftCard.currentBalance) - amountToApply
 
     // Determine new status
     const newStatus =
@@ -405,7 +416,7 @@ export async function refundGiftCard(
     }
 
     // Calculate new balance (cannot exceed initial balance)
-    const newBalance = Math.min(giftCard.currentBalance + amount, giftCard.initialBalance)
+    const newBalance = Math.min(Number(giftCard.currentBalance) + amount, Number(giftCard.initialBalance))
 
     // Update the gift card
     await tx.giftCard.update({

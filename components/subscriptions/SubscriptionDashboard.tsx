@@ -4,12 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { toast } from 'sonner';
-import {
-  SparklesIcon,
-  ArrowPathIcon,
-  PlusIcon,
-  InboxIcon,
-} from '@heroicons/react/24/outline';
+import { Sparkles, RefreshCw, Plus, Inbox } from 'lucide-react';
 import { SubscriptionCard } from './SubscriptionCard';
 import {
   SubscriptionStatus,
@@ -118,7 +113,7 @@ export function SubscriptionDashboard() {
   if (authStatus === 'loading') {
     return (
       <div className="flex items-center justify-center py-12">
-        <ArrowPathIcon className="size-8 animate-spin text-gray-400" />
+        <RefreshCw className="size-8 animate-spin text-gray-400" />
       </div>
     );
   }
@@ -126,7 +121,7 @@ export function SubscriptionDashboard() {
   if (authStatus === 'unauthenticated') {
     return (
       <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
-        <SparklesIcon className="mx-auto size-12 text-gray-400" />
+        <Sparkles className="mx-auto size-12 text-gray-400" />
         <h3 className="mt-4 text-lg font-semibold text-gray-900">
           Sign in to manage subscriptions
         </h3>
@@ -161,7 +156,7 @@ export function SubscriptionDashboard() {
           href="/products"
           className="inline-flex items-center rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
         >
-          <PlusIcon className="mr-2 size-4" />
+          <Plus className="mr-2 size-4" />
           Add subscription
         </Link>
       </div>
@@ -218,7 +213,7 @@ export function SubscriptionDashboard() {
           disabled={isLoading}
           className="ml-auto inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <ArrowPathIcon className={`mr-1.5 size-4 ${isLoading ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`mr-1.5 size-4 ${isLoading ? 'animate-spin' : ''}`} />
           Refresh
         </button>
       </div>
@@ -226,7 +221,7 @@ export function SubscriptionDashboard() {
       {/* Subscriptions list */}
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
-          <ArrowPathIcon className="size-8 animate-spin text-gray-400" />
+          <RefreshCw className="size-8 animate-spin text-gray-400" />
         </div>
       ) : filteredSubscriptions.length > 0 ? (
         <div className="space-y-4">
@@ -240,7 +235,7 @@ export function SubscriptionDashboard() {
         </div>
       ) : (
         <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-12 text-center">
-          <InboxIcon className="mx-auto size-12 text-gray-400" />
+          <Inbox className="mx-auto size-12 text-gray-400" />
           <h3 className="mt-4 text-lg font-semibold text-gray-900">
             {filter === 'all'
               ? 'No subscriptions yet'
@@ -257,7 +252,7 @@ export function SubscriptionDashboard() {
                 href="/products"
                 className="inline-flex items-center rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
               >
-                <SparklesIcon className="mr-2 size-4" />
+                <Sparkles className="mr-2 size-4" />
                 Browse products
               </Link>
             </div>
@@ -273,7 +268,7 @@ export function SubscriptionDashboard() {
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="flex items-start gap-3">
             <div className="flex size-8 items-center justify-center rounded-full bg-green-100 text-green-600">
-              <SparklesIcon className="size-4" />
+              <Sparkles className="size-4" />
             </div>
             <div>
               <p className="text-sm font-medium text-gray-900">Save up to 20%</p>
@@ -282,7 +277,7 @@ export function SubscriptionDashboard() {
           </div>
           <div className="flex items-start gap-3">
             <div className="flex size-8 items-center justify-center rounded-full bg-green-100 text-green-600">
-              <ArrowPathIcon className="size-4" />
+              <RefreshCw className="size-4" />
             </div>
             <div>
               <p className="text-sm font-medium text-gray-900">Flexible schedule</p>

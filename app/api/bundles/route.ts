@@ -93,7 +93,7 @@ export async function GET(request: NextRequest) {
     const bundlesWithSavings = bundles.map((bundle) => {
       // Calculate total price of default/required products
       const basePrice = bundle.products.reduce((sum, bp) => {
-        const productPrice = bp.product.salePrice || bp.product.price
+        const productPrice = Number(bp.product.salePrice || bp.product.price)
         return sum + productPrice * bp.maxQuantity
       }, 0)
 

@@ -70,7 +70,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
     }> = []
 
     if (bundle.isCustomizable && bundle.category) {
-      availableProducts = await prisma.product.findMany({
+      const products = await prisma.product.findMany({
         where: {
           category: bundle.category,
           inventory: { gt: 0 },
@@ -89,9 +89,10 @@ export async function GET(request: NextRequest, context: RouteContext) {
           title: "asc",
         },
       })
+      availableProducts = products.map(p => ({ ...p, price: Number(p.price), salePrice: p.salePrice ? Number(p.salePrice) : null }))
     } else if (bundle.isCustomizable) {
       // If no category filter, get all products
-      availableProducts = await prisma.product.findMany({
+      const products = await prisma.product.findMany({
         where: {
           inventory: { gt: 0 },
         },
@@ -110,12 +111,13 @@ export async function GET(request: NextRequest, context: RouteContext) {
           title: "asc",
         },
       })
+      availableProducts = products.map(p => ({ ...p, price: Number(p.price), salePrice: p.salePrice ? Number(p.salePrice) : null }))
     }
 
     // Calculate pricing based on bundle products
     const bundleProducts = bundle.products.map((bp) => ({
       ...bp,
-      effectivePrice: bp.product.salePrice || bp.product.price,
+      effectivePrice: Number(bp.product.salePrice || bp.product.price),
     }))
 
     // For fixed bundles, calculate the total

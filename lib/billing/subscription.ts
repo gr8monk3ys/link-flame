@@ -8,6 +8,7 @@
 import Stripe from 'stripe'
 import { prisma } from '@/lib/prisma'
 import { logger } from '@/lib/logger'
+import { getStripe } from '@/lib/stripe-server'
 import {
   type PlanId,
   type BillingInterval,
@@ -17,22 +18,6 @@ import {
   SAAS_PLANS,
   TRIAL_PERIOD_DAYS,
 } from './plans'
-
-// Initialize Stripe lazily to allow build without secret key
-let stripe: Stripe | null = null
-
-function getStripe(): Stripe {
-  if (!stripe) {
-    if (!process.env.STRIPE_SECRET_KEY) {
-      throw new Error('Missing STRIPE_SECRET_KEY environment variable')
-    }
-    stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: '2025-01-27.acacia',
-      typescript: true,
-    })
-  }
-  return stripe
-}
 
 /**
  * Error class for subscription-related errors

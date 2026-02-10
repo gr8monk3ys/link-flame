@@ -159,8 +159,8 @@ async function searchProducts(query: string): Promise<ProductSuggestion[]> {
   return products.map((product) => ({
     id: product.id,
     title: product.title,
-    price: product.price,
-    salePrice: product.salePrice,
+    price: Number(product.price),
+    salePrice: product.salePrice ? Number(product.salePrice) : null,
     image: product.image,
     category: product.category,
     slug: product.id, // Using ID as slug for product URLs

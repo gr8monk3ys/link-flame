@@ -12,22 +12,8 @@ import {
   errorResponse,
 } from '@/lib/api-response'
 import { logger } from '@/lib/logger'
+import { getStripe } from '@/lib/stripe-server'
 import Stripe from 'stripe'
-
-// Initialize Stripe lazily to allow build without secret key
-let stripe: Stripe | null = null
-
-function getStripe(): Stripe {
-  if (!stripe) {
-    if (!process.env.STRIPE_SECRET_KEY) {
-      throw new Error('Missing STRIPE_SECRET_KEY')
-    }
-    stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: '2025-01-27.acacia',
-    })
-  }
-  return stripe
-}
 
 // Define validation schema for express checkout data
 const ExpressCheckoutSchema = z.object({
@@ -124,8 +110,8 @@ export async function POST(request: Request) {
       }
 
       // Use server-side prices (NEVER trust client-provided prices)
-      const actualPrice =
-        variant?.salePrice ?? variant?.price ?? product.salePrice ?? product.price
+      const actualPrice = Number(
+        variant?.salePrice ?? variant?.price ?? product.salePrice ?? product.price)
       serverTotal += actualPrice * cartItem.quantity
 
       // Build product name with variant info

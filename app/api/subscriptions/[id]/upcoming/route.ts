@@ -90,11 +90,11 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     // Build the upcoming order preview
     const orderItems = subscription.items.map(item => {
       // Use current product price for comparison
-      const currentPrice = item.variant
+      const currentPrice = Number(item.variant
         ? (item.variant.salePrice ?? item.variant.price ?? item.product.salePrice ?? item.product.price)
-        : (item.product.salePrice ?? item.product.price);
+        : (item.product.salePrice ?? item.product.price));
 
-      const subscriptionPrice = item.priceAtSubscription;
+      const subscriptionPrice = Number(item.priceAtSubscription);
       const discountedPrice = subscriptionPrice * (1 - item.discountPercent / 100);
       const itemTotal = discountedPrice * item.quantity;
 
@@ -132,7 +132,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     });
 
     // Calculate totals
-    const totals = calculateSubscriptionTotal(subscription.items);
+    const totals = calculateSubscriptionTotal(subscription.items.map(item => ({ ...item, priceAtSubscription: Number(item.priceAtSubscription) })));
 
     // Check if all items are in stock
     const allInStock = orderItems.every(item => item.inStock);

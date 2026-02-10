@@ -17,8 +17,12 @@ generator client {
 // - JSON/JSONB native types (replace String JSON fields)
 // - Array types for multi-value fields
 // - Row-level security for multi-tenant isolation
+//
+// NOTE: Currently using SQLite for local development.
+// When switching to PostgreSQL, add @db.Decimal(10, 2) to all Decimal fields
+// and change provider to "postgresql".
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -61,17 +65,17 @@ model User {
 }
 
 model Product {
-  id          String  @id @default(cuid())
+  id          String   @id @default(cuid())
   title       String
   description String?
-  price       Float
-  salePrice   Float?
+  price       Decimal
+  salePrice   Decimal?
   image       String
-  category    String  @default("Uncategorized")
-  inventory   Int     @default(0)
+  category    String   @default("Uncategorized")
+  inventory   Int      @default(0)
   subtitle    String?
-  featured    Boolean @default(false)
-  hasVariants Boolean @default(false) // Whether this product has variant options
+  featured    Boolean  @default(false)
+  hasVariants Boolean  @default(false) // Whether this product has variant options
 
   // Brand relationship
   brandId String? // Optional link to brand
@@ -128,8 +132,8 @@ model ProductVariant {
   color     String? // e.g., "Red", "Blue", "Green"
   colorCode String? // Hex color code for UI display, e.g., "#FF0000"
   material  String? // e.g., "Cotton", "Bamboo", "Organic Cotton"
-  price     Float? // Override price (if null, uses product.price)
-  salePrice Float? // Override sale price
+  price     Decimal? // Override price (if null, uses product.price)
+  salePrice Decimal? // Override sale price
   image     String? // Override image (for color-specific photos)
   inventory Int     @default(0)
   isDefault Boolean @default(false) // Mark one variant as default selection
@@ -278,7 +282,7 @@ model Order {
   id              String  @id @default(cuid())
   userId          String
   stripeSessionId String? @unique
-  amount          Float
+  amount          Decimal
   status          String // Payment status: paid, pending, failed, refunded
   shippingAddress String?
   paymentMethod   String?
@@ -320,7 +324,7 @@ model OrderItem {
   productId       String
   variantId       String? // Reference to variant if applicable
   quantity        Int
-  price           Float
+  price           Decimal
   title           String
   // Store variant details at time of order (denormalized for historical accuracy)
   variantSku      String?
@@ -552,9 +556,9 @@ model BundleSelection {
   userId          String? // Authenticated user ID (optional for guests)
   sessionId       String? // Guest session ID (optional for logged-in users)
   selectedItems   String // JSON array of selected items with details
-  totalPrice      Float
-  discountedPrice Float    @default(0)
-  savings         Float    @default(0)
+  totalPrice      Decimal
+  discountedPrice Decimal  @default(0)
+  savings         Decimal  @default(0)
   status          String   @default("pending") // pending, in_cart, purchased
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -696,7 +700,7 @@ model SubscriptionItem {
   productId           String
   variantId           String?
   quantity            Int      @default(1)
-  priceAtSubscription Float // Price locked in at subscription time
+  priceAtSubscription Decimal // Price locked in at subscription time
   discountPercent     Float    @default(0) // Discount applied to this item
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
@@ -794,8 +798,8 @@ model LoyaltyRedemption {
   userId         String
   pointsUsed     Int // Points redeemed
   orderId        String? // Order where redemption was applied
-  discount       Float // Dollar amount discounted
-  discountAmount Float    @default(0) // Alias for discount amount
+  discount       Decimal // Dollar amount discounted
+  discountAmount Decimal  @default(0) // Alias for discount amount
   status         String   @default("applied") // applied, refunded
   redeemedAt     DateTime @default(now()) // When the points were redeemed
   createdAt      DateTime @default(now())
@@ -840,7 +844,7 @@ model Referral {
   refereeId       String    @unique // User who was referred (one referral per user)
   referralCodeId  String // The referral code used
   status          String    @default("PENDING") // PENDING, COMPLETED, REWARDED, EXPIRED
-  discountApplied Float? // Discount applied to referee's first order
+  discountApplied Decimal? // Discount applied to referee's first order
   pointsAwarded   Int? // Points awarded to referrer
   rewardPoints    Int       @default(0) // Points to be awarded to referrer (alias)
   firstOrderId    String? // Referee's first order that triggered completion
@@ -868,8 +872,8 @@ model Referral {
 model GiftCard {
   id             String    @id @default(cuid())
   code           String    @unique // 16-character alphanumeric code
-  initialBalance Float // Original amount of the gift card
-  currentBalance Float // Remaining balance
+  initialBalance Decimal // Original amount of the gift card
+  currentBalance Decimal // Remaining balance
   purchaserId    String? // User who purchased the gift card (optional for guest purchases)
   recipientEmail String? // Email address of the recipient
   recipientName  String? // Name of the recipient
@@ -894,7 +898,7 @@ model GiftCardTransaction {
   id          String   @id @default(cuid())
   giftCardId  String
   orderId     String? // Reference to order if used in checkout
-  amount      Float // Transaction amount (positive for purchase, negative for redemption)
+  amount      Decimal // Transaction amount (positive for purchase, negative for redemption)
   type        String // PURCHASE, REDEMPTION, REFUND
   description String? // Optional description of the transaction
   createdAt   DateTime @default(now())
@@ -1034,7 +1038,7 @@ model OrganizationSubscription {
   planId               String    // FREE, STARTER, PRO, ENTERPRISE
   billingInterval      String    // monthly, yearly
   status               String    // active, canceled, past_due, trialing, etc.
-  amount               Float     // Amount in dollars
+  amount               Decimal // Amount in dollars
   currency             String    @default("usd")
   trialStart           DateTime?
   trialEnd             DateTime?

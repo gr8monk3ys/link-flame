@@ -77,15 +77,15 @@ export default async function SharedWishlistPage({ params }: SharedWishlistPageP
                   {item.product.salePrice ? (
                     <>
                       <span className="font-semibold text-red-600">
-                        {formatPrice(item.product.salePrice)}
+                        {formatPrice(Number(item.product.salePrice))}
                       </span>
                       <span className="text-sm text-muted-foreground line-through">
-                        {formatPrice(item.product.price)}
+                        {formatPrice(Number(item.product.price))}
                       </span>
                     </>
                   ) : (
                     <span className="font-semibold">
-                      {formatPrice(item.product.price)}
+                      {formatPrice(Number(item.product.price))}
                     </span>
                   )}
                 </div>

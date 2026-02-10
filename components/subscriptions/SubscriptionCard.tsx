@@ -4,15 +4,7 @@ import { useState, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { toast } from 'sonner';
-import {
-  CalendarDaysIcon,
-  PauseIcon,
-  PlayIcon,
-  ArrowPathIcon,
-  XMarkIcon,
-  ChevronRightIcon,
-  TruckIcon,
-} from '@heroicons/react/24/outline';
+import { CalendarDays, Pause, Play, RefreshCw, X, ChevronRight, Truck } from 'lucide-react';
 import {
   SubscriptionFrequency,
   SubscriptionStatus,
@@ -180,7 +172,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
             onClick={() => setIsExpanded(!isExpanded)}
             className="text-gray-400 hover:text-gray-500"
           >
-            <ChevronRightIcon
+            <ChevronRight
               className={cn(
                 'size-5 transition-transform',
                 isExpanded ? 'rotate-90' : ''
@@ -236,7 +228,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
         {/* Next delivery info */}
         {isActive && (
           <div className="mt-4 flex items-center rounded-lg bg-green-50 px-3 py-2">
-            <TruckIcon className="mr-2 size-5 text-green-600" />
+            <Truck className="mr-2 size-5 text-green-600" />
             <span className="text-sm text-green-800">
               Next delivery: {nextDeliveryDate.toLocaleDateString('en-US', {
                 weekday: 'short',
@@ -249,7 +241,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
 
         {isPaused && (
           <div className="mt-4 flex items-center rounded-lg bg-yellow-50 px-3 py-2">
-            <PauseIcon className="mr-2 size-5 text-yellow-600" />
+            <Pause className="mr-2 size-5 text-yellow-600" />
             <span className="text-sm text-yellow-800">
               Subscription is paused. Resume to continue deliveries.
             </span>
@@ -334,7 +326,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
                   disabled={isLoading}
                   className="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <ArrowPathIcon className="mr-1.5 size-4" />
+                  <RefreshCw className="mr-1.5 size-4" />
                   Skip next delivery
                 </button>
                 <button
@@ -343,7 +335,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
                   disabled={isLoading}
                   className="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <PauseIcon className="mr-1.5 size-4" />
+                  <Pause className="mr-1.5 size-4" />
                   Pause
                 </button>
               </>
@@ -355,7 +347,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
                 disabled={isLoading}
                 className="inline-flex items-center rounded-md border border-green-600 bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <PlayIcon className="mr-1.5 size-4" />
+                <Play className="mr-1.5 size-4" />
                 Resume
               </button>
             )}
@@ -365,7 +357,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
               disabled={isLoading}
               className="inline-flex items-center rounded-md border border-red-300 bg-white px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <XMarkIcon className="mr-1.5 size-4" />
+              <X className="mr-1.5 size-4" />
               Cancel
             </button>
           </div>

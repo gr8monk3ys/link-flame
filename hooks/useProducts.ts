@@ -1,16 +1,16 @@
-import useSWR from 'swr';
+import { useState, useEffect, useCallback } from 'react';
 import type { Product } from '@/types/product';
 
-// Fetcher function for SWR
-const fetcher = async (url: string) => {
+// Fetcher function
+const fetcher = async (url: string): Promise<unknown> => {
   const res = await fetch(url);
-  
+
   if (!res.ok) {
     const error = new Error('An error occurred while fetching the data.');
     error.message = await res.text();
     throw error;
   }
-  
+
   return res.json();
 };
 
@@ -22,25 +22,36 @@ type UseProductsOptions = {
 
 export function useProducts(options: UseProductsOptions = {}) {
   const { category, limit, featured } = options;
-  
+
   // Build query string
   const queryParams = new URLSearchParams();
   if (category) queryParams.set('category', category);
   if (limit) queryParams.set('limit', limit.toString());
   if (featured) queryParams.set('featured', 'true');
-  
+
   const queryString = queryParams.toString();
   const url = `/api/products${queryString ? `?${queryString}` : ''}`;
-  
-  const { data, error, isLoading, mutate } = useSWR<unknown>(
-    url,
-    fetcher,
-    {
-      revalidateOnFocus: false,
-      revalidateIfStale: false,
-      dedupingInterval: 60000, // 1 minute
+
+  const [data, setData] = useState<unknown>(undefined);
+  const [error, setError] = useState<Error | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const mutate = useCallback(async () => {
+    setIsLoading(true);
+    setError(undefined);
+    try {
+      const result = await fetcher(url);
+      setData(result);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Unknown error'));
+    } finally {
+      setIsLoading(false);
     }
-  );
+  }, [url]);
+
+  useEffect(() => {
+    mutate();
+  }, [mutate]);
 
   const products = Array.isArray(data)
     ? data
@@ -49,7 +60,7 @@ export function useProducts(options: UseProductsOptions = {}) {
       : Array.isArray((data as { products?: Product[] })?.products)
         ? (data as { products?: Product[] }).products!
         : [];
-  
+
   return {
     products,
     isLoading,
@@ -59,16 +70,33 @@ export function useProducts(options: UseProductsOptions = {}) {
 }
 
 export function useProduct(id: string | null) {
-  const { data, error, isLoading, mutate } = useSWR<Product>(
-    id ? `/api/products/${id}` : null,
-    fetcher,
-    {
-      revalidateOnFocus: false,
-      revalidateIfStale: false,
-      dedupingInterval: 60000, // 1 minute
+  const [data, setData] = useState<Product | undefined>(undefined);
+  const [error, setError] = useState<Error | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const url = id ? `/api/products/${id}` : null;
+
+  const mutate = useCallback(async () => {
+    if (!url) {
+      setIsLoading(false);
+      return;
     }
-  );
-  
+    setIsLoading(true);
+    setError(undefined);
+    try {
+      const result = await fetcher(url) as Product;
+      setData(result);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Unknown error'));
+    } finally {
+      setIsLoading(false);
+    }
+  }, [url]);
+
+  useEffect(() => {
+    mutate();
+  }, [mutate]);
+
   return {
     product: data,
     isLoading,

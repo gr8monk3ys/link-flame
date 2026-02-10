@@ -243,14 +243,14 @@ export async function POST(request: NextRequest) {
       }
 
       // If variant is specified, validate it exists
-      let price = product.salePrice ?? product.price;
+      let price = Number(product.salePrice ?? product.price);
       if (item.variantId) {
         const variant = product.variants.find(v => v.id === item.variantId);
         if (!variant) {
           return notFoundResponse(`Variant ${item.variantId} for product ${product.title}`);
         }
         // Use variant price if available
-        price = variant.salePrice ?? variant.price ?? price;
+        price = Number(variant.salePrice ?? variant.price ?? price);
       }
 
       subscriptionItems.push({

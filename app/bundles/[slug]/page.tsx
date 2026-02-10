@@ -52,7 +52,7 @@ async function getBundle(slug: string) {
       ? { category: bundle.category, inventory: { gt: 0 } }
       : { inventory: { gt: 0 } }
 
-    availableProducts = await prisma.product.findMany({
+    const products = await prisma.product.findMany({
       where,
       select: {
         id: true,
@@ -69,12 +69,14 @@ async function getBundle(slug: string) {
         title: "asc",
       },
     })
+    availableProducts = products.map(p => ({ ...p, price: Number(p.price), salePrice: p.salePrice ? Number(p.salePrice) : null }))
   }
 
   // Calculate pricing based on bundle products
   const bundleProducts = bundle.products.map((bp) => ({
     ...bp,
-    effectivePrice: bp.product.salePrice || bp.product.price,
+    product: { ...bp.product, price: Number(bp.product.price), salePrice: bp.product.salePrice ? Number(bp.product.salePrice) : null },
+    effectivePrice: Number(bp.product.salePrice || bp.product.price),
   }))
 
   const basePrice = bundleProducts.reduce((sum, bp) => {

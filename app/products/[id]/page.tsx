@@ -96,6 +96,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
   // Transform the data to match the expected format
   const transformedProduct = {
     ...product,
+    price: Number(product.price),
+    salePrice: product.salePrice ? Number(product.salePrice) : null,
+    variants: product.variants.map(v => ({ ...v, price: v.price ? Number(v.price) : null, salePrice: v.salePrice ? Number(v.salePrice) : null })),
     // Flatten values for easier consumption
     values: product.values?.map((pva) => pva.value) || [],
     // Transform certifications

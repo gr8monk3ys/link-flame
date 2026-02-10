@@ -177,15 +177,15 @@ export async function SearchResults({ query }: SearchResultsProps) {
                     {hasDiscount ? (
                       <div className="flex items-center gap-2">
                         <span className="font-semibold text-primary">
-                          {formatPrice(product.salePrice!)}
+                          {formatPrice(Number(product.salePrice!))}
                         </span>
                         <span className="text-sm text-muted-foreground line-through">
-                          {formatPrice(product.price)}
+                          {formatPrice(Number(product.price))}
                         </span>
                       </div>
                     ) : (
                       <span className="font-semibold">
-                        {formatPrice(product.price)}
+                        {formatPrice(Number(product.price))}
                       </span>
                     )}
                   </div>

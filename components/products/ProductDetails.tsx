@@ -1,7 +1,7 @@
 "use client";
 
 import Image from 'next/image';
-import { StarIcon } from '@heroicons/react/20/solid';
+import { Star } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import { useCart } from "@/lib/providers/CartProvider";
 import { toast } from 'sonner';
@@ -223,7 +223,7 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
                   <div className="flex items-center">
                     {[0, 1, 2, 3, 4].map((rating) => (
                       <div key={rating} className="shrink-0">
-                        <StarIcon className="size-5" aria-hidden="true" />
+                        <Star className="size-5" fill="currentColor" aria-hidden="true" />
                       </div>
                     ))}
                   </div>

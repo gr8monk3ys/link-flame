@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { StarIcon } from '@heroicons/react/20/solid';
+import { Star } from 'lucide-react';
 import Link from 'next/link';
 
 interface FilterState {
@@ -100,14 +100,14 @@ export default function FilterSidebar({
             >
               <div className="flex shrink-0">
                 {[...Array(rating)].map((_, i) => (
-                  <StarIcon
+                  <Star fill="currentColor"
                     key={i}
                     className="size-5 text-yellow-400"
                     aria-hidden="true"
                   />
                 ))}
                 {[...Array(5 - rating)].map((_, i) => (
-                  <StarIcon
+                  <Star fill="currentColor"
                     key={i}
                     className="size-5 text-gray-300"
                     aria-hidden="true"

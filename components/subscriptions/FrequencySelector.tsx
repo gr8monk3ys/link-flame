@@ -1,7 +1,7 @@
 'use client';
 
 import { RadioGroup } from '@headlessui/react';
-import { CheckCircleIcon } from '@heroicons/react/20/solid';
+import { CheckCircle2 } from 'lucide-react';
 import {
   SubscriptionFrequency,
   FREQUENCY_LABELS,
@@ -129,7 +129,7 @@ export function FrequencySelector({
                       Save {option.discount}%
                     </span>
                     {checked && (
-                      <CheckCircleIcon className="size-5 text-green-600" aria-hidden="true" />
+                      <CheckCircle2 className="size-5 text-green-600" fill="currentColor" aria-hidden="true" />
                     )}
                   </div>
                 </div>
