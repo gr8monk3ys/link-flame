@@ -53,19 +53,8 @@ import { checkStrictRateLimit } from '@/lib/rate-limit'
 import { getUserIdForCart } from '@/lib/session'
 import { prisma } from '@/lib/prisma'
 
-// Import the Zod schema to test validation logic directly
-import { z } from 'zod'
-
-// Recreate the CheckoutSchema for testing
-const CheckoutSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  firstName: z.string().min(1, 'First name is required'),
-  lastName: z.string().min(1, 'Last name is required'),
-  address: z.string().min(1, 'Address is required'),
-  city: z.string().min(1, 'City is required'),
-  state: z.string().min(1, 'State is required'),
-  zipCode: z.string().regex(/^\d{5}(-\d{4})?$/, 'Invalid ZIP code format'),
-})
+// Import the actual shared schema (no longer recreated locally)
+import { CheckoutSchema } from '@/lib/validations/checkout'
 
 const validCheckoutData = {
   email: 'test@example.com',

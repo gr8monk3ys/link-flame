@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import Stripe from 'stripe'
+import { extractGiftOptions, convertCentsToAmount } from '@/lib/validations/webhook'
 
 /**
  * Stripe Webhook Handler Unit Tests
@@ -106,26 +107,7 @@ function createMockOrder(overrides: Record<string, unknown> = {}) {
 
 describe('Webhook Business Logic', () => {
   describe('extractGiftOptions', () => {
-    // Recreate the function logic for testing
-    function extractGiftOptions(metadata: Stripe.Metadata | null) {
-      if (!metadata) {
-        return {
-          isGift: false,
-          giftMessage: null,
-          giftRecipientName: null,
-          giftRecipientEmail: null,
-          hidePrice: false,
-        }
-      }
-
-      return {
-        isGift: metadata.isGift === 'true',
-        giftMessage: metadata.giftMessage || null,
-        giftRecipientName: metadata.giftRecipientName || null,
-        giftRecipientEmail: metadata.giftRecipientEmail || null,
-        hidePrice: metadata.hidePrice === 'true',
-      }
-    }
+    // extractGiftOptions imported from @/lib/validations/webhook
 
     it('should return default values for null metadata', () => {
       expect(extractGiftOptions(null)).toEqual({
@@ -321,10 +303,7 @@ describe('Webhook Business Logic', () => {
   })
 
   describe('Amount Conversion', () => {
-    // Stripe amounts are in cents
-    function convertCentsToAmount(cents: number): number {
-      return cents / 100
-    }
+    // convertCentsToAmount imported from @/lib/validations/webhook
 
     it('should convert cents to dollars correctly', () => {
       expect(convertCentsToAmount(9999)).toBe(99.99)
@@ -424,24 +403,7 @@ describe('Webhook Business Logic', () => {
       }
     }
 
-    function extractGiftOptions(metadata: Stripe.Metadata | null) {
-      if (!metadata) {
-        return {
-          isGift: false,
-          giftMessage: null,
-          giftRecipientName: null,
-          giftRecipientEmail: null,
-          hidePrice: false,
-        }
-      }
-      return {
-        isGift: metadata.isGift === 'true',
-        giftMessage: metadata.giftMessage || null,
-        giftRecipientName: metadata.giftRecipientName || null,
-        giftRecipientEmail: metadata.giftRecipientEmail || null,
-        hidePrice: metadata.hidePrice === 'true',
-      }
-    }
+    // extractGiftOptions imported from @/lib/validations/webhook
 
     it('should create correct order data from session', () => {
       const session = createMockCheckoutSession()

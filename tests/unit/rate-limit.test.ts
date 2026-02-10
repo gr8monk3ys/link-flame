@@ -116,7 +116,7 @@ describe('Rate Limiting Utilities', () => {
 
     it('should work with different user ID formats', () => {
       const testCases = [
-        'clerk_abc123',
+        'auth_abc123',
         'user_xyz789',
         '12345',
         'email@example.com',
@@ -130,23 +130,22 @@ describe('Rate Limiting Utilities', () => {
     });
   });
 
-  describe('checkRateLimit (graceful degradation)', () => {
-    it('should allow all requests when Redis is not configured', async () => {
-      // In test environment, Redis credentials are not set
-      const result = await checkRateLimit('test-identifier');
+  describe('checkRateLimit (in-memory fallback)', () => {
+    it('should use in-memory rate limiting when Redis is not configured', async () => {
+      // In test environment, Redis credentials are not set - uses in-memory fallback
+      const result = await checkRateLimit('test-ratelimit-identifier');
 
       expect(result.success).toBe(true);
-      expect(result.limit).toBe(Infinity);
-      expect(result.remaining).toBe(Infinity);
-      expect(result.reset).toBe(0);
+      expect(result.limit).toBe(10);
+      expect(result.remaining).toBe(9);
+      expect(typeof result.reset).toBe('number');
     });
 
-    it('should warn when rate limiting is not configured', async () => {
-      await checkRateLimit('test-identifier');
+    it('should warn about in-memory fallback when Redis is not configured', async () => {
+      await checkRateLimit('test-warn-identifier');
 
-      // Logger formats output as "[WARN] message" with additional metadata
       expect(console.warn).toHaveBeenCalledWith(
-        expect.stringContaining('Rate limiting is not configured'),
+        expect.stringContaining('in-memory fallback'),
         expect.anything()
       );
     });
@@ -166,22 +165,21 @@ describe('Rate Limiting Utilities', () => {
     });
   });
 
-  describe('checkStrictRateLimit (graceful degradation)', () => {
-    it('should allow all requests when Redis is not configured', async () => {
-      const result = await checkStrictRateLimit('test-identifier');
+  describe('checkStrictRateLimit (in-memory fallback)', () => {
+    it('should use in-memory rate limiting when Redis is not configured', async () => {
+      const result = await checkStrictRateLimit('test-strict-identifier');
 
       expect(result.success).toBe(true);
-      expect(result.limit).toBe(Infinity);
-      expect(result.remaining).toBe(Infinity);
-      expect(result.reset).toBe(0);
+      expect(result.limit).toBe(5);
+      expect(result.remaining).toBe(4);
+      expect(typeof result.reset).toBe('number');
     });
 
-    it('should warn when rate limiting is not configured', async () => {
-      await checkStrictRateLimit('test-identifier');
+    it('should warn about in-memory fallback when Redis is not configured', async () => {
+      await checkStrictRateLimit('test-strict-warn-identifier');
 
-      // Logger formats output as "[WARN] message" with additional metadata
       expect(console.warn).toHaveBeenCalledWith(
-        expect.stringContaining('Rate limiting is not configured'),
+        expect.stringContaining('in-memory fallback'),
         expect.anything()
       );
     });

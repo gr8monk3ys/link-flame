@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { z } from 'zod'
+import { AddToCartSchema, UpdateCartSchema } from '@/lib/validations/cart'
 
 /**
  * Cart API Unit Tests
@@ -10,19 +10,6 @@ import { z } from 'zod'
  * - Quantity limits
  * - Variant handling
  */
-
-// Recreate the schemas from the API for testing
-const AddToCartSchema = z.object({
-  productId: z.string().min(1, 'Product ID is required'),
-  variantId: z.string().optional().nullable(),
-  quantity: z.number().int().positive('Quantity must be a positive integer').max(999, 'Quantity cannot exceed 999').default(1),
-})
-
-const UpdateCartSchema = z.object({
-  productId: z.string().min(1, 'Product ID is required'),
-  variantId: z.string().optional().nullable(),
-  quantity: z.number().int().nonnegative('Quantity must be 0 or positive').max(999, 'Quantity cannot exceed 999'),
-})
 
 describe('Cart API - AddToCart Schema', () => {
   describe('productId validation', () => {
