@@ -7,6 +7,9 @@ import { format, parseISO } from 'date-fns'
 import DOMPurify from 'isomorphic-dompurify'
 import { getBaseUrl } from '@/lib/url'
 
+// Render at request time — DB not available during Vercel build
+export const dynamic = 'force-dynamic';
+
 export async function generateStaticParams() {
   try {
     const posts = await getAllPosts()

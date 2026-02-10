@@ -1,4 +1,8 @@
 import { prisma } from '@/lib/prisma';
+
+// Render at request time — DB not available during Vercel build
+export const dynamic = 'force-dynamic';
+
 import {
   DollarSign,
   ShoppingCart,

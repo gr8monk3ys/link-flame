@@ -3,6 +3,9 @@ import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import { BundleBuilder } from "@/components/bundles/BundleBuilder"
 
+// Render at request time — DB not available during Vercel build
+export const dynamic = 'force-dynamic';
+
 interface BundlePageProps {
   params: Promise<{ slug: string }>
 }

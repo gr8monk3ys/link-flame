@@ -8,8 +8,8 @@ export const metadata: Metadata = {
     "Save more with our curated product bundles. Build your own bundle or choose from our pre-made kits featuring eco-friendly essentials.",
 }
 
-// Revalidate every 5 minutes
-export const revalidate = 300
+// Render at request time — DB not available during Vercel build
+export const dynamic = 'force-dynamic'
 
 async function getBundles() {
   const bundles = await prisma.bundle.findMany({

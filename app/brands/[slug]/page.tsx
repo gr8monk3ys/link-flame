@@ -5,6 +5,9 @@ import { BrandHero, BrandStory, BrandProducts, type BrandProduct } from '@/compo
 import Link from 'next/link'
 import { ChevronLeft } from 'lucide-react'
 
+// Render at request time — DB not available during Vercel build
+export const dynamic = 'force-dynamic';
+
 interface BrandPageProps {
   params: Promise<{ slug: string }>
 }

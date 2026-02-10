@@ -2,8 +2,8 @@ import { getAllPosts, getFeaturedPosts } from "@/lib/blog"
 import { BlogCard } from "@/components/blogs/blog-card"
 import { BlogSearch } from "@/components/blogs/blog-search"
 
-// Revalidate blog pages every hour for fresh content
-export const revalidate = 3600;
+// Render at request time — DB not available during Vercel build
+export const dynamic = 'force-dynamic';
 
 export default async function BlogsPage() {
   const [featuredPosts, allPosts] = await Promise.all([

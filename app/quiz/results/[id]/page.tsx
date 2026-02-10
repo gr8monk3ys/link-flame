@@ -6,6 +6,9 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 
+// Render at request time — DB not available during Vercel build
+export const dynamic = 'force-dynamic';
+
 interface QuizResultsPageProps {
   params: Promise<{ id: string }>;
 }

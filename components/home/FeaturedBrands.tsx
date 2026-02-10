@@ -5,32 +5,37 @@ import { ArrowRight, Building2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 async function getFeaturedBrands() {
-  const brands = await prisma.brand.findMany({
-    where: {
-      isActive: true,
-      featured: true,
-    },
-    orderBy: [
-      { sortOrder: 'asc' },
-      { name: 'asc' },
-    ],
-    take: 6,
-    include: {
-      _count: {
-        select: {
-          products: true,
+  try {
+    const brands = await prisma.brand.findMany({
+      where: {
+        isActive: true,
+        featured: true,
+      },
+      orderBy: [
+        { sortOrder: 'asc' },
+        { name: 'asc' },
+      ],
+      take: 6,
+      include: {
+        _count: {
+          select: {
+            products: true,
+          },
         },
       },
-    },
-  })
+    })
 
-  // Parse JSON fields
-  return brands.map((brand) => ({
-    ...brand,
-    certifications: brand.certifications ? JSON.parse(brand.certifications) : [],
-    values: brand.values ? JSON.parse(brand.values) : [],
-    productCount: brand._count.products,
-  }))
+    // Parse JSON fields
+    return brands.map((brand) => ({
+      ...brand,
+      certifications: brand.certifications ? JSON.parse(brand.certifications) : [],
+      values: brand.values ? JSON.parse(brand.values) : [],
+      productCount: brand._count.products,
+    }))
+  } catch (error) {
+    console.error('Failed to fetch featured brands:', error instanceof Error ? error.message : error)
+    return []
+  }
 }
 
 export async function FeaturedBrands() {

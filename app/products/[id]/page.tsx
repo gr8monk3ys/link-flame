@@ -73,8 +73,8 @@ export async function generateMetadata({
   };
 }
 
-// Revalidate product pages every 30 minutes
-export const revalidate = 1800;
+// Render at request time — DB not available during Vercel build
+export const dynamic = 'force-dynamic';
 
 interface ProductPageProps {
   params: Promise<{ id: string }>;

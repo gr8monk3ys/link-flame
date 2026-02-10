@@ -31,10 +31,9 @@ export async function getAllPosts(): Promise<BlogPost[]> {
       });
       return posts.map(transformPrismaPost);
     } catch (error) {
-      // Throw error instead of silently returning empty array
-      // This allows callers to distinguish "no posts" from "error"
       const message = error instanceof Error ? error.message : 'Unknown database error';
-      throw new Error(`Failed to fetch posts from database: ${message}`);
+      console.error(`Failed to fetch posts from database: ${message}`);
+      return [];
     }
   }
 
@@ -65,10 +64,9 @@ export async function getPost(slug: string): Promise<BlogPost | null> {
       });
       return post ? transformPrismaPost(post) : null;
     } catch (error) {
-      // Throw error instead of silently returning null
-      // This allows callers to distinguish "post not found" from "error"
       const message = error instanceof Error ? error.message : 'Unknown database error';
-      throw new Error(`Failed to fetch post '${slug}' from database: ${message}`);
+      console.error(`Failed to fetch post '${slug}' from database: ${message}`);
+      return null;
     }
   }
 
@@ -92,7 +90,8 @@ export async function getFeaturedPosts(): Promise<BlogPost[]> {
       return posts.map(transformPrismaPost)
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown database error'
-      throw new Error(`Failed to fetch featured posts: ${message}`)
+      console.error(`Failed to fetch featured posts: ${message}`)
+      return []
     }
   }
   const posts = await getAllPosts()
@@ -112,7 +111,8 @@ export async function getPostsByCategory(category: string): Promise<BlogPost[]> 
       return posts.map(transformPrismaPost)
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown database error'
-      throw new Error(`Failed to fetch posts for category '${category}': ${message}`)
+      console.error(`Failed to fetch posts for category '${category}': ${message}`)
+      return []
     }
   }
   const posts = await getAllPosts()
@@ -138,7 +138,8 @@ export async function getPostsByTag(tag: string): Promise<BlogPost[]> {
         .map(transformPrismaPost)
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown database error'
-      throw new Error(`Failed to fetch posts for tag '${tag}': ${message}`)
+      console.error(`Failed to fetch posts for tag '${tag}': ${message}`)
+      return []
     }
   }
   const posts = await getAllPosts()
@@ -165,7 +166,8 @@ export async function searchPosts(query: string): Promise<BlogPost[]> {
       return posts.map(transformPrismaPost)
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown database error'
-      throw new Error(`Failed to search posts for '${query}': ${message}`)
+      console.error(`Failed to search posts for '${query}': ${message}`)
+      return []
     }
   }
   const posts = await getAllPosts()

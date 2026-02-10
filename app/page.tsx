@@ -6,8 +6,8 @@ import { FeaturedBrands } from "@/components/home/FeaturedBrands";
 import { QuizCTA } from "@/components/quiz";
 import { Suspense } from "react";
 
-// Revalidate homepage every 30 minutes for fresh featured content
-export const revalidate = 1800;
+// Render at request time — DB not available during Vercel build
+export const dynamic = 'force-dynamic';
 
 export default function IndexPage() {
   return (

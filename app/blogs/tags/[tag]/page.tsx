@@ -5,6 +5,9 @@ import { TagCloud } from "@/components/blogs/tag-cloud"
 import { PageProps } from "@/types/next"
 import { Metadata } from "next"
 
+// Render at request time — DB not available during Vercel build
+export const dynamic = 'force-dynamic';
+
 export async function generateStaticParams() {
   try {
     const posts = await getAllPosts()

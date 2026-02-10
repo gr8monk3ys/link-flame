@@ -4,8 +4,8 @@ import { prisma } from '@/lib/prisma'
 import { BrandGrid, BrandFilters } from '@/components/brands'
 import { Building2 } from 'lucide-react'
 
-// Revalidate brand pages every hour
-export const revalidate = 3600;
+// Render at request time — DB not available during Vercel build
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Brand Directory | Link Flame',
