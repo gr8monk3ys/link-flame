@@ -58,14 +58,6 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     items: [],
   })
 
-  const [total, setTotal] = useState<{
-    formatted: string
-    raw: number
-  }>({
-    formatted: '$0.00',
-    raw: 0,
-  })
-
   const [isLoading, setIsLoading] = useState(false)
   const hasInitialized = useRef(false)
   const [hasInitializedCart, setHasInitialized] = useState(false)
@@ -229,7 +221,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     syncCartToLocalStorage(cart)
   }, [cart, syncCartToLocalStorage])
 
-  // Get user ID from Clerk or use a default
+  // Get user ID from session or use a default
   const getUserId = async (): Promise<string> => {
     try {
       // Try to get the user ID from the auth API
@@ -428,22 +420,20 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     [cart],
   )
 
-  // Calculate cart total and derived values using useMemo
-  useEffect(() => {
-    if (!hasInitializedCart) return
-
-    const newTotal = cart?.items?.reduce((acc, item) => {
+  // Calculate cart total synchronously using useMemo
+  const cartTotal = useMemo(() => {
+    const rawTotal = cart?.items?.reduce((acc, item) => {
       return acc + (item.price * item.quantity)
     }, 0) || 0
 
-    setTotal({
-      formatted: (newTotal).toLocaleString('en-US', {
+    return {
+      formatted: rawTotal.toLocaleString('en-US', {
         style: 'currency',
         currency: 'USD',
       }),
-      raw: newTotal,
-    })
-  }, [cart, hasInitializedCart])
+      raw: rawTotal,
+    }
+  }, [cart.items])
   
   // Memoized cart items with additional derived data
   const cartItems = useMemo(() => 
@@ -471,7 +461,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         removeItem,
         clearCart,
         isProductInCart,
-        cartTotal: total,
+        cartTotal,
         hasInitializedCart,
         isLoading,
         fetchCartItems,
