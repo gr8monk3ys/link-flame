@@ -1,4 +1,4 @@
-import { Author, BlogPost } from './types'
+import { Author, BlogPost } from '@/types/blog'
 import { prisma } from './prisma'
 import { transformPrismaPost } from './transformations/blog'
 
@@ -82,11 +82,39 @@ export async function getPost(slug: string): Promise<BlogPost | null> {
 }
 
 export async function getFeaturedPosts(): Promise<BlogPost[]> {
+  if (typeof window === 'undefined') {
+    try {
+      const posts = await prisma.blogPost.findMany({
+        where: { featured: true },
+        include: { author: true, category: true },
+        orderBy: { publishedAt: 'desc' },
+      })
+      return posts.map(transformPrismaPost)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown database error'
+      throw new Error(`Failed to fetch featured posts: ${message}`)
+    }
+  }
   const posts = await getAllPosts()
   return posts.filter(post => post.featured)
 }
 
 export async function getPostsByCategory(category: string): Promise<BlogPost[]> {
+  if (typeof window === 'undefined') {
+    try {
+      const posts = await prisma.blogPost.findMany({
+        where: {
+          category: { name: { equals: category } },
+        },
+        include: { author: true, category: true },
+        orderBy: { publishedAt: 'desc' },
+      })
+      return posts.map(transformPrismaPost)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown database error'
+      throw new Error(`Failed to fetch posts for category '${category}': ${message}`)
+    }
+  }
   const posts = await getAllPosts()
   return posts.filter(post =>
     post.category && post.category.toLowerCase() === category.toLowerCase()
@@ -94,18 +122,57 @@ export async function getPostsByCategory(category: string): Promise<BlogPost[]> 
 }
 
 export async function getPostsByTag(tag: string): Promise<BlogPost[]> {
+  if (typeof window === 'undefined') {
+    try {
+      const candidates = await prisma.blogPost.findMany({
+        where: { tags: { contains: tag } },
+        include: { author: true, category: true },
+        orderBy: { publishedAt: 'desc' },
+      })
+      const lowerTag = tag.toLowerCase()
+      return candidates
+        .filter(post => {
+          if (!post.tags) return false
+          return post.tags.split(',').map(t => t.trim().toLowerCase()).includes(lowerTag)
+        })
+        .map(transformPrismaPost)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown database error'
+      throw new Error(`Failed to fetch posts for tag '${tag}': ${message}`)
+    }
+  }
   const posts = await getAllPosts()
-  return posts.filter(post => 
+  return posts.filter(post =>
     post.tags.map(t => t.toLowerCase()).includes(tag.toLowerCase())
   ).sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
 }
 
 export async function searchPosts(query: string): Promise<BlogPost[]> {
+  if (typeof window === 'undefined') {
+    try {
+      const searchTerms = query.toLowerCase().split(' ').filter(Boolean)
+      if (searchTerms.length === 0) return []
+      const orConditions = searchTerms.flatMap(term => [
+        { title: { contains: term } },
+        { description: { contains: term } },
+        { content: { contains: term } },
+      ])
+      const posts = await prisma.blogPost.findMany({
+        where: { OR: orConditions },
+        include: { author: true, category: true },
+        orderBy: { publishedAt: 'desc' },
+      })
+      return posts.map(transformPrismaPost)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown database error'
+      throw new Error(`Failed to search posts for '${query}': ${message}`)
+    }
+  }
   const posts = await getAllPosts()
   const searchTerms = query.toLowerCase().split(' ')
-  
-  return posts.filter(post => 
-    searchTerms.some(term => 
+
+  return posts.filter(post =>
+    searchTerms.some(term =>
       post.title.toLowerCase().includes(term) ||
       post.description.toLowerCase().includes(term) ||
       post.content?.toLowerCase().includes(term)
