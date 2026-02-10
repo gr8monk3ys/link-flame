@@ -18,21 +18,7 @@ import {
   PAYMENT_GRACE_PERIOD_DAYS,
 } from '@/lib/billing/plans'
 import { mapStripeStatus, syncSubscriptionStatus } from '@/lib/billing/subscription'
-
-// Initialize Stripe lazily
-let stripe: Stripe | null = null
-
-function getStripe(): Stripe {
-  if (!stripe) {
-    if (!process.env.STRIPE_SECRET_KEY) {
-      throw new Error('Missing STRIPE_SECRET_KEY')
-    }
-    stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: '2025-01-27.acacia',
-    })
-  }
-  return stripe
-}
+import { getStripe } from '@/lib/stripe-server'
 
 function getWebhookSecret(): string {
   // Use a separate webhook secret for billing webhooks if available

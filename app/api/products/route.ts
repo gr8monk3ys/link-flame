@@ -110,7 +110,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (minPrice !== null || maxPrice !== null) {
-      const priceFilter: Prisma.FloatFilter = {};
+      const priceFilter: Prisma.DecimalFilter = {};
       if (minPrice !== null) priceFilter.gte = minPrice;
       if (maxPrice !== null) priceFilter.lte = maxPrice;
       where.price = priceFilter;
@@ -133,6 +133,17 @@ export async function GET(request: NextRequest) {
           },
         },
       };
+    }
+
+    // Pre-filter by rating using Prisma groupBy to fix pagination count mismatch
+    if (rating) {
+      const ratingGroups = await prisma.review.groupBy({
+        by: ['productId'],
+        _avg: { rating: true },
+        having: { rating: { _avg: { gte: rating } } },
+      })
+      const qualifiedProductIds = ratingGroups.map(g => g.productId)
+      where.id = { in: qualifiedProductIds }
     }
 
     // Use transaction to execute count and findMany in parallel for better performance
@@ -165,18 +176,8 @@ export async function GET(request: NextRequest) {
       }),
     ]);
 
-    // Filter by rating after fetching (since we need to calculate average)
-    const filteredProducts = rating
-      ? products.filter((product) => {
-          const avgRating =
-            product.reviews.reduce((sum, review) => sum + review.rating, 0) /
-            product.reviews.length;
-          return avgRating >= rating;
-        })
-      : products;
-
     // Normalize prices and calculate imperfect discounted prices
-    const normalizedProducts = filteredProducts.map((product) => {
+    const normalizedProducts = products.map((product) => {
       const basePrice = Number(product.price);
       const salePrice = product.salePrice ? Number(product.salePrice) : null;
 

@@ -3,7 +3,6 @@ import { prisma } from "@/lib/prisma";
 import { getUserIdForCart } from "@/lib/session";
 import { checkRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { validateCsrfToken } from "@/lib/csrf";
-import { z } from "zod";
 import {
   handleApiError,
   rateLimitErrorResponse,
@@ -12,19 +11,7 @@ import {
   successResponse
 } from "@/lib/api-response";
 import { logger } from "@/lib/logger";
-
-// Validation schemas
-const AddToCartSchema = z.object({
-  productId: z.string().min(1, "Product ID is required"),
-  variantId: z.string().optional().nullable(), // Optional variant ID
-  quantity: z.number().int().positive("Quantity must be a positive integer").max(999, "Quantity cannot exceed 999").default(1),
-});
-
-const UpdateCartSchema = z.object({
-  productId: z.string().min(1, "Product ID is required"),
-  variantId: z.string().optional().nullable(), // Optional variant ID
-  quantity: z.number().int().nonnegative("Quantity must be 0 or positive").max(999, "Quantity cannot exceed 999"),
-});
+import { AddToCartSchema, UpdateCartSchema } from "@/lib/validations/cart";
 
 export async function GET(req: Request) {
   try {

@@ -200,7 +200,7 @@ export async function GET(request: Request) {
     // Import Stripe directly for session retrieval
     const StripeModule = await import('stripe')
     const stripe = new StripeModule.default(process.env.STRIPE_SECRET_KEY!, {
-      apiVersion: '2025-01-27.acacia',
+      apiVersion: '2025-02-24.acacia',
     })
 
     const session = await stripe.checkout.sessions.retrieve(sessionId, {
