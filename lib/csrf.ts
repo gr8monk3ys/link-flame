@@ -44,7 +44,10 @@ const CSRF_TOKEN_LENGTH = SECURITY.csrf.tokenLength;
 const CSRF_TOKEN_EXPIRY = SECURITY.csrf.tokenExpiry;
 
 // CSRF secret must be set in production - never use fallback in production
+// Lazy-initialized to avoid throwing during build when env vars aren't available
+let _csrfSecret: string | null = null;
 function getCsrfSecret(): string {
+  if (_csrfSecret) return _csrfSecret;
   const secret = process.env.NEXTAUTH_SECRET;
   if (!secret) {
     if (process.env.NODE_ENV === 'production') {
@@ -55,12 +58,12 @@ function getCsrfSecret(): string {
     }
     // Only allow fallback in development/test environments
     logger.warn('Using fallback CSRF secret - this is only acceptable in development/test environments');
-    return 'fallback-secret-for-csrf-dev-only';
+    _csrfSecret = 'fallback-secret-for-csrf-dev-only';
+    return _csrfSecret;
   }
-  return secret;
+  _csrfSecret = secret;
+  return _csrfSecret;
 }
-
-const CSRF_SECRET = getCsrfSecret();
 
 /**
  * Generate a cryptographically secure CSRF token
@@ -78,7 +81,7 @@ export function generateCsrfToken(): { token: string; signedToken: string; expir
   const expiresAt = Date.now() + CSRF_TOKEN_EXPIRY;
 
   // Create signed version with HMAC
-  const signature = createHmac('sha256', CSRF_SECRET)
+  const signature = createHmac('sha256', getCsrfSecret())
     .update(`${tokenValue}:${expiresAt}`)
     .digest('hex');
 
@@ -119,7 +122,7 @@ export function verifyCsrfToken(token: string, providedToken: string): boolean {
     }
 
     // Verify signature
-    const expectedSignature = createHmac('sha256', CSRF_SECRET)
+    const expectedSignature = createHmac('sha256', getCsrfSecret())
       .update(`${tokenValue}:${expiresAt}`)
       .digest('hex');
 
