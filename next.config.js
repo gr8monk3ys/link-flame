@@ -172,4 +172,9 @@ const nextConfig = {
 
 const wrappedConfig = withBundleAnalyzer(withMDX(nextConfig))
 
+// Remove experimental.turbo injected by wrapper plugins (conflicts with Turbopack in Next.js 16)
+if (wrappedConfig.experimental && 'turbo' in wrappedConfig.experimental) {
+  delete wrappedConfig.experimental.turbo
+}
+
 module.exports = wrappedConfig

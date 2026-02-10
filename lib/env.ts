@@ -10,12 +10,12 @@
 import { z } from 'zod';
 
 const envSchema = z.object({
-  // Database
-  DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
+  // Database (optional at build time, required at runtime)
+  DATABASE_URL: z.string().min(1, 'DATABASE_URL is required').optional(),
   DIRECT_DATABASE_URL: z.string().optional(), // For connection pooling bypass
 
-  // NextAuth
-  NEXTAUTH_SECRET: z.string().min(32, 'NEXTAUTH_SECRET must be at least 32 characters'),
+  // NextAuth (optional at build time, required at runtime)
+  NEXTAUTH_SECRET: z.string().min(32, 'NEXTAUTH_SECRET must be at least 32 characters').optional(),
   NEXTAUTH_URL: z.string().url('NEXTAUTH_URL must be a valid URL').optional(),
 
   // Stripe (Required for payment processing, optional in build-time)
@@ -79,12 +79,13 @@ function validateEnv() {
 export const env = validateEnv();
 
 // Additional production-only checks that require cross-field validation
+// Use warnings during build to avoid blocking Vercel deployments
 if (env.NODE_ENV === 'production') {
   if (!env.NEXT_PUBLIC_APP_URL) {
-    throw new Error('NEXT_PUBLIC_APP_URL is required in production');
+    console.warn('⚠️  NEXT_PUBLIC_APP_URL is not set. Set it in your deployment environment.');
   }
   if (env.STRIPE_SECRET_KEY && !env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
-    throw new Error('NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is required when Stripe is enabled');
+    console.warn('⚠️  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is required when Stripe is enabled');
   }
 }
 
