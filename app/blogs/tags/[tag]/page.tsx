@@ -6,11 +6,15 @@ import { PageProps } from "@/types/next"
 import { Metadata } from "next"
 
 export async function generateStaticParams() {
-  const posts = await getAllPosts()
-  const tags = [...new Set(posts.flatMap(post => post.tags))]
-  return tags.map(tag => ({
-    tag: encodeURIComponent(tag)
-  }))
+  try {
+    const posts = await getAllPosts()
+    const tags = [...new Set(posts.flatMap(post => post.tags))]
+    return tags.map(tag => ({
+      tag: encodeURIComponent(tag)
+    }))
+  } catch {
+    return []
+  }
 }
 
 export async function generateMetadata({

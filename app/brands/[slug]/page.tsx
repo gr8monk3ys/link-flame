@@ -92,14 +92,18 @@ export async function generateMetadata({ params }: BrandPageProps): Promise<Meta
 }
 
 export async function generateStaticParams() {
-  const brands = await prisma.brand.findMany({
-    where: { isActive: true },
-    select: { slug: true },
-  })
+  try {
+    const brands = await prisma.brand.findMany({
+      where: { isActive: true },
+      select: { slug: true },
+    })
 
-  return brands.map((brand) => ({
-    slug: brand.slug,
-  }))
+    return brands.map((brand) => ({
+      slug: brand.slug,
+    }))
+  } catch {
+    return []
+  }
 }
 
 export default async function BrandPage({ params }: BrandPageProps) {
