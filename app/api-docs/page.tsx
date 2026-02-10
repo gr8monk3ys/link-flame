@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Script from "next/script";
-import '@/types/swagger-ui';
+/// <reference path="../types/swagger-ui.d.ts" />
 
 export default function ApiDocsPage() {
   const containerRef = useRef<HTMLDivElement>(null);
