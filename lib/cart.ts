@@ -2,7 +2,7 @@
  * Cart database operations using Prisma.
  *
  * This module provides CRUD operations for shopping cart items stored in the database.
- * It supports both authenticated users (via Clerk user IDs) and guest users (via session IDs).
+ * It supports both authenticated users (via authenticated user IDs) and guest users (via session IDs).
  *
  * **Key Features:**
  * - Automatic quantity aggregation when adding duplicate items
@@ -11,7 +11,7 @@
  *
  * **User Identification:**
  * Use {@link getUserIdForCart} from `lib/session.ts` to get the appropriate user ID:
- * - Authenticated users: Clerk user ID
+ * - Authenticated users: authenticated user ID
  * - Guest users: Session ID from cookie
  *
  * @module lib/cart
@@ -27,14 +27,14 @@ import type { CartItem } from "@/types/cart";
  * to get full product details (title, price, image). The returned data is transformed
  * to match the CartItem type used throughout the application.
  *
- * @param {string} userId - User identifier (Clerk user ID for authenticated users, session ID for guests)
+ * @param {string} userId - User identifier (authenticated user ID for authenticated users, session ID for guests)
  * @returns {Promise<CartItem[]>} Array of cart items with product details
  *
  * @example
  * ```typescript
  * import { getUserIdForCart } from '@/lib/session'
  * import { getCartItems } from '@/lib/cart'
- * import { auth } from '@clerk/nextjs/server'
+ * import { getServerAuth } from '@/lib/auth'
  *
  * const { userId: authUserId } = await auth()
  * const userId = await getUserIdForCart(authUserId)
@@ -72,7 +72,7 @@ export async function getCartItems(userId: string): Promise<CartItem[]> {
  * This prevents duplicate cart entries for the same product and provides a better
  * user experience by automatically aggregating quantities.
  *
- * @param {string} userId - User identifier (Clerk user ID for authenticated users, session ID for guests)
+ * @param {string} userId - User identifier (authenticated user ID for authenticated users, session ID for guests)
  * @param {string} productId - The product ID to add to cart
  * @param {number} [quantity=1] - Quantity to add (defaults to 1)
  * @returns {Promise<void>}
@@ -141,7 +141,7 @@ export async function addToCart(userId: string, productId: string, quantity: num
  * needing to find the cart item ID first. Since userId + productId is effectively
  * unique, updateMany will only affect one record.
  *
- * @param {string} userId - User identifier (Clerk user ID for authenticated users, session ID for guests)
+ * @param {string} userId - User identifier (authenticated user ID for authenticated users, session ID for guests)
  * @param {string} productId - The product ID to update
  * @param {number} quantity - The new quantity (not added to existing, but replaces it)
  * @returns {Promise<void>}
@@ -194,7 +194,7 @@ export async function updateCartItemQuantity(userId: string, productId: string, 
  * - Auto-removal when quantity is set to 0
  * - Cleanup when a product is no longer available
  *
- * @param {string} userId - User identifier (Clerk user ID for authenticated users, session ID for guests)
+ * @param {string} userId - User identifier (authenticated user ID for authenticated users, session ID for guests)
  * @param {string} productId - The product ID to remove from cart
  * @returns {Promise<void>}
  *
@@ -245,7 +245,7 @@ export async function removeFromCart(userId: string, productId: string): Promise
  * **Warning:** This operation cannot be undone. Ensure you have user confirmation
  * or a valid business reason before calling this function.
  *
- * @param {string} userId - User identifier (Clerk user ID for authenticated users, session ID for guests)
+ * @param {string} userId - User identifier (authenticated user ID for authenticated users, session ID for guests)
  * @returns {Promise<void>}
  *
  * @example

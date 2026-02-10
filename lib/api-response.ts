@@ -196,9 +196,12 @@ export function handleApiError(error: unknown): NextResponse<ApiResponse<never>>
     return validationErrorResponse(error)
   }
 
-  // Known error with message
+  // Known error with message - sanitize in production to prevent information leakage
   if (error instanceof Error) {
-    return errorResponse(error.message, ErrorCodes.INTERNAL_ERROR, undefined, 500)
+    const message = process.env.NODE_ENV === 'production'
+      ? 'An internal error occurred'
+      : error.message
+    return errorResponse(message, ErrorCodes.INTERNAL_ERROR, undefined, 500)
   }
 
   // Unknown error

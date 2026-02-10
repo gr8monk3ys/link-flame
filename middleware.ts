@@ -41,7 +41,7 @@ function buildCspHeader(nonce: string): string {
     `default-src 'self'`,
     `script-src ${scriptSrc}`,
     `style-src ${styleSrc}`,
-    `img-src 'self' https://images.unsplash.com https://img.clerk.com https://*.stripe.com data: blob:`,
+    `img-src 'self' https://images.unsplash.com https://*.stripe.com data: blob:`,
     `font-src 'self' https://fonts.gstatic.com`,
     `connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://analytics.google.com`,
     `frame-src 'self' https://js.stripe.com https://hooks.stripe.com`,

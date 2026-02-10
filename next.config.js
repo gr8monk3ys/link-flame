@@ -13,11 +13,6 @@ const nextConfig = {
         hostname: 'images.unsplash.com',
         pathname: '/**',
       },
-      {
-        protocol: 'https',
-        hostname: 'img.clerk.com',
-        pathname: '/**',
-      },
       // OAuth provider avatars
       {
         protocol: 'https',
@@ -76,20 +71,8 @@ const nextConfig = {
     // Content Security Policy
     // Note: 'unsafe-inline' and 'unsafe-eval' are required for Next.js development
     // Consider using nonces or hashes in production for stricter CSP
-    const ContentSecurityPolicy = `
-      default-src 'self';
-      script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com https://www.googletagmanager.com https://www.google-analytics.com;
-      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-      img-src 'self' https://images.unsplash.com https://img.clerk.com https://*.stripe.com https://lh3.googleusercontent.com https://avatars.githubusercontent.com https://platform-lookaside.fbsbx.com https://pbs.twimg.com https://www.gravatar.com https://gravatar.com data: blob:;
-      font-src 'self' https://fonts.gstatic.com;
-      connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://analytics.google.com;
-      frame-src 'self' https://js.stripe.com https://hooks.stripe.com;
-      object-src 'none';
-      base-uri 'self';
-      form-action 'self';
-      frame-ancestors 'none';
-      upgrade-insecure-requests;
-    `.replace(/\s{2,}/g, ' ').trim();
+    // CSP is handled by middleware.ts with proper nonce-based policy for production.
+    // Only non-CSP security headers are set here to avoid conflicting dual CSP headers.
 
     return [
       // Cache static assets aggressively
@@ -153,10 +136,6 @@ const nextConfig = {
         source: '/:path*',
         headers: [
           {
-            key: 'Content-Security-Policy',
-            value: ContentSecurityPolicy
-          },
-          {
             key: 'X-DNS-Prefetch-Control',
             value: 'on'
           },
@@ -174,7 +153,7 @@ const nextConfig = {
           },
           {
             key: 'X-XSS-Protection',
-            value: '1; mode=block'
+            value: '0'
           },
           {
             key: 'Referrer-Policy',

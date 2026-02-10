@@ -21,6 +21,7 @@ import { logger } from "@/lib/logger";
 // Initialize Redis client (requires UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN env vars)
 let redis: Redis | null = null;
 let ratelimit: Ratelimit | null = null;
+let strictRatelimit: Ratelimit | null = null;
 
 // Only initialize if Upstash credentials are available
 if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
@@ -35,6 +36,49 @@ if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) 
     limiter: Ratelimit.slidingWindow(10, "10 s"),
     analytics: true,
   });
+
+  // Create a stricter rate limiter: 5 requests per minute
+  strictRatelimit = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(5, "1 m"),
+    analytics: true,
+  });
+}
+
+// In-memory rate limiting fallback when Redis is unavailable
+const memoryStore = new Map<string, { count: number; resetAt: number }>();
+
+// Clean up expired entries every 30 seconds
+const cleanupInterval = setInterval(() => {
+  const now = Date.now();
+  for (const [key, entry] of memoryStore) {
+    if (entry.resetAt <= now) {
+      memoryStore.delete(key);
+    }
+  }
+}, 30_000);
+if (typeof cleanupInterval === 'object' && 'unref' in cleanupInterval) {
+  cleanupInterval.unref();
+}
+
+function checkMemoryRateLimit(
+  identifier: string,
+  maxRequests: number,
+  windowMs: number
+): { success: boolean; limit: number; remaining: number; reset: number } {
+  const now = Date.now();
+  const entry = memoryStore.get(identifier);
+
+  if (!entry || entry.resetAt <= now) {
+    memoryStore.set(identifier, { count: 1, resetAt: now + windowMs });
+    return { success: true, limit: maxRequests, remaining: maxRequests - 1, reset: now + windowMs };
+  }
+
+  entry.count += 1;
+  const remaining = Math.max(0, maxRequests - entry.count);
+  const success = entry.count <= maxRequests;
+
+  return { success, limit: maxRequests, remaining, reset: entry.resetAt };
 }
 
 /**
@@ -85,15 +129,10 @@ export async function checkRateLimit(identifier: string): Promise<{
   remaining: number;
   reset: number;
 }> {
-  // If rate limiting is not configured, allow all requests
+  // If Redis rate limiting is not configured, use in-memory fallback
   if (!ratelimit) {
-    logger.warn("Rate limiting is not configured. Set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN environment variables.");
-    return {
-      success: true,
-      limit: Infinity,
-      remaining: Infinity,
-      reset: 0,
-    };
+    logger.warn("Redis rate limiting is not configured. Using in-memory fallback. Set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN for production.");
+    return checkMemoryRateLimit(identifier, 10, 10_000);
   }
 
   const { success, limit, remaining, reset } = await ratelimit.limit(identifier);
@@ -124,16 +163,16 @@ export async function checkRateLimit(identifier: string): Promise<{
  * - Returns `"ip:unknown"` if neither is available
  *
  * @param {Request} request - The incoming HTTP request object
- * @param {string | null} [userId] - Optional authenticated user ID from Clerk or other auth provider
+ * @param {string | null} [userId] - Optional authenticated user ID from NextAuth or other auth provider
  * @returns {string} Formatted identifier string (e.g., "user:clerk_abc123" or "ip:192.168.1.1")
  *
  * @example
  * ```typescript
  * // With authenticated user
- * import { auth } from '@clerk/nextjs/server'
- * const { userId } = await auth()
+ * import { getServerAuth } from '@/lib/auth'
+ * const { userId } = await getServerAuth()
  * const identifier = getIdentifier(request, userId)
- * // Returns: "user:clerk_abc123"
+ * // Returns: "user:auth_abc123"
  *
  * // With anonymous user
  * const identifier = getIdentifier(request, null)
@@ -211,23 +250,11 @@ export async function checkStrictRateLimit(identifier: string): Promise<{
   remaining: number;
   reset: number;
 }> {
-  // If rate limiting is not configured, allow all requests
-  if (!redis) {
-    logger.warn("Rate limiting is not configured.");
-    return {
-      success: true,
-      limit: Infinity,
-      remaining: Infinity,
-      reset: 0,
-    };
+  // If Redis rate limiting is not configured, use in-memory fallback
+  if (!strictRatelimit) {
+    logger.warn("Redis rate limiting is not configured. Using in-memory fallback for strict limits.");
+    return checkMemoryRateLimit(identifier, 5, 60_000);
   }
-
-  // Create a stricter rate limiter: 5 requests per minute
-  const strictRatelimit = new Ratelimit({
-    redis,
-    limiter: Ratelimit.slidingWindow(5, "1 m"),
-    analytics: true,
-  });
 
   const { success, limit, remaining, reset } = await strictRatelimit.limit(identifier);
 

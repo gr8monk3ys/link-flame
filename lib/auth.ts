@@ -2,7 +2,7 @@ import { auth as nextAuth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 
 /**
- * Server-side auth helper that mimics Clerk's auth() behavior
+ * Server-side auth helper using NextAuth
  * Returns the current user's ID if authenticated, null otherwise
  */
 export async function getServerAuth() {

@@ -59,13 +59,13 @@ export async function getGuestSessionId(): Promise<string> {
  * - If `authUserId` is provided (user is logged in), returns it directly
  * - If `authUserId` is null (user is anonymous), calls {@link getGuestSessionId} to get/create a guest session
  *
- * @param {string | null} authUserId - The authenticated user ID from Clerk, or null for guest users
+ * @param {string | null} authUserId - The authenticated user ID from NextAuth, or null for guest users
  * @returns {Promise<string>} Either the authenticated user ID or a guest session ID
  *
  * @example
  * ```typescript
  * // In an API route
- * import { auth } from '@clerk/nextjs/server'
+ * import { getServerAuth } from '@/lib/auth'
  * import { getUserIdForCart } from '@/lib/session'
  *
  * const { userId } = await auth()
@@ -98,7 +98,7 @@ export async function getUserIdForCart(authUserId: string | null): Promise<strin
  * ```typescript
  * // After merging guest cart on login
  * import { clearGuestSession, getGuestSessionId } from '@/lib/session'
- * import { auth } from '@clerk/nextjs/server'
+ * import { getServerAuth } from '@/lib/auth'
  *
  * const { userId } = await auth()
  * if (userId) {

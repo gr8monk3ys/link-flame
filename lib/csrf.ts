@@ -34,6 +34,7 @@
  */
 
 import { cookies } from 'next/headers';
+import { NextResponse } from 'next/server';
 import { randomBytes, createHmac, timingSafeEqual } from 'crypto';
 import { logger } from '@/lib/logger';
 import { SECURITY } from '@/config/constants';
@@ -223,6 +224,39 @@ export async function validateCsrfToken(request: Request): Promise<boolean> {
   }
 
   return verifyCsrfToken(storedToken.value, providedToken);
+}
+
+/**
+ * Validate CSRF token and return an error response if invalid.
+ *
+ * Returns `null` if the CSRF token is valid, or a 403 `NextResponse` if
+ * validation fails. Use this at the top of any mutating API route handler.
+ *
+ * @param request - The incoming HTTP request
+ * @returns `null` when valid, or a `NextResponse` with 403 status when invalid
+ *
+ * @example
+ * ```typescript
+ * const csrfError = await requireCsrf(request)
+ * if (csrfError) return csrfError
+ * ```
+ */
+export async function requireCsrf(request: Request): Promise<NextResponse | null> {
+  const isValid = await validateCsrfToken(request);
+  if (!isValid) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          message: 'Invalid or missing CSRF token',
+          code: 'CSRF_VALIDATION_FAILED',
+        },
+        meta: { timestamp: new Date().toISOString() },
+      },
+      { status: 403 }
+    );
+  }
+  return null;
 }
 
 /**
