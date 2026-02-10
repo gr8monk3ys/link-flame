@@ -64,6 +64,7 @@ const nextConfig = {
       allowedOrigins: ['localhost:3000'],
     },
   },
+  turbopack: {},
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
 
   // Security Headers - Production Ready Configuration
@@ -170,9 +171,5 @@ const nextConfig = {
 }
 
 const wrappedConfig = withBundleAnalyzer(withMDX(nextConfig))
-
-if (wrappedConfig.experimental && 'turbo' in wrappedConfig.experimental) {
-  delete wrappedConfig.experimental.turbo
-}
 
 module.exports = wrappedConfig
