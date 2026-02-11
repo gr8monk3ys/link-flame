@@ -6,7 +6,7 @@ export default function ProductComparisonSection() {
     <section className="section-spacing">
       <div className="mb-12 grid grid-cols-1 items-center gap-8 md:grid-cols-2">
         <div>
-          <h2 className="mb-4">Compare Sustainable Products</h2>
+          <h2 className="mb-4 font-serif">Compare Sustainable Products</h2>
           <p className="text-muted-foreground">Find the most eco-friendly products that match your needs and values.</p>
         </div>
         <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">

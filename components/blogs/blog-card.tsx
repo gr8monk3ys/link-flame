@@ -29,7 +29,7 @@ export function BlogCard({ post, featured = false }: BlogCardProps) {
             src={coverImage}
             alt={title}
             fill
-            className="object-cover transition-transform hover:scale-105"
+            className="object-cover transition-transform duration-500 hover:scale-105"
           />
         </Link>
         <div>
@@ -38,13 +38,13 @@ export function BlogCard({ post, featured = false }: BlogCardProps) {
               {category && (
                 <Link
                   href={`/blogs/categories/${categorySlug}`}
-                  className="text-sm font-medium text-primary hover:underline"
+                  className="text-xs font-semibold uppercase tracking-wider text-primary hover:underline"
                 >
                   {category}
                 </Link>
               )}
               <Link href={`/blogs/${slug}`} data-testid="blog-post-link">
-                <h3 className={`font-bold hover:underline ${featured ? "text-2xl" : "text-xl"}`}>
+                <h3 className={`font-serif font-semibold hover:underline ${featured ? "text-2xl" : "text-xl"}`}>
                   {title}
                 </h3>
               </Link>
@@ -79,7 +79,7 @@ export function BlogCard({ post, featured = false }: BlogCardProps) {
                 <Link
                   key={tag}
                   href={`/blogs/tags/${tag.toLowerCase()}`}
-                  className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors hover:bg-muted"
+                  className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors hover:bg-secondary hover:border-secondary"
                 >
                   #{tag}
                 </Link>

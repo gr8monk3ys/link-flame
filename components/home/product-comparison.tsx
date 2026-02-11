@@ -202,7 +202,7 @@ export function ProductComparison({ products = defaultProducts }: ProductCompari
             <motion.div
               key={product.id}
               layout
-              className="glass-effect hover-card-effect cursor-pointer rounded-lg p-4"
+              className="glass-effect hover-card-effect cursor-pointer rounded-xl p-5"
               onClick={() => handleProductSelect(product)}
             >
               <h3 className="mb-2 font-semibold">{product.name}</h3>

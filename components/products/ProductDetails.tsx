@@ -95,7 +95,7 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
   const displayInventory = selectedVariant?.inventory ?? product?.inventory ?? 0;
 
   return (
-    <div className="bg-white">
+    <div className="bg-background">
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
         <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
           {/* Image gallery */}
@@ -105,7 +105,7 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
                 {[displayImage].map((image) => (
                   <div
                     key={image}
-                    className="relative flex h-24 cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium uppercase hover:bg-gray-50"
+                    className="relative flex h-24 cursor-pointer items-center justify-center rounded-md bg-background text-sm font-medium uppercase hover:bg-muted"
                   >
                     <span className="absolute inset-0 overflow-hidden rounded-md">
                       <Image
@@ -148,7 +148,7 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
               </div>
             )}
 
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">{product.title}</h1>
+            <h1 className="font-serif text-3xl font-semibold tracking-normal text-foreground">{product.title}</h1>
 
             <div className="mt-3">
               <h2 className="sr-only">Product information</h2>
@@ -159,7 +159,7 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
                     <p className="text-3xl font-bold tracking-tight text-amber-600">
                       {'$' + (displayPrice * (1 - product.imperfectDiscount / 100)).toFixed(2)}
                     </p>
-                    <p className="text-xl text-gray-500 line-through">
+                    <p className="text-xl text-muted-foreground line-through">
                       {'$' + Number(displayPrice).toFixed(2)}
                     </p>
                   </div>
@@ -171,12 +171,12 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
                 </div>
               ) : (
                 <>
-                  <p className="text-3xl tracking-tight text-gray-900">
+                  <p className="text-3xl tracking-tight text-foreground">
                     {'$' + Number(displayPrice).toFixed(2)}
                   </p>
                   {/* Show original price if on sale */}
                   {selectedVariant?.salePrice && selectedVariant.price && selectedVariant.price > selectedVariant.salePrice && (
-                    <p className="text-lg text-gray-500 line-through">
+                    <p className="text-lg text-muted-foreground line-through">
                       {'$' + Number(selectedVariant.price).toFixed(2)}
                     </p>
                   )}
@@ -228,7 +228,7 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
                     ))}
                   </div>
                   <p className="sr-only">{averageRating} out of 5 stars</p>
-                  <div className="ml-3 text-sm font-medium text-green-600 hover:text-green-500">
+                  <div className="ml-3 text-sm font-medium text-primary hover:text-primary/80">
                     {product.reviews.length} reviews
                   </div>
                 </div>
@@ -237,7 +237,7 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
 
             <div className="mt-6">
               <h3 className="sr-only">Description</h3>
-              <p className="text-base text-gray-900">{product.description}</p>
+              <p className="text-base text-foreground">{product.description}</p>
             </div>
 
             {/* Sustainability Section */}
@@ -257,7 +257,7 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
             {/* Certifications */}
             {product.certifications && product.certifications.length > 0 && (
               <div className="mt-4">
-                <h4 className="mb-2 text-sm font-medium text-gray-900">Certifications</h4>
+                <h4 className="mb-2 text-sm font-medium text-foreground">Certifications</h4>
                 <CertificationBadgesFull
                   certifications={product.certifications.map(pc => pc.certification)}
                 />
@@ -267,7 +267,7 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
             {/* Shop by Values */}
             {product.values && product.values.length > 0 && (
               <div className="mt-4">
-                <h4 className="mb-2 text-sm font-medium text-gray-900">Values</h4>
+                <h4 className="mb-2 text-sm font-medium text-foreground">Values</h4>
                 <ValueBadgeList
                   values={product.values}
                   size="md"
@@ -444,7 +444,7 @@ function AddToCartButton({
       <button
         type="button"
         disabled
-        className="flex max-w-xs flex-1 cursor-not-allowed items-center justify-center rounded-md border border-transparent bg-gray-300 px-8 py-3 text-base font-medium text-gray-500 sm:w-full"
+        className="flex max-w-xs flex-1 cursor-not-allowed items-center justify-center rounded-lg border border-transparent bg-muted px-8 py-3 text-base font-medium text-muted-foreground sm:w-full"
       >
         Out of Stock
       </button>
@@ -456,7 +456,7 @@ function AddToCartButton({
       <button
         type="button"
         disabled
-        className="flex max-w-xs flex-1 cursor-not-allowed items-center justify-center rounded-md border border-transparent bg-gray-300 px-8 py-3 text-base font-medium text-gray-500 sm:w-full"
+        className="flex max-w-xs flex-1 cursor-not-allowed items-center justify-center rounded-lg border border-transparent bg-muted px-8 py-3 text-base font-medium text-muted-foreground sm:w-full"
       >
         Select Options
       </button>
@@ -472,7 +472,7 @@ function AddToCartButton({
       type="button"
       onClick={handleAddToCart}
       disabled={isLoading}
-      className="flex max-w-xs flex-1 items-center justify-center rounded-md border border-transparent bg-green-600 px-8 py-3 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full"
+      className="flex max-w-xs flex-1 items-center justify-center rounded-lg border border-transparent bg-primary px-8 py-3 text-base font-medium text-primary-foreground hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background sm:w-full transition-all duration-200 active:scale-[0.98]"
     >
       {buttonText}
     </button>

@@ -4,48 +4,48 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 142.1 76.2% 36.3%;
-    --primary-foreground: 355.7 100% 97.3%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    --background: 40 33% 98%;
+    --foreground: 25 15% 15%;
+    --card: 40 25% 99%;
+    --card-foreground: 25 15% 15%;
+    --popover: 40 25% 99%;
+    --popover-foreground: 25 15% 15%;
+    --primary: 152 45% 30%;
+    --primary-foreground: 40 33% 98%;
+    --secondary: 35 30% 93%;
+    --secondary-foreground: 25 15% 15%;
+    --muted: 35 20% 94%;
+    --muted-foreground: 25 10% 45%;
+    --accent: 38 80% 55%;
+    --accent-foreground: 25 15% 15%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 142.1 76.2% 36.3%;
+    --border: 35 15% 88%;
+    --input: 35 15% 88%;
+    --ring: 152 45% 30%;
     --radius: 0.75rem;
   }
 
   .dark {
-    --background: 20 14.3% 4.1%;
-    --foreground: 0 0% 95%;
-    --card: 24 9.8% 10%;
-    --card-foreground: 0 0% 95%;
-    --popover: 0 0% 9%;
-    --popover-foreground: 0 0% 95%;
-    --primary: 142.1 70.6% 45.3%;
-    --primary-foreground: 144.9 80.4% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 15%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 12 6.5% 15.1%;
-    --accent-foreground: 0 0% 98%;
+    --background: 25 15% 7%;
+    --foreground: 35 20% 92%;
+    --card: 25 12% 11%;
+    --card-foreground: 35 20% 92%;
+    --popover: 25 12% 9%;
+    --popover-foreground: 35 20% 92%;
+    --primary: 152 50% 42%;
+    --primary-foreground: 25 15% 7%;
+    --secondary: 25 10% 17%;
+    --secondary-foreground: 35 20% 92%;
+    --muted: 25 8% 16%;
+    --muted-foreground: 35 10% 60%;
+    --accent: 38 65% 45%;
+    --accent-foreground: 35 20% 92%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 85.7% 97.3%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 142.4 71.8% 29.2%;
+    --border: 25 10% 18%;
+    --input: 25 10% 18%;
+    --ring: 152 45% 35%;
   }
 }
 
@@ -57,10 +57,10 @@
     @apply bg-background text-foreground;
   }
   h1 {
-    @apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;
+    @apply scroll-m-20 text-4xl font-semibold tracking-normal font-serif lg:text-5xl;
   }
   h2 {
-    @apply scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0;
+    @apply scroll-m-20 pb-2 text-3xl font-semibold tracking-normal font-serif first:mt-0;
   }
   h3 {
     @apply scroll-m-20 text-2xl font-semibold tracking-tight;
@@ -69,7 +69,7 @@
     @apply scroll-m-20 text-xl font-semibold tracking-tight;
   }
   p {
-    @apply leading-7 [&:not(:first-child)]:mt-6;
+    @apply leading-relaxed [&:not(:first-child)]:mt-6;
   }
   .container {
     @apply mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl;
@@ -78,8 +78,8 @@
 
 /* Enhanced Card Hover Effects */
 .hover-card-effect {
-  @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1 relative 
-  before:absolute before:inset-0 before:rounded-lg before:bg-gradient-to-r before:from-primary/10 before:to-primary/5 
+  @apply transition-all duration-300 hover:shadow-warm-md hover:-translate-y-0.5 relative
+  before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-r before:from-primary/10 before:to-accent/5
   before:opacity-0 before:transition-opacity hover:before:opacity-100;
 }
 
@@ -92,15 +92,15 @@
 .modern-button {
   @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300
   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50
-  hover:bg-primary/90 active:scale-95 hover:shadow-md relative overflow-hidden
+  hover:bg-primary/90 active:scale-[0.98] hover:shadow-warm-md relative overflow-hidden
   before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent
-  before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-700;
+  before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-1000;
 }
 
 /* Enhanced Glass Effect */
 .glass-effect {
-  @apply bg-background/80 backdrop-blur-sm border border-border/50 shadow-sm
-  hover:shadow-md hover:bg-background/90 transition-all duration-300;
+  @apply bg-card/80 backdrop-blur-md border border-border/50 shadow-warm-sm
+  hover:shadow-warm-md hover:bg-card/90 transition-all duration-300;
 }
 
 /* Advanced Grid Layouts */
@@ -110,7 +110,7 @@
 
 /* Enhanced Section Spacing */
 .section-spacing {
-  @apply py-12 sm:py-16 lg:py-20 relative overflow-hidden;
+  @apply py-14 sm:py-20 lg:py-28 relative overflow-hidden;
 }
 
 /* Enhanced Responsive Images */
@@ -120,8 +120,8 @@
 
 /* Enhanced Text Gradients */
 .text-gradient {
-  @apply bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent
-  hover:from-primary/90 hover:to-primary/70 transition-all duration-300;
+  @apply bg-gradient-to-r from-primary via-primary/80 to-accent/70 bg-clip-text text-transparent
+  hover:from-primary/90 hover:to-accent/60 transition-all duration-300;
 }
 
 /* Enhanced Animated Underline */

@@ -46,14 +46,14 @@ export async function FeaturedBrands() {
   }
 
   return (
-    <section className="bg-gradient-to-b from-white to-gray-50/50 py-16 lg:py-20">
+    <section className="bg-gradient-to-b from-background to-secondary/30 py-16 lg:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-12 text-center">
-          <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-green-100">
-            <Building2 className="size-6 text-green-600" />
+          <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-primary/10">
+            <Building2 className="size-6 text-primary" />
           </div>
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          <h2 className="font-serif text-3xl font-semibold tracking-normal text-foreground sm:text-4xl">
             Featured Partner Brands
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">

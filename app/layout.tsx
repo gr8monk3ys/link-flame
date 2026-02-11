@@ -3,7 +3,7 @@ import "@/lib/env"
 import { Suspense } from "react"
 import { Metadata, Viewport } from "next"
 import { siteConfig } from "@/config/site"
-import { fontSans } from "@/lib/fonts"
+import { fontSans, fontSerif } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
 import { ThemeProvider } from "@/components/layout/theme-provider"
 import { Analytics } from "@/components/layout/analytics"
@@ -85,7 +85,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable
+          fontSans.variable,
+          fontSerif.variable
         )}
       >
         <SessionProvider>
@@ -98,7 +99,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <CartProvider>
               <ErrorBoundary>
                 <div className="relative flex min-h-screen flex-col">
-                  <SiteHeader className="glass-effect fixed top-0 z-50 w-full" />
+                  <SiteHeader className="fixed top-0 z-50 w-full" />
                   <main className="container mx-auto flex-1 px-4 pt-24 sm:px-6 lg:px-8">
                     {children}
                   </main>

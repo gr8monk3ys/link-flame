@@ -13,7 +13,7 @@ interface SiteFooterProps {
 
 export function SiteFooter({ className }: SiteFooterProps) {
   return (
-    <footer className={cn("border-t bg-background", className)}>
+    <footer className={cn("border-t border-border/40 bg-secondary/30", className)}>
       <div className="container py-12 md:py-16 lg:py-20">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-5">
           {/* Company Info */}
@@ -59,7 +59,7 @@ export function SiteFooter({ className }: SiteFooterProps) {
 
           {/* Quick Links */}
           <div>
-            <h3 className="mb-4 font-semibold">Quick Links</h3>
+            <h3 className="mb-4 font-serif font-medium">Quick Links</h3>
             <ul className="space-y-2">
               <li>
                 <Link
@@ -114,7 +114,7 @@ export function SiteFooter({ className }: SiteFooterProps) {
 
           {/* Categories */}
           <div>
-            <h3 className="mb-4 font-semibold">Categories</h3>
+            <h3 className="mb-4 font-serif font-medium">Categories</h3>
             <ul className="space-y-2">
               <li>
                 <Link
@@ -166,7 +166,7 @@ export function SiteFooter({ className }: SiteFooterProps) {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-12 border-t pt-8">
+        <div className="mt-12 border-t border-border/40 pt-8">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <div className="text-sm text-muted-foreground">
               &copy; {new Date().getFullYear()} {siteConfig.name}. All rights reserved.

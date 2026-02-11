@@ -103,7 +103,7 @@ export function QuizCTA({
     <>
       <section
         className={cn(
-          'relative overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-background',
+          'relative overflow-hidden bg-gradient-to-br from-secondary/50 via-accent/10 to-background',
           'border-y',
           className
         )}
@@ -118,12 +118,12 @@ export function QuizCTA({
 
         <div className="container relative py-16 md:py-20">
           <div className="mx-auto max-w-2xl space-y-6 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
+            <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
               <Sparkles className="size-4" />
               Personalized Recommendations
             </div>
 
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
+            <h2 className="font-serif text-3xl font-semibold tracking-normal md:text-4xl">
               Find Your Perfect Eco-Friendly Products
             </h2>
 

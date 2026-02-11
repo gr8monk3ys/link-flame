@@ -21,7 +21,7 @@ export default async function BlogsPage() {
   return (
     <div className="container py-10">
       <div className="flex max-w-[980px] flex-col items-start gap-2">
-        <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
+        <h1 className="font-serif text-3xl font-semibold leading-tight tracking-normal md:text-4xl">
           Eco-Living Blog
         </h1>
         <p className="max-w-[700px] text-lg text-muted-foreground">
@@ -38,7 +38,7 @@ export default async function BlogsPage() {
       {/* Featured Posts */}
       {featuredPosts.length > 0 && (
         <section className="my-12">
-          <h2 className="mb-6 text-2xl font-bold">Featured Articles</h2>
+          <h2 className="mb-6 font-serif text-2xl font-semibold">Featured Articles</h2>
           <div className="grid gap-6">
             {featuredPosts.map((post) => (
               <BlogCard key={post.slug} post={post} featured />
@@ -52,9 +52,9 @@ export default async function BlogsPage() {
         if (!category) return null;
         const categoryPosts = allPosts.filter(post => post.category === category)
         return (
-          <section key={category} className="my-12">
+          <section key={category} className="my-14">
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-2xl font-bold">{category}</h2>
+              <h2 className="font-serif text-2xl font-semibold">{category}</h2>
               <a
                 href={`/blogs/${category.toLowerCase()}`}
                 className="text-sm font-medium text-primary hover:underline"
