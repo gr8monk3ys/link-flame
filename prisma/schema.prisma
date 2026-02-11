@@ -6,23 +6,13 @@ generator client {
 // ===========================================
 // DATABASE CONFIGURATION
 // ===========================================
-// PostgreSQL is the primary database for production and multi-user workloads.
-// Update DATABASE_URL in .env to your PostgreSQL connection string:
-// DATABASE_URL="postgresql://user:password@localhost:5432/linkflame?schema=public"
-//
-// PostgreSQL provides:
-// - Better concurrency and connection pooling
-// - Full-text search (@@fulltext indexes)
-// - JSON/JSONB native types (replace String JSON fields)
-// - Array types for multi-value fields
-// - Row-level security for multi-tenant isolation
-//
-// NOTE: Currently using SQLite for local development.
-// When switching to PostgreSQL, add @db.Decimal(10, 2) to all Decimal fields
-// and change provider to "postgresql".
+// PostgreSQL via Neon (serverless). Uses connection pooling (pgbouncer)
+// for runtime queries and direct connection for migrations.
+// See .env for DATABASE_URL (pooled) and DIRECT_URL (direct).
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // User and Authentication
@@ -67,8 +57,8 @@ model Product {
   id          String   @id @default(cuid())
   title       String
   description String?
-  price       Decimal
-  salePrice   Decimal?
+  price       Decimal  @db.Decimal(10, 2)
+  salePrice   Decimal? @db.Decimal(10, 2)
   image       String
   category    String   @default("Uncategorized")
   inventory   Int      @default(0)
@@ -131,8 +121,8 @@ model ProductVariant {
   color     String? // e.g., "Red", "Blue", "Green"
   colorCode String? // Hex color code for UI display, e.g., "#FF0000"
   material  String? // e.g., "Cotton", "Bamboo", "Organic Cotton"
-  price     Decimal? // Override price (if null, uses product.price)
-  salePrice Decimal? // Override sale price
+  price     Decimal? @db.Decimal(10, 2) // Override price (if null, uses product.price)
+  salePrice Decimal? @db.Decimal(10, 2) // Override sale price
   image     String? // Override image (for color-specific photos)
   inventory Int     @default(0)
   isDefault Boolean @default(false) // Mark one variant as default selection
@@ -281,7 +271,7 @@ model Order {
   id              String  @id @default(cuid())
   userId          String
   stripeSessionId String? @unique
-  amount          Decimal
+  amount          Decimal @db.Decimal(10, 2)
   status          String // Payment status: paid, pending, failed, refunded
   shippingAddress String?
   paymentMethod   String?
@@ -323,7 +313,7 @@ model OrderItem {
   productId       String
   variantId       String? // Reference to variant if applicable
   quantity        Int
-  price           Decimal
+  price           Decimal @db.Decimal(10, 2)
   title           String
   // Store variant details at time of order (denormalized for historical accuracy)
   variantSku      String?
@@ -555,9 +545,9 @@ model BundleSelection {
   userId          String? // Authenticated user ID (optional for guests)
   sessionId       String? // Guest session ID (optional for logged-in users)
   selectedItems   String // JSON array of selected items with details
-  totalPrice      Decimal
-  discountedPrice Decimal  @default(0)
-  savings         Decimal  @default(0)
+  totalPrice      Decimal  @db.Decimal(10, 2)
+  discountedPrice Decimal  @db.Decimal(10, 2) @default(0)
+  savings         Decimal  @db.Decimal(10, 2) @default(0)
   status          String   @default("pending") // pending, in_cart, purchased
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -699,7 +689,7 @@ model SubscriptionItem {
   productId           String
   variantId           String?
   quantity            Int      @default(1)
-  priceAtSubscription Decimal // Price locked in at subscription time
+  priceAtSubscription Decimal @db.Decimal(10, 2) // Price locked in at subscription time
   discountPercent     Float    @default(0) // Discount applied to this item
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
@@ -797,8 +787,8 @@ model LoyaltyRedemption {
   userId         String
   pointsUsed     Int // Points redeemed
   orderId        String? // Order where redemption was applied
-  discount       Decimal // Dollar amount discounted
-  discountAmount Decimal  @default(0) // Alias for discount amount
+  discount       Decimal @db.Decimal(10, 2) // Dollar amount discounted
+  discountAmount Decimal @db.Decimal(10, 2) @default(0) // Alias for discount amount
   status         String   @default("applied") // applied, refunded
   redeemedAt     DateTime @default(now()) // When the points were redeemed
   createdAt      DateTime @default(now())
@@ -843,7 +833,7 @@ model Referral {
   refereeId       String    @unique // User who was referred (one referral per user)
   referralCodeId  String // The referral code used
   status          String    @default("PENDING") // PENDING, COMPLETED, REWARDED, EXPIRED
-  discountApplied Decimal? // Discount applied to referee's first order
+  discountApplied Decimal? @db.Decimal(10, 2) // Discount applied to referee's first order
   pointsAwarded   Int? // Points awarded to referrer
   rewardPoints    Int       @default(0) // Points to be awarded to referrer (alias)
   firstOrderId    String? // Referee's first order that triggered completion
@@ -871,8 +861,8 @@ model Referral {
 model GiftCard {
   id             String    @id @default(cuid())
   code           String    @unique // 16-character alphanumeric code
-  initialBalance Decimal // Original amount of the gift card
-  currentBalance Decimal // Remaining balance
+  initialBalance Decimal @db.Decimal(10, 2) // Original amount of the gift card
+  currentBalance Decimal @db.Decimal(10, 2) // Remaining balance
   purchaserId    String? // User who purchased the gift card (optional for guest purchases)
   recipientEmail String? // Email address of the recipient
   recipientName  String? // Name of the recipient
@@ -897,7 +887,7 @@ model GiftCardTransaction {
   id          String   @id @default(cuid())
   giftCardId  String
   orderId     String? // Reference to order if used in checkout
-  amount      Decimal // Transaction amount (positive for purchase, negative for redemption)
+  amount      Decimal @db.Decimal(10, 2) // Transaction amount (positive for purchase, negative for redemption)
   type        String // PURCHASE, REDEMPTION, REFUND
   description String? // Optional description of the transaction
   createdAt   DateTime @default(now())
@@ -1037,7 +1027,7 @@ model OrganizationSubscription {
   planId               String    // FREE, STARTER, PRO, ENTERPRISE
   billingInterval      String    // monthly, yearly
   status               String    // active, canceled, past_due, trialing, etc.
-  amount               Decimal // Amount in dollars
+  amount               Decimal @db.Decimal(10, 2) // Amount in dollars
   currency             String    @default("usd")
   trialStart           DateTime?
   trialEnd             DateTime?
