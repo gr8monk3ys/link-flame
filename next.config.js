@@ -64,7 +64,6 @@ const nextConfig = {
       allowedOrigins: ['localhost:3000'],
     },
   },
-  turbopack: {},
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
 
   // Security Headers - Production Ready Configuration
