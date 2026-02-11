@@ -4,6 +4,8 @@ import { errorResponse, paginatedResponse, handleApiError, validationErrorRespon
 import { checkRateLimit, getIdentifier } from '@/lib/rate-limit';
 import { z } from 'zod';
 
+export const dynamic = 'force-dynamic'
+
 /**
  * Blog Search API Endpoint
  *

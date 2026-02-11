@@ -23,6 +23,8 @@ import {
   SubscriptionStatus,
 } from '@/lib/subscriptions';
 
+export const dynamic = 'force-dynamic'
+
 // Validation schema for updating subscription
 const updateSubscriptionSchema = z.object({
   frequency: z.enum(['WEEKLY', 'BIWEEKLY', 'MONTHLY', 'BIMONTHLY']).optional(),

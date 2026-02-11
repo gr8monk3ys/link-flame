@@ -7,6 +7,8 @@ import { checkStrictRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { validateCsrfToken } from "@/lib/csrf";
 import { logger } from "@/lib/logger";
 
+export const dynamic = 'force-dynamic'
+
 /**
  * POST /api/cart/migrate
  * Migrates guest cart items to authenticated user's cart

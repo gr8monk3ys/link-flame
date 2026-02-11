@@ -4,6 +4,8 @@ import { BlogPost } from '@/types'
 import { handleApiError, notFoundResponse } from '@/lib/api-response'
 import { logger } from '@/lib/logger'
 
+export const dynamic = 'force-dynamic'
+
 // Cache individual blog posts for 1 hour (3600 seconds) for better performance
 // Remove this line if you need real-time updates
 export const revalidate = 3600

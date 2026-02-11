@@ -20,6 +20,8 @@ import {
 import { checkRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(req: Request) {
   try {
     const { userId } = await getServerAuth();

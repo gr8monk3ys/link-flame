@@ -15,6 +15,8 @@ import { logger } from '@/lib/logger'
 import { getStripe } from '@/lib/stripe-server'
 import Stripe from 'stripe'
 
+export const dynamic = 'force-dynamic'
+
 // Define validation schema for express checkout data
 const ExpressCheckoutSchema = z.object({
   paymentMethodId: z.string().min(1, 'Payment method ID is required'),

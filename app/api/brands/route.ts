@@ -11,6 +11,8 @@ import { logger } from '@/lib/logger'
 import { checkRateLimit, getIdentifier } from '@/lib/rate-limit'
 import { calculatePaginationMeta } from '@/lib/api/pagination'
 
+export const dynamic = 'force-dynamic'
+
 // Schema for brand filtering
 const filterSchema = z.object({
   certification: z.string().optional(),

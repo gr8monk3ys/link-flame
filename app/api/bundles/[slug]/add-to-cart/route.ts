@@ -15,6 +15,8 @@ import { checkRateLimit, getIdentifier } from "@/lib/rate-limit"
 import { getServerAuth } from "@/lib/auth"
 import { getGuestSessionId, getUserIdForCart } from "@/lib/session"
 
+export const dynamic = 'force-dynamic'
+
 interface RouteContext {
   params: Promise<{ slug: string }>
 }

@@ -21,6 +21,8 @@ import {
   removeFromWishlist,
 } from "@/lib/wishlists";
 
+export const dynamic = 'force-dynamic'
+
 /**
  * Saved Items API (Legacy/Backward Compatible)
  *

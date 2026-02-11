@@ -12,6 +12,8 @@ import {
 } from "@/lib/api-response"
 import { logger } from "@/lib/logger"
 
+export const dynamic = 'force-dynamic'
+
 // Validation schema for newsletter subscription
 const NewsletterSchema = z.object({
   email: z.string().email("Invalid email address").toLowerCase(),

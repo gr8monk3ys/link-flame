@@ -11,6 +11,8 @@ import {
 import { logger } from "@/lib/logger";
 import { checkRateLimit, getIdentifier } from "@/lib/rate-limit";
 
+export const dynamic = 'force-dynamic'
+
 // Common imperfect reasons for reference
 export const IMPERFECT_REASONS = [
   { id: "dented_packaging", label: "Slightly dented packaging", description: "The product packaging has minor cosmetic dents but the product inside is perfect" },

@@ -4,6 +4,8 @@ import { handleApiError, errorResponse, notFoundResponse, rateLimitErrorResponse
 import { checkRateLimit, getIdentifier } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger';
 
+export const dynamic = 'force-dynamic'
+
 // Using a simpler approach with request URL
 export async function GET(request: NextRequest) {
   // Extract the ID from the URL path

@@ -29,6 +29,8 @@ import {
   type ResourceType,
 } from '@/lib/billing/usage'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * Query params schema
  */

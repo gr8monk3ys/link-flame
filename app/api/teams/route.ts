@@ -13,6 +13,8 @@ import {
 import { hasPermission } from '@/lib/teams/permissions'
 import { logger } from '@/lib/logger'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * Query params schema for GET /api/teams
  */

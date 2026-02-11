@@ -10,6 +10,8 @@ import {
 import { checkRateLimit, getIdentifier } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * Search Suggestions API Endpoint
  *

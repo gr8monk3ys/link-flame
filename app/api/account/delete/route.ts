@@ -14,6 +14,8 @@ import { checkStrictRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { validateCsrfToken } from "@/lib/csrf";
 import { logger } from "@/lib/logger";
 
+export const dynamic = 'force-dynamic'
+
 const deleteAccountSchema = z.object({
   password: z.string().min(1, "Password is required to confirm account deletion"),
   confirmation: z.literal("DELETE MY ACCOUNT", {

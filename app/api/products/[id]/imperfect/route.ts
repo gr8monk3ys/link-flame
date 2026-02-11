@@ -16,6 +16,8 @@ import { logger } from "@/lib/logger";
 import { invalidateProductCaches } from "@/lib/cache";
 import { IMPERFECT_REASONS } from "../../imperfect/route";
 
+export const dynamic = 'force-dynamic'
+
 interface RouteParams {
   params: Promise<{ id: string }>;
 }

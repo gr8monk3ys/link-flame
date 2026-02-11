@@ -14,6 +14,8 @@ import { checkRateLimit, checkStrictRateLimit, getIdentifier } from '@/lib/rate-
 import { validateCsrfToken } from '@/lib/csrf';
 import { z } from 'zod';
 
+export const dynamic = 'force-dynamic'
+
 /**
  * Product Reviews API
  *

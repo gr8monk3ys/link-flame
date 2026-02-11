@@ -17,6 +17,8 @@ import { getStripe } from "@/lib/stripe-server";
 import Stripe from "stripe";
 import { CheckoutSchema, GiftOptionsSchema } from "@/lib/validations/checkout";
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: Request) {
   try {
     // CSRF protection

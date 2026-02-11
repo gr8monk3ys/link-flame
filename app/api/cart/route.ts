@@ -13,6 +13,8 @@ import {
 import { logger } from "@/lib/logger";
 import { AddToCartSchema, UpdateCartSchema } from "@/lib/validations/cart";
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(req: Request) {
   try {
     const { userId } = await getServerAuth();

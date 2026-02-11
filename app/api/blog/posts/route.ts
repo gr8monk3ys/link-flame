@@ -5,6 +5,8 @@ import { transformPrismaPost } from '@/lib/transformations/blog'
 import { logger } from '@/lib/logger'
 import { z } from 'zod'
 
+export const dynamic = 'force-dynamic'
+
 // Cache blog posts for 1 hour (3600 seconds) for better performance
 // Remove this line if you need real-time updates
 export const revalidate = 3600

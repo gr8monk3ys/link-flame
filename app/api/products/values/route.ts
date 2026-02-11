@@ -8,6 +8,8 @@ import {
 import { logger } from "@/lib/logger";
 import { checkRateLimit, getIdentifier } from "@/lib/rate-limit";
 
+export const dynamic = 'force-dynamic'
+
 /**
  * GET /api/products/values
  * Returns all product values with their product counts

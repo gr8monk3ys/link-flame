@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { checkStrictRateLimit, getIdentifier } from '@/lib/rate-limit';
 import { rateLimitErrorResponse } from '@/lib/api-response';
 
+export const dynamic = 'force-dynamic'
+
 // Wrap POST handler with rate limiting for signin/signup
 async function POST(request: NextRequest) {
   // Only rate limit signin requests (callback/credentials/credentials)

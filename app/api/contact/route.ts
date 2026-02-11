@@ -12,6 +12,8 @@ import {
 } from "@/lib/api-response";
 import { logger } from "@/lib/logger";
 
+export const dynamic = 'force-dynamic'
+
 // Validation schema for contact form
 const ContactSchema = z.object({
   name: z.string().min(1, "Name is required").max(100, "Name is too long"),

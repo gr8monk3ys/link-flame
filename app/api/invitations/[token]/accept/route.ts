@@ -20,6 +20,8 @@ import {
 } from '@/lib/rate-limit'
 import { rateLimitErrorResponse } from '@/lib/api-response'
 
+export const dynamic = 'force-dynamic'
+
 interface RouteParams {
   params: Promise<{ token: string }>
 }

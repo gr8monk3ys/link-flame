@@ -8,6 +8,8 @@ import { validateCsrfToken } from "@/lib/csrf";
 import { logger } from "@/lib/logger";
 import { getOrCreateDefaultWishlist } from "@/lib/wishlists";
 
+export const dynamic = 'force-dynamic'
+
 /**
  * POST /api/saved-items/migrate
  *

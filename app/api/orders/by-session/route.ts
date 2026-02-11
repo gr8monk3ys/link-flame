@@ -12,6 +12,8 @@ import { checkRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 import { getUserIdForCart } from "@/lib/session";
 
+export const dynamic = 'force-dynamic'
+
 // Schema for query parameter validation
 const queryParamsSchema = z.object({
   session_id: z.string().min(1, "Session ID is required"),

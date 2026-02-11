@@ -27,6 +27,8 @@ import {
 } from '@/lib/rate-limit'
 import { rateLimitErrorResponse } from '@/lib/api-response'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * Request body schema for PATCH /api/teams/[memberId]
  */

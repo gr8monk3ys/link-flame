@@ -10,6 +10,8 @@ import {
 import { checkRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 
+export const dynamic = 'force-dynamic'
+
 // Shipping status labels for display
 const SHIPPING_STATUS_LABELS: Record<string, string> = {
   processing: "Processing",

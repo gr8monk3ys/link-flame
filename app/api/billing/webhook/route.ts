@@ -20,6 +20,8 @@ import {
 import { mapStripeStatus, syncSubscriptionStatus } from '@/lib/billing/subscription'
 import { getStripe } from '@/lib/stripe-server'
 
+export const dynamic = 'force-dynamic'
+
 function getWebhookSecret(): string {
   // Use a separate webhook secret for billing webhooks if available
   const secret = process.env.STRIPE_BILLING_WEBHOOK_SECRET || process.env.STRIPE_WEBHOOK_SECRET

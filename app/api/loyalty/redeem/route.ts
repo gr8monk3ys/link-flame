@@ -34,6 +34,8 @@ import {
 } from "@/lib/api-response";
 import { logger } from "@/lib/logger";
 
+export const dynamic = 'force-dynamic'
+
 const RedeemPointsSchema = z.object({
   pointsToRedeem: z
     .number()

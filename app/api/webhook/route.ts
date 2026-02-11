@@ -11,6 +11,8 @@ import { storeOrderImpact } from "@/lib/impact";
 import { getStripe } from "@/lib/stripe-server";
 import { extractGiftOptions } from "@/lib/validations/webhook";
 
+export const dynamic = 'force-dynamic'
+
 function getWebhookSecret(): string {
   if (!process.env.STRIPE_WEBHOOK_SECRET) {
     throw new Error("Missing STRIPE_WEBHOOK_SECRET");

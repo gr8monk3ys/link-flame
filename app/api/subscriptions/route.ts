@@ -21,6 +21,8 @@ import {
   isValidFrequency,
 } from '@/lib/subscriptions';
 
+export const dynamic = 'force-dynamic'
+
 // Pagination query parameter validation schema
 const paginationSchema = z.object({
   page: z.coerce.number().int().positive().default(1),

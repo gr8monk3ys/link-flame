@@ -14,6 +14,8 @@ import {
 import { checkRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 
+export const dynamic = 'force-dynamic'
+
 // Schema for query parameter validation
 const queryParamsSchema = z.object({
   page: z.coerce.number().int().min(1).max(10000).default(1),

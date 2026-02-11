@@ -27,6 +27,8 @@ import {
 import { prisma } from '@/lib/prisma'
 import { hasPermission } from '@/lib/teams/permissions'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * Validation schema for portal request
  */

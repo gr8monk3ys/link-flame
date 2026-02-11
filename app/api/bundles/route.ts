@@ -10,6 +10,8 @@ import {
 import { logger } from "@/lib/logger"
 import { checkRateLimit, getIdentifier } from "@/lib/rate-limit"
 
+export const dynamic = 'force-dynamic'
+
 // Schema for query params
 const querySchema = z.object({
   page: z.coerce.number().int().min(1).max(10000).default(1),

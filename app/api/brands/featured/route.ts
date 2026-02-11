@@ -7,6 +7,8 @@ import {
 import { logger } from '@/lib/logger'
 import { checkRateLimit, getIdentifier } from '@/lib/rate-limit'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
   // Rate limit to prevent excessive requests
   const identifier = getIdentifier(request)

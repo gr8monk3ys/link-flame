@@ -32,6 +32,8 @@ import {
   SubscriptionError,
 } from '@/lib/billing/subscription'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * Validation schema for checkout request
  */

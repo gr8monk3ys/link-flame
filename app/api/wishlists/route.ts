@@ -21,6 +21,8 @@ import {
   createWishlist,
 } from "@/lib/wishlists";
 
+export const dynamic = 'force-dynamic'
+
 /**
  * Wishlists API
  *

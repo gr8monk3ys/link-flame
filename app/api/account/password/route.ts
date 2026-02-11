@@ -14,6 +14,8 @@ import { checkStrictRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { validateCsrfToken } from "@/lib/csrf";
 import { logger } from "@/lib/logger";
 
+export const dynamic = 'force-dynamic'
+
 const changePasswordSchema = z.object({
   currentPassword: z.string().min(1, "Current password is required"),
   newPassword: z

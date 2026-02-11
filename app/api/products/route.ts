@@ -19,6 +19,8 @@ import { checkRateLimit, getIdentifier } from "@/lib/rate-limit"
 import { validateCsrfToken } from "@/lib/csrf"
 import { calculatePaginationMeta } from "@/lib/api/pagination"
 
+export const dynamic = 'force-dynamic'
+
 // Schema for product filtering
 const filterSchema = z.object({
   categories: z.array(z.string()).optional(),
