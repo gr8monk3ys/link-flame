@@ -4,326 +4,139 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Link Flame is an eco-friendly living blog and e-commerce platform built with Next.js 16 (App Router), featuring blog content management, user authentication, and Stripe-powered product sales.
+Link Flame is an eco-friendly e-commerce and blog platform built with Next.js 16 (App Router), PostgreSQL, Stripe payments, and NextAuth v5.
 
-## Development Commands
+## Commands
 
 ```bash
-# Install dependencies
-npm install
+npm run dev                   # Dev server on localhost:3000
+npm run build                 # Production build (verify before pushing to Vercel)
+npm run lint                  # ESLint
+npx tsc --noEmit              # Type check (tests dir is excluded from tsconfig)
 
-# Run development server (localhost:3000)
-npm run dev
+# Unit tests (Vitest, happy-dom)
+npx vitest run                # All unit tests (~680 tests)
+npx vitest run tests/unit/csrf.test.ts          # Single file
+npx vitest run -t "token generation"            # By test name pattern
 
-# Production build
-npm run build
+# E2E tests (Playwright, auto-starts dev server on port 4010)
+npx playwright test                             # All E2E tests
+npx playwright test tests/e2e/auth.spec.ts      # Single file
+npx playwright test --grep "sign in"            # By title pattern
 
-# Start production server
-npm start
-
-# Linting
-npm run lint
-
-# Database operations
-npx prisma migrate dev        # Create and apply migrations
-npx prisma generate          # Generate Prisma Client (runs automatically on postinstall)
-npx prisma studio            # Open database GUI
-npx prisma db seed           # Seed database with initial data
-npx prisma db push           # Push schema changes without migrations (dev only)
-
-# Bundle analysis
-npm run analyze              # Analyze bundle size with webpack bundle analyzer
+# Database (PostgreSQL via Neon)
+npx prisma migrate dev        # Create + apply migration
+npx prisma db push            # Push schema without migration (dev only)
+npx prisma studio             # Database GUI
+npx prisma db seed            # Seed with sample data
+npx prisma generate           # Regenerate client (also runs on npm install)
 ```
+
+## Tech Stack
+
+- **Next.js 16.0.1** (App Router, React 19, Turbopack)
+- **PostgreSQL** via Neon (serverless) with **Prisma ORM**
+- **NextAuth v5** (JWT strategy, credentials provider, bcrypt)
+- **Stripe** for checkout + webhooks
+- **Tailwind CSS v3** (pinned, NOT v4) + Radix UI primitives
+- **Zod** for API validation, **DOMPurify** for XSS protection
 
 ## Architecture
 
-### Tech Stack
-- **Framework**: Next.js 16.0.1 with App Router (React 19) and MCP Server for AI agent integration
-- **Database**: SQLite via Prisma ORM (development setup, easily switchable to PostgreSQL)
-- **Authentication**: NextAuth v5 with JWT strategy and credentials provider
-- **Payments**: Stripe integration for e-commerce checkout
-- **Styling**: Tailwind CSS + Radix UI components
-- **Content**: MDX support for rich blog content
-- **State**: React Context for cart management, client-side hooks for other state
-- **Validation**: Zod for API input validation with comprehensive type safety
-- **AI Integration**: Model Context Protocol (MCP) server configured in `.mcp.json` for real-time agent access
+### Authentication (split config pattern)
 
-### Directory Structure
+Auth is split across two files for Edge Runtime compatibility:
 
-```
-app/                         # Next.js App Router pages and API routes
-├── api/                     # API route handlers
-│   ├── blog/               # Blog CRUD operations
-│   ├── products/           # Product catalog endpoints
-│   ├── cart/               # Shopping cart management
-│   ├── checkout/           # Stripe checkout sessions
-│   └── webhook/            # Stripe webhook handler
-├── blogs/                  # Blog listing and individual post pages
-├── products/               # Product catalog pages
-├── authentication/         # Auth pages (NextAuth sign in/up/out)
-└── layout.tsx             # Root layout with providers
+- `auth.config.ts` — Minimal config (pages, providers skeleton). Runs in Edge Runtime (middleware). **Must NOT import Prisma, bcrypt, or Node-only modules.**
+- `auth.ts` — Full config with Credentials provider, Prisma lookup, bcrypt. Server-side only.
+- `middleware.ts` — Imports `auth.config.ts`, protects `/account/*`, `/checkout`, `/admin`. Also generates CSP nonce and request ID headers.
 
-components/                 # React components organized by feature
-├── blogs/                 # Blog-specific components
-├── cart/                  # Shopping cart UI
-├── checkout/              # Checkout flow components
-├── collections/           # Product collections
-├── home/                  # Homepage sections
-├── layout/                # Header, footer, navigation
-├── shared/                # Reusable components
-└── ui/                    # Radix UI component wrappers
+```typescript
+// Server Components / API routes
+import { getServerAuth } from '@/lib/auth'
+const { userId, user, session } = await getServerAuth()
 
-lib/                       # Utility functions and business logic
-├── blog.ts               # Blog data fetching (SSR: Prisma, client: API)
-├── products.ts           # Product utilities
-├── auth.ts               # NextAuth server-side helpers (getServerAuth, requireRole)
-├── session.ts            # Guest session management for anonymous users
-├── api-response.ts       # Standardized API response helpers
-├── rate-limit.ts         # Rate limiting utilities
-├── prisma.ts             # Prisma client singleton
-├── providers/            # React Context providers
-│   └── CartProvider.tsx  # Cart state management with Context API
-└── utils/                # Generic utilities
+// Role check
+import { requireRole } from '@/lib/auth'
+await requireRole(userId, ['ADMIN', 'EDITOR'])
 
-content/                   # MDX blog content files
-├── blogs/                # Blog posts in MDX format
-
-prisma/                    # Database schema and migrations
-├── schema.prisma         # Database schema definition
-└── seed.ts               # Database seeding script
-
-hooks/                     # Custom React hooks
-├── useProducts.ts        # Product data fetching
-└── useSavedItems.ts      # Saved items functionality
-
-Note: Cart management now uses React Context Provider (see lib/providers/CartProvider.tsx)
-
-config/                    # Configuration files
-├── site.ts               # Site metadata and navigation config
-└── docs.ts               # Documentation structure
+// Client Components
+import { useSession } from 'next-auth/react'
+const { data: session } = useSession()
 ```
 
-## Key Architectural Patterns
+### Database
 
-### 1. Blog Content System
-The codebase uses a unified blog system via `lib/blog.ts`:
-- **Server-side (SSR/build)**: Fetches directly from Prisma database
-- **Client-side (browser)**: Fetches from `/api/blog/*` endpoints
-- **API Routes**: `/app/api/blog/` endpoints for CRUD operations with search, filtering by category/tags
+PostgreSQL via Neon with connection pooling:
+- `DATABASE_URL` — Pooled connection (pgbouncer) for runtime queries
+- `DIRECT_URL` — Direct connection for migrations (`directUrl` in schema.prisma)
+- All monetary `Decimal` fields use `@db.Decimal(10, 2)`
+- Prisma client singleton in `lib/prisma.ts` (cached in `globalThis` for dev HMR)
 
-### 2. Authentication Flow (NextAuth v5)
-- **Middleware** (`middleware.ts`) uses NextAuth to protect routes and redirect unauthenticated users
-- **Strategy**: JWT-based sessions (no database sessions for better performance)
-- **Provider**: Credentials provider with bcrypt password hashing
-- **Server-side**: Use `getServerAuth()` from `lib/auth.ts` to access user session in API routes
-- **Client-side**: Use `useSession()` hook from `next-auth/react` in components
-- **Authorization**: Role-based access control via `requireRole()` helper (supports ADMIN, EDITOR, USER roles)
-- **Guest Sessions**: Anonymous users get guest session IDs for cart persistence before login
+### Cart + Guest Sessions
 
-**Auth Routes**:
-- Sign in: `/auth/signin`
-- Sign up: `/auth/signup`
-- Sign out: `/auth/signout`
-- Error page: `/auth/error`
-
-**Protected Routes**: `/account/*`, `/checkout` require authentication
-
-### 3. Database Models (Prisma)
-Key models in `prisma/schema.prisma`:
-- **User**: Auth with password field for credentials provider, role field for RBAC
-- **BlogPost**: Blog content with author, category, tags, featured status
-- **Product**: E-commerce products with optional sale prices and reviews
-- **CartItem**: Shopping cart items (supports both authenticated users and guest sessions)
-- **Order**: Order records with items, payment status, and customer details
-- **Newsletter**: Email subscriptions for newsletter
-- **Contact**: Contact form submissions
-
-Note: Schema uses SQLite (`file:./dev.db`) but can be switched to PostgreSQL by updating `datasource.db.provider`. The Account and Session models have been removed as JWT strategy is used instead of database sessions.
-
-### 4. E-commerce Integration
-- **Stripe Checkout**: Creates sessions via `/api/checkout` (currently demo mode without real Stripe integration)
-- **Webhooks**: `/api/webhook` handles Stripe events (payment confirmation, order fulfillment)
-- **Cart State**: Managed by React Context Provider (`lib/providers/CartProvider.tsx`)
-  - Supports both authenticated users and anonymous guest sessions
-  - Automatic cart migration when guest users log in (merges duplicate items)
-  - Guest sessions use cookies with 30-day expiration
-- **Guest Sessions**: Managed via `lib/session.ts` with functions:
-  - `getGuestSessionId()`: Creates or retrieves guest session ID
-  - `getUserIdForCart()`: Returns user ID or guest session ID
-  - `clearGuestSession()`: Clears guest session after login
-- Products fetched from Prisma database (`Product` model)
-
-### 5. Content Management
-- **MDX Files**: Blog content stored in `content/blogs/` as `.mdx` files
-- **Database**: Blog metadata and content also stored in Prisma `BlogPost` model
-- Content can be rendered from either source depending on the implementation
-
-## Environment Variables
-
-Required environment variables (see `.env.example`):
-- `DATABASE_URL`: Database connection string (SQLite by default)
-- `NEXTAUTH_URL`: Base URL for NextAuth (e.g., http://localhost:3000)
-- `NEXTAUTH_SECRET`: Secret for NextAuth JWT encryption (generate with `openssl rand -base64 32`)
-- `STRIPE_SECRET_KEY`: Stripe secret key for backend operations
-- `STRIPE_PUBLISHABLE_KEY`: Stripe publishable key for frontend
-- `STRIPE_WEBHOOK_SECRET`: Stripe webhook signing secret for event verification
-- `UPSTASH_REDIS_REST_URL`: Upstash Redis URL for rate limiting (optional)
-- `UPSTASH_REDIS_REST_TOKEN`: Upstash Redis token for rate limiting (optional)
-
-## Important Development Notes
-
-### Working with the Database
-1. After schema changes, run `npx prisma migrate dev` to create and apply migration
-2. Prisma Client regenerates automatically on `npm install` (postinstall hook)
-3. For quick prototyping, use `npx prisma db push` (skips migrations)
-
-### Authentication
-- NextAuth middleware protects specific routes (configured in `middleware.ts`)
-- Protected routes: `/account/*`, `/checkout`
-- **Server Components/API Routes**:
-  ```typescript
-  import { getServerAuth } from '@/lib/auth'
-  const { userId, user, session } = await getServerAuth()
-  ```
-- **Client Components**:
-  ```typescript
-  import { useSession } from 'next-auth/react'
-  const { data: session, status } = useSession()
-  ```
-- **Role-based access**:
-  ```typescript
-  const hasAccess = await requireRole(userId, ['ADMIN', 'EDITOR'])
-  ```
-
-### Adding New Blog Posts
-Two options (depending on which system is active):
-1. **MDX files**: Add `.mdx` file to `content/blogs/` with frontmatter
-2. **Database**: Use Prisma to create `BlogPost` records or add via API
+Cart supports both authenticated users and anonymous guests:
+- `lib/session.ts` — `getGuestSessionId()` creates/reads guest session cookie (30-day httpOnly)
+- `getUserIdForCart(authUserId)` — Returns auth user ID or guest session ID
+- `lib/providers/CartProvider.tsx` — React Context with `useReducer`, CSRF-protected API calls, debounced sync
+- Guest cart auto-merges into user cart on login via `/api/cart/migrate`
 
 ### API Routes
-- All API routes are in `app/api/`
-- **Standardized responses**: Use helpers from `lib/api-response.ts`:
-  - `successResponse(data, options)`: Success responses (200/201)
-  - `errorResponse(message, code, details, status)`: Generic errors
-  - `validationErrorResponse(zodError)`: Zod validation errors (400)
-  - `unauthorizedResponse(message)`: Auth required (401)
-  - `forbiddenResponse(message)`: Permission denied (403)
-  - `notFoundResponse(resource)`: Resource not found (404)
-  - `rateLimitErrorResponse(reset)`: Rate limit exceeded (429)
-  - `handleApiError(error)`: Catch-all error handler (500)
-- **Authentication**: Use `getServerAuth()` from `lib/auth.ts`
-- **Validation**: Use Zod schemas for all API inputs with comprehensive validation:
-  - Numeric fields have min/max bounds (e.g., prices max $1M, quantities max 999)
-  - String fields have length limits
-  - Sale prices validated to be less than regular price
-- **Rate limiting**: Available via Upstash Redis (strict and standard modes)
 
-### Component Organization
-- Feature-specific components go in `components/{feature}/`
-- Shared/reusable components go in `components/shared/`
-- Radix UI wrapper components go in `components/ui/`
-- Keep components close to where they're used when possible
+All 78 API routes are in `app/api/`. Every route exports `const dynamic = 'force-dynamic'` to prevent static rendering during Vercel builds.
+
+Patterns to follow:
+- Use response helpers from `lib/api-response.ts`: `successResponse()`, `errorResponse()`, `validationErrorResponse()`, `unauthorizedResponse()`, `notFoundResponse()`, `handleApiError()`
+- Validate input with Zod schemas
+- Auth: call `getServerAuth()` from `lib/auth.ts`
+- CSRF: validate with `validateCsrfToken()` from `lib/csrf.ts` on mutation endpoints
+- Rate limiting: via Upstash Redis (optional; gracefully disabled without config)
 
 ### Styling
-- Tailwind utility classes (primary approach)
-- `tailwind.config.js` extends default theme with custom colors/spacing
-- `class-variance-authority` (CVA) for component variants
-- `tailwind-merge` + `clsx` for conditional classes (see `lib/utils.ts`)
 
-## Testing
+- Tailwind CSS v3 with CSS custom properties (HSL format) in `styles/globals.css`
+- Design tokens: `--primary` (forest green), `--secondary` (warm beige), `--accent` (honey amber)
+- Two font families: Inter (sans, body) and Lora (serif, headlines) via `lib/fonts.ts`
+- Custom warm box shadows: `shadow-warm-sm`, `shadow-warm`, `shadow-warm-md`, `shadow-warm-lg`
+- Component variants: `class-variance-authority` (CVA)
+- Class merging: `cn()` from `lib/utils.ts` (clsx + tailwind-merge)
 
-### Testing Infrastructure
-Comprehensive testing setup with unit tests (Vitest) and E2E tests (Playwright):
+### Environment Variables
 
-**Test Commands:**
-```bash
-# Run all tests (unit + E2E)
-npm test
+Required (see `.env.example`):
+- `DATABASE_URL` — Neon pooled PostgreSQL connection string
+- `DIRECT_URL` — Neon direct (unpooled) connection string
+- `NEXTAUTH_SECRET` — Min 32 chars (`openssl rand -base64 32`)
+- `NEXTAUTH_URL` — Base URL (http://localhost:3000)
 
-# Unit tests (Vitest)
-npm run test:unit              # Run all unit tests
-npm run test:unit:watch        # Watch mode
-npm run test:unit:ui           # Interactive UI mode
-npm run test:unit:coverage     # With coverage report
+Optional:
+- `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET`
+- `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` (rate limiting)
+- `RESEND_API_KEY` (email notifications)
 
-# Run a single unit test file
-npx vitest run tests/unit/csrf.test.ts
-npx vitest tests/unit/csrf.test.ts  # Watch mode for single file
+Validation: `lib/env.ts` validates env vars at startup with Zod but never throws during build (warns instead).
 
-# E2E tests (Playwright)
-npm run test:e2e               # Run all E2E tests
-npm run test:e2e:ui            # Interactive UI mode
-npm run test:e2e:headed        # Run with visible browser
-npm run test:e2e:debug         # Debug mode
-npm run test:e2e:report        # View test report
+## Vercel Deployment
 
-# Run a single E2E test file
-npx playwright test tests/e2e/auth.spec.ts
-npx playwright test tests/e2e/auth.spec.ts --headed  # With browser visible
+- Builds use `bun` as package manager with `NODE_ENV=production`
+- All API routes must have `export const dynamic = 'force-dynamic'` — without this, Next.js tries to statically render them during build, which fails because the DB isn't available
+- `turbopack: {}` in `next.config.js` is **required** (even if empty) when webpack config plugins are present — removing it breaks the build
+- Configure `DATABASE_URL` and `DIRECT_URL` in Vercel dashboard environment variables
 
-# Run tests matching a pattern
-npx vitest run -t "token generation"  # Run tests with matching name
-npx playwright test --grep "sign in"  # Run E2E tests with matching title
-```
+## Key Files
 
-**Test Structure:**
-- **Unit Tests** (`tests/unit/`): CSRF protection, API responses, rate limiting utilities
-- **E2E Tests** (`tests/e2e/`): Authentication flows, rate limiting verification, cart operations
-
-**Configuration:**
-- Unit test config: `vitest.config.ts` (happy-dom environment, `@/` alias)
-- E2E test config: `playwright.config.ts` (auto-starts dev server on port 3000)
-- Test setup: `tests/setup.ts`
-- Full documentation: `tests/README.md`
-
-## Security
-
-### Production-Grade Security Implementation
-
-**Security Rating:** 🟢 **9.5/10 (PRODUCTION-READY)**
-
-The application implements comprehensive security measures:
-
-#### CSRF Protection
-- **Implementation**: `lib/csrf.ts`
-- **Token Generation**: Cryptographically secure (32-byte random tokens)
-- **Signatures**: HMAC-SHA256 for tamper prevention
-- **Storage**: HTTP-only cookies with 24-hour expiry
-- **Protected Endpoints**: `/api/contact`, `/api/newsletter`, `/api/checkout`, `/api/cart`
-- **Full Guide**: `CSRF_IMPLEMENTATION.md`
-
-#### Security Headers
-- **Configuration**: `next.config.js` headers()
-- **Content Security Policy (CSP)**: Comprehensive directives for scripts, styles, images, fonts, frames
-- **HSTS**: 2-year max-age with includeSubDomains and preload
-- **X-Frame-Options**: DENY (clickjacking protection)
-- **X-Content-Type-Options**: nosniff (MIME sniffing protection)
-- **Referrer-Policy**: strict-origin-when-cross-origin
-- **Permissions-Policy**: Restricts camera, microphone, geolocation
-- **Full Guide**: `SECURITY_HEADERS.md`
-
-#### Additional Security Features
-- **Rate Limiting**: 5 req/min on auth/contact/newsletter, 10 req/10s on cart
-- **Input Validation**: Zod schemas on all API endpoints
-- **XSS Protection**: DOMPurify sanitization for user-generated content
-- **SQL Injection Prevention**: Prisma ORM with parameterized queries
-- **Password Security**: Bcrypt hashing with salt rounds
-- **JWT Sessions**: NextAuth v5 with secure token management
-
-**Security Audit Report**: `SECURITY_AUDIT.md`
-
-## AI Subagents
-
-This project includes 7 specialized AI subagents in `.claude/agents/` for domain-specific tasks:
-
-| Agent | Domain |
-|-------|--------|
-| **Security Guardian** | Payment security, authentication, OWASP compliance |
-| **Test Engineer** | E2E tests, checkout validation, regression testing |
-| **Feature Engineer** | Implementing new features from TODO.md |
-| **Database Specialist** | Prisma migrations, schema design, query optimization |
-| **Performance Optimizer** | Core Web Vitals, bundle size, API response times |
-| **API Guardian** | RESTful endpoints, validation, error handling |
-| **Bug Hunter** | Issue investigation, root cause analysis |
-
-See `.claude/AGENTS_GUIDE.md` for detailed usage instructions and collaboration workflows.
+| File | Purpose |
+|------|---------|
+| `auth.config.ts` | Edge-safe auth config (no Node modules) |
+| `auth.ts` | Full auth with Credentials provider + Prisma |
+| `middleware.ts` | Route protection, CSP nonce, request ID |
+| `lib/prisma.ts` | Prisma client singleton |
+| `lib/auth.ts` | `getServerAuth()`, `requireRole()` helpers |
+| `lib/session.ts` | Guest session management |
+| `lib/api-response.ts` | Standardized API response builders |
+| `lib/csrf.ts` | CSRF token generation + validation |
+| `lib/env.ts` | Zod-validated environment variables |
+| `lib/providers/CartProvider.tsx` | Cart state (Context + useReducer) |
+| `config/constants.ts` | App-wide constants (currency, limits, thresholds) |
+| `prisma/schema.prisma` | Database schema (PostgreSQL) |
+| `prisma/seed.ts` | Sample data seeder |
