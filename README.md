@@ -95,6 +95,8 @@ Edit `.env` with your credentials:
 ```env
 # Database (PostgreSQL)
 DATABASE_URL="postgresql://user:password@localhost:5432/linkflame?schema=public"
+# Direct database URL (used by Prisma for migrations; can be same as DATABASE_URL for local dev)
+DIRECT_URL="postgresql://user:password@localhost:5432/linkflame?schema=public"
 
 # NextAuth v5 (https://next-auth.js.org)
 # Generate secret with: openssl rand -base64 32
@@ -115,6 +117,28 @@ UPSTASH_REDIS_REST_TOKEN="..."
 ```bash
 npx prisma migrate dev
 npx prisma db seed  # Optional: seed with sample data
+```
+
+### Production Readiness Checks
+
+Run these before a production deploy:
+
+```bash
+# Validate required production env vars (Stripe, Redis, URLs, price IDs, auth)
+npm run check:prod-env
+
+# Verify Stripe account + configured price IDs against Stripe API
+npm run check:stripe-config
+
+# Full local preflight gate
+npm run preflight:production
+```
+
+To replay webhook events against your local billing endpoint (after configuring Stripe):
+
+```bash
+stripe listen --forward-to http://localhost:3000/api/billing/webhook
+stripe trigger checkout.session.completed
 ```
 
 ## Model Context Protocol (MCP) Integration
@@ -272,9 +296,9 @@ Open [http://localhost:3000](http://localhost:3000)
    - Role-based access control (ADMIN, EDITOR, USER)
    - Guest session support for anonymous cart management
 
-4. **Protected routes** (configured in `middleware.ts`):
+4. **Protected routes** (configured in `proxy.ts`):
    - `/account/*` - User account pages
-   - `/checkout` - Checkout flow
+   - `/admin/*` - Admin pages
 
 5. **Auth pages**:
    - Sign in: `/auth/signin`
