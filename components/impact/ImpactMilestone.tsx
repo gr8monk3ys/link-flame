@@ -167,7 +167,10 @@ export function useMilestoneNotifications() {
   // Auto-show first milestone when added
   useEffect(() => {
     if (!currentMilestone && pendingMilestones.length > 0) {
-      showNextMilestone();
+      const timer = setTimeout(() => {
+        showNextMilestone();
+      }, 0);
+      return () => clearTimeout(timer);
     }
   }, [pendingMilestones, currentMilestone, showNextMilestone]);
 

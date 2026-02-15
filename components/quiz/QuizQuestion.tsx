@@ -30,11 +30,16 @@ export function QuizQuestion({
 
   useEffect(() => {
     // Reset animation on question change
-    setAnimationClass('opacity-0 translate-x-4');
-    const timer = setTimeout(() => {
+    const resetTimer = setTimeout(() => {
+      setAnimationClass('opacity-0 translate-x-4');
+    }, 0);
+    const revealTimer = setTimeout(() => {
       setAnimationClass('opacity-100 translate-x-0');
     }, 50);
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(resetTimer);
+      clearTimeout(revealTimer);
+    };
   }, [question]);
 
   const handleOptionClick = (value: string) => {
