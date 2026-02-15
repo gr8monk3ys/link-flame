@@ -9,17 +9,25 @@ export const dynamic = 'force-dynamic'
 // Enable ISR with 1 hour revalidation
 export const revalidate = 3600;
 
-interface Category {
-  id: string;
-  name: string;
-}
-
 export async function GET() {
   try {
     // Try to get from Redis cache, fallback to database
-    const categories = await getOrSetCached<Category[]>(
+    const categories = await getOrSetCached<Array<{ name: string; count: number }>>(
       CacheKeys.CATEGORIES,
-      async () => prisma.category.findMany(),
+      async () => {
+        const grouped = await prisma.product.groupBy({
+          by: ['category'],
+          _count: { _all: true },
+        });
+
+        return grouped
+          .map((row) => ({
+            name: row.category,
+            count: row._count._all,
+          }))
+          .filter((row) => typeof row.name === 'string' && row.name.trim().length > 0)
+          .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+      },
       CacheTTL.LONG // 1 hour
     );
 

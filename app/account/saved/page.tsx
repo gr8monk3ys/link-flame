@@ -27,6 +27,7 @@ function SavedItemsContent() {
     deleteWishlist,
     removeFromWishlist,
     moveToWishlist,
+    updateWishlistItemNote,
   } = useWishlists();
 
   const { addItemToCart } = useCart();
@@ -117,8 +118,7 @@ function SavedItemsContent() {
   };
 
   const handleUpdateNote = async (itemId: string, note: string | null) => {
-    // TODO: Implement note update API
-    toast.info('Note update coming soon');
+    await updateWishlistItemNote(itemId, note);
   };
 
   const handleShareLink = (shareToken: string) => {
