@@ -9,13 +9,11 @@ import { headers } from 'next/headers'
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { prisma } from '@/lib/prisma'
+import { Prisma } from '@prisma/client'
 import { logger } from '@/lib/logger'
 import { errorResponse } from '@/lib/api-response'
 import {
   type PlanId,
-  type SubscriptionStatus,
-  DEFAULT_PLAN_ID,
-  PAYMENT_GRACE_PERIOD_DAYS,
 } from '@/lib/billing/plans'
 import { mapStripeStatus, syncSubscriptionStatus } from '@/lib/billing/subscription'
 import { getStripe } from '@/lib/stripe-server'
@@ -42,18 +40,136 @@ function validateWebhookSignature(body: string, signature: string): Stripe.Event
  * Check if an event has already been processed (idempotency)
  */
 async function isEventProcessed(eventId: string): Promise<boolean> {
-  // Check in a processed_events table or cache
-  // For now, return false (would implement with Redis or database table)
-  logger.info('Checking if event was processed', { eventId })
-  return false
+  const existingEvent = await prisma.billingEvent.findUnique({
+    where: { stripeEventId: eventId },
+    select: { id: true },
+  })
+
+  return !!existingEvent
+}
+
+function getObjectId(value: string | { id: string } | null | undefined): string | null {
+  if (!value) {
+    return null
+  }
+
+  if (typeof value === 'string') {
+    return value
+  }
+
+  return value.id
+}
+
+/**
+ * Resolve organization ID from Stripe event payload/relations.
+ */
+async function resolveOrganizationIdFromEvent(event: Stripe.Event): Promise<string | null> {
+  switch (event.type) {
+    case 'customer.subscription.created':
+    case 'customer.subscription.updated':
+    case 'customer.subscription.deleted':
+    case 'customer.subscription.trial_will_end': {
+      const subscription = event.data.object as Stripe.Subscription
+      return subscription.metadata?.organizationId || null
+    }
+
+    case 'checkout.session.completed': {
+      const session = event.data.object as Stripe.Checkout.Session
+      const metadataOrgId = session.metadata?.organizationId
+      if (metadataOrgId) {
+        return metadataOrgId
+      }
+
+      if (session.mode === 'subscription' && session.subscription) {
+        const subscriptionId = getObjectId(session.subscription)
+        if (subscriptionId) {
+          const subscription = await getStripe().subscriptions.retrieve(subscriptionId)
+          return subscription.metadata?.organizationId || null
+        }
+      }
+
+      return null
+    }
+
+    case 'invoice.payment_succeeded':
+    case 'invoice.payment_failed': {
+      const invoice = event.data.object as Stripe.Invoice
+
+      const subscriptionId = getObjectId(invoice.subscription)
+      if (subscriptionId) {
+        const subscription = await getStripe().subscriptions.retrieve(subscriptionId)
+        if (subscription.metadata?.organizationId) {
+          return subscription.metadata.organizationId
+        }
+      }
+
+      const customerId = getObjectId(invoice.customer)
+      if (!customerId) {
+        return null
+      }
+
+      const organization = await prisma.organization.findUnique({
+        where: { stripeCustomerId: customerId },
+        select: { id: true },
+      })
+
+      return organization?.id || null
+    }
+
+    case 'customer.updated': {
+      const customer = event.data.object as Stripe.Customer
+      const metadataOrgId = customer.metadata?.organizationId
+      if (metadataOrgId) {
+        return metadataOrgId
+      }
+
+      const organization = await prisma.organization.findUnique({
+        where: { stripeCustomerId: customer.id },
+        select: { id: true },
+      })
+
+      return organization?.id || null
+    }
+
+    default:
+      return null
+  }
 }
 
 /**
  * Mark an event as processed
  */
-async function markEventProcessed(eventId: string): Promise<void> {
-  // Store in processed_events table or cache
-  logger.info('Marking event as processed', { eventId })
+async function markEventProcessed(event: Stripe.Event): Promise<void> {
+  const organizationId = await resolveOrganizationIdFromEvent(event)
+
+  if (!organizationId) {
+    logger.warn('Could not resolve organization for billing event; skipping persistence', {
+      eventId: event.id,
+      eventType: event.type,
+    })
+    return
+  }
+
+  try {
+    await prisma.billingEvent.create({
+      data: {
+        organizationId,
+        stripeEventId: event.id,
+        eventType: event.type,
+        eventData: JSON.stringify(event),
+      },
+    })
+  } catch (error) {
+    // Unique constraint means a concurrent worker already recorded this event.
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      logger.info('Billing event already persisted by another worker', {
+        eventId: event.id,
+        eventType: event.type,
+      })
+      return
+    }
+    throw error
+  }
 }
 
 /**
@@ -125,16 +241,8 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription): Pro
     organizationId,
   })
 
-  // Downgrade to free plan
-  // When Organization model exists:
-  // await prisma.organization.update({
-  //   where: { id: organizationId },
-  //   data: {
-  //     planId: DEFAULT_PLAN_ID,
-  //     stripeSubscriptionId: null,
-  //     subscriptionStatus: 'canceled',
-  //   },
-  // })
+  // Sync final status to database (canceled => FREE entitlements).
+  await syncSubscriptionStatus(organizationId, subscription)
 
   // Send cancellation email
   // await sendSubscriptionCancelledEmail(organizationId)
@@ -353,7 +461,7 @@ export async function POST(req: Request) {
     }
 
     // Mark event as processed
-    await markEventProcessed(event.id)
+    await markEventProcessed(event)
 
     return new NextResponse(null, { status: 200 })
   } catch (error: unknown) {
