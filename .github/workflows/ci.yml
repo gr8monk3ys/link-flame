@@ -16,10 +16,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -47,10 +47,10 @@ jobs:
     needs: validate
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -85,10 +85,10 @@ jobs:
           --health-retries=5
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -101,6 +101,7 @@ jobs:
         env:
           CI: true
           DATABASE_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
+          DIRECT_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
 
       - name: Upload coverage reports
         uses: codecov/codecov-action@v5
@@ -130,10 +131,10 @@ jobs:
           --health-retries=5
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -151,16 +152,19 @@ jobs:
         run: npx prisma db push
         env:
           DATABASE_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
+          DIRECT_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
 
       - name: Seed test database
         run: npx prisma db seed
         env:
           DATABASE_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
+          DIRECT_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
 
       - name: Run E2E tests
         run: npm run test:e2e
         env:
           DATABASE_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
+          DIRECT_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
           NEXTAUTH_URL: http://localhost:3000
           NEXTAUTH_SECRET: test-secret-for-ci-only-not-production
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
@@ -168,7 +172,7 @@ jobs:
           CI: true
 
       - name: Upload Playwright report
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-report
@@ -176,7 +180,7 @@ jobs:
           retention-days: 7
 
       - name: Upload test screenshots
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: test-screenshots
@@ -190,10 +194,10 @@ jobs:
     needs: [lint, unit-tests]
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -208,12 +212,13 @@ jobs:
         run: npm run build
         env:
           DATABASE_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
+          DIRECT_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
           NEXTAUTH_URL: http://localhost:3000
           NEXTAUTH_SECRET: build-secret-for-ci-only
           NEXT_PUBLIC_APP_URL: http://localhost:3000
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
           name: nextjs-build
           path: .next/
@@ -227,10 +232,10 @@ jobs:
     if: github.event_name == 'pull_request'
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -246,3 +251,4 @@ jobs:
             --exit-code || echo "Schema changes detected - migration may be needed"
         env:
           DATABASE_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
+          DIRECT_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public

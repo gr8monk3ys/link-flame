@@ -1,27 +1,27 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma } from '@/lib/prisma'
+import { logger } from '@/lib/logger'
+import { errorResponse, successResponse } from '@/lib/api-response'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
   try {
-    // Lightweight DB check to ensure connectivity.
-    await prisma.$queryRaw`SELECT 1`;
+    const startMs = Date.now()
+    await prisma.$queryRaw`SELECT 1`
+    const durationMs = Date.now() - startMs
 
-    return NextResponse.json(
+    return successResponse(
       {
-        status: "ok",
-        timestamp: new Date().toISOString(),
+        ok: true,
+        checks: {
+          db: 'up',
+        },
       },
-      { status: 200 }
-    );
+      { durationMs }
+    )
   } catch (error) {
-    return NextResponse.json(
-      {
-        status: "error",
-        timestamp: new Date().toISOString(),
-      },
-      { status: 503 }
-    );
+    logger.error('Health check failed', error)
+    return errorResponse('Service unhealthy', 'UNHEALTHY', undefined, 503)
   }
 }
+
