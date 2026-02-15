@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import Link from "next/link"
+import { NewsletterSignup } from "@/components/shared/newsletter-signup"
 
 export default function FashionBeautyPage() {
   return (
@@ -23,8 +25,8 @@ export default function FashionBeautyPage() {
               <p className="mb-4 text-sm text-muted-foreground">
                 Eco-friendly clothing and accessories
               </p>
-              <Button variant="outline" className="w-full">
-                Explore
+              <Button asChild variant="outline" className="w-full">
+                <Link href="/guides-and-tips/fashion-beauty/sustainable-fashion">Explore</Link>
               </Button>
             </Card>
 
@@ -33,8 +35,8 @@ export default function FashionBeautyPage() {
               <p className="mb-4 text-sm text-muted-foreground">
                 Natural and organic beauty products
               </p>
-              <Button variant="outline" className="w-full">
-                Explore
+              <Button asChild variant="outline" className="w-full">
+                <Link href="/guides-and-tips/fashion-beauty/clean-beauty">Explore</Link>
               </Button>
             </Card>
 
@@ -43,8 +45,8 @@ export default function FashionBeautyPage() {
               <p className="mb-4 text-sm text-muted-foreground">
                 Sustainably sourced accessories
               </p>
-              <Button variant="outline" className="w-full">
-                Explore
+              <Button asChild variant="outline" className="w-full">
+                <Link href="/guides-and-tips/fashion-beauty/ethical-jewelry">Explore</Link>
               </Button>
             </Card>
           </div>
@@ -63,7 +65,9 @@ export default function FashionBeautyPage() {
                   <p className="mb-4 text-muted-foreground">
                     Learn how to create a capsule wardrobe with eco-friendly pieces that last
                   </p>
-                  <Button>Read Guide</Button>
+                  <Button asChild>
+                    <Link href="/guides-and-tips/fashion-beauty/sustainable-wardrobe">Read Guide</Link>
+                  </Button>
                 </div>
                 <div className="rounded-lg bg-muted md:w-1/3"></div>
               </div>
@@ -78,7 +82,9 @@ export default function FashionBeautyPage() {
                   <p className="mb-4 text-muted-foreground">
                     Discover clean beauty products that are good for your skin and the environment
                   </p>
-                  <Button>Read Guide</Button>
+                  <Button asChild>
+                    <Link href="/guides-and-tips/fashion-beauty/natural-skincare">Read Guide</Link>
+                  </Button>
                 </div>
                 <div className="rounded-lg bg-muted md:w-1/3"></div>
               </div>
@@ -201,13 +207,10 @@ export default function FashionBeautyPage() {
         </section>
 
         {/* Newsletter Section */}
-        <section className="rounded-lg bg-muted p-8 text-center">
-          <h2 className="mb-4 text-2xl font-bold">Stay Updated</h2>
-          <p className="mb-6 text-muted-foreground">
-            Get the latest sustainable fashion and beauty tips delivered to your inbox
-          </p>
-          <Button size="lg">Subscribe to Newsletter</Button>
-        </section>
+        <NewsletterSignup
+          title="Stay Updated"
+          description="Get the latest sustainable fashion and clean beauty tips delivered to your inbox."
+        />
       </div>
     </div>
   )

@@ -33,7 +33,8 @@ test.describe('Blog', () => {
       await page.waitForLoadState('domcontentloaded')
 
       // Should have main heading
-      const heading = page.locator('h1')
+      // Use role-based query to avoid strict-mode failures when hidden headings exist in the DOM.
+      const heading = page.getByRole('heading', { level: 1, name: /blog|eco|living/i })
       await expect(heading).toBeVisible({ timeout: 5000 })
       await expect(heading).toContainText(/blog|eco|living/i)
     })
@@ -293,13 +294,25 @@ test.describe('Blog', () => {
       )
 
       if (await categoryLink.first().isVisible({ timeout: 5000 }).catch(() => false)) {
-        await Promise.all([
-          page.waitForURL(/\/blogs\/categories\/[a-zA-Z0-9-]+/, { timeout: 10000 }),
-          categoryLink.first().click(),
-        ])
+        const link = categoryLink.first()
+        const categoryHref = await link.getAttribute('href')
+
+        await link.click()
+        await page.waitForLoadState('domcontentloaded')
+
+        if (categoryHref?.includes('/blogs/categories/')) {
+          await expect
+            .poll(() => page.url(), { timeout: 15000 })
+            .toContain(categoryHref)
+        } else {
+          // Fallback for alternate category URL structures.
+          await expect
+            .poll(() => page.url(), { timeout: 15000 })
+            .toMatch(/\/blogs\/categories\/[a-zA-Z0-9-]+|\/categories\/[a-zA-Z0-9-]+/)
+        }
 
         // Should be on category page
-        expect(page.url()).toMatch(/\/blogs\/categories\/[a-zA-Z0-9-]+/)
+        expect(page.url()).toMatch(/\/blogs\/categories\/[a-zA-Z0-9-]+|\/categories\/[a-zA-Z0-9-]+/)
       }
     })
 

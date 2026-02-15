@@ -15,6 +15,21 @@ const getBaseUrl = () => {
   return `http://localhost:${process.env.PORT ?? 3000}`; // dev SSR should use localhost
 }
 
+function extractPostsFromApiResponse(payload: unknown): BlogPost[] {
+  if (Array.isArray(payload)) {
+    return payload as BlogPost[]
+  }
+
+  if (payload && typeof payload === 'object' && 'data' in payload) {
+    const data = (payload as { data?: unknown }).data
+    if (Array.isArray(data)) {
+      return data as BlogPost[]
+    }
+  }
+
+  throw new Error('Unexpected blog posts response shape')
+}
+
 // Helper functions
 export async function getAllPosts(): Promise<BlogPost[]> {
   // During build or when running in Node.js, fetch from database
@@ -45,7 +60,8 @@ export async function getAllPosts(): Promise<BlogPost[]> {
     throw new Error(`Failed to fetch posts: ${response.status}`)
   }
 
-  const posts = await response.json() as BlogPost[]
+  const payload = (await response.json()) as unknown
+  const posts = extractPostsFromApiResponse(payload)
   return posts.sort((a: BlogPost, b: BlogPost) =>
     new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
   )

@@ -171,7 +171,7 @@ export default function GreenHomePage() {
         <ProductGrid category="green-home" limit={4} />
         <div className="mt-4 text-center">
           <Button asChild variant="outline">
-            <Link href="/reviews?category=green-home">View All Products</Link>
+            <Link href="/collections">View All Products</Link>
           </Button>
         </div>
       </div>

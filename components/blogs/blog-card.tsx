@@ -79,7 +79,7 @@ export function BlogCard({ post, featured = false }: BlogCardProps) {
                 <Link
                   key={tag}
                   href={`/blogs/tags/${tag.toLowerCase()}`}
-                  className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors hover:bg-secondary hover:border-secondary"
+                  className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors hover:border-secondary hover:bg-secondary"
                 >
                   #{tag}
                 </Link>
