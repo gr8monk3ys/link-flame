@@ -1,4 +1,3 @@
-const withMDX = require('@next/mdx')()
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
@@ -64,15 +63,17 @@ const nextConfig = {
       allowedOrigins: ['localhost:3000'],
     },
   },
-  turbopack: {},
-  pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
+  turbopack: {
+    // Pin Turbopack root to this workspace to avoid monorepo lockfile ambiguity warnings.
+    root: __dirname,
+  },
 
   // Security Headers - Production Ready Configuration
   async headers() {
     // Content Security Policy
     // Note: 'unsafe-inline' and 'unsafe-eval' are required for Next.js development
     // Consider using nonces or hashes in production for stricter CSP
-    // CSP is handled by middleware.ts with proper nonce-based policy for production.
+    // CSP is handled by proxy.ts.
     // Only non-CSP security headers are set here to avoid conflicting dual CSP headers.
 
     return [
@@ -170,11 +171,4 @@ const nextConfig = {
   },
 }
 
-const wrappedConfig = withBundleAnalyzer(withMDX(nextConfig))
-
-// Remove experimental.turbo injected by wrapper plugins (conflicts with Turbopack in Next.js 16)
-if (wrappedConfig.experimental && 'turbo' in wrappedConfig.experimental) {
-  delete wrappedConfig.experimental.turbo
-}
-
-module.exports = wrappedConfig
+module.exports = withBundleAnalyzer(nextConfig)
