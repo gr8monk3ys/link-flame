@@ -56,12 +56,12 @@ describe('Rate Limiting Utilities', () => {
       expect(identifier).toBe('ip:10.0.0.5');
     });
 
-    it('should use "unknown" when neither IP header is available', () => {
+    it('should use anonymous fallback when IP headers are unavailable', () => {
       const request = new Request('http://localhost:3000/api/test');
 
       const identifier = getIdentifier(request, null);
 
-      expect(identifier).toBe('ip:unknown');
+      expect(identifier).toMatch(/^anon:/);
     });
 
     it('should prioritize user ID over IP even when IP is available', () => {
@@ -86,8 +86,24 @@ describe('Rate Limiting Utilities', () => {
 
       const identifier = getIdentifier(request, null);
 
-      // Should fallback to unknown when forwarded-for is empty
-      expect(identifier).toBe('ip:unknown');
+      expect(identifier).toMatch(/^anon:/);
+    });
+
+    it('should derive anonymous identifier from session cookies when IP is unavailable', () => {
+      const request = {
+        headers: {
+          get: (name: string) => {
+            if (name.toLowerCase() === 'cookie') {
+              return 'guest_session_id=guest-abc123';
+            }
+            return null;
+          },
+        },
+      } as unknown as Request;
+
+      const identifier = getIdentifier(request, null);
+
+      expect(identifier).toMatch(/^anon:cookie:/);
     });
 
     it('should handle multiple IPs in x-forwarded-for and use first one', () => {
@@ -225,6 +241,20 @@ describe('Rate Limiting Utilities', () => {
       expect(typeof result.limit).toBe('number');
       expect(typeof result.remaining).toBe('number');
       expect(typeof result.reset).toBe('number');
+    });
+  });
+
+  describe('Fallback bucket isolation', () => {
+    it('should isolate standard and strict fallback buckets for the same identifier', async () => {
+      const identifier = `shared-${Date.now()}`;
+
+      for (let i = 0; i < 10; i += 1) {
+        await checkRateLimit(identifier);
+      }
+
+      const strictResult = await checkStrictRateLimit(identifier);
+      expect(strictResult.success).toBe(true);
+      expect(strictResult.remaining).toBe(4);
     });
   });
 

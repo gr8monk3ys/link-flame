@@ -22,6 +22,31 @@ import { logger } from "@/lib/logger";
 let redis: Redis | null = null;
 let ratelimit: Ratelimit | null = null;
 let strictRatelimit: Ratelimit | null = null;
+let hasLoggedStandardFallback = false;
+let hasLoggedStrictFallback = false;
+
+function parsePositiveIntegerEnv(name: string, fallback: number): number {
+  const rawValue = process.env[name];
+  if (!rawValue) return fallback;
+
+  const parsed = Number.parseInt(rawValue, 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    logger.warn(`Invalid ${name} value "${rawValue}". Falling back to ${fallback}.`);
+    return fallback;
+  }
+
+  return parsed;
+}
+
+const STRICT_RATE_LIMIT_MAX_REQUESTS = parsePositiveIntegerEnv(
+  "RATE_LIMIT_STRICT_MAX_REQUESTS",
+  5
+);
+const STRICT_RATE_LIMIT_WINDOW_SECONDS = parsePositiveIntegerEnv(
+  "RATE_LIMIT_STRICT_WINDOW_SECONDS",
+  60
+);
+const STRICT_RATE_LIMIT_WINDOW_MS = STRICT_RATE_LIMIT_WINDOW_SECONDS * 1_000;
 
 // Only initialize if Upstash credentials are available
 if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
@@ -40,13 +65,60 @@ if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) 
   // Create a stricter rate limiter: 5 requests per minute
   strictRatelimit = new Ratelimit({
     redis,
-    limiter: Ratelimit.slidingWindow(5, "1 m"),
+    limiter: Ratelimit.slidingWindow(
+      STRICT_RATE_LIMIT_MAX_REQUESTS,
+      `${STRICT_RATE_LIMIT_WINDOW_SECONDS} s`
+    ),
     analytics: true,
   });
 }
 
 // In-memory rate limiting fallback when Redis is unavailable
 const memoryStore = new Map<string, { count: number; resetAt: number }>();
+
+function hashString(value: string): string {
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = Math.imul(31, hash) + value.charCodeAt(i) | 0;
+  }
+  return (hash >>> 0).toString(36);
+}
+
+function getCookieValue(cookieHeader: string, name: string): string | null {
+  const entries = cookieHeader.split(";");
+  for (const entry of entries) {
+    const [rawName, ...rawValueParts] = entry.trim().split("=");
+    if (rawName === name && rawValueParts.length > 0) {
+      return rawValueParts.join("=");
+    }
+  }
+  return null;
+}
+
+function getAnonymousFingerprint(request: Request): string {
+  const cookieHeader = request.headers.get("cookie") || "";
+  const sessionCookieNames = [
+    "__Secure-next-auth.session-token",
+    "next-auth.session-token",
+    "__Host-next-auth.csrf-token",
+    "next-auth.csrf-token",
+    "guest_session_id",
+  ];
+
+  for (const name of sessionCookieNames) {
+    const value = getCookieValue(cookieHeader, name);
+    if (value) {
+      return `cookie:${hashString(`${name}:${value}`)}`;
+    }
+  }
+
+  const userAgent = request.headers.get("user-agent");
+  if (userAgent) {
+    return `ua:${hashString(userAgent)}`;
+  }
+
+  return "unknown";
+}
 
 // Clean up expired entries every 30 seconds
 const cleanupInterval = setInterval(() => {
@@ -62,15 +134,17 @@ if (typeof cleanupInterval === 'object' && 'unref' in cleanupInterval) {
 }
 
 function checkMemoryRateLimit(
+  bucket: string,
   identifier: string,
   maxRequests: number,
   windowMs: number
 ): { success: boolean; limit: number; remaining: number; reset: number } {
+  const namespacedIdentifier = `${bucket}:${identifier}`;
   const now = Date.now();
-  const entry = memoryStore.get(identifier);
+  const entry = memoryStore.get(namespacedIdentifier);
 
   if (!entry || entry.resetAt <= now) {
-    memoryStore.set(identifier, { count: 1, resetAt: now + windowMs });
+    memoryStore.set(namespacedIdentifier, { count: 1, resetAt: now + windowMs });
     return { success: true, limit: maxRequests, remaining: maxRequests - 1, reset: now + windowMs };
   }
 
@@ -79,6 +153,29 @@ function checkMemoryRateLimit(
   const success = entry.count <= maxRequests;
 
   return { success, limit: maxRequests, remaining, reset: entry.resetAt };
+}
+
+function logFallback(bucket: "standard" | "strict"): void {
+  const isProduction = process.env.NODE_ENV === "production";
+
+  if (bucket === "standard") {
+    if (hasLoggedStandardFallback) return;
+    hasLoggedStandardFallback = true;
+  } else {
+    if (hasLoggedStrictFallback) return;
+    hasLoggedStrictFallback = true;
+  }
+
+  const message = isProduction
+    ? "Redis rate limiting is not configured in production. Falling back to in-memory limits. Configure UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN before launch."
+    : "Redis rate limiting is not configured. Using in-memory fallback. Set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN for production.";
+
+  if (isProduction) {
+    logger.error(message);
+    return;
+  }
+
+  logger.warn(message);
 }
 
 /**
@@ -131,8 +228,8 @@ export async function checkRateLimit(identifier: string): Promise<{
 }> {
   // If Redis rate limiting is not configured, use in-memory fallback
   if (!ratelimit) {
-    logger.warn("Redis rate limiting is not configured. Using in-memory fallback. Set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN for production.");
-    return checkMemoryRateLimit(identifier, 10, 10_000);
+    logFallback("standard");
+    return checkMemoryRateLimit("standard", identifier, 10, 10_000);
   }
 
   const { success, limit, remaining, reset } = await ratelimit.limit(identifier);
@@ -188,8 +285,11 @@ export function getIdentifier(request: Request, userId?: string | null): string 
   // Otherwise use IP address
   const forwarded = request.headers.get("x-forwarded-for");
   const ip = forwarded ? forwarded.split(",")[0].trim() : request.headers.get("x-real-ip") || "unknown";
+  if (ip && ip !== "unknown") {
+    return `ip:${ip}`;
+  }
 
-  return `ip:${ip}`;
+  return `anon:${getAnonymousFingerprint(request)}`;
 }
 
 /**
@@ -252,8 +352,13 @@ export async function checkStrictRateLimit(identifier: string): Promise<{
 }> {
   // If Redis rate limiting is not configured, use in-memory fallback
   if (!strictRatelimit) {
-    logger.warn("Redis rate limiting is not configured. Using in-memory fallback for strict limits.");
-    return checkMemoryRateLimit(identifier, 5, 60_000);
+    logFallback("strict");
+    return checkMemoryRateLimit(
+      "strict",
+      identifier,
+      STRICT_RATE_LIMIT_MAX_REQUESTS,
+      STRICT_RATE_LIMIT_WINDOW_MS
+    );
   }
 
   const { success, limit, remaining, reset } = await strictRatelimit.limit(identifier);
