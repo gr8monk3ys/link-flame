@@ -1,5 +1,13 @@
 import { test, expect } from '@playwright/test'
-import { createTestUser, getCsrfToken, waitForCartUpdate, addItemToCart, loginUser } from './fixtures'
+import {
+  createTestUser,
+  getCsrfToken,
+  waitForCartUpdate,
+  addItemToCart,
+  loginUser,
+  getMissingStripeCheckoutEnvVars,
+  isStripeCheckoutE2EConfigured,
+} from './fixtures'
 
 /**
  * Checkout Flow E2E Tests
@@ -28,6 +36,14 @@ const validCheckoutData = {
   city: 'New York',
   state: 'NY',
   zipCode: '10001',
+}
+
+function requireStripeCheckoutConfig() {
+  const missingEnvVars = getMissingStripeCheckoutEnvVars()
+  test.skip(
+    !isStripeCheckoutE2EConfigured(),
+    `Stripe checkout E2E requires env vars: ${missingEnvVars.join(', ')}`
+  )
 }
 
 test.describe('Checkout Page Access', () => {
@@ -231,6 +247,8 @@ test.describe('Checkout API', () => {
   })
 
   test('should accept valid checkout request with items in cart', async ({ page }) => {
+    requireStripeCheckoutConfig()
+
     const testUser = generateTestUser()
 
     // Create and login user with CSRF token
@@ -253,24 +271,17 @@ test.describe('Checkout API', () => {
       },
     })
 
-    // Check response - either success (with Stripe) or 500 (if Stripe not configured)
-    const body = await response.json()
+    expect(response.status()).toBe(200)
 
-    if (response.status() === 200) {
-      // Stripe is configured - should return session URL
-      expect(body.sessionUrl || body.sessionId).toBeDefined()
-    } else if (response.status() === 500) {
-      // Stripe not configured - acceptable in test environment
-      expect(body.error?.message).toContain('checkout')
-    } else {
-      // Unexpected status
-      expect(response.status()).toBe(200)
-    }
+    const body = await response.json()
+    expect(body.sessionUrl || body.sessionId).toBeDefined()
   })
 })
 
 test.describe('Checkout Flow - End to End', () => {
   test('should complete checkout flow from cart to payment', async ({ page }) => {
+    requireStripeCheckoutConfig()
+
     const testUser = generateTestUser()
 
     // Create and login user with CSRF token
@@ -326,27 +337,20 @@ test.describe('Checkout Flow - End to End', () => {
     // Submit form
     const submitButton = page.locator('button[type="submit"]:has-text("Place Order"), button[type="submit"]:has-text("Checkout"), button[type="submit"]:has-text("Pay"), button[type="submit"]').first()
 
-    if (await submitButton.isVisible({ timeout: 2000 }).catch(() => false)) {
-      // Listen for navigation or API response
-      const responsePromise = page.waitForResponse(
-        (response) => response.url().includes('/api/checkout'),
-        { timeout: 10000 }
-      ).catch(() => null)
+    await expect(submitButton).toBeVisible({ timeout: 5000 })
 
-      await submitButton.click()
+    const responsePromise = page.waitForResponse(
+      (response) => response.url().includes('/api/checkout'),
+      { timeout: 10000 }
+    )
 
-      const response = await responsePromise
+    await submitButton.click()
 
-      if (response) {
-        // If we got an API response, check it
-        if (response.status() === 200) {
-          // Success - may redirect to Stripe or order confirmation
-          const body = await response.json()
-          expect(body.sessionUrl || body.sessionId).toBeDefined()
-        }
-        // Other statuses may indicate Stripe not configured, which is acceptable
-      }
-    }
+    const response = await responsePromise
+    expect(response.status()).toBe(200)
+
+    const body = await response.json()
+    expect(body.sessionUrl || body.sessionId).toBeDefined()
   })
 
   test('should show cart summary on checkout page', async ({ page }) => {
@@ -380,6 +384,8 @@ test.describe('Checkout Flow - End to End', () => {
 
 test.describe('Checkout Security', () => {
   test('should not expose product prices to client manipulation', async ({ page }) => {
+    requireStripeCheckoutConfig()
+
     const testUser = generateTestUser()
 
     // Create and login user with CSRF token
@@ -408,13 +414,9 @@ test.describe('Checkout Security', () => {
       },
     })
 
-    // Server should use database prices, not client-submitted prices
-    // If Stripe is configured, it will create session with correct prices
-    // If not, it will fail but not because of price manipulation
-    if (response.status() === 200) {
-      const body = await response.json()
-      // Success means server calculated its own price
-      expect(body.sessionUrl || body.sessionId).toBeDefined()
-    }
+    // Server should use database prices, not client-submitted values.
+    expect(response.status()).toBe(200)
+    const body = await response.json()
+    expect(body.sessionUrl || body.sessionId).toBeDefined()
   })
 })

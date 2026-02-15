@@ -1,6 +1,7 @@
 import { getServerAuth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getUserIdForCart } from "@/lib/session";
+import { Prisma } from "@prisma/client";
+import { clearGuestSession, getExistingGuestSessionId, getUserIdForCart } from "@/lib/session";
 import { checkRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { validateCsrfToken } from "@/lib/csrf";
 import {
@@ -15,10 +16,122 @@ import { AddToCartSchema, UpdateCartSchema } from "@/lib/validations/cart";
 
 export const dynamic = 'force-dynamic'
 
+async function migrateGuestCartToAuthenticatedUser(
+  guestSessionId: string,
+  userId: string
+): Promise<void> {
+  const guestCartItems = await prisma.cartItem.findMany({
+    where: { userId: guestSessionId },
+    select: {
+      id: true,
+      productId: true,
+      variantId: true,
+      quantity: true,
+    },
+  });
+
+  if (guestCartItems.length === 0) {
+    await clearGuestSession();
+    return;
+  }
+
+  await prisma.$transaction(async (tx) => {
+    for (const guestItem of guestCartItems) {
+      const existingItem = await tx.cartItem.findFirst({
+        where: {
+          userId,
+          productId: guestItem.productId,
+          variantId: guestItem.variantId,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (existingItem) {
+        await tx.cartItem.updateMany({
+          where: {
+            id: existingItem.id,
+            userId,
+          },
+          data: {
+            quantity: {
+              increment: guestItem.quantity,
+            },
+          },
+        });
+        await tx.cartItem.deleteMany({
+          where: {
+            id: guestItem.id,
+            userId: guestSessionId,
+          },
+        });
+      } else {
+        try {
+          const transferred = await tx.cartItem.updateMany({
+            where: {
+              id: guestItem.id,
+              userId: guestSessionId,
+            },
+            data: { userId },
+          });
+
+          if (transferred.count === 0) {
+            continue;
+          }
+        } catch (migrationError) {
+          if (
+            migrationError instanceof Prisma.PrismaClientKnownRequestError &&
+            migrationError.code === "P2002"
+          ) {
+            await tx.cartItem.updateMany({
+              where: {
+                userId,
+                productId: guestItem.productId,
+                variantId: guestItem.variantId,
+              },
+              data: {
+                quantity: {
+                  increment: guestItem.quantity,
+                },
+              },
+            });
+            await tx.cartItem.deleteMany({
+              where: {
+                id: guestItem.id,
+                userId: guestSessionId,
+              },
+            });
+            continue;
+          }
+
+          throw migrationError;
+        }
+      }
+    }
+  });
+
+  await clearGuestSession();
+}
+
 export async function GET(req: Request) {
   try {
     const { userId } = await getServerAuth();
-    const userIdToUse = await getUserIdForCart(userId);
+    let userIdToUse: string;
+
+    if (userId) {
+      const guestSessionId = await getExistingGuestSessionId();
+      if (
+        guestSessionId &&
+        guestSessionId.startsWith('guest_') &&
+        guestSessionId !== userId
+      ) {
+        await migrateGuestCartToAuthenticatedUser(guestSessionId, userId);
+      }
+      userIdToUse = userId;
+    } else {
+      userIdToUse = await getUserIdForCart(null);
+    }
 
     const cartItems = await prisma.cartItem.findMany({
       where: {

@@ -42,7 +42,7 @@ const CartItemRow = memo(({
 }: { 
   item: CartItem; 
   updateQuantity: (id: string, quantity: number) => void; 
-  removeItem: (id: string) => void;
+  removeItem: (id: string, variantId?: string | null, cartItemId?: string) => void;
   saveForLater: (item: CartItem) => void;
 }) => {
   const [isUpdating, setIsUpdating] = useState(false);
@@ -51,7 +51,7 @@ const CartItemRow = memo(({
   const handleSaveForLater = () => {
     setIsSaving(true);
     saveForLater(item);
-    removeItem(item.id);
+    removeItem(item.id, item.variantId ?? null, item.cartItemId);
     // Reset saving state after a short delay
     setTimeout(() => setIsSaving(false), 600);
   };
@@ -110,7 +110,7 @@ const CartItemRow = memo(({
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => removeItem(item.id)}
+          onClick={() => removeItem(item.id, item.variantId ?? null, item.cartItemId)}
           aria-label="Remove item"
           className="h-8 px-2"
         >
