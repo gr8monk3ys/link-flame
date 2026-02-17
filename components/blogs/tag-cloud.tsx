@@ -1,42 +1,22 @@
-"use client"
-
 import Link from "next/link"
 import { getAllPosts } from "@/lib/blog"
-import { useEffect, useState } from "react"
 
-export function TagCloud() {
-  const [tags, setTags] = useState<Array<{ tag: string; count: number }>>([])
+export async function TagCloud() {
+  const posts = await getAllPosts()
 
-  useEffect(() => {
-    async function fetchTags() {
-      try {
-        const posts = await getAllPosts()
-        const tagCounts = posts.reduce((acc, post) => {
-          post.tags.forEach((tag) => {
-            const normalizedTag = tag.toLowerCase()
-            acc[normalizedTag] = (acc[normalizedTag] || 0) + 1
-          })
-          return acc
-        }, {} as Record<string, number>)
-
-        // Convert to array and sort by count
-        const sortedTags = Object.entries(tagCounts)
-          .sort(([, a], [, b]) => b - a)
-          .map(([tag, count]) => ({ tag, count }))
-
-        setTags(sortedTags)
-      } catch (error) {
-        console.error('Error fetching tags:', error)
-        setTags([])
-      }
+  const tagCounts = posts.reduce((acc, post) => {
+    for (const tag of post.tags || []) {
+      const normalized = tag.toLowerCase()
+      acc[normalized] = (acc[normalized] || 0) + 1
     }
+    return acc
+  }, {} as Record<string, number>)
 
-    fetchTags()
-  }, [])
+  const tags = Object.entries(tagCounts)
+    .sort(([, a], [, b]) => b - a)
+    .map(([tag, count]) => ({ tag, count }))
 
-  if (tags.length === 0) {
-    return null
-  }
+  if (tags.length === 0) return null
 
   return (
     <div className="rounded-lg border bg-card text-card-foreground shadow-sm">

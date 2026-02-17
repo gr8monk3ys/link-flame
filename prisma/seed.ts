@@ -396,6 +396,7 @@ async function main() {
       price: 24.99,
       image: '/images/leaves.jpg',
       category: 'Kitchen',
+      isSubscribable: true,
     },
     {
       title: 'Reusable Produce Bags - Set of 5',
@@ -403,6 +404,7 @@ async function main() {
       price: 16.99,
       image: '/images/plastic-bags.jpg',
       category: 'Kitchen',
+      isSubscribable: true,
     },
     {
       title: 'Bamboo Cutlery Set',
@@ -431,6 +433,7 @@ async function main() {
       price: 15.99,
       image: '/images/wall-hanger-plant.jpg',
       category: 'Bathroom',
+      isSubscribable: true,
     },
     {
       title: 'Stainless Steel Lunch Container',
@@ -466,6 +469,7 @@ async function main() {
       price: 45.99,
       image: '/images/food-bag.jpg',
       category: 'Home',
+      isSubscribable: true,
     },
     {
       title: 'Bamboo Dish Brush',

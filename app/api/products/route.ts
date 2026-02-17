@@ -83,6 +83,8 @@ export async function GET(request: NextRequest) {
     const pageSize = Number(searchParams.get('pageSize')) || 12;
     // Imperfect products filter
     const imperfect = searchParams.get('imperfect');
+    // Subscribe & Save filter
+    const subscribable = searchParams.get('subscribable');
     // "Shop by Values" filter - comma-separated value slugs
     const valuesParam = searchParams.get('values');
     const valueSlugs = valuesParam ? valuesParam.split(',').map(s => s.trim()).filter(Boolean) : [];
@@ -123,6 +125,13 @@ export async function GET(request: NextRequest) {
       where.isImperfect = true;
     } else if (imperfect === 'false') {
       where.isImperfect = false;
+    }
+
+    // Filter by subscription eligibility (Subscribe & Save)
+    if (subscribable === 'true') {
+      where.isSubscribable = true;
+    } else if (subscribable === 'false') {
+      where.isSubscribable = false;
     }
 
     // Filter by sustainability values (Shop by Values)

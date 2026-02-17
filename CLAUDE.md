@@ -49,7 +49,7 @@ Auth is split across two files for Edge Runtime compatibility:
 
 - `auth.config.ts` — Minimal config (pages, providers skeleton). Runs in Edge Runtime (middleware). **Must NOT import Prisma, bcrypt, or Node-only modules.**
 - `auth.ts` — Full config with Credentials provider, Prisma lookup, bcrypt. Server-side only.
-- `middleware.ts` — Imports `auth.config.ts`, protects `/account/*`, `/checkout`, `/admin`. Also generates CSP nonce and request ID headers.
+- `proxy.ts` — Imports `auth.config.ts`, protects `/account/*` and `/admin/*`. Also generates CSP nonce and request ID headers.
 
 ```typescript
 // Server Components / API routes
@@ -129,7 +129,7 @@ Validation: `lib/env.ts` validates env vars at startup with Zod but never throws
 |------|---------|
 | `auth.config.ts` | Edge-safe auth config (no Node modules) |
 | `auth.ts` | Full auth with Credentials provider + Prisma |
-| `middleware.ts` | Route protection, CSP nonce, request ID |
+| `proxy.ts` | Route protection, CSP nonce, request ID |
 | `lib/prisma.ts` | Prisma client singleton |
 | `lib/auth.ts` | `getServerAuth()`, `requireRole()` helpers |
 | `lib/session.ts` | Guest session management |

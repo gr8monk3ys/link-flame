@@ -11,6 +11,7 @@ import { checkStrictRateLimit, getIdentifier } from '@/lib/rate-limit'
 import { validateCsrfToken } from '@/lib/csrf'
 import {
   errorResponse,
+  forbiddenResponse,
   handleApiError,
   rateLimitErrorResponse,
   successResponse,
@@ -19,6 +20,7 @@ import {
 } from '@/lib/api-response'
 import { logger } from '@/lib/logger'
 import { getBaseUrl } from '@/lib/url'
+import { prisma } from '@/lib/prisma'
 import {
   type PlanId,
   type BillingInterval,
@@ -31,6 +33,8 @@ import {
   getOrCreateStripeCustomer,
   SubscriptionError,
 } from '@/lib/billing/subscription'
+import { getStripe } from '@/lib/stripe-server'
+import { hasPermission } from '@/lib/teams/permissions'
 
 export const dynamic = 'force-dynamic'
 
@@ -51,6 +55,20 @@ const CheckoutSchema = z.object({
 })
 
 type CheckoutRequest = z.infer<typeof CheckoutSchema>
+
+async function getOrganizationRole(organizationId: string, userId: string): Promise<string | null> {
+  const membership = await prisma.organizationMember.findUnique({
+    where: {
+      organizationId_userId: {
+        organizationId,
+        userId,
+      },
+    },
+    select: { role: true },
+  })
+
+  return membership?.role ?? null
+}
 
 /**
  * POST /api/billing/checkout
@@ -92,6 +110,19 @@ export async function POST(request: Request) {
     }
 
     const { planId, interval, organizationId, email, name, enableTrial } = validation.data
+
+    const userRole = await getOrganizationRole(organizationId, userId)
+    if (!userRole) {
+      logger.warn('Unauthorized billing checkout creation attempt', {
+        userId,
+        organizationId,
+      })
+      return forbiddenResponse('You do not have access to this organization')
+    }
+
+    if (!hasPermission(userRole, 'billing.manage')) {
+      return forbiddenResponse('You do not have permission to manage billing')
+    }
 
     // Verify the plan exists and is not free
     if (isFreePlan(planId)) {
@@ -199,18 +230,9 @@ export async function GET(request: Request) {
       return errorResponse('Session ID is required', 'MISSING_SESSION_ID', undefined, 400)
     }
 
-    // Import Stripe directly for session retrieval
-    const StripeModule = await import('stripe')
-    const stripe = new StripeModule.default(process.env.STRIPE_SECRET_KEY!, {
-      apiVersion: '2025-02-24.acacia',
-    })
-
-    const session = await stripe.checkout.sessions.retrieve(sessionId, {
+    const session = await getStripe().checkout.sessions.retrieve(sessionId, {
       expand: ['subscription', 'customer'],
     })
-
-    // Verify session belongs to this user's organization
-    // Additional authorization check would go here
 
     // Type-safe handling of subscription and customer
     const subscription = typeof session.subscription === 'object' && session.subscription !== null
@@ -220,6 +242,32 @@ export async function GET(request: Request) {
     const customer = typeof session.customer === 'object' && session.customer !== null
       ? session.customer
       : null
+
+    const organizationId = session.metadata?.organizationId ||
+      subscription?.metadata?.organizationId ||
+      (customer && 'metadata' in customer ? customer.metadata?.organizationId : undefined)
+
+    if (!organizationId) {
+      logger.warn('Checkout session missing organization metadata', {
+        userId,
+        sessionId,
+      })
+      return forbiddenResponse('You do not have access to this checkout session')
+    }
+
+    const userRole = await getOrganizationRole(organizationId, userId)
+    if (!userRole) {
+      logger.warn('Unauthorized billing checkout session access attempt', {
+        userId,
+        organizationId,
+        sessionId,
+      })
+      return forbiddenResponse('You do not have access to this checkout session')
+    }
+
+    if (!hasPermission(userRole, 'billing.read')) {
+      return forbiddenResponse('You do not have permission to view billing details')
+    }
 
     // Get customer email (handle DeletedCustomer case)
     const customerEmail = session.customer_email ||

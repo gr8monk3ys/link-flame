@@ -7,11 +7,17 @@ node_modules
 
 # testing
 coverage
+playwright-report/
+test-results/
+.playwright-cli/
 
 # next.js
 .next/
 out/
 build
+
+# TypeScript incremental build artifacts
+*.tsbuildinfo
 
 # misc
 .DS_Store
@@ -34,3 +40,9 @@ yarn-error.log*
 
 .contentlayer
 .env
+
+# local databases (should never be committed)
+prisma/dev.db
+
+# Local agent/tooling settings
+.claude/settings.local.json

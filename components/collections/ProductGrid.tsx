@@ -4,6 +4,7 @@ import { memo, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCart } from "@/lib/providers/CartProvider";
+import { useSavedItems } from "@/hooks/useSavedItems";
 import { toast } from "sonner";
 import { ImperfectBadge } from "@/components/imperfect";
 
@@ -17,6 +18,7 @@ interface Product {
   description?: string;
   reviews: { rating: number }[];
   createdAt: Date;
+  isSubscribable?: boolean;
   // Imperfect product fields
   isImperfect?: boolean;
   imperfectReason?: string | null;
@@ -61,6 +63,7 @@ function ProductGrid({
   onPageSizeChange
 }: ProductGridProps) {
   const { addItemToCart } = useCart();
+  const { isItemSaved, toggleSaveItem } = useSavedItems();
 
   // Memoized add to cart handler
   const handleAddToCart = useCallback(async (product: Product) => {
@@ -82,9 +85,18 @@ function ProductGrid({
   }, [addItemToCart]);
 
   // Memoized wishlist handler
-  const handleWishlist = useCallback(() => {
-    toast.info("Wishlist feature coming soon!");
-  }, []);
+  const handleWishlist = useCallback(
+    async (product: Product) => {
+      await toggleSaveItem({
+        id: product.id,
+        title: product.title,
+        price: product.imperfectPrice ?? product.salePrice ?? product.price,
+        image: product.image,
+        quantity: 1,
+      });
+    },
+    [toggleSaveItem]
+  );
 
   if (isLoading) {
     return (
@@ -118,7 +130,10 @@ function ProductGrid({
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {products.map((product, index) => (
+        {products.map((product, index) => {
+          const isSaved = isItemSaved(product.id);
+
+          return (
           <div key={product.id} className="group relative" data-testid="product-card">
             {/* Quick view link */}
             <Link
@@ -156,15 +171,32 @@ function ProductGrid({
                   New
                 </span>
               ) : null}
+
+              {product.isSubscribable ? (
+                <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                  Subscribe &amp; Save
+                </span>
+              ) : null}
             </div>
 
             {/* Wishlist button */}
             <button
               className="absolute right-4 top-16 z-10 rounded-full bg-white p-2 opacity-0 shadow-md transition-opacity group-hover:opacity-100"
-              aria-label={`Add ${product.title} to wishlist`}
-              onClick={handleWishlist}
+              aria-label={`${isSaved ? 'Remove' : 'Add'} ${product.title} ${isSaved ? 'from' : 'to'} wishlist`}
+              aria-pressed={isSaved}
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                void handleWishlist(product);
+              }}
             >
-              <svg className="size-5 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <svg
+                className={`size-5 ${isSaved ? 'text-red-600' : 'text-gray-900'}`}
+                fill={isSaved ? 'currentColor' : 'none'}
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
             </button>
@@ -226,7 +258,8 @@ function ProductGrid({
               </div>
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Pagination */}

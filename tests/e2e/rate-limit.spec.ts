@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import { getCsrfToken } from './fixtures';
 
 type RateLimitInfo = {
@@ -29,6 +29,31 @@ function extractRateLimitInfo(body: any): RateLimitInfo | null {
   return null;
 }
 
+const randomTestIp = () => {
+  const octet = () => Math.floor(Math.random() * 250) + 1;
+  return `10.${octet()}.${octet()}.${octet()}`;
+};
+
+async function burstSignupRequests(page: Page, count = 6) {
+  const baseEmail = `test${Date.now()}-${Math.floor(Math.random() * 1_000_000)}`;
+  const csrfToken = await getCsrfToken(page);
+
+  return Promise.all(
+    Array.from({ length: count }, (_, i) =>
+      page.request.post('/api/auth/signup', {
+        data: {
+          name: `Test User ${i}`,
+          email: `${baseEmail}+${i}@example.com`,
+          password: 'TestPassword123!',
+        },
+        headers: {
+          'X-CSRF-Token': csrfToken,
+        },
+      })
+    )
+  );
+}
+
 /**
  * Rate Limiting E2E Tests
  *
@@ -46,28 +71,14 @@ function extractRateLimitInfo(body: any): RateLimitInfo | null {
  */
 
 test.describe('Rate Limiting - Signup Endpoint', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.context().setExtraHTTPHeaders({
+      'x-forwarded-for': randomTestIp(),
+    });
+  });
+
   test('should enforce rate limit on signup endpoint', async ({ page }) => {
-    const baseEmail = `test${Date.now()}`;
-
-    // Get CSRF token first - required for signup endpoint
-    const csrfToken = await getCsrfToken(page);
-
-    // Make 6 requests rapidly (limit is 5 per minute)
-    // Each request includes the CSRF token
-    const responses = await Promise.all(
-      Array.from({ length: 6 }, (_, i) =>
-        page.request.post('/api/auth/signup', {
-          data: {
-            name: `Test User ${i}`,
-            email: `${baseEmail}+${i}@example.com`,
-            password: 'TestPassword123!',
-          },
-          headers: {
-            'X-CSRF-Token': csrfToken,
-          },
-        })
-      )
-    );
+    const responses = await burstSignupRequests(page, 6);
 
     // Count successful and rate-limited responses
     const successCount = responses.filter((r) => r.status() === 201).length;
@@ -95,53 +106,37 @@ test.describe('Rate Limiting - Signup Endpoint', () => {
   });
 
   test('should include retry-after information in rate limit response', async ({ page }) => {
-    const baseEmail = `test${Date.now()}`;
-
-    // Get CSRF token first - required for signup endpoint
-    const csrfToken = await getCsrfToken(page);
-
-    // Make 6 rapid requests to trigger rate limit
-    const responses = await Promise.all(
-      Array.from({ length: 6 }, (_, i) =>
-        page.request.post('/api/auth/signup', {
-          data: {
-            name: `Test User ${i}`,
-            email: `${baseEmail}+${i}@example.com`,
-            password: 'TestPassword123!',
-          },
-          headers: {
-            'X-CSRF-Token': csrfToken,
-          },
-        })
-      )
-    );
+    const responses = await burstSignupRequests(page, 6);
 
     const rateLimitedResponse = responses.find((r) => r.status() === 429);
+    expect(rateLimitedResponse, 'Expected at least one 429 response').toBeDefined();
 
-    if (rateLimitedResponse) {
-      const body = await rateLimitedResponse.json();
-      const info = extractRateLimitInfo(body);
+    const body = await rateLimitedResponse!.json();
+    const info = extractRateLimitInfo(body);
 
-      // Should have retry-after info
-      expect(info?.retryAfter ?? info?.resetAt).toBeDefined();
+    // Should have retry-after info
+    expect(info?.retryAfter ?? info?.resetAt).toBeDefined();
 
-      const now = Date.now();
-      if (typeof info?.resetAt === 'string') {
-        const retryAt = new Date(info.resetAt).getTime();
-        expect(retryAt).toBeGreaterThan(now);
-      } else if (typeof info?.retryAfter === 'string') {
-        const retryAt = new Date(info.retryAfter).getTime();
-        expect(retryAt).toBeGreaterThan(now);
-      } else if (typeof info?.retryAfter === 'number') {
-        expect(info.retryAfter).toBeGreaterThan(0);
-      }
-    } else {
-      test.skip();
+    const now = Date.now();
+    if (typeof info?.resetAt === 'string') {
+      const retryAt = new Date(info.resetAt).getTime();
+      expect(retryAt).toBeGreaterThan(now);
+    } else if (typeof info?.retryAfter === 'string') {
+      const retryAt = new Date(info.retryAfter).getTime();
+      expect(retryAt).toBeGreaterThan(now);
+    } else if (typeof info?.retryAfter === 'number') {
+      expect(info.retryAfter).toBeGreaterThan(0);
     }
   });
 });
 
 test.describe('Rate Limiting - Contact Endpoint', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.context().setExtraHTTPHeaders({
+      'x-forwarded-for': randomTestIp(),
+    });
+  });
+
   test('should enforce rate limit on contact form', async ({ page }) => {
     // Get CSRF token first - required for contact endpoint
     const csrfToken = await getCsrfToken(page);
@@ -176,6 +171,12 @@ test.describe('Rate Limiting - Contact Endpoint', () => {
 });
 
 test.describe('Rate Limiting - Newsletter Endpoint', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.context().setExtraHTTPHeaders({
+      'x-forwarded-for': randomTestIp(),
+    });
+  });
+
   test('should enforce rate limit on newsletter subscription', async ({ page }) => {
     const baseEmail = `newsletter${Date.now()}`;
 
@@ -209,6 +210,12 @@ test.describe('Rate Limiting - Newsletter Endpoint', () => {
 });
 
 test.describe('Rate Limiting - IP-based', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.context().setExtraHTTPHeaders({
+      'x-forwarded-for': randomTestIp(),
+    });
+  });
+
   test('should track rate limits by IP for anonymous requests', async ({ page }) => {
     // This test verifies that rate limiting works for anonymous users
     // (tracked by IP address rather than user ID)
@@ -246,52 +253,60 @@ test.describe('Rate Limiting - IP-based', () => {
 });
 
 test.describe('Rate Limiting - Edge Cases', () => {
-  test('should allow requests after rate limit window expires', async ({ page }) => {
-    // This test would require waiting 60+ seconds for the rate limit to reset
-    // Skipping for now to keep test suite fast
-    test.skip();
+  test.beforeEach(async ({ page }) => {
+    await page.context().setExtraHTTPHeaders({
+      'x-forwarded-for': randomTestIp(),
+    });
+  });
 
-    // Implementation if needed:
-    // 1. Make 5 requests to hit limit
-    // 2. Wait 61 seconds
-    // 3. Make another request
-    // 4. Should succeed (200/201)
+  test('should allow requests after rate limit window expires', async ({ page }) => {
+    test.setTimeout(45_000);
+
+    const responses = await burstSignupRequests(page, 6);
+    const rateLimitedResponse = responses.find((r) => r.status() === 429);
+    expect(rateLimitedResponse, 'Expected at least one 429 response').toBeDefined();
+
+    const body = await rateLimitedResponse!.json();
+    const info = extractRateLimitInfo(body);
+    expect(info).toBeDefined();
+
+    const now = Date.now();
+    const resetAtMs = typeof info?.resetAt === 'string'
+      ? new Date(info.resetAt).getTime()
+      : now + (typeof info?.retryAfter === 'number' ? info.retryAfter * 1000 : 1000);
+    const waitMs = Math.max(0, Math.min(30_000, resetAtMs - now + 1_000));
+    await page.waitForTimeout(waitMs);
+
+    const csrfToken = await getCsrfToken(page);
+    const recoveryResponse = await page.request.post('/api/auth/signup', {
+      data: {
+        name: 'Window Reset User',
+        email: `window-reset-${Date.now()}@example.com`,
+        password: 'TestPassword123!',
+      },
+      headers: {
+        'X-CSRF-Token': csrfToken,
+      },
+    });
+
+    expect(recoveryResponse.status()).toBe(201);
   });
 
   test('should return valid JSON error for rate-limited requests', async ({ page }) => {
-    const baseEmail = `test${Date.now()}`;
-
-    // Get CSRF token first - required for signup endpoint
-    const csrfToken = await getCsrfToken(page);
-
-    // Make 6 rapid requests
-    const responses = await Promise.all(
-      Array.from({ length: 6 }, (_, i) =>
-        page.request.post('/api/auth/signup', {
-          data: {
-            name: `Test User ${i}`,
-            email: `${baseEmail}+${i}@example.com`,
-            password: 'TestPassword123!',
-          },
-          headers: {
-            'X-CSRF-Token': csrfToken,
-          },
-        })
-      )
-    );
+    const responses = await burstSignupRequests(page, 6);
 
     const rateLimitedResponse = responses.find((r) => r.status() === 429);
 
-    if (rateLimitedResponse) {
-      // Should return valid JSON
-      const body = await rateLimitedResponse.json();
-      const info = extractRateLimitInfo(body);
+    expect(rateLimitedResponse, 'Expected at least one 429 response').toBeDefined();
 
-      expect(body).toBeDefined();
-      expect(typeof body).toBe('object');
-      expect(info?.code).toBe('RATE_LIMIT_EXCEEDED');
-      expect(info?.message).toBeTruthy();
-      expect(info?.retryAfter ?? info?.resetAt).toBeDefined();
-    }
+    // Should return valid JSON
+    const body = await rateLimitedResponse!.json();
+    const info = extractRateLimitInfo(body);
+
+    expect(body).toBeDefined();
+    expect(typeof body).toBe('object');
+    expect(info?.code).toBe('RATE_LIMIT_EXCEEDED');
+    expect(info?.message).toBeTruthy();
+    expect(info?.retryAfter ?? info?.resetAt).toBeDefined();
   });
 });

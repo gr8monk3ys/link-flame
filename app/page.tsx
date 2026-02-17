@@ -4,6 +4,7 @@ import MapSection from "@/components/home/MapSection";
 import CTASection from "@/components/home/CTASection";
 import { FeaturedBrands } from "@/components/home/FeaturedBrands";
 import { QuizCTA } from "@/components/quiz";
+import { SustainabilityCommitment } from "@/components/sustainability";
 import { Suspense } from "react";
 
 // Render at request time — DB not available during Vercel build
@@ -13,6 +14,9 @@ export default function IndexPage() {
   return (
     <div className="space-y-24 lg:space-y-32">
       <HeroSection />
+
+      {/* Trust / value props (inspired by leading eco-stores) */}
+      <SustainabilityCommitment variant="compact" />
 
       {/* Product Quiz CTA Banner */}
       <QuizCTA variant="banner" />

@@ -490,7 +490,7 @@ docker-compose up -d
 ### 1. Verify Deployment
 
 ```bash
-# Check health (create /api/health endpoint if needed)
+# Check health
 curl https://yourdomain.com/api/health
 
 # Check pages load

@@ -88,7 +88,7 @@
   - Updated 25+ API routes and utility files
 
 - [x] **Add request ID tracing** ✅
-  - Added `x-request-id` header generation in `middleware.ts`
+  - Added `x-request-id` header generation in `proxy.ts`
   - Added `getRequestIdFromRequest()` in `lib/logger.ts` for API routes
   - Added `withRequestId()` method for contextual logging with correlation IDs
 

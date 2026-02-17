@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import Link from "next/link"
 
 export default function ZeroWastePage() {
   return (
@@ -23,8 +24,8 @@ export default function ZeroWastePage() {
               <p className="mb-4 text-sm text-muted-foreground">
                 Track your waste for a week to identify areas for improvement
               </p>
-              <Button variant="outline" className="w-full">
-                Learn More
+              <Button asChild variant="outline" className="w-full">
+                <Link href="/guides-and-tips/zero-waste/assess">Learn More</Link>
               </Button>
             </Card>
 
@@ -33,8 +34,8 @@ export default function ZeroWastePage() {
               <p className="mb-4 text-sm text-muted-foreground">
                 Switch to reusable alternatives for common disposable items
               </p>
-              <Button variant="outline" className="w-full">
-                View Guide
+              <Button asChild variant="outline" className="w-full">
+                <Link href="/guides-and-tips/zero-waste/replace">View Guide</Link>
               </Button>
             </Card>
 
@@ -43,8 +44,8 @@ export default function ZeroWastePage() {
               <p className="mb-4 text-sm text-muted-foreground">
                 Develop sustainable habits and routines
               </p>
-              <Button variant="outline" className="w-full">
-                Get Tips
+              <Button asChild variant="outline" className="w-full">
+                <Link href="/guides-and-tips/zero-waste/maintain">Get Tips</Link>
               </Button>
             </Card>
           </div>
@@ -108,7 +109,9 @@ export default function ZeroWastePage() {
                       <span>Composting basics</span>
                     </li>
                   </ul>
-                  <Button>Explore Kitchen Tips</Button>
+                  <Button asChild>
+                    <Link href="/guides-and-tips/zero-waste/kitchen">Explore Kitchen Tips</Link>
+                  </Button>
                 </div>
                 <div className="rounded-lg bg-muted md:w-1/3"></div>
               </div>
@@ -168,7 +171,9 @@ export default function ZeroWastePage() {
                       <span>Sustainable cleaning solutions</span>
                     </li>
                   </ul>
-                  <Button>View Bathroom Guide</Button>
+                  <Button asChild>
+                    <Link href="/guides-and-tips/zero-waste/bathroom">View Bathroom Guide</Link>
+                  </Button>
                 </div>
                 <div className="rounded-lg bg-muted md:w-1/3"></div>
               </div>
@@ -188,7 +193,9 @@ export default function ZeroWastePage() {
                 <li>Beeswax wraps</li>
                 <li>Compost bin</li>
               </ul>
-              <Button className="mt-4">Shop Now</Button>
+              <Button asChild className="mt-4">
+                <Link href="/collections?values=zero-waste">Shop Now</Link>
+              </Button>
             </Card>
 
             <Card className="p-6">
@@ -199,7 +206,9 @@ export default function ZeroWastePage() {
                 <li>Safety razor</li>
                 <li>Reusable cotton rounds</li>
               </ul>
-              <Button className="mt-4">Shop Now</Button>
+              <Button asChild className="mt-4">
+                <Link href="/collections?values=zero-waste">Shop Now</Link>
+              </Button>
             </Card>
           </div>
         </section>
@@ -211,8 +220,12 @@ export default function ZeroWastePage() {
             Connect with others on their zero waste journey, share tips, and get inspired
           </p>
           <div className="space-x-4">
-            <Button variant="default">Join Community</Button>
-            <Button variant="outline">Learn More</Button>
+            <Button asChild variant="default">
+              <Link href="/community/join">Join Community</Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/blogs">Learn More</Link>
+            </Button>
           </div>
         </section>
       </div>

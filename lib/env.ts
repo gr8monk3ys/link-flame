@@ -12,7 +12,10 @@ import { z } from 'zod';
 const envSchema = z.object({
   // Database (optional at build time, required at runtime)
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required').optional(),
-  DIRECT_DATABASE_URL: z.string().optional(), // For connection pooling bypass
+  // Prisma `directUrl` expects DIRECT_URL (used for migrations / bypassing poolers).
+  // Keep DIRECT_DATABASE_URL as a legacy alias to avoid breaking existing setups.
+  DIRECT_URL: z.string().optional(),
+  DIRECT_DATABASE_URL: z.string().optional(),
 
   // NextAuth (optional at build time, required at runtime)
   NEXTAUTH_SECRET: z.string().min(32, 'NEXTAUTH_SECRET must be at least 32 characters').optional(),
@@ -45,6 +48,7 @@ function validateEnv() {
   try {
     return envSchema.parse({
       DATABASE_URL: process.env.DATABASE_URL,
+      DIRECT_URL: process.env.DIRECT_URL ?? process.env.DIRECT_DATABASE_URL,
       DIRECT_DATABASE_URL: process.env.DIRECT_DATABASE_URL,
       NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
       NEXTAUTH_URL: process.env.NEXTAUTH_URL,

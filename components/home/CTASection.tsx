@@ -15,14 +15,19 @@ export default function CTASection() {
         />
       </div>
       <div className="relative z-10 mx-auto max-w-3xl text-center">
-        <h2 className="text-gradient font-serif mb-6">Ready to Make a Difference?</h2>
+        <h2 className="text-gradient mb-6 font-serif">Ready to Make a Difference?</h2>
         <p className="mb-8 text-lg text-muted-foreground">
           Join our community of eco-conscious individuals and start your journey
           towards sustainable living today.
         </p>
-        <Button className="modern-button bg-accent text-accent-foreground hover:bg-accent/90" size="lg">
-          Get Started
-        </Button>
+        <Link href="/collections">
+          <Button
+            className="modern-button bg-accent text-accent-foreground hover:bg-accent/90"
+            size="lg"
+          >
+            Get Started
+          </Button>
+        </Link>
       </div>
     </section>
   );

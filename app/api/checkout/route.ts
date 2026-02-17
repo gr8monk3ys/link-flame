@@ -15,7 +15,7 @@ import { logger } from "@/lib/logger";
 import { getBaseUrl } from "@/lib/url";
 import { getStripe } from "@/lib/stripe-server";
 import Stripe from "stripe";
-import { CheckoutSchema, GiftOptionsSchema } from "@/lib/validations/checkout";
+import { CheckoutSchema } from "@/lib/validations/checkout";
 
 export const dynamic = 'force-dynamic'
 
@@ -74,6 +74,17 @@ export async function POST(request: Request) {
     // Verify inventory and build line items with SERVER-SIDE prices
     let serverTotal = 0;
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
+    const pendingOrderItems: Array<{
+      productId: string;
+      variantId: string | null;
+      quantity: number;
+      price: number;
+      title: string;
+      variantSku: string | null;
+      variantSize: string | null;
+      variantColor: string | null;
+      variantMaterial: string | null;
+    }> = [];
 
     for (const item of cartItems) {
       const product = item.product;
@@ -126,6 +137,18 @@ export async function POST(request: Request) {
         },
         quantity: item.quantity,
       });
+
+      pendingOrderItems.push({
+        productId: product.id,
+        variantId: variant?.id || null,
+        quantity: item.quantity,
+        price: actualPrice,
+        title: productName,
+        variantSku: variant?.sku || null,
+        variantSize: variant?.size || null,
+        variantColor: variant?.color || null,
+        variantMaterial: variant?.material || null,
+      });
     }
 
     // Extract gift options from validated data
@@ -136,6 +159,9 @@ export async function POST(request: Request) {
       giftRecipientEmail: validation.data.giftRecipientEmail || '',
       hidePrice: validation.data.hidePrice || false,
     };
+
+    const customerName = `${validation.data.firstName} ${validation.data.lastName}`;
+    const shippingAddress = `${validation.data.address}, ${validation.data.city}, ${validation.data.state} ${validation.data.zipCode}`;
 
     logger.info('Creating Stripe checkout session', {
       userId: userIdToUse,
@@ -162,8 +188,8 @@ export async function POST(request: Request) {
         metadata: {
           userId: userIdToUse,
           customerEmail: data.email,
-          customerName: `${validation.data.firstName} ${validation.data.lastName}`,
-          shippingAddress: `${validation.data.address}, ${validation.data.city}, ${validation.data.state} ${validation.data.zipCode}`,
+          customerName,
+          shippingAddress,
           // Gift options stored in metadata
           isGift: giftOptions.isGift.toString(),
           giftMessage: giftOptions.giftMessage,
@@ -179,6 +205,52 @@ export async function POST(request: Request) {
         // Expire after 30 minutes
         expires_at: Math.floor(Date.now() / 1000) + (30 * 60),
       });
+
+      // Persist immutable order snapshot before redirecting the user to Stripe.
+      // Webhook finalization uses this pending order, not the mutable live cart.
+      try {
+        await prisma.order.create({
+          data: {
+            userId: userIdToUse,
+            stripeSessionId: session.id,
+            amount: serverTotal,
+            status: "pending",
+            paymentMethod: "stripe_checkout",
+            customerEmail: data.email,
+            customerName,
+            shippingAddress,
+            isGift: giftOptions.isGift,
+            giftMessage: giftOptions.giftMessage || null,
+            giftRecipientName: giftOptions.giftRecipientName || null,
+            giftRecipientEmail: giftOptions.giftRecipientEmail || null,
+            hidePrice: giftOptions.hidePrice,
+            items: {
+              create: pendingOrderItems,
+            },
+          },
+        });
+      } catch (snapshotError) {
+        logger.error("Failed to persist checkout snapshot order", snapshotError, {
+          userId: userIdToUse,
+          sessionId: session.id,
+        });
+
+        // Best effort: expire unusable checkout session to prevent orphaned payments.
+        try {
+          await getStripe().checkout.sessions.expire(session.id);
+        } catch (expireError) {
+          logger.error("Failed to expire Stripe session after snapshot failure", expireError, {
+            sessionId: session.id,
+          });
+        }
+
+        return errorResponse(
+          "Failed to initialize checkout session. Please try again.",
+          undefined,
+          undefined,
+          500
+        );
+      }
 
       logger.info('Stripe checkout session created', {
         sessionId: session.id,

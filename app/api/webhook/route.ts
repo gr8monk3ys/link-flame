@@ -9,7 +9,6 @@ import { sendOrderConfirmation, isEmailConfigured } from "@/lib/email";
 import { awardPurchasePoints } from "@/lib/loyalty";
 import { storeOrderImpact } from "@/lib/impact";
 import { getStripe } from "@/lib/stripe-server";
-import { extractGiftOptions } from "@/lib/validations/webhook";
 
 export const dynamic = 'force-dynamic'
 
@@ -31,116 +30,118 @@ function validateWebhookSignature(body: string, signature: string): Stripe.Event
   );
 }
 
-/**
- * Cart item with product and variant relations
- */
-type CartItemWithRelations = Prisma.CartItemGetPayload<{
-  include: { product: true; variant: true };
+type OrderWithItems = Prisma.OrderGetPayload<{
+  include: { items: true };
 }>;
 
-// extractGiftOptions imported from @/lib/validations/webhook
-
 /**
- * Creates an order from checkout session and decrements inventory
+ * Decrements inventory for paid order items (variant or product level).
+ * Uses guarded updates to avoid negative inventory in race conditions.
  */
-async function createOrderFromCheckout(
-  session: Stripe.Checkout.Session,
-  userId: string,
-  cartItems: CartItemWithRelations[]
+async function decrementInventoryFromOrderItems(
+  tx: Prisma.TransactionClient,
+  orderItems: OrderWithItems["items"]
 ) {
-  // Extract gift options from session metadata
-  const giftOptions = extractGiftOptions(session.metadata);
-
-  return prisma.$transaction(async (tx) => {
-    // Create the order with items (including variant details and gift options)
-    const newOrder = await tx.order.create({
-      data: {
-        userId,
-        stripeSessionId: session.id,
-        amount: (session.amount_total || 0) / 100,
-        status: "paid",
-        customerEmail: session.customer_details?.email || session.metadata?.customerEmail,
-        customerName: session.customer_details?.name || session.metadata?.customerName,
-        shippingAddress: session.metadata?.shippingAddress,
-        // Gift options
-        isGift: giftOptions.isGift,
-        giftMessage: giftOptions.giftMessage,
-        giftRecipientName: giftOptions.giftRecipientName,
-        giftRecipientEmail: giftOptions.giftRecipientEmail,
-        hidePrice: giftOptions.hidePrice,
-        items: {
-          create: cartItems.map((item) => {
-            // Use variant price if available, otherwise product price
-            const price = item.variant?.salePrice ?? item.variant?.price ??
-                         item.product.salePrice ?? item.product.price;
-
-            // Build title with variant info
-            let title = item.product.title;
-            if (item.variant) {
-              const variantParts = [
-                item.variant.size,
-                item.variant.color,
-                item.variant.material
-              ].filter(Boolean);
-              if (variantParts.length > 0) {
-                title += ` (${variantParts.join(', ')})`;
-              }
-            }
-
-            return {
-              productId: item.productId,
-              quantity: item.quantity,
-              price,
-              title,
-              // Variant details (denormalized for historical accuracy)
-              variantId: item.variantId,
-              variantSku: item.variant?.sku || null,
-              variantSize: item.variant?.size || null,
-              variantColor: item.variant?.color || null,
-              variantMaterial: item.variant?.material || null,
-            };
-          }),
+  for (const item of orderItems) {
+    if (item.variantId) {
+      const result = await tx.productVariant.updateMany({
+        where: {
+          id: item.variantId,
+          inventory: { gte: item.quantity },
         },
-      },
-    });
+        data: {
+          inventory: {
+            decrement: item.quantity,
+          },
+        },
+      });
 
-    // Decrement inventory for each item
-    await decrementInventory(tx, cartItems);
+      if (result.count === 0) {
+        throw new Error(`Insufficient variant inventory for ${item.variantId}`);
+      }
+    } else {
+      const result = await tx.product.updateMany({
+        where: {
+          id: item.productId,
+          inventory: { gte: item.quantity },
+        },
+        data: {
+          inventory: {
+            decrement: item.quantity,
+          },
+        },
+      });
 
-    return newOrder;
-  });
+      if (result.count === 0) {
+        throw new Error(`Insufficient product inventory for ${item.productId}`);
+      }
+    }
+  }
 }
 
 /**
- * Decrements inventory for cart items (variant or product level)
+ * Remove purchased quantities from mutable cart state while preserving newer additions.
  */
-async function decrementInventory(
+async function reconcileUserCartWithOrderItems(
   tx: Prisma.TransactionClient,
-  cartItems: CartItemWithRelations[]
+  userId: string,
+  orderItems: OrderWithItems["items"]
 ) {
-  for (const item of cartItems) {
-    if (item.variantId && item.variant) {
-      // Decrement variant inventory
-      await tx.productVariant.update({
-        where: { id: item.variantId },
-        data: {
-          inventory: {
-            decrement: item.quantity,
-          },
-        },
-      });
-    } else {
-      // Decrement product inventory
-      await tx.product.update({
-        where: { id: item.productId },
-        data: {
-          inventory: {
-            decrement: item.quantity,
-          },
-        },
-      });
+  for (const item of orderItems) {
+    const cartItem = await tx.cartItem.findFirst({
+      where: {
+        userId,
+        productId: item.productId,
+        variantId: item.variantId ?? null,
+      },
+    });
+
+    if (!cartItem) {
+      continue;
     }
+
+    if (cartItem.quantity <= item.quantity) {
+      await tx.cartItem.delete({
+        where: { id: cartItem.id },
+      });
+      continue;
+    }
+
+    await tx.cartItem.update({
+      where: { id: cartItem.id },
+      data: {
+        quantity: {
+          decrement: item.quantity,
+        },
+      },
+    });
   }
+}
+
+/**
+ * Finalize a pending snapshot order after successful Stripe payment.
+ */
+async function finalizePendingOrderFromCheckout(
+  session: Stripe.Checkout.Session,
+  pendingOrder: OrderWithItems
+) {
+  return prisma.$transaction(async (tx) => {
+    await decrementInventoryFromOrderItems(tx, pendingOrder.items);
+    await reconcileUserCartWithOrderItems(tx, pendingOrder.userId, pendingOrder.items);
+
+    return tx.order.update({
+      where: { id: pendingOrder.id },
+      data: {
+        amount: (session.amount_total || 0) / 100,
+        status: "paid",
+        customerEmail: session.customer_details?.email || pendingOrder.customerEmail,
+        customerName: session.customer_details?.name || pendingOrder.customerName,
+      },
+      include: {
+        items: true,
+      },
+    });
+  });
 }
 
 /**
@@ -211,20 +212,6 @@ async function sendOrderConfirmationEmail(orderId: string, customerEmail: string
 }
 
 /**
- * Clears the user's cart after successful order
- */
-async function clearUserCart(userId: string, orderId: string) {
-  await prisma.cartItem.deleteMany({
-    where: { userId },
-  });
-
-  logger.info('Cart cleared after order creation', {
-    userId,
-    orderId,
-  });
-}
-
-/**
  * Stripe webhook handler
  */
 export async function POST(req: Request) {
@@ -257,69 +244,69 @@ export async function POST(req: Request) {
     const session = event.data.object as Stripe.Checkout.Session;
     const userId = session?.metadata?.userId;
 
-    if (event.type === "checkout.session.completed" && userId) {
+    if (event.type === "checkout.session.completed") {
       logger.info('Processing checkout.session.completed', {
         sessionId: session.id,
         userId,
       });
 
-      // IDEMPOTENCY CHECK: Prevent duplicate orders if webhook is retried
-      const existingOrder = await prisma.order.findUnique({
+      // Find pending order snapshot created at checkout session creation.
+      const pendingOrder = await prisma.order.findUnique({
         where: { stripeSessionId: session.id },
-      });
-
-      if (existingOrder) {
-        logger.info('Order already processed, skipping', {
-          orderId: existingOrder.id,
-          sessionId: session.id,
-        });
-        return new NextResponse(null, { status: 200 });
-      }
-
-      // Get cart items before clearing them (include variants)
-      const cartItems = await prisma.cartItem.findMany({
-        where: { userId },
         include: {
-          product: true,
-          variant: true,
+          items: true,
         },
       });
 
-      if (cartItems.length === 0) {
-        logger.warn('No cart items found for completed checkout', {
+      if (!pendingOrder) {
+        logger.error("Pending checkout snapshot order not found", {
+          sessionId: session.id,
           userId,
+        });
+        throw new Error(`Missing pending order snapshot for session ${session.id}`);
+      }
+
+      // IDEMPOTENCY CHECK: Prevent duplicate fulfillment if webhook is retried.
+      if (pendingOrder.status === "paid") {
+        logger.info("Order already finalized, skipping", {
+          orderId: pendingOrder.id,
           sessionId: session.id,
         });
         return new NextResponse(null, { status: 200 });
       }
 
-      // Create order and decrement inventory
-      const order = await createOrderFromCheckout(session, userId, cartItems);
+      if (pendingOrder.items.length === 0) {
+        logger.error("Pending order has no items", {
+          orderId: pendingOrder.id,
+          sessionId: session.id,
+        });
+        throw new Error(`Pending order ${pendingOrder.id} has no items`);
+      }
+
+      // Finalize pending order and apply inventory/cart updates atomically.
+      const order = await finalizePendingOrderFromCheckout(session, pendingOrder);
 
       logger.info('Order created from webhook', {
         orderId: order.id,
-        userId,
+        userId: order.userId,
         sessionId: session.id,
         amount: order.amount,
-        itemCount: cartItems.length,
+        itemCount: order.items.length,
         inventoryUpdated: true,
         isGift: order.isGift,
       });
-
-      // Clear the user's cart
-      await clearUserCart(userId, order.id);
 
       // Send order confirmation email
       await sendOrderConfirmationEmail(order.id, order.customerEmail || '');
 
       // Award loyalty points for the purchase
       // Only award points for authenticated users (not guest sessions)
-      if (userId && !userId.startsWith('guest_')) {
+      if (order.userId && !order.userId.startsWith('guest_')) {
         try {
-          const loyaltyResult = await awardPurchasePoints(userId, order.id, Number(order.amount));
+          const loyaltyResult = await awardPurchasePoints(order.userId, order.id, Number(order.amount));
           if (loyaltyResult.success) {
             logger.info('Loyalty points awarded for purchase', {
-              userId,
+              userId: order.userId,
               orderId: order.id,
               pointsAwarded: loyaltyResult.pointsAwarded,
               orderAmount: order.amount,
@@ -328,7 +315,7 @@ export async function POST(req: Request) {
         } catch (loyaltyError) {
           // Log but don't fail the webhook if loyalty points fail
           logger.error('Failed to award loyalty points', loyaltyError, {
-            userId,
+            userId: order.userId,
             orderId: order.id,
             orderAmount: order.amount,
           });
@@ -337,17 +324,17 @@ export async function POST(req: Request) {
 
       // Calculate and store environmental impact for the order
       // Only track impact for authenticated users (not guest sessions)
-      if (userId && !userId.startsWith('guest_')) {
+      if (order.userId && !order.userId.startsWith('guest_')) {
         try {
-          const impactItems = cartItems.map(item => ({
+          const impactItems = order.items.map((item) => ({
             productId: item.productId,
             quantity: item.quantity,
           }));
 
-          const impactResult = await storeOrderImpact(order.id, userId, impactItems);
+          const impactResult = await storeOrderImpact(order.id, order.userId, impactItems);
 
           logger.info('Environmental impact stored for order', {
-            userId,
+            userId: order.userId,
             orderId: order.id,
             impactMetricsCount: impactResult.orderImpacts.length,
             milestonesAchieved: impactResult.milestones.length,
@@ -356,7 +343,7 @@ export async function POST(req: Request) {
           // Log any milestones achieved
           if (impactResult.milestones.length > 0) {
             logger.info('User achieved impact milestones', {
-              userId,
+              userId: order.userId,
               orderId: order.id,
               milestones: impactResult.milestones,
             });
@@ -364,7 +351,7 @@ export async function POST(req: Request) {
         } catch (impactError) {
           // Log but don't fail the webhook if impact tracking fails
           logger.error('Failed to store environmental impact', impactError, {
-            userId,
+            userId: order.userId,
             orderId: order.id,
           });
         }

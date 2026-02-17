@@ -28,9 +28,17 @@ export function ActiveFilters({ className }: ActiveFiltersProps) {
   const selectedValueSlugs = useMemo(() => {
     return searchParams.get('values')?.split(',').filter(Boolean) || [];
   }, [searchParams]);
-  const selectedCategory = searchParams.get('category');
+  const selectedCategories = useMemo(() => {
+    return searchParams.getAll('category').filter(Boolean);
+  }, [searchParams]);
+  const searchQuery = searchParams.get('search');
+  const rating = searchParams.get('rating');
+  const startDate = searchParams.get('startDate');
+  const endDate = searchParams.get('endDate');
   const minPrice = searchParams.get('minPrice');
   const maxPrice = searchParams.get('maxPrice');
+  const imperfect = searchParams.get('imperfect');
+  const subscribable = searchParams.get('subscribable');
 
   // Fetch all values to get names for active filters
   useEffect(() => {
@@ -65,10 +73,34 @@ export function ActiveFilters({ className }: ActiveFiltersProps) {
     router.push(`${pathname}?${newParams.toString()}`);
   }, [pathname, router, searchParams, selectedValueSlugs]);
 
-  // Remove category filter
-  const removeCategoryFilter = useCallback(() => {
+  // Remove a specific category filter
+  const removeCategoryFilter = useCallback((categoryName: string) => {
     const newParams = new URLSearchParams(searchParams.toString());
+    const remaining = selectedCategories.filter((name) => name !== categoryName);
     newParams.delete('category');
+    remaining.forEach((name) => newParams.append('category', name));
+    newParams.delete('page');
+    router.push(`${pathname}?${newParams.toString()}`);
+  }, [pathname, router, searchParams, selectedCategories]);
+
+  const removeSearchFilter = useCallback(() => {
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.delete('search');
+    newParams.delete('page');
+    router.push(`${pathname}?${newParams.toString()}`);
+  }, [pathname, router, searchParams]);
+
+  const removeRatingFilter = useCallback(() => {
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.delete('rating');
+    newParams.delete('page');
+    router.push(`${pathname}?${newParams.toString()}`);
+  }, [pathname, router, searchParams]);
+
+  const removeDateFilter = useCallback(() => {
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.delete('startDate');
+    newParams.delete('endDate');
     newParams.delete('page');
     router.push(`${pathname}?${newParams.toString()}`);
   }, [pathname, router, searchParams]);
@@ -82,20 +114,45 @@ export function ActiveFilters({ className }: ActiveFiltersProps) {
     router.push(`${pathname}?${newParams.toString()}`);
   }, [pathname, router, searchParams]);
 
+  const removeImperfectFilter = useCallback(() => {
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.delete('imperfect');
+    newParams.delete('page');
+    router.push(`${pathname}?${newParams.toString()}`);
+  }, [pathname, router, searchParams]);
+
+  const removeSubscribableFilter = useCallback(() => {
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.delete('subscribable');
+    newParams.delete('page');
+    router.push(`${pathname}?${newParams.toString()}`);
+  }, [pathname, router, searchParams]);
+
   // Clear all filters
   const clearAllFilters = useCallback(() => {
     const newParams = new URLSearchParams();
-    // Preserve search query if present
-    const search = searchParams.get('search');
-    if (search) {
-      newParams.set('search', search);
+    // Preserve pageSize if the user chose a custom size.
+    const currentPageSize = searchParams.get('pageSize');
+    if (currentPageSize) {
+      newParams.set('pageSize', currentPageSize);
     }
-    router.push(`${pathname}?${newParams.toString()}`);
+
+    const url = newParams.toString() ? `${pathname}?${newParams.toString()}` : pathname;
+    router.push(url);
   }, [pathname, router, searchParams]);
 
   // Memoize the active filters list to prevent recalculation on every render
   const activeFilters = useMemo(() => {
     const filters: Array<{ type: string; label: string; onRemove: () => void }> = [];
+
+    // Search
+    if (searchQuery) {
+      filters.push({
+        type: 'search',
+        label: `Search: ${searchQuery}`,
+        onRemove: removeSearchFilter,
+      });
+    }
 
     // Add value filters
     selectedValueSlugs.forEach((slug) => {
@@ -109,12 +166,35 @@ export function ActiveFilters({ className }: ActiveFiltersProps) {
       }
     });
 
-    // Add category filter
-    if (selectedCategory) {
+    // Categories (multi)
+    selectedCategories.forEach((categoryName) => {
       filters.push({
         type: 'category',
-        label: `Category: ${selectedCategory}`,
-        onRemove: removeCategoryFilter,
+        label: `Category: ${categoryName}`,
+        onRemove: () => removeCategoryFilter(categoryName),
+      });
+    });
+
+    // Rating
+    if (rating) {
+      filters.push({
+        type: 'rating',
+        label: `Rating: ${rating}+`,
+        onRemove: removeRatingFilter,
+      });
+    }
+
+    // Date range
+    if (startDate || endDate) {
+      const label = startDate && endDate
+        ? `Date: ${startDate.split('T')[0]} - ${endDate.split('T')[0]}`
+        : startDate
+          ? `Date: from ${startDate.split('T')[0]}`
+          : `Date: until ${endDate?.split('T')[0]}`;
+      filters.push({
+        type: 'date',
+        label,
+        onRemove: removeDateFilter,
       });
     }
 
@@ -135,8 +215,44 @@ export function ActiveFilters({ className }: ActiveFiltersProps) {
       });
     }
 
+    if (imperfect === 'true') {
+      filters.push({
+        type: 'imperfect',
+        label: 'Perfectly Imperfect',
+        onRemove: removeImperfectFilter,
+      });
+    }
+
+    if (subscribable === 'true') {
+      filters.push({
+        type: 'subscribable',
+        label: 'Subscribe & Save',
+        onRemove: removeSubscribableFilter,
+      });
+    }
+
     return filters;
-  }, [selectedValueSlugs, allValues, selectedCategory, minPrice, maxPrice, removeValueFilter, removeCategoryFilter, removePriceFilter]);
+  }, [
+    allValues,
+    endDate,
+    imperfect,
+    maxPrice,
+    minPrice,
+    rating,
+    removeCategoryFilter,
+    removeDateFilter,
+    removeImperfectFilter,
+    removePriceFilter,
+    removeRatingFilter,
+    removeSearchFilter,
+    removeSubscribableFilter,
+    removeValueFilter,
+    searchQuery,
+    selectedCategories,
+    selectedValueSlugs,
+    startDate,
+    subscribable,
+  ]);
 
   if (activeFilters.length === 0) {
     return null;

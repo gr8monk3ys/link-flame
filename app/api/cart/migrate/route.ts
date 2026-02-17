@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { getServerAuth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getGuestSessionId, clearGuestSession } from "@/lib/session";
+import { Prisma } from "@prisma/client";
+import { getExistingGuestSessionId, clearGuestSession } from "@/lib/session";
 import { handleApiError, unauthorizedResponse, errorResponse, rateLimitErrorResponse } from "@/lib/api-response";
 import { checkStrictRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { validateCsrfToken } from "@/lib/csrf";
@@ -44,10 +45,10 @@ export async function POST(request: Request) {
     }
 
     // Get the guest session ID from cookie
-    const guestSessionId = await getGuestSessionId();
+    const guestSessionId = await getExistingGuestSessionId();
 
     // If no guest session, nothing to migrate
-    if (!guestSessionId.startsWith("guest_")) {
+    if (!guestSessionId || !guestSessionId.startsWith("guest_")) {
       return NextResponse.json({
         success: true,
         message: "No guest cart to migrate",
@@ -55,17 +56,129 @@ export async function POST(request: Request) {
       });
     }
 
-    // Fetch all guest cart items
-    const guestCartItems = await prisma.cartItem.findMany({
-      where: {
-        userId: guestSessionId,
-      },
-      include: {
-        product: true,
-      },
+    const { migratedCount, mergedCount, guestItemCount } = await prisma.$transaction(async (tx) => {
+      const guestCartItems = await tx.cartItem.findMany({
+        where: {
+          userId: guestSessionId,
+        },
+        select: {
+          id: true,
+          productId: true,
+          variantId: true,
+          quantity: true,
+        },
+      });
+
+      if (guestCartItems.length === 0) {
+        return { migratedCount: 0, mergedCount: 0, guestItemCount: 0 };
+      }
+
+      let migrated = 0;
+      let merged = 0;
+
+      for (const guestItem of guestCartItems) {
+        const existingItem = await tx.cartItem.findFirst({
+          where: {
+            userId,
+            productId: guestItem.productId,
+            variantId: guestItem.variantId,
+          },
+          select: {
+            id: true,
+          },
+        });
+
+        if (existingItem) {
+          const updated = await tx.cartItem.updateMany({
+            where: {
+              id: existingItem.id,
+              userId,
+            },
+            data: {
+              quantity: {
+                increment: guestItem.quantity,
+              },
+            },
+          });
+
+          if (updated.count > 0) {
+            await tx.cartItem.deleteMany({
+              where: {
+                id: guestItem.id,
+                userId: guestSessionId,
+              },
+            });
+            merged += 1;
+          }
+          continue;
+        }
+
+        try {
+          const transferred = await tx.cartItem.updateMany({
+            where: {
+              id: guestItem.id,
+              userId: guestSessionId,
+            },
+            data: {
+              userId,
+            },
+          });
+
+          if (transferred.count > 0) {
+            migrated += 1;
+          }
+        } catch (migrationError) {
+          if (
+            migrationError instanceof Prisma.PrismaClientKnownRequestError &&
+            migrationError.code === "P2002"
+          ) {
+            // A concurrent request created or moved the same product+variant in the target cart.
+            const mergedTarget = await tx.cartItem.updateMany({
+              where: {
+                userId,
+                productId: guestItem.productId,
+                variantId: guestItem.variantId,
+              },
+              data: {
+                quantity: {
+                  increment: guestItem.quantity,
+                },
+              },
+            });
+
+            if (mergedTarget.count > 0) {
+              await tx.cartItem.deleteMany({
+                where: {
+                  id: guestItem.id,
+                  userId: guestSessionId,
+                },
+              });
+              merged += 1;
+            }
+            continue;
+          }
+
+          throw migrationError;
+        }
+      }
+
+      await tx.cartItem.deleteMany({
+        where: {
+          id: {
+            in: guestCartItems.map((item) => item.id),
+          },
+          userId: guestSessionId,
+        },
+      });
+
+      return {
+        migratedCount: migrated,
+        mergedCount: merged,
+        guestItemCount: guestCartItems.length,
+      };
     });
 
-    if (guestCartItems.length === 0) {
+    if (guestItemCount === 0) {
       await clearGuestSession();
       return NextResponse.json({
         success: true,
@@ -73,51 +186,6 @@ export async function POST(request: Request) {
         migrated: 0,
       });
     }
-
-    let migratedCount = 0;
-    let mergedCount = 0;
-
-    // Migrate each guest cart item
-    for (const guestItem of guestCartItems) {
-      // Check if user already has this product in their cart
-      const existingItem = await prisma.cartItem.findFirst({
-        where: {
-          userId: userId,
-          productId: guestItem.productId,
-        },
-      });
-
-      if (existingItem) {
-        // Merge quantities if product already exists in authenticated cart
-        await prisma.cartItem.update({
-          where: {
-            id: existingItem.id,
-          },
-          data: {
-            quantity: existingItem.quantity + guestItem.quantity,
-          },
-        });
-        mergedCount++;
-      } else {
-        // Transfer the item to authenticated user
-        await prisma.cartItem.update({
-          where: {
-            id: guestItem.id,
-          },
-          data: {
-            userId: userId,
-          },
-        });
-        migratedCount++;
-      }
-    }
-
-    // Delete any remaining guest cart items (those that were merged)
-    await prisma.cartItem.deleteMany({
-      where: {
-        userId: guestSessionId,
-      },
-    });
 
     // Clear the guest session cookie
     await clearGuestSession();

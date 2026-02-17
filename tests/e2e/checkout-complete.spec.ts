@@ -6,7 +6,8 @@ import {
   generateTestUser,
   getCsrfToken,
   addItemToCart,
-  waitForCartUpdate,
+  getMissingStripeCheckoutEnvVars,
+  isStripeCheckoutE2EConfigured,
 } from './fixtures/auth'
 
 /**
@@ -32,20 +33,32 @@ const validCheckoutData = {
   zipCode: '10001',
 }
 
+const randomTestIp = () => {
+  const octet = () => Math.floor(Math.random() * 250) + 1
+  return `10.${octet()}.${octet()}.${octet()}`
+}
+
+function requireStripeCheckoutConfig() {
+  const missingEnvVars = getMissingStripeCheckoutEnvVars()
+  test.skip(
+    !isStripeCheckoutE2EConfigured(),
+    `Stripe checkout E2E requires env vars: ${missingEnvVars.join(', ')}`
+  )
+}
+
 test.describe('Complete Checkout Flow', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.context().setExtraHTTPHeaders({
+      'x-forwarded-for': randomTestIp(),
+    })
+  })
+
   test.describe('Guest User Checkout', () => {
     test('guest user is redirected to signin when accessing checkout', async ({
       page,
     }) => {
       // Add item to cart as guest
-      await page.goto('/collections')
-      await page.waitForSelector('[data-testid="product-card"], .group.relative')
-
-      const addToCartButton = page
-        .locator('[data-testid="add-to-cart-button"], button:has-text("Add to Cart")')
-        .first()
-      await addToCartButton.click()
-      await waitForCartUpdate(page)
+      await addItemToCart(page)
 
       // Navigate to cart
       await page.goto('/cart', { waitUntil: 'domcontentloaded' })
@@ -68,14 +81,7 @@ test.describe('Complete Checkout Flow', () => {
       await createTestUser(page, testUser)
 
       // Add item to cart as guest
-      await page.goto('/collections')
-      await page.waitForSelector('[data-testid="product-card"], .group.relative')
-
-      const addToCartButton = page
-        .locator('[data-testid="add-to-cart-button"], button:has-text("Add to Cart")')
-        .first()
-      await addToCartButton.click()
-      await waitForCartUpdate(page)
+      await addItemToCart(page)
 
       // Go to cart and count items
       await page.goto('/cart', { waitUntil: 'domcontentloaded' })
@@ -84,22 +90,23 @@ test.describe('Complete Checkout Flow', () => {
       const guestCartItems = page.locator(
         '[data-testid="cart-item"], .cart-item, [class*="cart"] [class*="item"]'
       )
+      await expect
+        .poll(() => guestCartItems.count(), { timeout: 15000 })
+        .toBeGreaterThan(0)
       const guestCartCount = await guestCartItems.count()
 
       // Login
       await loginUser(page, testUser.email, testUser.password)
 
       // Go to cart - items should be migrated
-      await page.goto('/cart')
-      await page.waitForLoadState('networkidle')
+      await page.goto('/cart', { waitUntil: 'domcontentloaded' })
 
       const migratedCartItems = page.locator(
         '[data-testid="cart-item"], .cart-item, [class*="cart"] [class*="item"]'
       )
-      const migratedCartCount = await migratedCartItems.count()
-
-      // Should have at least the guest cart items
-      expect(migratedCartCount).toBeGreaterThanOrEqual(guestCartCount)
+      await expect
+        .poll(() => migratedCartItems.count(), { timeout: 15000 })
+        .toBeGreaterThanOrEqual(guestCartCount)
     })
   })
 
@@ -164,6 +171,8 @@ test.describe('Complete Checkout Flow', () => {
     })
 
     test('can complete checkout flow to payment', async ({ page }) => {
+      requireStripeCheckoutConfig()
+
       const testUser = generateTestUser('CheckoutComplete')
 
       // Create and login user
@@ -214,29 +223,20 @@ test.describe('Complete Checkout Flow', () => {
         )
         .first()
 
-      if (await submitButton.isVisible({ timeout: 2000 }).catch(() => false)) {
-        // Listen for API response
-        const responsePromise = page
-          .waitForResponse(
-            (response) => response.url().includes('/api/checkout'),
-            { timeout: 10000 }
-          )
-          .catch(() => null)
+      await expect(submitButton).toBeVisible({ timeout: 5000 })
 
-        await submitButton.click()
+      const responsePromise = page.waitForResponse(
+        (response) => response.url().includes('/api/checkout'),
+        { timeout: 10000 }
+      )
 
-        const response = await responsePromise
+      await submitButton.click()
 
-        if (response) {
-          // Check response status
-          if (response.status() === 200) {
-            const body = await response.json()
-            // Success - may have Stripe session URL
-            expect(body.sessionUrl || body.sessionId || body.success).toBeDefined()
-          }
-          // Other statuses may indicate Stripe not configured
-        }
-      }
+      const response = await responsePromise
+      expect(response.status()).toBe(200)
+
+      const body = await response.json()
+      expect(body.sessionUrl || body.sessionId || body.success).toBeDefined()
     })
   })
 
@@ -441,6 +441,8 @@ test.describe('Complete Checkout Flow', () => {
     })
 
     test('does not allow price manipulation', async ({ page }) => {
+      requireStripeCheckoutConfig()
+
       const testUser = generateTestUser('CheckoutPriceManip')
 
       // Create and login user
@@ -467,16 +469,17 @@ test.describe('Complete Checkout Flow', () => {
         },
       })
 
-      // Server should use database prices, not client-submitted prices
-      if (response.status() === 200) {
-        const body = await response.json()
-        expect(body.sessionUrl || body.sessionId).toBeDefined()
-      }
+      // Server should use database prices, not client-submitted prices.
+      expect(response.status()).toBe(200)
+      const body = await response.json()
+      expect(body.sessionUrl || body.sessionId).toBeDefined()
     })
   })
 
   test.describe('Checkout with Stripe Test Mode', () => {
     test('valid checkout request returns Stripe session', async ({ page }) => {
+      requireStripeCheckoutConfig()
+
       const testUser = generateTestUser('CheckoutStripe')
 
       // Create and login user
@@ -499,13 +502,8 @@ test.describe('Complete Checkout Flow', () => {
 
       const body = await response.json()
 
-      if (response.status() === 200) {
-        // Stripe is configured - should return session URL
-        expect(body.sessionUrl || body.sessionId).toBeDefined()
-      } else if (response.status() === 500) {
-        // Stripe not configured - acceptable in test environment
-        expect(body.error).toBeDefined()
-      }
+      expect(response.status()).toBe(200)
+      expect(body.sessionUrl || body.sessionId).toBeDefined()
     })
   })
 })

@@ -185,10 +185,31 @@ export const ErrorCodes = {
 
 export type ErrorCode = (typeof ErrorCodes)[keyof typeof ErrorCodes]
 
+function isInvalidJsonBodyError(error: unknown): error is SyntaxError {
+  if (!(error instanceof SyntaxError)) {
+    return false
+  }
+
+  const message = (error.message || '').toLowerCase()
+  return (
+    message.includes('unexpected end of json input') ||
+    message.includes('unexpected token') ||
+    message.includes('json')
+  )
+}
+
 /**
  * Handle common API errors
  */
 export function handleApiError(error: unknown): NextResponse<ApiResponse<never>> {
+  // Treat invalid JSON bodies as client errors (bots/common client mistakes).
+  if (isInvalidJsonBodyError(error)) {
+    logger.warn('API received invalid JSON body', {
+      message: error.message,
+    })
+    return errorResponse('Invalid JSON body', ErrorCodes.BAD_REQUEST, undefined, 400)
+  }
+
   logger.error('API error occurred', error)
 
   // Zod validation error

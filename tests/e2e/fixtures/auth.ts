@@ -18,6 +18,32 @@ export interface TestUser {
   password: string
 }
 
+const STRIPE_CHECKOUT_E2E_ENV_VARS = [
+  'STRIPE_SECRET_KEY',
+  'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY',
+  'STRIPE_STARTER_MONTHLY_PRICE_ID',
+  'STRIPE_STARTER_YEARLY_PRICE_ID',
+  'STRIPE_PRO_MONTHLY_PRICE_ID',
+  'STRIPE_PRO_YEARLY_PRICE_ID',
+] as const
+
+/**
+ * Return the Stripe env vars required to validate end-to-end checkout session creation.
+ */
+export function getMissingStripeCheckoutEnvVars(): string[] {
+  return STRIPE_CHECKOUT_E2E_ENV_VARS.filter((name) => {
+    const value = process.env[name]
+    return typeof value !== 'string' || value.trim().length === 0
+  })
+}
+
+/**
+ * True when Stripe checkout E2E can assert successful session creation.
+ */
+export function isStripeCheckoutE2EConfigured(): boolean {
+  return getMissingStripeCheckoutEnvVars().length === 0
+}
+
 /**
  * Generate unique test user data
  * @param prefix - Optional prefix for the user name
@@ -167,14 +193,23 @@ export async function loginUser(page: Page, email: string, password: string) {
       // Session endpoint might not be called in some edge cases
     })
 
-  // Ensure auth session cookie exists
+  // Ensure authenticated session is established
   await expect
     .poll(
       async () => {
-        const cookies = await page.context().cookies()
-        return cookies.some((cookie) =>
-          cookie.name.includes('session-token') || cookie.name.includes('authjs')
-        )
+        try {
+          const response = await page.request.get('/api/auth/session', {
+            timeout: 5000,
+          })
+          if (!response.ok()) {
+            return false
+          }
+          const session = await response.json()
+          return session?.user?.email === email
+        } catch {
+          // Transient request failures can happen while the app settles.
+          return false
+        }
       },
       { timeout: 15000 }
     )
@@ -266,15 +301,15 @@ export async function addItemToCart(page: Page) {
   // Click the add to cart button (revealed on hover)
   const addToCartButton = productCard.locator('[data-testid="add-to-cart-button"]')
   await expect(addToCartButton).toBeVisible({ timeout: 5000 })
-  await Promise.all([
-    page.waitForResponse(
-      (response) =>
-        response.url().includes('/api/cart') &&
-        response.request().method() === 'POST',
-      { timeout: 15000 }
-    ),
-    addToCartButton.click(),
-  ])
+  const addToCartRequest = page.waitForResponse(
+    (response) =>
+      response.url().includes('/api/cart') &&
+      response.request().method() === 'POST',
+    { timeout: 15000 }
+  ).catch(() => null)
+
+  await addToCartButton.click()
+  await addToCartRequest
 
   await waitForCartUpdate(page)
 

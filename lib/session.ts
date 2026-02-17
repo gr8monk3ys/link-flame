@@ -49,6 +49,16 @@ export async function getGuestSessionId(): Promise<string> {
 }
 
 /**
+ * Gets the current guest session ID if it already exists.
+ *
+ * Unlike {@link getGuestSessionId}, this does not create a new cookie.
+ */
+export async function getExistingGuestSessionId(): Promise<string | null> {
+  const cookieStore = await cookies()
+  return cookieStore.get(SESSION_COOKIE_NAME)?.value || null
+}
+
+/**
  * Gets the appropriate user identifier for cart operations.
  *
  * This is a convenience function that determines whether to use an authenticated

@@ -21,7 +21,7 @@ Link Flame implements comprehensive security measures to protect user data and p
 - Server-side session validation via `getServerAuth()`
 - Client-side hooks with `useSession()`
 - Role-based access control (RBAC) with ADMIN, EDITOR, USER roles
-- Protected routes via middleware
+- Protected routes via proxy middleware (`proxy.ts`)
 
 **Guest Sessions**
 - Anonymous user support with secure session IDs
@@ -47,14 +47,14 @@ Link Flame implements comprehensive security measures to protect user data and p
 ```typescript
 // Client: Fetch CSRF token
 const res = await fetch('/api/csrf');
-const { csrfToken } = await res.json();
+const { token } = await res.json();
 
 // Include in POST/PATCH/DELETE requests
 fetch('/api/protected-endpoint', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'X-CSRF-Token': csrfToken
+    'X-CSRF-Token': token
   },
   body: JSON.stringify(data)
 });

@@ -52,46 +52,75 @@ export async function getOrCreateStripeCustomer(
   metadata?: Record<string, string>
 ): Promise<string> {
   try {
-    // Check if organization already has a Stripe customer ID
-    // This would require a stripeCustomerId field on Organization model
-    // For now, we'll search by metadata
-
-    // Search for existing customer
-    const existingCustomers = await getStripe().customers.list({
-      email,
-      limit: 1,
+    const organization = await prisma.organization.findUnique({
+      where: { id: organizationId },
+      select: { stripeCustomerId: true },
     })
 
-    if (existingCustomers.data.length > 0) {
-      const existingCustomer = existingCustomers.data[0]
-
-      // Update metadata if needed
-      if (organizationId && existingCustomer.metadata?.organizationId !== organizationId) {
-        await getStripe().customers.update(existingCustomer.id, {
-          metadata: {
-            ...existingCustomer.metadata,
-            organizationId,
-          },
-        })
-      }
-
-      return existingCustomer.id
+    if (!organization) {
+      throw new SubscriptionError('Organization not found', 'ORGANIZATION_NOT_FOUND')
     }
 
-    // Create new customer
-    const customer = await getStripe().customers.create({
+    if (organization.stripeCustomerId) {
+      return organization.stripeCustomerId
+    }
+
+    const stripe = getStripe()
+
+    // Prefer an existing customer that was previously created for this organization.
+    // We intentionally do not "take over" a random customer that matches the email.
+    const existingCustomers = await stripe.customers.list({
       email,
-      name,
-      metadata: {
-        organizationId,
-        ...metadata,
-      },
+      limit: 10,
     })
 
-    logger.info('Created Stripe customer', {
+    const matchingCustomer = existingCustomers.data.find(
+      (customer) => customer.metadata?.organizationId === organizationId
+    )
+
+    const customer = matchingCustomer
+      ? await stripe.customers.update(matchingCustomer.id, {
+          // Keep org association stable and add optional metadata (e.g. userId for auditing).
+          metadata: {
+            ...matchingCustomer.metadata,
+            organizationId,
+            ...(metadata ?? {}),
+          },
+          ...(name ? { name } : {}),
+        })
+      : await stripe.customers.create({
+          email,
+          name,
+          metadata: {
+            organizationId,
+            ...(metadata ?? {}),
+          },
+        })
+
+    try {
+      await prisma.organization.update({
+        where: { id: organizationId },
+        data: {
+          stripeCustomerId: customer.id,
+          billingEmail: email,
+          ...(name ? { billingName: name } : {}),
+        },
+        select: { id: true },
+      })
+    } catch (error) {
+      // Avoid failing checkout if customer persistence races with another request.
+      logger.warn('Failed to persist Stripe customer ID to organization', {
+        organizationId,
+        customerId: customer.id,
+        error: error instanceof Error ? error.message : String(error),
+      })
+    }
+
+    logger.info('Resolved Stripe customer', {
       customerId: customer.id,
       organizationId,
       email,
+      source: matchingCustomer ? 'existing' : 'created',
     })
 
     return customer.id
@@ -621,6 +650,36 @@ export function mapStripeStatus(stripeStatus: string): SubscriptionStatus {
   return statusMap[stripeStatus] || 'incomplete'
 }
 
+function normalizePlanId(value: unknown): PlanId | null {
+  if (typeof value !== 'string') return null
+  const upper = value.toUpperCase()
+  return upper in SAAS_PLANS ? (upper as PlanId) : null
+}
+
+function mapStripeInterval(value: Stripe.Price.Recurring.Interval | null | undefined): BillingInterval | null {
+  if (!value) return null
+  if (value === 'month') return 'monthly'
+  if (value === 'year') return 'yearly'
+  return null
+}
+
+function inferPlanFromPriceId(priceId: string): { planId: PlanId; interval: BillingInterval } | null {
+  const candidates: Array<[PlanId, BillingInterval, string | null | undefined]> = [
+    ['STARTER', 'monthly', SAAS_PLANS.STARTER.stripePriceIdMonthly],
+    ['STARTER', 'yearly', SAAS_PLANS.STARTER.stripePriceIdYearly],
+    ['PRO', 'monthly', SAAS_PLANS.PRO.stripePriceIdMonthly],
+    ['PRO', 'yearly', SAAS_PLANS.PRO.stripePriceIdYearly],
+  ]
+
+  for (const [planId, interval, candidate] of candidates) {
+    if (candidate && candidate === priceId) {
+      return { planId, interval }
+    }
+  }
+
+  return null
+}
+
 /**
  * Sync subscription status from Stripe to database
  */
@@ -630,28 +689,135 @@ export async function syncSubscriptionStatus(
 ): Promise<void> {
   try {
     const status = mapStripeStatus(stripeSubscription.status)
-    const planId = stripeSubscription.metadata?.planId as PlanId | undefined
+    const price = stripeSubscription.items.data[0]?.price
+    const priceId = price?.id
+    const intervalFromStripe = mapStripeInterval(price?.recurring?.interval)
+    const inferred = priceId ? inferPlanFromPriceId(priceId) : null
 
-    // Update organization subscription status in database
-    // This would require Organization model with subscription fields
+    const planIdFromMetadata = normalizePlanId(stripeSubscription.metadata?.planId)
+    const planId = planIdFromMetadata ?? inferred?.planId ?? 'FREE'
+    const billingInterval = intervalFromStripe ?? inferred?.interval ?? null
+
+    const entitlementsPlan: PlanId =
+      status === 'canceled' || status === 'unpaid' || status === 'incomplete_expired'
+        ? 'FREE'
+        : planId
+
+    const currentPeriodStart = new Date(stripeSubscription.current_period_start * 1000)
+    const currentPeriodEnd = new Date(stripeSubscription.current_period_end * 1000)
+    const trialEndsAt = stripeSubscription.trial_end
+      ? new Date(stripeSubscription.trial_end * 1000)
+      : null
+
+    const canceledAt = stripeSubscription.canceled_at
+      ? new Date(stripeSubscription.canceled_at * 1000)
+      : stripeSubscription.cancel_at
+        ? new Date(stripeSubscription.cancel_at * 1000)
+        : null
+
+    const customerId =
+      typeof stripeSubscription.customer === 'string'
+        ? stripeSubscription.customer
+        : stripeSubscription.customer?.id
+
+    const plan = SAAS_PLANS[entitlementsPlan]
+
     logger.info('Syncing subscription status', {
       organizationId,
       subscriptionId: stripeSubscription.id,
       status,
       planId,
-      currentPeriodEnd: new Date(stripeSubscription.current_period_end * 1000).toISOString(),
+      entitlementsPlan,
+      billingInterval,
+      priceId,
+      customerId,
+      currentPeriodEnd: currentPeriodEnd.toISOString(),
     })
 
-    // When Organization model exists:
-    // await prisma.organization.update({
-    //   where: { id: organizationId },
-    //   data: {
-    //     stripeSubscriptionId: stripeSubscription.id,
-    //     subscriptionStatus: status,
-    //     planId: planId,
-    //     currentPeriodEnd: new Date(stripeSubscription.current_period_end * 1000),
-    //   },
-    // })
+    await prisma.organization.update({
+      where: { id: organizationId },
+      data: {
+        ...(customerId ? { stripeCustomerId: customerId } : {}),
+        stripeSubscriptionId: stripeSubscription.id,
+        plan: entitlementsPlan,
+        billingInterval: entitlementsPlan === 'FREE' ? null : billingInterval,
+        subscriptionStatus: status,
+        trialEndsAt,
+        currentPeriodStart,
+        currentPeriodEnd,
+        canceledAt,
+
+        // Keep denormalized limits in sync with plan entitlements.
+        limitProducts: plan.limits.products,
+        limitOrders: plan.limits.orders,
+        limitTeamMembers: plan.limits.teamMembers,
+        limitStorageMB: plan.limits.storageMB,
+      },
+      select: { id: true },
+    })
+
+    if (priceId && billingInterval) {
+      const amountCents = price?.unit_amount ?? 0
+      const currency = price?.currency ?? 'usd'
+      const snapshot = {
+        organizationId,
+        stripeSubscriptionId: stripeSubscription.id,
+        stripePriceId: priceId,
+        planId: entitlementsPlan,
+        billingInterval,
+        status,
+        amount: amountCents / 100,
+        currency,
+        trialStart: stripeSubscription.trial_start
+          ? new Date(stripeSubscription.trial_start * 1000)
+          : null,
+        trialEnd: trialEndsAt,
+        currentPeriodStart,
+        currentPeriodEnd,
+        canceledAt,
+        endedAt: stripeSubscription.ended_at
+          ? new Date(stripeSubscription.ended_at * 1000)
+          : null,
+      }
+
+      const lastSnapshot = await prisma.organizationSubscription.findFirst({
+        where: {
+          organizationId,
+          stripeSubscriptionId: stripeSubscription.id,
+        },
+        orderBy: { createdAt: 'desc' },
+        select: {
+          id: true,
+          stripePriceId: true,
+          planId: true,
+          billingInterval: true,
+          status: true,
+          currentPeriodEnd: true,
+        },
+      })
+
+      const shouldWriteSnapshot =
+        !lastSnapshot ||
+        lastSnapshot.status !== snapshot.status ||
+        lastSnapshot.stripePriceId !== snapshot.stripePriceId ||
+        lastSnapshot.planId !== snapshot.planId ||
+        lastSnapshot.billingInterval !== snapshot.billingInterval ||
+        lastSnapshot.currentPeriodEnd.getTime() !== snapshot.currentPeriodEnd.getTime()
+
+      if (shouldWriteSnapshot) {
+        await prisma.organizationSubscription.create({
+          data: snapshot,
+          select: { id: true },
+        })
+      }
+    } else {
+      logger.warn('Subscription sync skipped history persistence due to missing price/interval', {
+        organizationId,
+        subscriptionId: stripeSubscription.id,
+        priceId,
+        billingInterval,
+      })
+    }
   } catch (error) {
     logger.error('Failed to sync subscription status', error, {
       organizationId,

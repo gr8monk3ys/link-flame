@@ -100,7 +100,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
               <ErrorBoundary>
                 <div className="relative flex min-h-screen flex-col">
                   <SiteHeader className="fixed top-0 z-50 w-full" />
-                  <main className="container mx-auto flex-1 px-4 pt-24 sm:px-6 lg:px-8">
+                  <main className="container mx-auto flex-1 px-4 pt-28 sm:px-6 lg:px-8">
                     {children}
                   </main>
                   <SiteFooter className="mt-auto" />

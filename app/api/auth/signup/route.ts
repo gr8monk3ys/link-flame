@@ -8,6 +8,7 @@ import {
   rateLimitErrorResponse,
   errorResponse,
   successResponse,
+  ErrorCodes,
 } from "@/lib/api-response";
 import { checkStrictRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { validateCsrfToken } from "@/lib/csrf";
@@ -43,7 +44,12 @@ export async function POST(request: Request) {
       return rateLimitErrorResponse(reset);
     }
 
-    const body = await request.json();
+    let body: unknown
+    try {
+      body = await request.json()
+    } catch {
+      return errorResponse("Invalid JSON body", ErrorCodes.BAD_REQUEST, undefined, 400)
+    }
 
     // Validate input
     const validation = signupSchema.safeParse(body);

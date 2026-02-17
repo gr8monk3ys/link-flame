@@ -28,21 +28,21 @@ export default function CleanTransportPage() {
         <Card className="p-6">
           <h2 className="mb-4 text-xl font-semibold">Transportation Guides</h2>
           <div className="space-y-4">
-            <Link href="/clean-transport/ev-guide" className="block hover:underline">
+            <Link href="/guides-and-tips/clean-transport/ev-guide" className="block hover:underline">
               Electric Vehicle Buying Guide
             </Link>
-            <Link href="/clean-transport/e-bikes" className="block hover:underline">
+            <Link href="/guides-and-tips/clean-transport/e-bikes" className="block hover:underline">
               E-Bike Comparison Guide
             </Link>
-            <Link href="/clean-transport/eco-travel" className="block hover:underline">
+            <Link href="/guides-and-tips/clean-transport/eco-travel" className="block hover:underline">
               Sustainable Travel Tips
             </Link>
-            <Link href="/clean-transport/charging" className="block hover:underline">
+            <Link href="/guides-and-tips/clean-transport/charging" className="block hover:underline">
               EV Charging Guide
             </Link>
           </div>
           <Button asChild className="mt-4">
-            <Link href="/clean-transport/guides">View All Guides</Link>
+            <Link href="/guides-and-tips/clean-transport/guides">View All Guides</Link>
           </Button>
         </Card>
 
@@ -65,7 +65,7 @@ export default function CleanTransportPage() {
         <ProductGrid category="clean-transport" limit={4} />
         <div className="mt-4 text-center">
           <Button asChild variant="outline">
-            <Link href="/reviews?category=clean-transport">View All Products</Link>
+            <Link href="/collections">View All Products</Link>
           </Button>
         </div>
       </div>

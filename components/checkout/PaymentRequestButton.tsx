@@ -56,7 +56,7 @@ export function PaymentRequestButton({
   // Initialize Stripe
   useEffect(() => {
     if (!isStripeConfigured()) {
-      setIsLoading(false)
+      queueMicrotask(() => setIsLoading(false))
       return
     }
 
@@ -68,7 +68,7 @@ export function PaymentRequestButton({
   // Create and configure PaymentRequest when Stripe is loaded and cart changes
   useEffect(() => {
     if (!stripe || cartTotal.raw <= 0) {
-      setIsLoading(false)
+      queueMicrotask(() => setIsLoading(false))
       return
     }
 

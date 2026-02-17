@@ -20,6 +20,21 @@ export function useSavedItems() {
   const hasInitialized = useRef(false);
   const prevAuthStatus = useRef<string | null>(null);
 
+  const getCsrfToken = useCallback(async (): Promise<string> => {
+    const response = await fetch('/api/csrf');
+    if (!response.ok) {
+      throw new Error('Failed to get CSRF token');
+    }
+
+    const data = await response.json().catch(() => ({}));
+    const token = typeof data?.token === 'string' ? data.token : null;
+    if (!token) {
+      throw new Error('Failed to get CSRF token');
+    }
+
+    return token;
+  }, []);
+
   // Fetch saved items from the API
   const fetchSavedItems = useCallback(async () => {
     try {
@@ -98,8 +113,12 @@ export function useSavedItems() {
       // Check if user just logged in (transition from unauthenticated to authenticated)
       if (prevAuthStatus.current === 'unauthenticated' && status === 'authenticated' && session?.user?.id) {
         try {
+          const csrfToken = await getCsrfToken();
           const response = await fetch('/api/saved-items/migrate', {
             method: 'POST',
+            headers: {
+              'X-CSRF-Token': csrfToken,
+            },
           });
 
           if (response.ok) {
@@ -124,7 +143,7 @@ export function useSavedItems() {
     if (status !== 'loading') {
       migrateSavedItems();
     }
-  }, [status, session, fetchSavedItems]);
+  }, [status, session, fetchSavedItems, getCsrfToken]);
 
   // Save items to localStorage whenever they change (as cache)
   useEffect(() => {
@@ -151,9 +170,13 @@ export function useSavedItems() {
     setSavedItems(prev => [...prev, optimisticItem]);
 
     try {
+      const csrfToken = await getCsrfToken();
       const response = await fetch('/api/saved-items', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken,
+        },
         body: JSON.stringify({ productId: item.id }),
       });
 
@@ -186,7 +209,7 @@ export function useSavedItems() {
       // Revert optimistic update
       setSavedItems(prev => prev.filter(i => i.id !== item.id || i.savedAt !== optimisticItem.savedAt));
     }
-  }, [savedItems, fetchSavedItems]);
+  }, [savedItems, fetchSavedItems, getCsrfToken]);
 
   // Remove item from saved items
   const removeSavedItem = useCallback(async (itemId: string) => {
@@ -197,8 +220,12 @@ export function useSavedItems() {
     setSavedItems(prev => prev.filter(item => item.id !== itemId));
 
     try {
+      const csrfToken = await getCsrfToken();
       const response = await fetch(`/api/saved-items?productId=${itemId}`, {
         method: 'DELETE',
+        headers: {
+          'X-CSRF-Token': csrfToken,
+        },
       });
 
       if (!response.ok) {
@@ -212,7 +239,7 @@ export function useSavedItems() {
       // Revert optimistic update
       setSavedItems(previousItems);
     }
-  }, [savedItems]);
+  }, [savedItems, getCsrfToken]);
 
   // Check if an item is saved
   const isItemSaved = useCallback((itemId: string) => {

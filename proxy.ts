@@ -1,44 +1,46 @@
 import NextAuth from 'next-auth'
 import authConfig from '@/auth.config'
-
-const { auth } = NextAuth(authConfig)
 import { NextResponse } from 'next/server'
 
-// Generate a unique request ID
+const { auth } = NextAuth(authConfig)
+
+// Generate a unique request ID for correlating logs across services.
 function generateRequestId(): string {
-  // Use crypto.randomUUID if available, otherwise fallback
-  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto && crypto.randomUUID) {
     return crypto.randomUUID()
   }
-  // Fallback for older environments
-  return `${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 15)}`
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`
 }
 
 /**
- * Generate a cryptographically secure nonce for CSP
- * Uses Web Crypto API available in Edge Runtime
+ * Generate a cryptographically secure nonce for CSP.
+ * Uses Web Crypto API available in Edge Runtime.
  */
 function generateNonce(): string {
-  const array = new Uint8Array(16)
-  crypto.getRandomValues(array)
-  return Buffer.from(array).toString('base64')
+  const bytes = new Uint8Array(16)
+  crypto.getRandomValues(bytes)
+  let binary = ''
+  for (const value of bytes) binary += String.fromCharCode(value)
+  return btoa(binary)
 }
 
 /**
- * Build CSP header with nonce support
- * @param nonce - The generated nonce for this request
+ * Build CSP header. We keep this reasonably strict while still allowing Next.js
+ * to work without wiring nonces into every script tag.
+ *
+ * TODO: tighten `script-src` by removing `'unsafe-inline'` once we pass a nonce
+ * through to all scripts that need it.
  */
 function buildCspHeader(nonce: string): string {
   const isDevelopment = process.env.NODE_ENV === 'development'
 
-  // In development, we need to be more permissive for HMR and dev tools
   const scriptSrc = isDevelopment
     ? `'self' 'unsafe-eval' 'unsafe-inline'`
-    : `'self' 'nonce-${nonce}' 'strict-dynamic' https://js.stripe.com https://www.googletagmanager.com https://www.google-analytics.com`
+    : `'self' 'unsafe-inline' 'nonce-${nonce}' https://js.stripe.com https://www.googletagmanager.com https://www.google-analytics.com`
 
   const styleSrc = isDevelopment
     ? `'self' 'unsafe-inline' https://fonts.googleapis.com`
-    : `'self' 'unsafe-inline' https://fonts.googleapis.com` // Styles still need unsafe-inline for CSS-in-JS
+    : `'self' 'unsafe-inline' https://fonts.googleapis.com`
 
   const directives = [
     `default-src 'self'`,
@@ -58,21 +60,19 @@ function buildCspHeader(nonce: string): string {
   return directives.join('; ')
 }
 
-export default auth((req) => {
+export const proxy = auth((req) => {
   const { pathname } = req.nextUrl
   const isLoggedIn = !!req.auth
 
-  // Generate request ID and CSP nonce
   const requestId = req.headers.get('x-request-id') || generateRequestId()
   const nonce = generateNonce()
 
-  // Protected routes that require authentication
-  const protectedRoutes = ['/account', '/checkout', '/admin']
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    pathname.startsWith(route)
-  )
+  // Protected routes that require authentication.
+  // Note: `/checkout` is intentionally *not* protected to support guest checkout.
+  // Billing pages handle unauthenticated users by rendering a sign-in CTA.
+  const protectedRoutes = ['/account', '/admin']
+  const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route))
 
-  // Redirect to sign-in if accessing protected route without auth
   if (isProtectedRoute && !isLoggedIn) {
     const signInUrl = new URL('/auth/signin', req.url)
     signInUrl.searchParams.set('callbackUrl', pathname)
@@ -81,34 +81,29 @@ export default auth((req) => {
     return response
   }
 
-  // Clone the request headers and add request ID and nonce
+  // Propagate request-scoped headers to the app.
   const requestHeaders = new Headers(req.headers)
   requestHeaders.set('x-request-id', requestId)
-  requestHeaders.set('x-nonce', nonce) // Pass nonce to page components
+  requestHeaders.set('x-nonce', nonce)
 
-  // Create response with headers
   const response = NextResponse.next({
     request: {
       headers: requestHeaders,
     },
   })
 
-  // Set response headers
   response.headers.set('x-request-id', requestId)
   response.headers.set('x-nonce', nonce)
-
-  // Set CSP header (with nonce in production)
-  const cspHeader = buildCspHeader(nonce)
-  response.headers.set('Content-Security-Policy', cspHeader)
+  response.headers.set('Content-Security-Policy', buildCspHeader(nonce))
 
   return response
 })
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
+    // Skip Next.js internals and all static files, unless found in search params.
     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Always run for API routes
+    // Always run for API routes.
     '/(api|trpc)(.*)',
   ],
 }

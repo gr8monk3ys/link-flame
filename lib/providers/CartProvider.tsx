@@ -61,7 +61,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(false)
   const hasInitialized = useRef(false)
   const [hasInitializedCart, setHasInitialized] = useState(false)
-  const prevAuthStatus = useRef<string | null>(null)
+  const hasAttemptedCartMigration = useRef(false)
 
   // Track pending quantity updates to handle race conditions
   const pendingQuantityUpdates = useRef(0)
@@ -157,40 +157,45 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Handle cart migration when user logs in
   useEffect(() => {
+    if (status === 'unauthenticated') {
+      hasAttemptedCartMigration.current = false
+      return
+    }
+
+    if (status !== 'authenticated' || !session?.user?.id || hasAttemptedCartMigration.current) {
+      return
+    }
+
     const migrateGuestCart = async () => {
-      // Check if user just logged in (transition from unauthenticated to authenticated)
-      if (prevAuthStatus.current === 'unauthenticated' && status === 'authenticated' && session?.user?.id) {
-        try {
-          const csrfToken = await getCsrfToken()
-          const response = await fetch('/api/cart/migrate', {
-            method: 'POST',
-            headers: {
-              'X-CSRF-Token': csrfToken,
-            },
-          })
+      hasAttemptedCartMigration.current = true
 
-          if (response.ok) {
-            const data = await response.json()
-            if (data.total > 0) {
-              toast.success(`Welcome back! ${data.total} item(s) added to your cart`)
-              // Refresh cart to show migrated items
-              await fetchCartItems()
-            }
-          } else {
-            console.error('Failed to migrate guest cart')
+      try {
+        const csrfToken = await getCsrfToken()
+        const response = await fetch('/api/cart/migrate', {
+          method: 'POST',
+          headers: {
+            'X-CSRF-Token': csrfToken,
+          },
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          if (data.total > 0) {
+            toast.success(`Welcome back! ${data.total} item(s) added to your cart`)
           }
-        } catch (error) {
-          console.error('[CART_MIGRATION_ERROR]', error)
+          // Always refresh after migration attempt because server cart might have changed.
+          await fetchCartItems()
+        } else {
+          console.error('Failed to migrate guest cart')
+          hasAttemptedCartMigration.current = false
         }
+      } catch (error) {
+        console.error('[CART_MIGRATION_ERROR]', error)
+        hasAttemptedCartMigration.current = false
       }
-
-      // Update the previous auth status
-      prevAuthStatus.current = status
     }
 
-    if (status !== 'loading') {
-      migrateGuestCart()
-    }
+    migrateGuestCart()
   }, [status, session, fetchCartItems])
 
   // Sync cart to local storage - only store IDs, quantities, and variantIds

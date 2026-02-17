@@ -27,4 +27,8 @@ export {
   // Extended test fixtures
   test,
   expect,
+
+  // Stripe checkout config helpers
+  getMissingStripeCheckoutEnvVars,
+  isStripeCheckoutE2EConfigured,
 } from './auth'
