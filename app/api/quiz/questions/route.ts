@@ -10,6 +10,8 @@ import { successResponse, handleApiError, rateLimitErrorResponse } from '@/lib/a
 import { checkRateLimit, getIdentifier } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger';
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
   try {
     // Apply rate limiting to prevent abuse

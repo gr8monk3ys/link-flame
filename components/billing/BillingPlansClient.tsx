@@ -31,15 +31,24 @@ export function BillingPlansClient(props: {
   const [selectedOrgId, setSelectedOrgId] = useState<string | null>(
     organizations[0]?.id ?? null
   )
-  const [interval, setInterval] = useState<Interval>('monthly')
-  const [creatingOrg, setCreatingOrg] = useState(false)
-  const [creatingOrgName, setCreatingOrgName] = useState('')
-  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null)
+  const [uiState, setUiState] = useState<{
+    interval: Interval
+    creatingOrg: boolean
+    creatingOrgName: string
+    checkoutLoading: string | null
+  }>({
+    interval: 'monthly',
+    creatingOrg: false,
+    creatingOrgName: '',
+    checkoutLoading: null,
+  })
 
   const paidPlans = useMemo(
     () => props.plans.filter((p) => p.id === 'starter' || p.id === 'pro'),
     [props.plans]
   )
+
+  const { interval, creatingOrg, creatingOrgName, checkoutLoading } = uiState
 
   async function createOrganization() {
     const name = creatingOrgName.trim()
@@ -49,7 +58,7 @@ export function BillingPlansClient(props: {
     }
 
     try {
-      setCreatingOrg(true)
+      setUiState((prev) => ({ ...prev, creatingOrg: true }))
       const csrfToken = await getCsrfToken()
 
       const res = await fetch('/api/organizations', {
@@ -71,12 +80,12 @@ export function BillingPlansClient(props: {
 
       setOrganizations((prev) => [created, ...prev])
       setSelectedOrgId(created.id)
-      setCreatingOrgName('')
+      setUiState((prev) => ({ ...prev, creatingOrgName: '' }))
       toast.success('Organization created')
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to create organization')
     } finally {
-      setCreatingOrg(false)
+      setUiState((prev) => ({ ...prev, creatingOrg: false }))
     }
   }
 
@@ -87,7 +96,7 @@ export function BillingPlansClient(props: {
     }
 
     try {
-      setCheckoutLoading(planIdUpper)
+      setUiState((prev) => ({ ...prev, checkoutLoading: planIdUpper }))
       const csrfToken = await getCsrfToken()
 
       const res = await fetch('/api/billing/checkout', {
@@ -118,7 +127,7 @@ export function BillingPlansClient(props: {
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to start checkout')
     } finally {
-      setCheckoutLoading(null)
+      setUiState((prev) => ({ ...prev, checkoutLoading: null }))
     }
   }
 
@@ -164,12 +173,13 @@ export function BillingPlansClient(props: {
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
             <div className="flex-1">
-              <label className="mb-1 block text-sm font-medium">
+              <label htmlFor="create-org-name" className="mb-1 block text-sm font-medium">
                 Create a new organization
               </label>
               <input
+                id="create-org-name"
                 value={creatingOrgName}
-                onChange={(e) => setCreatingOrgName(e.target.value)}
+                onChange={(e) => setUiState((prev) => ({ ...prev, creatingOrgName: e.target.value }))}
                 placeholder="e.g. Acme Co."
                 className="h-10 w-full rounded-lg border bg-background px-3 text-sm"
               />
@@ -195,7 +205,7 @@ export function BillingPlansClient(props: {
             className={`rounded-full px-3 py-1 text-sm ${
               interval === 'monthly' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'
             }`}
-            onClick={() => setInterval('monthly')}
+            onClick={() => setUiState((prev) => ({ ...prev, interval: 'monthly' }))}
           >
             Monthly
           </button>
@@ -204,7 +214,7 @@ export function BillingPlansClient(props: {
             className={`rounded-full px-3 py-1 text-sm ${
               interval === 'yearly' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'
             }`}
-            onClick={() => setInterval('yearly')}
+            onClick={() => setUiState((prev) => ({ ...prev, interval: 'yearly' }))}
           >
             Yearly
           </button>
@@ -279,4 +289,3 @@ export function BillingPlansClient(props: {
     </div>
   )
 }
-

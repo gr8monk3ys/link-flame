@@ -46,7 +46,9 @@ function OrderConfirmationContent() {
         setOrderDetails(data.data);
       }
     } catch (error) {
-      console.error("Failed to fetch order details:", error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error("Failed to fetch order details:", error);
+      }
     } finally {
       setLoading(false);
     }

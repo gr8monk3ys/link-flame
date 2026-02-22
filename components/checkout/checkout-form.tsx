@@ -64,7 +64,9 @@ export default function CheckoutForm() {
         setCsrfToken(data.token);
       }
     } catch (error) {
-      console.error('Failed to fetch CSRF token:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to fetch CSRF token:', error);
+      }
     }
   }, []);
 
@@ -181,7 +183,9 @@ export default function CheckoutForm() {
       // Redirect to order confirmation page with order ID
       router.push(redirectUrl || "/order-confirmation");
     } catch (error) {
-      console.error("Error submitting form:", error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error("Error submitting form:", error);
+      }
       const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
       setError(errorMessage);
       toast.error(errorMessage);

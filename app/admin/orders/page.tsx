@@ -42,7 +42,9 @@ export default function AdminOrdersPage() {
         setOrders(data.orders || []);
       }
     } catch (error) {
-      console.error('Failed to fetch orders:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to fetch orders:', error);
+      }
     } finally {
       setLoading(false);
     }
@@ -67,7 +69,9 @@ export default function AdminOrdersPage() {
         alert('Failed to update shipping status');
       }
     } catch (error) {
-      console.error('Failed to update shipping status:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to update shipping status:', error);
+      }
       alert('Failed to update shipping status');
     }
   }

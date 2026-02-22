@@ -59,7 +59,9 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
       const data = await response.json()
       setReviewData(data.data)
     } catch (error) {
-      console.error('Error fetching reviews:', error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error fetching reviews:', error)
+      }
       toast.error('Failed to load reviews')
     } finally {
       setLoading(false)
@@ -109,7 +111,9 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
       setComment("")
       fetchReviews() // Refresh reviews
     } catch (error: unknown) {
-      console.error('Error submitting review:', error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error submitting review:', error)
+      }
       const message = error instanceof Error ? error.message : 'Failed to submit review'
       toast.error(message)
     } finally {

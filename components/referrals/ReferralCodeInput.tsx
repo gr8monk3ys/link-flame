@@ -69,7 +69,9 @@ export function ReferralCodeInput({
       toast.success(data.data.message);
       onCodeApplied?.(data.data.code, data.data.discountPercent);
     } catch (err) {
-      console.error("Failed to validate referral code:", err);
+      if (process.env.NODE_ENV === 'development') {
+        console.error("Failed to validate referral code:", err);
+      }
       setError("Failed to validate code. Please try again.");
     } finally {
       setLoading(false);

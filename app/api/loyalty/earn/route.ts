@@ -40,6 +40,8 @@ import {
 } from "@/lib/api-response";
 import { logger } from "@/lib/logger";
 
+export const dynamic = 'force-dynamic'
+
 const EarnPointsSchema = z.object({
   source: z.enum([
     POINT_SOURCES.PURCHASE,

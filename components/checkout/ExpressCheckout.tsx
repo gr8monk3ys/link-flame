@@ -70,7 +70,9 @@ export function ExpressCheckout({ disabled = false, className = '' }: ExpressChe
         // Redirect to order confirmation
         router.push(redirectUrl || `/order-confirmation?orderId=${orderId}`)
       } catch (error) {
-        console.error('Express checkout failed:', error)
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Express checkout failed:', error)
+        }
         const errorMessage =
           error instanceof Error ? error.message : 'Payment failed. Please try again.'
         toast.error(errorMessage)
@@ -82,7 +84,9 @@ export function ExpressCheckout({ disabled = false, className = '' }: ExpressChe
   )
 
   const handlePaymentError = useCallback((error: Error) => {
-    console.error('Payment error:', error)
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Payment error:', error)
+    }
     toast.error(error.message || 'Payment failed. Please try again.')
   }, [])
 

@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils"
 import { HeaderSearch } from "@/components/search/HeaderSearch"
 import { AnnouncementBar } from "@/components/announcement-bar"
 import { AccountLink } from "@/components/account-link"
+import { Suspense } from "react"
 
 interface SiteHeaderProps {
   className?: string
@@ -20,7 +21,19 @@ export function SiteHeader({ className }: SiteHeaderProps) {
         <div className="flex items-center space-x-4">
           <nav className="flex items-center space-x-4 sm:space-x-6">
             {/* Predictive Search */}
-            <HeaderSearch />
+            <Suspense
+              fallback={
+                <button
+                  type="button"
+                  aria-label="Search"
+                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground"
+                >
+                  <span className="sr-only">Search</span>
+                </button>
+              }
+            >
+              <HeaderSearch />
+            </Suspense>
 
             {/* Loyalty Badge - Shows points and tier for authenticated users */}
             <LoyaltyBadge compact className="hidden sm:flex" />

@@ -1,6 +1,12 @@
+import type { Metadata } from "next"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import Link from "next/link"
+
+export const metadata: Metadata = {
+  title: "Zero Waste Living Guide | Link Flame",
+  description: "Actionable zero-waste tips and guides for reducing household waste.",
+}
 
 export default function ZeroWastePage() {
   return (

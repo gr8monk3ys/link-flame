@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 import { Loader2, ExternalLink, AlertTriangle } from 'lucide-react'
@@ -42,9 +42,7 @@ async function getCsrfToken(): Promise<string> {
 export function BillingDashboardClient(props: {
   initialOrganizations: OrganizationSummary[]
 }) {
-  const [organizations, setOrganizations] = useState<OrganizationSummary[]>(
-    props.initialOrganizations
-  )
+  const organizations = props.initialOrganizations
   const [selectedOrgId, setSelectedOrgId] = useState<string | null>(
     organizations[0]?.id ?? null
   )
@@ -57,36 +55,35 @@ export function BillingDashboardClient(props: {
     [organizations, selectedOrgId]
   )
 
+  const loadUsage = useCallback(async (orgId: string, signal: AbortSignal) => {
+    const encodedOrgId = encodeURIComponent(orgId)
+    try {
+      setLoading(true)
+      const res = await fetch(`/api/billing/usage?organizationId=${encodedOrgId}`, {
+        cache: 'no-store',
+        signal,
+      })
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(json?.error?.message || 'Failed to load usage')
+      if (!signal.aborted) setUsage(json?.data as UsageResponse)
+    } catch (err) {
+      if (signal.aborted) return
+      setUsage(null)
+      toast.error(err instanceof Error ? err.message : 'Failed to load usage')
+    } finally {
+      if (!signal.aborted) setLoading(false)
+    }
+  }, [])
+
   useEffect(() => {
     const orgId = selectedOrgId
     if (!orgId) return
-    const encodedOrgId = encodeURIComponent(orgId)
-    let cancelled = false
-
-    async function fetchUsage() {
-      try {
-        setLoading(true)
-        const res = await fetch(`/api/billing/usage?organizationId=${encodedOrgId}`, {
-          cache: 'no-store',
-        })
-        const json = await res.json().catch(() => ({}))
-        if (!res.ok) throw new Error(json?.error?.message || 'Failed to load usage')
-        if (!cancelled) setUsage(json?.data as UsageResponse)
-      } catch (err) {
-        if (!cancelled) {
-          setUsage(null)
-          toast.error(err instanceof Error ? err.message : 'Failed to load usage')
-        }
-      } finally {
-        if (!cancelled) setLoading(false)
-      }
-    }
-
-    fetchUsage()
+    const controller = new AbortController()
+    void loadUsage(orgId, controller.signal)
     return () => {
-      cancelled = true
+      controller.abort()
     }
-  }, [selectedOrgId])
+  }, [loadUsage, selectedOrgId])
 
   async function openPortal() {
     if (!selectedOrg?.stripeCustomerId) {

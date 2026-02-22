@@ -10,6 +10,7 @@ export default function HeroSection() {
           src="/images/leaves.jpg"
           alt="Sustainable living background"
           fill
+          sizes="100vw"
           className="object-cover opacity-20"
           priority
         />

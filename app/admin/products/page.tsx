@@ -33,7 +33,9 @@ export default function AdminProductsPage() {
         setProducts(data.products || []);
       }
     } catch (error) {
-      console.error('Failed to fetch products:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to fetch products:', error);
+      }
     } finally {
       setLoading(false);
     }
@@ -55,7 +57,9 @@ export default function AdminProductsPage() {
         alert('Failed to delete product');
       }
     } catch (error) {
-      console.error('Failed to delete product:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to delete product:', error);
+      }
       alert('Failed to delete product');
     }
   }

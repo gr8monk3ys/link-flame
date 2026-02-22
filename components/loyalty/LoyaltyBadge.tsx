@@ -100,7 +100,9 @@ export function LoyaltyBadge({ className, showPoints = true, compact = false }: 
           }
         }
       } catch (error) {
-        console.error('Failed to fetch loyalty data:', error)
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Failed to fetch loyalty data:', error)
+        }
       } finally {
         setLoading(false)
       }
@@ -192,7 +194,9 @@ export function LoyaltyBadgeIcon({ className }: { className?: string }) {
           }
         }
       } catch (error) {
-        console.error('Failed to fetch tier:', error)
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Failed to fetch tier:', error)
+        }
       }
     }
 

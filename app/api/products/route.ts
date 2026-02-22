@@ -18,6 +18,7 @@ import { invalidateProductCaches } from "@/lib/cache"
 import { checkRateLimit, getIdentifier } from "@/lib/rate-limit"
 import { validateCsrfToken } from "@/lib/csrf"
 import { calculatePaginationMeta } from "@/lib/api/pagination"
+import { withPrismaRetry } from "@/lib/prisma-retry"
 
 export const dynamic = 'force-dynamic'
 
@@ -93,12 +94,10 @@ export async function GET(request: NextRequest) {
     const where: Prisma.ProductWhereInput = {};
 
     if (search) {
-      // Note: SQLite doesn't support case-insensitive mode, using contains only
-      // For production PostgreSQL, add mode: 'insensitive' to each filter
       where.OR = [
-        { title: { contains: search } },
-        { description: { contains: search } },
-        { category: { contains: search } },
+        { title: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
+        { category: { contains: search, mode: 'insensitive' } },
       ];
     }
 
@@ -146,21 +145,21 @@ export async function GET(request: NextRequest) {
       };
     }
 
-    // Pre-filter by rating using Prisma groupBy to fix pagination count mismatch
-    if (rating) {
-      const ratingGroups = await prisma.review.groupBy({
-        by: ['productId'],
-        _avg: { rating: true },
-        having: { rating: { _avg: { gte: rating } } },
-      })
-      const qualifiedProductIds = ratingGroups.map(g => g.productId)
-      where.id = { in: qualifiedProductIds }
-    }
+    const { total, products } = await withPrismaRetry(async () => {
+      // Pre-filter by rating using Prisma groupBy to fix pagination count mismatch
+      if (rating) {
+        const ratingGroups = await prisma.review.groupBy({
+          by: ['productId'],
+          _avg: { rating: true },
+          having: { rating: { _avg: { gte: rating } } },
+        })
+        const qualifiedProductIds = ratingGroups.map(g => g.productId)
+        where.id = { in: qualifiedProductIds }
+      }
 
-    // Use transaction to execute count and findMany in parallel for better performance
-    const [total, products] = await prisma.$transaction([
-      prisma.product.count({ where }),
-      prisma.product.findMany({
+      // Query count + items separately so transient pooled-connection hiccups can be retried safely.
+      const total = await prisma.product.count({ where })
+      const products = await prisma.product.findMany({
         where,
         include: {
           reviews: {
@@ -184,8 +183,10 @@ export async function GET(request: NextRequest) {
         },
         skip: (page - 1) * pageSize,
         take: pageSize,
-      }),
-    ]);
+      })
+
+      return { total, products }
+    })
 
     // Normalize prices and calculate imperfect discounted prices
     const normalizedProducts = products.map((product) => {

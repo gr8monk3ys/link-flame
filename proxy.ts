@@ -28,15 +28,15 @@ function generateNonce(): string {
  * Build CSP header. We keep this reasonably strict while still allowing Next.js
  * to work without wiring nonces into every script tag.
  *
- * TODO: tighten `script-src` by removing `'unsafe-inline'` once we pass a nonce
- * through to all scripts that need it.
+ * Production uses nonce-based script-src with 'strict-dynamic' for CSP Level 3
+ * browsers. The nonce is generated per-request and propagated via x-nonce header.
  */
 function buildCspHeader(nonce: string): string {
   const isDevelopment = process.env.NODE_ENV === 'development'
 
   const scriptSrc = isDevelopment
     ? `'self' 'unsafe-eval' 'unsafe-inline'`
-    : `'self' 'unsafe-inline' 'nonce-${nonce}' https://js.stripe.com https://www.googletagmanager.com https://www.google-analytics.com`
+    : `'self' 'nonce-${nonce}' 'strict-dynamic' https://js.stripe.com https://www.googletagmanager.com https://www.google-analytics.com`
 
   const styleSrc = isDevelopment
     ? `'self' 'unsafe-inline' https://fonts.googleapis.com`

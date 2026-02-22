@@ -432,7 +432,9 @@ function AddToCartButton({
       });
       toast.success("Product added to cart!");
     } catch (error) {
-      console.error("Error:", error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error("Error:", error);
+      }
       toast.error(error instanceof Error ? error.message : "Failed to complete action.");
     } finally {
       setIsLoading(false);

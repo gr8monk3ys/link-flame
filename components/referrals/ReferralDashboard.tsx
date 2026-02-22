@@ -75,7 +75,9 @@ export function ReferralDashboard() {
       setStats(statsData.data);
       setReferrals(referralsData.data || []);
     } catch (err) {
-      console.error("Failed to fetch referral data:", err);
+      if (process.env.NODE_ENV === 'development') {
+        console.error("Failed to fetch referral data:", err);
+      }
       setError("Failed to load referral data. Please try again.");
     } finally {
       setLoading(false);

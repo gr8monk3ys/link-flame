@@ -114,7 +114,9 @@ export default function ImperfectPage() {
         const uniqueCategories = [...new Set(data.data?.map((p: ImperfectProduct) => p.category) || [])];
         setCategories(uniqueCategories as string[]);
       } catch (err) {
-        console.error('Error fetching imperfect products:', err);
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error fetching imperfect products:', err);
+        }
         setError('Failed to load products. Please try again.');
       } finally {
         setIsLoading(false);

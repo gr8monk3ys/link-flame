@@ -20,6 +20,8 @@ import { checkRateLimit, getIdentifier } from '@/lib/rate-limit';
 import { rateLimitErrorResponse } from '@/lib/api-response';
 import { validateCsrfToken } from '@/lib/csrf';
 
+export const dynamic = 'force-dynamic'
+
 // Schema for quiz submission
 const submitSchema = z.object({
   responses: z.record(

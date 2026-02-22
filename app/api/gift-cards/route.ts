@@ -24,6 +24,8 @@ import {
   GIFT_CARD_CONFIG,
 } from '@/lib/gift-cards'
 
+export const dynamic = 'force-dynamic'
+
 // Validation schema for purchasing a gift card
 const PurchaseGiftCardSchema = z.object({
   amount: z

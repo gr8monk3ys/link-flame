@@ -82,7 +82,9 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
       setGiftCardInfo(info)
       onBalanceChecked?.(info)
     } catch (error) {
-      console.error('Balance check error:', error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Balance check error:', error)
+      }
       setError(error instanceof Error ? error.message : 'Failed to check balance')
       setGiftCardInfo(null)
     } finally {

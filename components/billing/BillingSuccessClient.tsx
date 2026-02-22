@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Loader2, CheckCircle2, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -19,35 +19,45 @@ export function BillingSuccessClient(props: { sessionId: string }) {
   const [details, setDetails] = useState<CheckoutDetails | null>(null)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    let cancelled = false
-
-    async function fetchDetails() {
-      try {
-        setLoading(true)
-        setError(null)
-        const res = await fetch(`/api/billing/checkout?session_id=${encodeURIComponent(props.sessionId)}`, {
+  const loadCheckoutDetails = useCallback(async (signal: AbortSignal) => {
+    try {
+      setLoading(true)
+      setError(null)
+      const res = await fetch(
+        `/api/billing/checkout?session_id=${encodeURIComponent(props.sessionId)}`,
+        {
           cache: 'no-store',
-        })
-        const json = await res.json().catch(() => ({}))
-        if (!res.ok) throw new Error(json?.error?.message || 'Failed to verify checkout session')
-        if (!cancelled) {
-          setDetails(json?.data as CheckoutDetails)
+          signal,
         }
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to verify checkout'
-        if (!cancelled) setError(message)
-        toast.error(message)
-      } finally {
-        if (!cancelled) setLoading(false)
+      )
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        throw new Error(json?.error?.message || 'Failed to verify checkout session')
+      }
+      if (!signal.aborted) {
+        setDetails(json?.data as CheckoutDetails)
+      }
+    } catch (err) {
+      if (signal.aborted) {
+        return
+      }
+      const message = err instanceof Error ? err.message : 'Failed to verify checkout'
+      setError(message)
+      toast.error(message)
+    } finally {
+      if (!signal.aborted) {
+        setLoading(false)
       }
     }
-
-    fetchDetails()
-    return () => {
-      cancelled = true
-    }
   }, [props.sessionId])
+
+  useEffect(() => {
+    const controller = new AbortController()
+    void loadCheckoutDetails(controller.signal)
+    return () => {
+      controller.abort()
+    }
+  }, [loadCheckoutDetails])
 
   return (
     <div className="container max-w-2xl py-10">
@@ -110,4 +120,3 @@ export function BillingSuccessClient(props: { sessionId: string }) {
     </div>
   )
 }
-

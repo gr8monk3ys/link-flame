@@ -6,9 +6,16 @@ import { FeaturedBrands } from "@/components/home/FeaturedBrands";
 import { QuizCTA } from "@/components/quiz";
 import { SustainabilityCommitment } from "@/components/sustainability";
 import { Suspense } from "react";
+import type { Metadata } from "next";
 
 // Render at request time — DB not available during Vercel build
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: 'Link Flame | Sustainable Shopping',
+  description:
+    'Discover eco-friendly products, sustainable brands, and practical guides for greener living.',
+};
 
 export default function IndexPage() {
   return (

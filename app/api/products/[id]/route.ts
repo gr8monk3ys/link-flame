@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { handleApiError, errorResponse, notFoundResponse, rateLimitErrorResponse, successResponse } from '@/lib/api-response';
 import { checkRateLimit, getIdentifier } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger';
+import { withPrismaRetry } from '@/lib/prisma-retry';
 
 export const dynamic = 'force-dynamic'
 
@@ -24,34 +25,36 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const product = await prisma.product.findUnique({
-      where: { id },
-      include: {
-        reviews: {
-          select: {
-            rating: true,
+    const product = await withPrismaRetry(async () =>
+      prisma.product.findUnique({
+        where: { id },
+        include: {
+          reviews: {
+            select: {
+              rating: true,
+            },
           },
-        },
-        variants: {
-          orderBy: {
-            sortOrder: 'asc',
+          variants: {
+            orderBy: {
+              sortOrder: 'asc',
+            },
           },
-        },
-        // Include product values for "Shop by Values" display
-        values: {
-          include: {
-            value: {
-              select: {
-                id: true,
-                name: true,
-                slug: true,
-                iconName: true,
+          // Include product values for "Shop by Values" display
+          values: {
+            include: {
+              value: {
+                select: {
+                  id: true,
+                  name: true,
+                  slug: true,
+                  iconName: true,
+                },
               },
             },
           },
         },
-      },
-    });
+      })
+    );
 
     if (!product) {
       return notFoundResponse("Product");

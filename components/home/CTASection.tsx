@@ -10,6 +10,7 @@ export default function CTASection() {
           src="/images/wall-hanger-plant.jpg"
           alt="Sustainable living"
           fill
+          sizes="100vw"
           className="object-cover opacity-10"
           priority
         />

@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Check } from 'lucide-react';
 
@@ -26,22 +25,6 @@ export function QuizQuestion({
   onSelect,
   isAnimating = false,
 }: QuizQuestionProps) {
-  const [animationClass, setAnimationClass] = useState('opacity-0 translate-x-4');
-
-  useEffect(() => {
-    // Reset animation on question change
-    const resetTimer = setTimeout(() => {
-      setAnimationClass('opacity-0 translate-x-4');
-    }, 0);
-    const revealTimer = setTimeout(() => {
-      setAnimationClass('opacity-100 translate-x-0');
-    }, 50);
-    return () => {
-      clearTimeout(resetTimer);
-      clearTimeout(revealTimer);
-    };
-  }, [question]);
-
   const handleOptionClick = (value: string) => {
     if (questionType === 'SINGLE_CHOICE') {
       onSelect(value);
@@ -67,9 +50,10 @@ export function QuizQuestion({
 
   return (
     <div
+      key={question}
       className={cn(
         'transition-all duration-300 ease-out',
-        animationClass,
+        isAnimating ? 'translate-x-4 opacity-0' : 'translate-x-0 opacity-100',
         isAnimating && 'pointer-events-none'
       )}
     >

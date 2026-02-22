@@ -114,7 +114,9 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
         }
       } catch (err) {
         setError('Failed to load loyalty data. Please try again.')
-        console.error('Failed to fetch loyalty data:', err)
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Failed to fetch loyalty data:', err)
+        }
       } finally {
         setLoading(false)
       }
