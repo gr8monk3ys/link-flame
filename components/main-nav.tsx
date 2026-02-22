@@ -41,6 +41,8 @@ export function MainNav({ className, items }: MainNavProps) {
       <button
         className="md:hidden"
         onClick={() => setShowMobileMenu(!showMobileMenu)}
+        aria-label={showMobileMenu ? "Close menu" : "Open menu"}
+        aria-expanded={showMobileMenu}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -113,7 +115,7 @@ export function MainNav({ className, items }: MainNavProps) {
           </NavigationMenu>
         ) : null}
       </div>
-      {showMobileMenu && <MobileNav items={items} />}
+      {showMobileMenu && <MobileNav items={items} onClose={() => setShowMobileMenu(false)} />}
     </div>
   );
 }

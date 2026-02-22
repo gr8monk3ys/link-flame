@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { PaymentRequestButton } from './PaymentRequestButton'
 import { useCart } from '@/lib/providers/CartProvider'
@@ -31,6 +31,17 @@ export function ExpressCheckout({ disabled = false, className = '' }: ExpressChe
   const router = useRouter()
   const { cart, clearCart, cartTotal } = useCart()
   const [isProcessing, setIsProcessing] = useState(false)
+  const [csrfToken, setCsrfToken] = useState<string | null>(null)
+
+  // Fetch CSRF token on mount
+  useEffect(() => {
+    fetch('/api/csrf')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.token) setCsrfToken(data.token)
+      })
+      .catch(() => { /* CSRF fetch failed — checkout will still attempt */ })
+  }, [])
 
   // Define all hooks before any conditional returns to follow Rules of Hooks
   const handlePaymentSuccess = useCallback(
@@ -38,12 +49,17 @@ export function ExpressCheckout({ disabled = false, className = '' }: ExpressChe
       setIsProcessing(true)
 
       try {
+        const headers: Record<string, string> = {
+          'Content-Type': 'application/json',
+        }
+        if (csrfToken) {
+          headers['X-CSRF-Token'] = csrfToken
+        }
+
         // Create a checkout session with the payment method
         const response = await fetch('/api/checkout/express', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers,
           body: JSON.stringify({
             paymentMethodId,
             items: cart.items.map((item) => ({
@@ -80,7 +96,7 @@ export function ExpressCheckout({ disabled = false, className = '' }: ExpressChe
         setIsProcessing(false)
       }
     },
-    [cart.items, clearCart, router]
+    [cart.items, clearCart, csrfToken, router]
   )
 
   const handlePaymentError = useCallback((error: Error) => {
