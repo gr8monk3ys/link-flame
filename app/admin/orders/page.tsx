@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { Search, ExternalLink, Eye, Gift } from 'lucide-react';
+import { Search, ExternalLink, Eye, Gift, RefreshCw } from 'lucide-react';
 
 interface Order {
   id: string;
@@ -12,6 +12,7 @@ interface Order {
   status: string;
   shippingStatus: string | null;
   trackingNumber: string | null;
+  shippingCarrier: string | null;
   createdAt: string;
   isGift: boolean;
   giftRecipientName: string | null;
@@ -23,23 +24,39 @@ interface Order {
   } | null;
 }
 
+const CARRIER_OPTIONS = [
+  { value: '', label: 'Select Carrier' },
+  { value: 'UPS', label: 'UPS' },
+  { value: 'USPS', label: 'USPS' },
+  { value: 'FedEx', label: 'FedEx' },
+  { value: 'DHL', label: 'DHL' },
+  { value: 'Other', label: 'Other' },
+];
+
+function getCsrfToken(): string | undefined {
+  return document.cookie
+    .split('; ')
+    .find((c) => c.startsWith('csrf_token='))
+    ?.split('=')[1];
+}
+
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [shippingFilter, setShippingFilter] = useState('all');
+  const [refundingOrderId, setRefundingOrderId] = useState<string | null>(null);
+  const [trackingInputs, setTrackingInputs] = useState<
+    Record<string, { trackingNumber: string; shippingCarrier: string }>
+  >({});
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
-  async function fetchOrders() {
+  const fetchOrders = useCallback(async () => {
     try {
-      const res = await fetch('/api/orders');
+      const res = await fetch('/api/orders?admin=true&limit=50');
       if (res.ok) {
-        const data = await res.json();
-        setOrders(data.orders || []);
+        const responseData = await res.json();
+        setOrders(responseData.data || []);
       }
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
@@ -48,25 +65,83 @@ export default function AdminOrdersPage() {
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
+
+  // Initialize tracking inputs from order data
+  useEffect(() => {
+    const inputs: Record<
+      string,
+      { trackingNumber: string; shippingCarrier: string }
+    > = {};
+    for (const order of orders) {
+      inputs[order.id] = {
+        trackingNumber: order.trackingNumber || '',
+        shippingCarrier: order.shippingCarrier || '',
+      };
+    }
+    setTrackingInputs(inputs);
+  }, [orders]);
+
+  function updateTrackingInput(
+    orderId: string,
+    field: 'trackingNumber' | 'shippingCarrier',
+    value: string
+  ) {
+    setTrackingInputs((prev) => ({
+      ...prev,
+      [orderId]: {
+        ...prev[orderId],
+        [field]: value,
+      },
+    }));
   }
 
   async function updateShippingStatus(orderId: string, status: string) {
     try {
+      const csrfToken = getCsrfToken();
+      const tracking = trackingInputs[orderId];
+
       const res = await fetch(`/api/orders/${orderId}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ shippingStatus: status }),
+        headers: {
+          'Content-Type': 'application/json',
+          ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {}),
+        },
+        body: JSON.stringify({
+          shippingStatus: status,
+          ...(tracking?.trackingNumber
+            ? { trackingNumber: tracking.trackingNumber }
+            : {}),
+          ...(tracking?.shippingCarrier
+            ? { shippingCarrier: tracking.shippingCarrier }
+            : {}),
+        }),
       });
 
       if (res.ok) {
-        const updatedOrder = await res.json();
         setOrders(
           orders.map((o) =>
-            o.id === orderId ? { ...o, shippingStatus: status } : o
+            o.id === orderId
+              ? {
+                  ...o,
+                  shippingStatus: status,
+                  trackingNumber:
+                    tracking?.trackingNumber || o.trackingNumber,
+                  shippingCarrier:
+                    tracking?.shippingCarrier || o.shippingCarrier,
+                }
+              : o
           )
         );
       } else {
-        alert('Failed to update shipping status');
+        const errorData = await res.json().catch(() => null);
+        alert(
+          errorData?.error?.message || 'Failed to update shipping status'
+        );
       }
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
@@ -76,10 +151,70 @@ export default function AdminOrdersPage() {
     }
   }
 
+  async function handleRefund(orderId: string) {
+    const order = orders.find((o) => o.id === orderId);
+    if (!order) return;
+
+    const confirmed = window.confirm(
+      `Are you sure you want to refund order #${orderId}?\n\nAmount: $${Number(order.amount).toFixed(2)}\nCustomer: ${order.customerName || order.user?.name || 'Unknown'}\n\nThis action cannot be undone.`
+    );
+
+    if (!confirmed) return;
+
+    setRefundingOrderId(orderId);
+
+    try {
+      const csrfToken = getCsrfToken();
+
+      const res = await fetch(`/api/orders/${orderId}/refund`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {}),
+        },
+      });
+
+      if (res.ok) {
+        setOrders(
+          orders.map((o) =>
+            o.id === orderId ? { ...o, status: 'refunded' } : o
+          )
+        );
+        alert('Refund processed successfully');
+      } else {
+        const errorData = await res.json().catch(() => null);
+        alert(
+          errorData?.error?.message || 'Failed to process refund'
+        );
+      }
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to process refund:', error);
+      }
+      alert('Failed to process refund');
+    } finally {
+      setRefundingOrderId(null);
+    }
+  }
+
+  function getPaymentStatusBadge(status: string): string {
+    switch (status) {
+      case 'paid':
+        return 'bg-green-100 text-green-800';
+      case 'failed':
+        return 'bg-red-100 text-red-800';
+      case 'refunded':
+        return 'bg-purple-100 text-purple-800';
+      case 'pending':
+      default:
+        return 'bg-yellow-100 text-yellow-800';
+    }
+  }
+
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
-      order.customerName.toLowerCase().includes(search.toLowerCase()) ||
-      order.customerEmail.toLowerCase().includes(search.toLowerCase()) ||
+      order.customerName?.toLowerCase().includes(search.toLowerCase()) ||
+      order.customerEmail?.toLowerCase().includes(search.toLowerCase()) ||
       order.id.toString().includes(search);
 
     const matchesPaymentStatus =
@@ -92,6 +227,17 @@ export default function AdminOrdersPage() {
 
     return matchesSearch && matchesPaymentStatus && matchesShippingStatus;
   });
+
+  // Determine if tracking fields should be shown for a given shipping status
+  function shouldShowTracking(shippingStatus: string | null): boolean {
+    const trackableStatuses = [
+      'shipped',
+      'in_transit',
+      'out_for_delivery',
+      'delivered',
+    ];
+    return shippingStatus !== null && trackableStatuses.includes(shippingStatus);
+  }
 
   if (loading) {
     return (
@@ -132,6 +278,7 @@ export default function AdminOrdersPage() {
               <option value="pending">Pending</option>
               <option value="paid">Paid</option>
               <option value="failed">Failed</option>
+              <option value="refunded">Refunded</option>
             </select>
             <select
               value={shippingFilter}
@@ -142,7 +289,10 @@ export default function AdminOrdersPage() {
               <option value="pending">Pending</option>
               <option value="processing">Processing</option>
               <option value="shipped">Shipped</option>
+              <option value="in_transit">In Transit</option>
+              <option value="out_for_delivery">Out for Delivery</option>
               <option value="delivered">Delivered</option>
+              <option value="cancelled">Cancelled</option>
             </select>
           </div>
         </div>
@@ -168,6 +318,9 @@ export default function AdminOrdersPage() {
               <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 Shipping
               </th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                Tracking
+              </th>
               <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500">
                 Gift
               </th>
@@ -183,7 +336,7 @@ export default function AdminOrdersPage() {
             {filteredOrders.length === 0 ? (
               <tr>
                 <td
-                  colSpan={8}
+                  colSpan={9}
                   className="px-6 py-8 text-center text-gray-500"
                 >
                   No orders found
@@ -204,17 +357,11 @@ export default function AdminOrdersPage() {
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
-                    ${order.amount.toFixed(2)}
+                    ${Number(order.amount).toFixed(2)}
                   </td>
                   <td className="whitespace-nowrap px-6 py-4">
                     <span
-                      className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold leading-5 ${
-                        order.status === 'paid'
-                          ? 'bg-green-100 text-green-800'
-                          : order.status === 'failed'
-                          ? 'bg-red-100 text-red-800'
-                          : 'bg-yellow-100 text-yellow-800'
-                      }`}
+                      className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold leading-5 ${getPaymentStatusBadge(order.status)}`}
                     >
                       {order.status}
                     </span>
@@ -230,8 +377,69 @@ export default function AdminOrdersPage() {
                       <option value="pending">Pending</option>
                       <option value="processing">Processing</option>
                       <option value="shipped">Shipped</option>
+                      <option value="in_transit">In Transit</option>
+                      <option value="out_for_delivery">Out for Delivery</option>
                       <option value="delivered">Delivered</option>
+                      <option value="cancelled">Cancelled</option>
                     </select>
+                  </td>
+                  <td className="px-6 py-4">
+                    {shouldShowTracking(order.shippingStatus) ? (
+                      <div className="flex flex-col gap-1">
+                        <select
+                          value={
+                            trackingInputs[order.id]?.shippingCarrier || ''
+                          }
+                          onChange={(e) =>
+                            updateTrackingInput(
+                              order.id,
+                              'shippingCarrier',
+                              e.target.value
+                            )
+                          }
+                          className="w-28 rounded border border-gray-300 px-1 py-1 text-xs focus:border-transparent focus:ring-2 focus:ring-ring"
+                        >
+                          {CARRIER_OPTIONS.map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </option>
+                          ))}
+                        </select>
+                        <input
+                          type="text"
+                          placeholder="Tracking #"
+                          value={
+                            trackingInputs[order.id]?.trackingNumber || ''
+                          }
+                          onChange={(e) =>
+                            updateTrackingInput(
+                              order.id,
+                              'trackingNumber',
+                              e.target.value
+                            )
+                          }
+                          onBlur={() => {
+                            // Save tracking info when user leaves the field
+                            const tracking = trackingInputs[order.id];
+                            if (
+                              tracking &&
+                              (tracking.trackingNumber !==
+                                (order.trackingNumber || '') ||
+                                tracking.shippingCarrier !==
+                                  (order.shippingCarrier || ''))
+                            ) {
+                              updateShippingStatus(
+                                order.id,
+                                order.shippingStatus || 'processing'
+                              );
+                            }
+                          }}
+                          className="w-36 rounded border border-gray-300 px-2 py-1 text-xs focus:border-transparent focus:ring-2 focus:ring-ring"
+                        />
+                      </div>
+                    ) : (
+                      <span className="text-xs text-gray-400">-</span>
+                    )}
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-center">
                     {order.isGift ? (
@@ -271,13 +479,31 @@ export default function AdminOrdersPage() {
                     {new Date(order.createdAt).toLocaleDateString()}
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                    <Link
-                      href={`/account/orders/${order.id}`}
-                      className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-900"
-                    >
-                      <Eye className="size-4" />
-                      View
-                    </Link>
+                    <div className="flex items-center justify-end gap-2">
+                      <Link
+                        href={`/account/orders/${order.id}`}
+                        className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-900"
+                      >
+                        <Eye className="size-4" />
+                        View
+                      </Link>
+                      {order.status === 'paid' && (
+                        <button
+                          onClick={() => handleRefund(order.id)}
+                          disabled={refundingOrderId === order.id}
+                          className="inline-flex items-center gap-1 rounded bg-red-50 px-2 py-1 text-xs font-medium text-red-700 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          {refundingOrderId === order.id ? (
+                            <>
+                              <RefreshCw className="size-3 animate-spin" />
+                              Refunding...
+                            </>
+                          ) : (
+                            'Refund'
+                          )}
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))
@@ -287,7 +513,7 @@ export default function AdminOrdersPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-6">
         <div className="rounded-lg bg-white p-4 shadow">
           <p className="text-sm text-gray-600">Total Orders</p>
           <p className="mt-1 text-2xl font-bold text-gray-900">
@@ -297,19 +523,25 @@ export default function AdminOrdersPage() {
         <div className="rounded-lg bg-white p-4 shadow">
           <p className="text-sm text-gray-600">Pending</p>
           <p className="mt-1 text-2xl font-bold text-yellow-600">
-            {orders.filter((o) => !o.shippingStatus).length}
+            {orders.filter((o) => !o.shippingStatus || o.shippingStatus === 'processing').length}
           </p>
         </div>
         <div className="rounded-lg bg-white p-4 shadow">
           <p className="text-sm text-gray-600">Shipped</p>
           <p className="mt-1 text-2xl font-bold text-blue-600">
-            {orders.filter((o) => o.shippingStatus === 'shipped').length}
+            {orders.filter((o) => o.shippingStatus === 'shipped' || o.shippingStatus === 'in_transit').length}
           </p>
         </div>
         <div className="rounded-lg bg-white p-4 shadow">
           <p className="text-sm text-gray-600">Delivered</p>
           <p className="mt-1 text-2xl font-bold text-green-600">
             {orders.filter((o) => o.shippingStatus === 'delivered').length}
+          </p>
+        </div>
+        <div className="rounded-lg bg-white p-4 shadow">
+          <p className="text-sm text-gray-600">Refunded</p>
+          <p className="mt-1 text-2xl font-bold text-purple-600">
+            {orders.filter((o) => o.status === 'refunded').length}
           </p>
         </div>
         <div className="rounded-lg bg-white p-4 shadow">

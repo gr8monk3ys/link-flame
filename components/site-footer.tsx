@@ -171,7 +171,7 @@ export function SiteFooter({ className }: SiteFooterProps) {
             <div className="text-sm text-muted-foreground">
               &copy; {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
             </div>
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-4">
               <Link
                 href="/terms"
                 className="text-sm text-muted-foreground hover:text-foreground"
@@ -183,6 +183,18 @@ export function SiteFooter({ className }: SiteFooterProps) {
                 className="text-sm text-muted-foreground hover:text-foreground"
               >
                 Privacy Policy
+              </Link>
+              <Link
+                href="/shipping-policy"
+                className="text-sm text-muted-foreground hover:text-foreground"
+              >
+                Shipping Policy
+              </Link>
+              <Link
+                href="/return-policy"
+                className="text-sm text-muted-foreground hover:text-foreground"
+              >
+                Returns
               </Link>
             </div>
           </div>
