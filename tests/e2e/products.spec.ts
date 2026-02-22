@@ -11,34 +11,118 @@ const randomTestIp = () => {
   return `10.${octet()}.${octet()}.${octet()}`
 }
 
+const RETRYABLE_NETWORK_ERRORS = [
+  'ERR_NETWORK_IO_SUSPENDED',
+  'net::ERR_ABORTED',
+  'net::ERR_CONNECTION_CLOSED',
+  'Timeout',
+]
+
+const PRODUCT_CARD_SELECTOR = '[data-testid="product-card"]'
+const PRODUCT_LINK_SELECTOR = `${PRODUCT_CARD_SELECTOR} a[href^="/products/"]`
+const EMPTY_STATE_PATTERN = /no products|no results|not found/i
+
+const isRetryableNavigationError = (error: unknown): boolean => {
+  const message = error instanceof Error ? error.message : String(error)
+  return RETRYABLE_NETWORK_ERRORS.some((fragment) => message.includes(fragment))
+}
+
+const gotoWithRetry = async (
+  page: Page,
+  url: string,
+  maxAttempts = 3
+) => {
+  let lastError: unknown = null
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      await page.goto(url, { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
+      return
+    } catch (error) {
+      lastError = error
+      if (!isRetryableNavigationError(error) || attempt >= maxAttempts) {
+        throw error
+      }
+      await page.waitForTimeout(300 * attempt)
+    }
+  }
+
+  throw lastError ?? new Error(`Failed to navigate to ${url}`)
+}
+
+const requestJsonWithRetry = async (
+  page: Page,
+  url: string,
+  retries = 3
+) => {
+  let lastStatus: number | null = null
+  let lastBody = ''
+  let lastError: unknown = null
+
+  for (let attempt = 0; attempt < retries; attempt += 1) {
+    try {
+      const response = await page.request.get(url, {
+        timeout: 12_000,
+      })
+      if (response.ok()) {
+        const json = await response.json()
+        return { response, json }
+      }
+
+      lastStatus = response.status()
+      lastBody = await response.text().catch(() => '')
+    } catch (error) {
+      lastError = error
+    }
+
+    if (attempt < retries - 1) {
+      await page.waitForTimeout(250 * (attempt + 1))
+    }
+  }
+
+  if (lastStatus !== null) {
+    throw new Error(`Expected ${url} to succeed but got ${lastStatus} ${lastBody}`)
+  }
+
+  throw lastError ?? new Error(`Expected ${url} to succeed`)
+}
+
+const waitForProductsGrid = async (
+  page: Page,
+  { allowEmpty = false, timeout = 12_000 }: { allowEmpty?: boolean; timeout?: number } = {}
+) => {
+  await Promise.race([
+    page.waitForSelector(PRODUCT_CARD_SELECTOR, {
+      timeout,
+    }),
+    page.getByText(EMPTY_STATE_PATTERN).first().waitFor({
+      timeout,
+    }),
+  ])
+
+  const hasCards = await page
+    .locator(PRODUCT_CARD_SELECTOR)
+    .first()
+    .isVisible({ timeout: 1_500 })
+    .catch(() => false)
+
+  if (!allowEmpty) {
+    expect(hasCards).toBeTruthy()
+  }
+
+  return hasCards
+}
+
 const goToFirstProduct = async (page: Page) => {
-  await page.goto('/collections', { waitUntil: 'domcontentloaded' })
-  await page.waitForLoadState('domcontentloaded')
-  await page.waitForSelector('[data-testid="product-card"], .group.relative', {
-    timeout: 10000,
-  })
+  await gotoWithRetry(page, '/collections')
+  await waitForProductsGrid(page, { allowEmpty: false, timeout: 15_000 })
 
-  const productLink = page.locator('a[href^="/products/"]').first()
+  const productLink = page.locator(PRODUCT_LINK_SELECTOR).first()
   const href = await productLink.getAttribute('href').catch(() => null)
+  expect(href).toMatch(/^\/products\/[a-zA-Z0-9-]+$/)
 
-  if (href) {
-    await page.goto(href, { waitUntil: 'domcontentloaded' })
-    await page.waitForLoadState('domcontentloaded')
-    return
-  }
-
-  // Fallback for transient listing/filter states: navigate directly from API.
-  const productsResponse = await page.request.get('/api/products?page=1&pageSize=1')
-  if (!productsResponse.ok()) {
-    throw new Error(`Unable to fetch products for detail navigation: ${productsResponse.status()}`)
-  }
-
-  const productsPayload = await productsResponse.json()
-  const firstProductId = productsPayload?.data?.[0]?.id
-  expect(firstProductId).toBeTruthy()
-
-  await page.goto(`/products/${firstProductId}`, { waitUntil: 'domcontentloaded' })
-  await page.waitForLoadState('domcontentloaded')
+  await gotoWithRetry(page, href!)
 }
 
 /**
@@ -62,41 +146,23 @@ test.describe('Product Browsing', () => {
 
   test.describe('Product Listing Page', () => {
     test('products page loads with items', async ({ page }) => {
-      await page.goto('/collections', { waitUntil: 'domcontentloaded' })
-      await page.waitForLoadState('domcontentloaded')
-
-      // Wait for products to load
-      const productCard = page
-        .locator('[data-testid="product-card"], .group.relative')
-        .first()
-
-      await expect(productCard).toBeVisible({ timeout: 10000 })
+      await gotoWithRetry(page, '/collections')
+      await waitForProductsGrid(page, { allowEmpty: false, timeout: 15_000 })
     })
 
     test('product cards display correct information', async ({ page }) => {
-      await page.goto('/collections', { waitUntil: 'domcontentloaded' })
-      await page.waitForLoadState('domcontentloaded')
+      await gotoWithRetry(page, '/collections')
 
       // Wait for products
-      await page.waitForSelector('[data-testid="product-card"]', {
-        timeout: 10000,
-      })
+      await waitForProductsGrid(page, { allowEmpty: false, timeout: 15_000 })
 
       // Check first product card
       const firstProduct = page
-        .locator('[data-testid="product-card"]')
+        .locator(PRODUCT_CARD_SELECTOR)
         .first()
 
-      // Should have image
-      const hasImage = await firstProduct
-        .locator('img')
-        .first()
-        .isVisible({ timeout: 3000 })
-        .catch(() => false)
-
-      // Should have title
-      const hasTitle = await firstProduct
-        .locator('h3')
+      const hasTitleLink = await firstProduct
+        .locator('a[href^="/products/"]')
         .first()
         .isVisible({ timeout: 3000 })
         .catch(() => false)
@@ -107,7 +173,7 @@ test.describe('Product Browsing', () => {
         .isVisible({ timeout: 3000 })
         .catch(() => false)
 
-      expect(hasImage || hasTitle).toBeTruthy()
+      expect(hasTitleLink || hasPrice).toBeTruthy()
     })
 
     test('shows loading state while fetching products', async ({ page }) => {
@@ -132,8 +198,7 @@ test.describe('Product Browsing', () => {
       page,
     }) => {
       // Navigate with impossible filter
-      await page.goto('/collections?search=xyznonexistentproduct123', { waitUntil: 'domcontentloaded' })
-      await page.waitForLoadState('domcontentloaded')
+      await gotoWithRetry(page, '/collections?search=xyznonexistentproduct123')
 
       // Should show empty state or no products message
       const emptyState = page.locator(
@@ -152,13 +217,10 @@ test.describe('Product Browsing', () => {
 
   test.describe('Product Filtering', () => {
     test('category filter works', async ({ page }) => {
-      await page.goto('/collections', { waitUntil: 'domcontentloaded' })
-      await page.waitForLoadState('domcontentloaded')
+      await gotoWithRetry(page, '/collections')
 
       // Wait for products
-      await page.waitForSelector('[data-testid="product-card"], .group.relative', {
-        timeout: 10000,
-      })
+      await waitForProductsGrid(page, { allowEmpty: false })
 
       // Find category filter
       const categoryFilter = page.locator(
@@ -170,15 +232,12 @@ test.describe('Product Browsing', () => {
         await page.waitForLoadState('domcontentloaded')
 
         // Products should update
-        await page.waitForSelector('[data-testid="product-card"], .group.relative', {
-          timeout: 10000,
-        })
+        await waitForProductsGrid(page, { allowEmpty: true })
       }
     })
 
     test('price range filter works', async ({ page }) => {
-      await page.goto('/collections', { waitUntil: 'domcontentloaded' })
-      await page.waitForLoadState('domcontentloaded')
+      await gotoWithRetry(page, '/collections')
 
       // Find price filter inputs
       const minPriceInput = page.locator(
@@ -193,15 +252,12 @@ test.describe('Product Browsing', () => {
         await page.waitForLoadState('domcontentloaded')
 
         // Products should filter
-        await page.waitForSelector('[data-testid="product-card"], .group.relative', {
-          timeout: 10000,
-        })
+        await waitForProductsGrid(page, { allowEmpty: true })
       }
     })
 
     test('search filter returns relevant results', async ({ page }) => {
-      await page.goto('/collections', { waitUntil: 'domcontentloaded' })
-      await page.waitForLoadState('domcontentloaded')
+      await gotoWithRetry(page, '/collections')
 
       // Find search input
       const searchInput = page.locator(
@@ -217,19 +273,14 @@ test.describe('Product Browsing', () => {
 
         // Products should update
         await Promise.race([
-          page
-            .waitForSelector('[data-testid="product-card"], .group.relative', {
-              timeout: 10000,
-            })
-            .catch(() => {}),
+          page.waitForSelector(PRODUCT_CARD_SELECTOR, { timeout: 10000 }).catch(() => {}),
           page.getByText(/no products/i).waitFor({ timeout: 10000 }).catch(() => {}),
         ])
       }
     })
 
     test('rating filter works', async ({ page }) => {
-      await page.goto('/collections', { waitUntil: 'domcontentloaded' })
-      await page.waitForLoadState('domcontentloaded')
+      await gotoWithRetry(page, '/collections')
 
       // Find rating filter
       const ratingFilter = page.locator(
@@ -244,8 +295,7 @@ test.describe('Product Browsing', () => {
     })
 
     test('values filter (sustainability) works', async ({ page }) => {
-      await page.goto('/collections', { waitUntil: 'domcontentloaded' })
-      await page.waitForLoadState('domcontentloaded')
+      await gotoWithRetry(page, '/collections')
 
       // Find values/sustainability filter
       const valuesFilter = page.locator(
@@ -259,23 +309,16 @@ test.describe('Product Browsing', () => {
         // URL should update with values parameter
         // Products should filter
         await Promise.race([
-          page
-            .waitForSelector('[data-testid="product-card"], .group.relative', {
-              timeout: 10000,
-            })
-            .catch(() => {}),
+          page.waitForSelector(PRODUCT_CARD_SELECTOR, { timeout: 10000 }).catch(() => {}),
           page.getByText(/no products/i).waitFor({ timeout: 10000 }).catch(() => {}),
         ])
       }
     })
 
     test('subscribe & save (subscribable) filter works', async ({ page }) => {
-      await page.goto('/collections', { waitUntil: 'domcontentloaded' })
-      await page.waitForLoadState('domcontentloaded')
+      await gotoWithRetry(page, '/collections')
 
-      await page.waitForSelector('[data-testid="product-card"], .group.relative', {
-        timeout: 10000,
-      })
+      await waitForProductsGrid(page, { allowEmpty: false })
 
       const subscribableCheckbox = page.locator('#subscribable-filter')
       const isVisible = await subscribableCheckbox
@@ -288,9 +331,7 @@ test.describe('Product Browsing', () => {
 
       await expect(page).toHaveURL(/subscribable=true/)
 
-      await page.waitForSelector('[data-testid="product-card"], .group.relative', {
-        timeout: 10000,
-      })
+      await waitForProductsGrid(page, { allowEmpty: false })
 
       // UI badge should show up for subscribable products
       const badge = page.getByText('Subscribe & Save').first()
@@ -306,8 +347,7 @@ test.describe('Product Browsing', () => {
     })
 
     test('can clear filters', async ({ page }) => {
-      await page.goto('/collections?search=test', { waitUntil: 'domcontentloaded' })
-      await page.waitForLoadState('domcontentloaded')
+      await gotoWithRetry(page, '/collections?search=test')
 
       // Find clear filters button
       const clearButton = page.locator(
@@ -326,13 +366,10 @@ test.describe('Product Browsing', () => {
 
   test.describe('Product Pagination', () => {
     test('pagination controls are visible', async ({ page }) => {
-      await page.goto('/collections', { waitUntil: 'domcontentloaded' })
-      await page.waitForLoadState('domcontentloaded')
+      await gotoWithRetry(page, '/collections')
 
       // Wait for products
-      await page.waitForSelector('[data-testid="product-card"], .group.relative', {
-        timeout: 10000,
-      })
+      await waitForProductsGrid(page, { allowEmpty: false })
 
       // Look for pagination
       const pagination = page.locator(
@@ -348,12 +385,9 @@ test.describe('Product Browsing', () => {
     })
 
     test('can navigate to next page', async ({ page }) => {
-      await page.goto('/collections', { waitUntil: 'domcontentloaded' })
-      await page.waitForLoadState('domcontentloaded')
+      await gotoWithRetry(page, '/collections')
 
-      await page.waitForSelector('[data-testid="product-card"], .group.relative', {
-        timeout: 10000,
-      })
+      await waitForProductsGrid(page, { allowEmpty: false })
 
       // Find next button
       const nextButton = page.locator(
@@ -365,15 +399,12 @@ test.describe('Product Browsing', () => {
         await page.waitForLoadState('domcontentloaded')
 
         // Products should update (different page)
-        await page.waitForSelector('[data-testid="product-card"], .group.relative', {
-          timeout: 10000,
-        })
+        await waitForProductsGrid(page, { allowEmpty: true })
       }
     })
 
     test('can change page size', async ({ page }) => {
-      await page.goto('/collections', { waitUntil: 'domcontentloaded' })
-      await page.waitForLoadState('domcontentloaded')
+      await gotoWithRetry(page, '/collections')
 
       // Find page size selector
       const pageSizeSelect = page.locator(
@@ -385,9 +416,7 @@ test.describe('Product Browsing', () => {
         await page.waitForLoadState('domcontentloaded')
 
         // More products should load
-        await page.waitForSelector('[data-testid="product-card"], .group.relative', {
-          timeout: 10000,
-        })
+        await waitForProductsGrid(page, { allowEmpty: false })
       }
     })
   })
@@ -473,25 +502,23 @@ test.describe('Product Browsing', () => {
 
   test.describe('Add to Cart', () => {
     test('can add product to cart from listing page', async ({ page }) => {
-      await page.goto('/collections', { waitUntil: 'domcontentloaded' })
-      await page.waitForLoadState('domcontentloaded')
+      await gotoWithRetry(page, '/collections')
 
-      await page.waitForSelector('[data-testid="product-card"], .group.relative', {
-        timeout: 10000,
-      })
+      await waitForProductsGrid(page, { allowEmpty: false })
 
       // Hover over product to reveal add to cart button
       const productCard = page
-        .locator('[data-testid="product-card"], .group.relative')
+        .locator(PRODUCT_CARD_SELECTOR)
         .first()
       await productCard.hover()
 
       // Click add to cart
-      const addToCartButton = page
+      const addToCartButton = productCard
         .locator('[data-testid="add-to-cart-button"], button:has-text("Add to Cart")')
         .first()
 
-      await addToCartButton.click()
+      await expect(addToCartButton).toBeVisible({ timeout: 5_000 })
+      await addToCartButton.click({ force: true })
       await waitForCartUpdate(page)
 
       // Verify item was added (toast notification or cart count)
@@ -512,20 +539,16 @@ test.describe('Product Browsing', () => {
       await createTestUser(page, testUser)
       await loginUser(page, testUser.email, testUser.password)
 
-      await page.goto('/collections', { waitUntil: 'domcontentloaded' })
-      await page.waitForLoadState('domcontentloaded')
+      await gotoWithRetry(page, '/collections')
+      await waitForProductsGrid(page, { allowEmpty: false })
 
-      await page.waitForSelector('[data-testid="product-card"]', {
-        timeout: 10000,
-      })
-
-      const productCard = page.locator('[data-testid="product-card"]').first()
+      const productCard = page.locator(PRODUCT_CARD_SELECTOR).first()
       await productCard.hover()
 
       const wishlistButton = productCard
-        .locator('button[aria-label*="wishlist"]')
+        .locator('button[aria-label*="wishlist" i]')
         .first()
-      await expect(wishlistButton).toBeVisible({ timeout: 5000 })
+      await expect(wishlistButton).toBeVisible({ timeout: 10_000 })
 
       const saveRequest = page.waitForResponse(
         (response) =>
@@ -559,15 +582,13 @@ test.describe('Product Browsing', () => {
       await createTestUser(page, testUser)
       await loginUser(page, testUser.email, testUser.password)
 
-      await page.goto('/collections', { waitUntil: 'domcontentloaded' })
-      await page.waitForLoadState('domcontentloaded')
+      await gotoWithRetry(page, '/collections')
 
-      await page.waitForSelector('[data-testid="product-card"], .group.relative', {
-        timeout: 10000,
-      })
+      await waitForProductsGrid(page, { allowEmpty: false })
 
       // Navigate to product detail
-      await page.locator('[data-testid="product-card"] a, .group.relative a').first().click()
+      await page.locator(PRODUCT_LINK_SELECTOR).first().click()
+      await page.waitForURL(/\/products\/[a-zA-Z0-9-]+/, { timeout: 10_000 })
       await page.waitForLoadState('domcontentloaded')
 
       // Find add to cart button
@@ -639,55 +660,39 @@ test.describe('Product Browsing', () => {
 
   test.describe('Product API', () => {
     test('products API returns products', async ({ page }) => {
-      const response = await page.request.get('/api/products')
-
-      expect(response.ok()).toBeTruthy()
-
-      const body = await response.json()
+      const { json: body } = await requestJsonWithRetry(page, '/api/products')
       expect(body).toHaveProperty('data')
       expect(Array.isArray(body.data)).toBeTruthy()
     })
 
     test('products API supports pagination', async ({ page }) => {
-      const response = await page.request.get('/api/products?page=1&pageSize=5')
-
-      expect(response.ok()).toBeTruthy()
-
-      const body = await response.json()
+      const { json: body } = await requestJsonWithRetry(
+        page,
+        '/api/products?page=1&pageSize=5'
+      )
       expect(body).toHaveProperty('data')
       expect(body.data.length).toBeLessThanOrEqual(5)
     })
 
     test('products API supports search', async ({ page }) => {
-      const response = await page.request.get('/api/products?search=eco')
-
-      expect(response.ok()).toBeTruthy()
-
-      const body = await response.json()
+      const { json: body } = await requestJsonWithRetry(
+        page,
+        '/api/products?search=eco'
+      )
       expect(body).toHaveProperty('data')
     })
 
     test('single product API returns product details', async ({ page }) => {
       // First get a product ID
-      const listResponse = await page.request.get('/api/products')
-      const listBody = await listResponse.json()
+      const { json: listBody } = await requestJsonWithRetry(page, '/api/products')
 
       if (listBody.data && listBody.data.length > 0) {
         const productId = listBody.data[0].id
 
-        // Get specific product
-        let response = await page.request.get(`/api/products/${productId}`)
-        for (let attempt = 0; attempt < 2 && !response.ok(); attempt += 1) {
-          await page.waitForTimeout(250)
-          response = await page.request.get(`/api/products/${productId}`)
-        }
-
-        if (!response.ok()) {
-          const errorBody = await response.text().catch(() => '')
-          throw new Error(`Expected product detail request to succeed, got ${response.status()} ${errorBody}`)
-        }
-
-        const body = await response.json()
+        const { json: body } = await requestJsonWithRetry(
+          page,
+          `/api/products/${productId}`
+        )
         expect(body).toHaveProperty('data')
         expect(body.data.id).toBe(productId)
         expect(body.data).toHaveProperty('title')

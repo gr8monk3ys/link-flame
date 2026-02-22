@@ -68,7 +68,7 @@ test.describe('Checkout Page Access', () => {
 
     // Now access checkout
     await page.goto('/checkout')
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
 
     // Should be on checkout page (not redirected to signin)
     // The URL should contain /checkout, even if it has a callbackUrl parameter
@@ -94,7 +94,7 @@ test.describe('Checkout Form Validation', () => {
 
   test('should show validation errors for empty form submission', async ({ page }) => {
     await page.goto('/checkout')
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
 
     // Try to submit empty form
     const submitButton = page.locator('button[type="submit"]:has-text("Place Order"), button[type="submit"]:has-text("Checkout"), button[type="submit"]:has-text("Pay")')
@@ -117,7 +117,7 @@ test.describe('Checkout Form Validation', () => {
 
   test('should validate email format', async ({ page }) => {
     await page.goto('/checkout')
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
 
     // Fill email with invalid format
     const emailInput = page.locator('input[name="email"], input[type="email"], #email')
@@ -135,7 +135,7 @@ test.describe('Checkout Form Validation', () => {
 
   test('should validate ZIP code format', async ({ page }) => {
     await page.goto('/checkout')
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
 
     // Find ZIP code input
     const zipInput = page.locator('input[name="zipCode"], input[name="zip"], #zipCode, #zip')
@@ -294,7 +294,7 @@ test.describe('Checkout Flow - End to End', () => {
 
     // Navigate to checkout
     await page.goto('/checkout')
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
 
     // Fill checkout form
     const emailInput = page.locator('input[name="email"], input[type="email"], #email').first()
@@ -366,7 +366,7 @@ test.describe('Checkout Flow - End to End', () => {
 
     // Navigate to checkout
     await page.goto('/checkout')
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
 
     // Should show cart items or order summary
     const cartSummary = page.locator('[data-testid="cart-summary"], [data-testid="order-summary"], .cart-summary, .order-summary')

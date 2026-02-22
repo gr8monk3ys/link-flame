@@ -123,7 +123,7 @@ test.describe('Complete Checkout Flow', () => {
 
       // Navigate to checkout
       await page.goto('/checkout')
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       // Should be on checkout page (not redirected)
       expect(page.url()).toContain('/checkout')
@@ -142,7 +142,7 @@ test.describe('Complete Checkout Flow', () => {
 
       // Navigate to checkout
       await page.goto('/checkout')
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       // Should show cart items or order summary
       const hasSummary = await page
@@ -184,7 +184,7 @@ test.describe('Complete Checkout Flow', () => {
 
       // Navigate to checkout
       await page.goto('/checkout')
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       // Fill checkout form fields if present
       const formFields = [
@@ -252,7 +252,7 @@ test.describe('Complete Checkout Flow', () => {
       page,
     }) => {
       await page.goto('/checkout')
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       // Try to submit empty form
       const submitButton = page
@@ -282,7 +282,7 @@ test.describe('Complete Checkout Flow', () => {
 
     test('validates email format', async ({ page }) => {
       await page.goto('/checkout')
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       const emailInput = page
         .locator('input[name="email"], input[type="email"], #email')
@@ -302,7 +302,7 @@ test.describe('Complete Checkout Flow', () => {
 
     test('validates ZIP code format', async ({ page }) => {
       await page.goto('/checkout')
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       const zipInput = page
         .locator('input[name="zipCode"], input[name="zip"], #zipCode, #zip')
@@ -327,7 +327,7 @@ test.describe('Complete Checkout Flow', () => {
 
     test('validates required fields', async ({ page }) => {
       await page.goto('/checkout')
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       // Required fields to test
       const requiredFields = [
