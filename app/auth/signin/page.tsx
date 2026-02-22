@@ -84,6 +84,11 @@ function SignInForm() {
                 {error}
               </div>
             )}
+            <div className="flex justify-end">
+              <Link href="/auth/forgot-password" className="text-sm text-primary hover:underline">
+                Forgot password?
+              </Link>
+            </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Signing in..." : "Sign In"}
             </Button>

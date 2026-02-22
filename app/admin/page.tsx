@@ -102,22 +102,16 @@ export default async function AdminDashboard() {
         <StatCard
           title="Total Revenue"
           value={`$${revenue.toFixed(2)}`}
-          change="+12.5% from last month"
-          trend="up"
           icon={<DollarSign className="size-6" />}
         />
         <StatCard
           title="Total Orders"
           value={totalOrders}
-          change="+8.2% from last month"
-          trend="up"
           icon={<ShoppingCart className="size-6" />}
         />
         <StatCard
           title="Total Users"
           value={totalUsers}
-          change="+15.3% from last month"
-          trend="up"
           icon={<Users className="size-6" />}
         />
         <StatCard

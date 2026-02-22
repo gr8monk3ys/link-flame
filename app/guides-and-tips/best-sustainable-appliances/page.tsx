@@ -1,97 +1,18 @@
 import { Metadata } from "next"
-import { ProductComparison } from "@/components/home/product-comparison"
 import { SustainabilityCalculator } from "@/components/guides-and-tips/sustainability-calculator"
-import { Separator } from "@/components/ui/separator"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 export const metadata: Metadata = {
-  title: "Best Eco-Friendly Home Appliances 2024 | Link Flame",
+  title: "Best Eco-Friendly Home Appliances 2026 | Link Flame",
   description:
     "Compare the most energy-efficient and sustainable home appliances. Expert reviews, environmental impact scores, and buying guide.",
 }
-
-// In a real app, this would come from your database or CMS
-const sampleProductsData = [
-  {
-    id: "1",
-    name: "EcoWash Pro 3000",
-    slug: "ecowash-pro-3000",
-    description: "An energy-efficient washing machine with advanced eco features",
-    categoryId: "kitchen-appliances",
-    manufacturerId: "greentech-appliances",
-    features: [
-      "Smart load detection",
-      "Eco wash cycle",
-      "Steam cleaning",
-      "WiFi connectivity"
-    ],
-    sustainabilityScore: {
-      id: "eco-score-1",
-      productId: "1",
-      overall: 4.5,
-      carbonFootprint: 4.0,
-      materialSourcing: 4.0,
-      manufacturingProcess: 4.5,
-      packaging: 4.0,
-      endOfLife: 4.5,
-      socialImpact: 4.0
-    },
-    price: 799.99,
-    images: [{ url: "/images/products/washer1.jpg" }],
-    ranking: 1,
-    comparisonNotes: "Top-rated eco-friendly washing machine",
-    pros: ["Energy efficient", "Smart features"],
-    cons: ["Higher upfront cost"],
-    affiliateUrl: "https://example.com/ecowash-pro-3000",
-    createdAt: new Date("2024-01-01"),
-    lastUpdated: new Date("2024-01-01")
-  },
-  // Add more products as needed...
-]
-
-const sampleProducts = sampleProductsData.map(product => ({
-  id: product.id,
-  name: product.name,
-  slug: product.slug,
-  description: product.description,
-  categoryId: product.categoryId,
-  manufacturerId: product.manufacturerId,
-  features: product.features,
-  sustainabilityScore: product.sustainabilityScore,
-  price: product.price,
-  image: product.images?.[0]?.url || "/images/products/placeholder.jpg",
-  rating: product.sustainabilityScore?.overall || 0,
-  energyRating: "A+++",
-  specs: {
-    carbonFootprint: product.sustainabilityScore?.carbonFootprint || 0,
-    materialSourcing: product.sustainabilityScore?.materialSourcing || 0,
-    manufacturingProcess: product.sustainabilityScore?.manufacturingProcess || 0,
-    packaging: product.sustainabilityScore?.packaging || 0,
-    endOfLife: product.sustainabilityScore?.endOfLife || 0,
-    socialImpact: product.sustainabilityScore?.socialImpact || 0
-  },
-  ranking: product.ranking,
-  comparisonNotes: product.comparisonNotes
-}))
 
 const categories = [
   {
     title: "Kitchen Appliances",
     description: "Energy-efficient appliances for your cooking needs",
-    icon: (
-      <svg
-        className="size-6 text-primary"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-        />
-      </svg>
-    ),
     features: [
       "Energy Star certified",
       "Smart temperature control",
@@ -102,21 +23,6 @@ const categories = [
   {
     title: "Laundry Solutions",
     description: "Water and energy-efficient washing machines and dryers",
-    icon: (
-      <svg
-        className="size-6 text-primary"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-        />
-      </svg>
-    ),
     features: [
       "High efficiency models",
       "Cold water washing",
@@ -127,21 +33,6 @@ const categories = [
   {
     title: "HVAC Systems",
     description: "Smart heating and cooling solutions for your home",
-    icon: (
-      <svg
-        className="size-6 text-primary"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-        />
-      </svg>
-    ),
     features: [
       "Smart thermostats",
       "Zone control",
@@ -197,9 +88,6 @@ export default function SustainableAppliancesPage() {
               key={index}
               className="glass-effect hover-card-effect rounded-lg p-6"
             >
-              <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-primary/10">
-                {category.icon}
-              </div>
               <h3 className="mb-2 font-semibold">{category.title}</h3>
               <p className="mb-4 text-muted-foreground">{category.description}</p>
               <div className="space-y-2">
@@ -227,11 +115,22 @@ export default function SustainableAppliancesPage() {
         </div>
       </section>
 
-      {/* Product Comparison Section */}
+      {/* Browse Products CTA */}
+      <section className="section-spacing text-center">
+        <h2 className="mb-4">Browse Eco-Friendly Products</h2>
+        <p className="mx-auto mb-8 max-w-xl text-muted-foreground">
+          Explore our curated collection of sustainable products, vetted for environmental impact and quality.
+        </p>
+        <Button asChild size="lg">
+          <Link href="/collections">View All Products</Link>
+        </Button>
+      </section>
+
+      {/* Sustainability Calculator */}
       <section className="section-spacing">
-        <h2 className="mb-12 text-center">Compare Top Rated Appliances</h2>
-        <div className="glass-effect rounded-lg p-6">
-          <ProductComparison products={sampleProducts} />
+        <h2 className="mb-8 text-center">Calculate Your Impact</h2>
+        <div className="mx-auto max-w-2xl glass-effect rounded-lg p-6">
+          <SustainabilityCalculator />
         </div>
       </section>
 

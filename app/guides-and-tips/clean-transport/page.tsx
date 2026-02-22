@@ -2,7 +2,6 @@ import { Metadata } from "next"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { TransportCalculator } from "@/components/guides-and-tips/transport-calculator"
-import { ChargingStationMap } from "@/components/home/charging-station-map"
 import { ProductGrid } from "@/components/shared/product-grid"
 import Link from "next/link"
 
@@ -51,12 +50,6 @@ export default function CleanTransportPage() {
           <h2 className="mb-4 text-xl font-semibold">Transport Impact Calculator</h2>
           <TransportCalculator />
         </Card>
-      </div>
-
-      {/* Charging Station Map */}
-      <div className="my-8">
-        <h2 className="mb-6 text-2xl font-semibold">EV Charging Stations Near You</h2>
-        <ChargingStationMap />
       </div>
 
       {/* Product Recommendations */}
