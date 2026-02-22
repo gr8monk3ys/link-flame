@@ -25,12 +25,12 @@ export default function HeroSection() {
           Join us in creating a sustainable world, one choice at a time.
         </p>
         <div className="mt-12 flex justify-center gap-5">
-          <Link href="/guides-and-tips">
-            <Button className="modern-button">Explore Eco Living</Button>
+          <Link href="/collections">
+            <Button className="modern-button">Shop Now</Button>
           </Link>
-          <Link href="/blogs">
+          <Link href="/guides-and-tips">
             <Button variant="outline" className="modern-button">
-              Read Our Blog
+              Explore Eco Living
             </Button>
           </Link>
         </div>

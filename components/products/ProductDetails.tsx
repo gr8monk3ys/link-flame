@@ -5,7 +5,6 @@ import { Star } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import { useCart } from "@/lib/providers/CartProvider";
 import { toast } from 'sonner';
-import { useSession } from "next-auth/react";
 import { ProductReviews } from '@/components/products/product-reviews';
 import { VariantSelector, ProductVariant } from '@/components/products/variant-selector';
 import { SubscribeOption } from '@/components/subscriptions';
@@ -90,7 +89,7 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
   }, []);
 
   // Compute display values based on selected variant
-  const displayPrice = selectedVariant?.price ?? selectedVariant?.salePrice ?? product?.salePrice ?? product?.price ?? 0;
+  const displayPrice = selectedVariant?.salePrice ?? selectedVariant?.price ?? product?.salePrice ?? product?.price ?? 0;
   const displayImage = selectedVariant?.image ?? product?.image ?? '';
   const displayInventory = selectedVariant?.inventory ?? product?.inventory ?? 0;
 
@@ -221,9 +220,13 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
                 <h3 className="sr-only">Reviews</h3>
                 <div className="flex items-center">
                   <div className="flex items-center">
-                    {[0, 1, 2, 3, 4].map((rating) => (
-                      <div key={rating} className="shrink-0">
-                        <Star className="size-5" fill="currentColor" aria-hidden="true" />
+                    {[0, 1, 2, 3, 4].map((index) => (
+                      <div key={index} className="shrink-0">
+                        <Star
+                          className={`size-5 ${index < Math.round(averageRating!) ? 'text-amber-400' : 'text-gray-300'}`}
+                          fill={index < Math.round(averageRating!) ? 'currentColor' : 'none'}
+                          aria-hidden="true"
+                        />
                       </div>
                     ))}
                   </div>
@@ -348,7 +351,6 @@ function AddToCartButton({
 }: AddToCartButtonProps) {
   const { addItemToCart } = useCart();
   const [isLoading, setIsLoading] = useState(false);
-  const { data: session } = useSession();
 
   const isOutOfStock = inventory <= 0;
   const needsVariant = product.hasVariants && !selectedVariant;
@@ -361,11 +363,6 @@ function AddToCartButton({
 
     if (needsVariant) {
       toast.error("Please select a size/color option");
-      return;
-    }
-
-    if (!session) {
-      toast.error("Please sign in to add items to cart");
       return;
     }
 

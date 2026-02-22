@@ -21,7 +21,7 @@ type FormErrors = {
 
 export default function CheckoutForm() {
   const router = useRouter();
-  const { cart, cartTotal, clearCart } = useCart();
+  const { cart, cartTotal } = useCart();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
@@ -171,17 +171,16 @@ export default function CheckoutForm() {
         throw new Error(errorData.error || "Failed to create order");
       }
 
-      // Clear the cart after successful checkout
-      clearCart();
-      
-      // Show success message
-      toast.success("Order placed successfully!");
-      
-      // Get the redirect URL from the response or use default
-      const { redirectUrl } = await response.json();
-      
-      // Redirect to order confirmation page with order ID
-      router.push(redirectUrl || "/order-confirmation");
+      // Get the Stripe session URL from the response
+      const { sessionUrl } = await response.json();
+
+      if (sessionUrl) {
+        // Redirect to Stripe Checkout — cart stays intact until payment succeeds.
+        // The order-confirmation page (or webhook) clears the cart after payment.
+        window.location.href = sessionUrl;
+      } else {
+        throw new Error("No checkout session URL returned");
+      }
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
         console.error("Error submitting form:", error);
