@@ -36,7 +36,7 @@ function buildCspHeader(nonce: string): string {
 
   const scriptSrc = isDevelopment
     ? `'self' 'unsafe-eval' 'unsafe-inline'`
-    : `'self' 'nonce-${nonce}' 'strict-dynamic' https://js.stripe.com https://www.googletagmanager.com https://www.google-analytics.com`
+    : `'self' 'unsafe-inline' 'nonce-${nonce}' https://js.stripe.com https://www.googletagmanager.com https://www.google-analytics.com`
 
   const styleSrc = isDevelopment
     ? `'self' 'unsafe-inline' https://fonts.googleapis.com`
