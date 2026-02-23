@@ -397,7 +397,7 @@ export default function AdminOrdersPage() {
                               e.target.value
                             )
                           }
-                          className="w-28 rounded border border-gray-300 px-1 py-1 text-xs focus:border-transparent focus:ring-2 focus:ring-ring"
+                          className="w-28 rounded border border-gray-300 p-1 text-xs focus:border-transparent focus:ring-2 focus:ring-ring"
                         >
                           {CARRIER_OPTIONS.map((opt) => (
                             <option key={opt.value} value={opt.value}>

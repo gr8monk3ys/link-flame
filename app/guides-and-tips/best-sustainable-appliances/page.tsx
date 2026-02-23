@@ -129,7 +129,7 @@ export default function SustainableAppliancesPage() {
       {/* Sustainability Calculator */}
       <section className="section-spacing">
         <h2 className="mb-8 text-center">Calculate Your Impact</h2>
-        <div className="mx-auto max-w-2xl glass-effect rounded-lg p-6">
+        <div className="glass-effect mx-auto max-w-2xl rounded-lg p-6">
           <SustainabilityCalculator />
         </div>
       </section>

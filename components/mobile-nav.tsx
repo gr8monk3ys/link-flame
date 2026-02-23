@@ -44,7 +44,7 @@ export function MobileNav({ className, items, onClose }: MobileNavProps) {
       <nav
         className={cn(
           "fixed inset-y-0 right-0 z-50 w-72 bg-background shadow-xl md:hidden",
-          "animate-in slide-in-from-right duration-200",
+          "duration-200 animate-in slide-in-from-right",
           className
         )}
         role="dialog"
