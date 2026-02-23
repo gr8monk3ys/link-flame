@@ -26,6 +26,8 @@ import {
   normalizeGiftCardCode,
 } from '@/lib/gift-cards'
 
+export const dynamic = 'force-dynamic'
+
 // Validation schema for redeeming a gift card
 const RedeemGiftCardSchema = z.object({
   code: z

@@ -1100,6 +1100,19 @@ model OrganizationInvitation {
   @@index([expiresAt])
 }
 
+// Password reset tokens for forgot-password flow
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  email     String
+  tokenHash String   @unique // SHA-256 hash of the token (never store plaintext)
+  expiresAt DateTime
+  usedAt    DateTime? // Null until the token is consumed
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([expiresAt])
+}
+
 // AuditLog: Compliance and security audit trail
 model AuditLog {
   id             String   @id @default(cuid())

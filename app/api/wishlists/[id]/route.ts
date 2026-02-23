@@ -19,6 +19,8 @@ import {
   deleteWishlist,
 } from "@/lib/wishlists";
 
+export const dynamic = 'force-dynamic'
+
 /**
  * Individual Wishlist API
  *

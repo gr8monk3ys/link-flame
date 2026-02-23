@@ -29,6 +29,7 @@ export function BlogCard({ post, featured = false }: BlogCardProps) {
             src={coverImage}
             alt={title}
             fill
+            sizes={featured ? "(min-width: 768px) 50vw, 100vw" : "(min-width: 1280px) 25vw, (min-width: 768px) 33vw, 100vw"}
             className="object-cover transition-transform duration-500 hover:scale-105"
           />
         </Link>
@@ -59,6 +60,7 @@ export function BlogCard({ post, featured = false }: BlogCardProps) {
                     src={author.image}
                     alt={author.name}
                     fill
+                    sizes="32px"
                     className="rounded-full object-cover"
                   />
                 </div>

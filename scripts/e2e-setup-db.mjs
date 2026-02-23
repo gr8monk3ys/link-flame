@@ -1,4 +1,5 @@
 import { spawnSync } from 'node:child_process'
+import nextEnv from '@next/env'
 
 function run(cmd, args, opts = {}) {
   const result = spawnSync(cmd, args, {
@@ -27,6 +28,10 @@ function run(cmd, args, opts = {}) {
  * Use E2E_DATABASE_URL / E2E_DIRECT_URL to point to an isolated test database.
  */
 async function main() {
+  const { loadEnvConfig } = nextEnv
+  // Match Next.js runtime env resolution so DB setup targets the same database.
+  loadEnvConfig(process.cwd())
+
   const env = { ...process.env }
 
   // Prefer isolated E2E DB variables when provided.
@@ -37,14 +42,55 @@ async function main() {
     env.DIRECT_URL = env.E2E_DIRECT_URL
   }
 
-  // Ensure at least one subscribable product exists for E2E.
+  // Ensure E2E has deterministic catalog data:
+  // - at least one in-stock product exists
+  // - at least one subscribable product exists
   // This is safe to run repeatedly.
   const sql = `
 DO $$
 BEGIN
+  IF NOT EXISTS (SELECT 1 FROM "Product") THEN
+    INSERT INTO "Product" (
+      "id",
+      "title",
+      "description",
+      "price",
+      "image",
+      "category",
+      "inventory",
+      "isSubscribable",
+      "createdAt",
+      "updatedAt"
+    ) VALUES (
+      'e2e_product_seed_1',
+      'Reusable Bamboo Toothbrush',
+      'Seeded product for deterministic E2E runs',
+      12.99,
+      'https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&w=800&q=80',
+      'Personal Care',
+      50,
+      true,
+      NOW(),
+      NOW()
+    );
+  END IF;
+
+  UPDATE "Product"
+  SET
+    "inventory" = GREATEST("inventory", 10),
+    "updatedAt" = NOW()
+  WHERE "id" IN (
+    SELECT "id"
+    FROM "Product"
+    ORDER BY "createdAt" ASC
+    LIMIT 3
+  );
+
   IF NOT EXISTS (SELECT 1 FROM "Product" WHERE "isSubscribable" = true) THEN
     UPDATE "Product"
-    SET "isSubscribable" = true
+    SET
+      "isSubscribable" = true,
+      "updatedAt" = NOW()
     WHERE "id" IN (
       SELECT "id"
       FROM "Product"

@@ -105,7 +105,9 @@ export function RedeemPointsModal({
         }
       } catch (err) {
         setError('Failed to load redemption data')
-        console.error('Error fetching redemption data:', err)
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error fetching redemption data:', err)
+        }
       } finally {
         setLoading(false)
       }
@@ -144,7 +146,9 @@ export function RedeemPointsModal({
       }
     } catch (err) {
       setError('Failed to redeem points. Please try again.')
-      console.error('Error redeeming points:', err)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error redeeming points:', err)
+      }
     } finally {
       setRedeeming(false)
     }
@@ -396,7 +400,9 @@ export function InlineRedeemWidget({
         }
       } catch (err) {
         setError('Failed to load points')
-        console.error('Error fetching redemption data:', err)
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error fetching redemption data:', err)
+        }
       } finally {
         setLoading(false)
       }
@@ -433,7 +439,9 @@ export function InlineRedeemWidget({
       }
     } catch (err) {
       setError('Failed to apply discount')
-      console.error('Error applying discount:', err)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error applying discount:', err)
+      }
     } finally {
       setApplying(false)
     }

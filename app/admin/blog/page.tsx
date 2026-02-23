@@ -37,7 +37,9 @@ export default function AdminBlogPage() {
         setPosts(data.posts || []);
       }
     } catch (error) {
-      console.error('Failed to fetch blog posts:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to fetch blog posts:', error);
+      }
     } finally {
       setLoading(false);
     }
@@ -59,7 +61,9 @@ export default function AdminBlogPage() {
         alert('Failed to delete blog post');
       }
     } catch (error) {
-      console.error('Failed to delete blog post:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to delete blog post:', error);
+      }
       alert('Failed to delete blog post');
     }
   }
@@ -92,7 +96,9 @@ export default function AdminBlogPage() {
         alert('Failed to update post status');
       }
     } catch (error) {
-      console.error('Failed to update post status:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to update post status:', error);
+      }
       alert('Failed to update post status');
     }
   }

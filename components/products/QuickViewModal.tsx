@@ -354,7 +354,9 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
           : null,
       })
     } catch (error) {
-      console.error("Error adding product to cart:", error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error("Error adding product to cart:", error)
+      }
     } finally {
       setIsAddingToCart(false)
     }
@@ -379,7 +381,9 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
         quantity: 1,
       })
     } catch (error) {
-      console.error("Error toggling wishlist:", error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error("Error toggling wishlist:", error)
+      }
     } finally {
       setIsTogglingWishlist(false)
     }

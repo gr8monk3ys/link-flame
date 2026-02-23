@@ -8,7 +8,6 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { buttonVariants } from "@/components/ui/button"
 import { StarRating } from "@/components/ui/star-rating"
 import { useCart } from "@/lib/providers/CartProvider";
-import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { SustainabilityTags } from "@/components/sustainability/PlasticFreeTag";
 import { ValueBadgeList } from "@/components/filters/ValueBadge";
@@ -74,8 +73,6 @@ interface AdminProductCardProps {
 type ProductCardProps = TopPickProductCardProps | AdminProductCardProps
 
 const ProductCard = memo(function ProductCard(props: ProductCardProps) {
-  const { data: session } = useSession();
-  const userId = session?.user?.id;
   const { addItemToCart } = useCart()
   if (props.variant === "admin") {
     const { product } = props
@@ -152,18 +149,16 @@ const ProductCard = memo(function ProductCard(props: ProductCardProps) {
               />
             )}
           </div>
-          {userId && (
-            <button
-              className={buttonVariants({
-                variant: isOutOfStock ? "secondary" : "default",
-                className: `w-full mt-4 ${isOutOfStock ? "cursor-not-allowed opacity-50" : ""}`,
-              })}
-              onClick={handleAddToCart}
-              disabled={isOutOfStock}
-            >
-              {isOutOfStock ? "Out of Stock" : "Add to Cart"}
-            </button>
-          )}
+          <button
+            className={buttonVariants({
+              variant: isOutOfStock ? "secondary" : "default",
+              className: `w-full mt-4 ${isOutOfStock ? "cursor-not-allowed opacity-50" : ""}`,
+            })}
+            onClick={handleAddToCart}
+            disabled={isOutOfStock}
+          >
+            {isOutOfStock ? "Out of Stock" : "Add to Cart"}
+          </button>
         </CardContent>
       </Card>
     )
@@ -198,23 +193,21 @@ const ProductCard = memo(function ProductCard(props: ProductCardProps) {
         >
           View Details
         </a>
-        {userId && (
-          <button
-            className={buttonVariants({
-              variant: "default",
-              className: "w-full",
-            })}
-            onClick={() => addItemToCart({
-              id: product.id,
-              title: product.title,
-              price: 0, // TopPick doesn't have price, may need to fetch
-              image: product.image,
-              quantity: 1,
-            })}
-          >
-            Add to Cart
-          </button>
-        )}
+        <button
+          className={buttonVariants({
+            variant: "default",
+            className: "w-full",
+          })}
+          onClick={() => addItemToCart({
+            id: product.id,
+            title: product.title,
+            price: 0, // TopPick doesn't have price, may need to fetch
+            image: product.image,
+            quantity: 1,
+          })}
+        >
+          Add to Cart
+        </button>
       </CardFooter>
     </Card>
   )

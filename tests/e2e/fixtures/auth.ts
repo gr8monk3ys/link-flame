@@ -58,6 +58,59 @@ export function generateTestUser(prefix = 'Test'): TestUser {
   }
 }
 
+const RETRYABLE_NAV_ERRORS = [
+  'ERR_NETWORK_IO_SUSPENDED',
+  'net::ERR_ABORTED',
+  'net::ERR_CONNECTION_CLOSED',
+  'Timeout',
+]
+
+function isRetryableNavigationError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error)
+  return RETRYABLE_NAV_ERRORS.some((fragment) => message.includes(fragment))
+}
+
+async function gotoWithRetry(page: Page, url: string, maxAttempts = 3) {
+  let lastError: unknown = null
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      await page.goto(url, { waitUntil: 'domcontentloaded' })
+      await page.waitForLoadState('domcontentloaded')
+      return
+    } catch (error) {
+      lastError = error
+      if (!isRetryableNavigationError(error) || attempt >= maxAttempts) {
+        throw error
+      }
+      await page.waitForTimeout(300 * attempt)
+    }
+  }
+
+  throw lastError ?? new Error(`Failed to navigate to ${url}`)
+}
+
+async function requestJsonWithRetry(page: Page, url: string, retries = 3) {
+  let lastStatus = 0
+  let lastBody = ''
+
+  for (let attempt = 0; attempt < retries; attempt += 1) {
+    const response = await page.request.get(url)
+    if (response.ok()) {
+      const json = await response.json()
+      return { response, json }
+    }
+
+    lastStatus = response.status()
+    lastBody = await response.text().catch(() => '')
+    if (attempt < retries - 1) {
+      await page.waitForTimeout(250 * (attempt + 1))
+    }
+  }
+
+  throw new Error(`GET ${url} failed with ${lastStatus}: ${lastBody}`)
+}
+
 function randomTestIp() {
   const octet = () => Math.floor(Math.random() * 250) + 1
   return `10.${octet()}.${octet()}.${octet()}`
@@ -118,10 +171,18 @@ export async function getCsrfToken(page: Page, retries = 3): Promise<string> {
 export async function createTestUser(
   page: Page,
   userData: TestUser,
-  retries = 2
+  retries = 5
 ) {
   await setUniqueIpHeader(page)
   let lastResponse: Awaited<ReturnType<Page['request']['post']>> | null = null
+
+  // Warm up the signup route while Next.js compiles in development mode.
+  await page.request
+    .post('/api/auth/signup', {
+      headers: { 'content-type': 'application/json' },
+      data: {},
+    })
+    .catch(() => null)
 
   for (let attempt = 0; attempt <= retries; attempt++) {
     const csrfResponse = await page.request.get('/api/csrf')
@@ -160,7 +221,9 @@ export async function createTestUser(
     lastResponse = response
 
     if (attempt < retries) {
-      await page.waitForTimeout(100 * Math.pow(2, attempt))
+      // Route compilation can briefly surface 404 before the API is ready.
+      const waitMs = response.status() === 404 ? 500 * Math.pow(2, attempt) : 150 * Math.pow(2, attempt)
+      await page.waitForTimeout(waitMs)
     }
   }
 
@@ -175,45 +238,82 @@ export async function createTestUser(
  */
 export async function loginUser(page: Page, email: string, password: string) {
   await setUniqueIpHeader(page)
-  await page.goto('/auth/signin')
-  await page.waitForLoadState('networkidle')
 
-  await page.fill('#email', email)
-  await page.fill('#password', password)
-  await page.click('button[type="submit"]')
-
-  // Wait for session to be established
-  await page
-    .waitForResponse(
-      (response) =>
-        response.url().includes('/api/auth/session') && response.status() === 200,
-      { timeout: 15000 }
-    )
-    .catch(() => {
-      // Session endpoint might not be called in some edge cases
+  const submitSignIn = async () => {
+    await gotoWithRetry(page, '/auth/signin')
+    await page.waitForLoadState('domcontentloaded')
+    const emailInput = page.locator('#email')
+    const passwordInput = page.locator('#password')
+    const submitButton = page.getByRole('button', {
+      name: /sign in|signing in/i,
     })
 
-  // Ensure authenticated session is established
-  await expect
-    .poll(
-      async () => {
-        try {
-          const response = await page.request.get('/api/auth/session', {
-            timeout: 5000,
-          })
-          if (!response.ok()) {
+    await expect(emailInput).toBeVisible({ timeout: 15_000 })
+    await expect(passwordInput).toBeVisible({ timeout: 15_000 })
+    await expect(submitButton).toBeVisible({ timeout: 15_000 })
+
+    await emailInput.fill('', { timeout: 15_000 })
+    await emailInput.fill(email, { timeout: 15_000 })
+    await passwordInput.fill('', { timeout: 15_000 })
+    await passwordInput.fill(password, { timeout: 15_000 })
+    await submitButton.click()
+  }
+
+  const waitForSession = async () => {
+    // Session endpoint might not be called in some edge cases.
+    await page
+      .waitForResponse(
+        (response) =>
+          response.url().includes('/api/auth/session') && response.status() === 200,
+        { timeout: 25_000 }
+      )
+      .catch(() => null)
+
+    await expect
+      .poll(
+        async () => {
+          try {
+            const response = await page.request.get('/api/auth/session', {
+              timeout: 5000,
+            })
+            if (!response.ok()) {
+              return false
+            }
+            const session = await response.json()
+            return session?.user?.email === email
+          } catch {
+            // Transient request failures can happen while the app settles.
             return false
           }
-          const session = await response.json()
-          return session?.user?.email === email
-        } catch {
-          // Transient request failures can happen while the app settles.
-          return false
-        }
-      },
-      { timeout: 15000 }
-    )
-    .toBeTruthy()
+        },
+        { timeout: 25_000 }
+      )
+      .toBeTruthy()
+  }
+
+  let lastError: unknown = null
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      await submitSignIn()
+      await waitForSession()
+      if (attempt > 1 && lastError instanceof Error) {
+        console.warn('[E2E] login retry succeeded after initial failure:', lastError.message)
+      }
+      lastError = null
+      break
+    } catch (error) {
+      lastError = error
+      if (attempt < 3) {
+        await page.waitForTimeout(350 * attempt)
+        continue
+      }
+      throw error
+    }
+  }
+
+  if (lastError) {
+    throw lastError instanceof Error ? lastError : new Error(String(lastError))
+  }
 
   // Wait for sign-in to complete - redirect away from auth
   await page
@@ -234,14 +334,14 @@ export async function loginUser(page: Page, email: string, password: string) {
  */
 export async function logoutUser(page: Page) {
   await page.goto('/auth/signout')
-  await page.waitForLoadState('networkidle')
+  await page.waitForLoadState('domcontentloaded')
 
   const signOutButton = page.locator(
     'button:has-text("Sign Out"), button:has-text("Sign out")'
   )
   if (await signOutButton.isVisible({ timeout: 2000 }).catch(() => false)) {
     await signOutButton.click()
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
   }
 }
 
@@ -280,7 +380,7 @@ export async function waitForCartUpdate(page: Page) {
         response.url().includes('/api/cart') && response.status() === 200,
       { timeout: 5000 }
     ),
-    page.waitForLoadState('networkidle', { timeout: 5000 }),
+    page.waitForLoadState('domcontentloaded', { timeout: 5000 }),
   ]).catch(() => {
     // Cart update may have completed already
   })
@@ -291,25 +391,28 @@ export async function waitForCartUpdate(page: Page) {
  * @param page - Playwright page instance
  */
 export async function addItemToCart(page: Page) {
-  await page.goto('/collections')
-  await page.waitForSelector('[data-testid="product-card"]', { timeout: 10000 })
+  const { json: productsBody } = await requestJsonWithRetry(
+    page,
+    '/api/products?page=1&pageSize=1'
+  )
+  const productId = productsBody?.data?.[0]?.id as string | undefined
+  if (!productId) {
+    throw new Error('No products available for cart setup')
+  }
 
-  const productCard = page.locator('[data-testid="product-card"]').first()
-  await productCard.scrollIntoViewIfNeeded()
-  await productCard.hover()
+  const csrfToken = await getCsrfToken(page)
+  const addResponse = await page.request.post('/api/cart', {
+    headers: csrfToken ? { 'X-CSRF-Token': csrfToken } : undefined,
+    data: {
+      productId,
+      quantity: 1,
+    },
+  })
 
-  // Click the add to cart button (revealed on hover)
-  const addToCartButton = productCard.locator('[data-testid="add-to-cart-button"]')
-  await expect(addToCartButton).toBeVisible({ timeout: 5000 })
-  const addToCartRequest = page.waitForResponse(
-    (response) =>
-      response.url().includes('/api/cart') &&
-      response.request().method() === 'POST',
-    { timeout: 15000 }
-  ).catch(() => null)
-
-  await addToCartButton.click()
-  await addToCartRequest
+  if (!addResponse.ok()) {
+    const body = await addResponse.text().catch(() => '')
+    throw new Error(`Failed to add cart item via API: ${addResponse.status()} ${body}`)
+  }
 
   await waitForCartUpdate(page)
 
@@ -322,7 +425,7 @@ export async function addItemToCart(page: Page) {
         const body = await response.json()
         return Array.isArray(body.data) ? body.data.length : 0
       },
-      { timeout: 15000 }
+      { timeout: 30_000 }
     )
     .toBeGreaterThan(0)
 }

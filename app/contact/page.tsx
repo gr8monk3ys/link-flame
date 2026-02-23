@@ -34,7 +34,9 @@ export default function ContactPage() {
       setStatus("success")
       setFormData({ name: "", email: "", subject: "", message: "" })
     } catch (error) {
-      console.error("Contact form error:", error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error("Contact form error:", error)
+      }
       setStatus("error")
     }
   }

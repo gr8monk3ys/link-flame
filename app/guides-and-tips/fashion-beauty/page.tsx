@@ -1,7 +1,14 @@
+import type { Metadata } from "next"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import Link from "next/link"
 import { NewsletterSignup } from "@/components/shared/newsletter-signup"
+
+export const metadata: Metadata = {
+  title: "Eco Fashion & Beauty Guide | Link Flame",
+  description:
+    "Explore sustainable fashion and clean beauty recommendations for everyday routines.",
+}
 
 export default function FashionBeautyPage() {
   return (

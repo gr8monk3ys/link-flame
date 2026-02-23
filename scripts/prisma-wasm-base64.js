@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path');
 
 const runtimeDir = path.join(__dirname, '..', 'node_modules', '@prisma', 'client', 'runtime');
+// The .wasm source files live in the prisma CLI package, not in @prisma/client
+const prismaCliDir = path.join(__dirname, '..', 'node_modules', 'prisma', 'build');
 
 // Detect provider from schema
 const schemaPath = path.join(__dirname, '..', 'prisma', 'schema.prisma');
@@ -14,7 +16,8 @@ try {
   // Default to sqlite if schema can't be read
 }
 
-const wasmPath = path.join(runtimeDir, `query_engine_bg.${provider}.wasm`);
+// Source .wasm is in the prisma CLI package; output goes to @prisma/client/runtime/
+const wasmPath = path.join(prismaCliDir, `query_engine_bg.${provider}.wasm`);
 const outPath = path.join(runtimeDir, `query_engine_bg.${provider}.wasm-base64.js`);
 
 if (fs.existsSync(outPath)) {

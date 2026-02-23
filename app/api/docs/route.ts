@@ -3,6 +3,8 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { logger } from '@/lib/logger';
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     const specPath = join(process.cwd(), 'docs/api/openapi.yaml');

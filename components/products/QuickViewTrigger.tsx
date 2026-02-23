@@ -75,7 +75,9 @@ export function QuickViewTrigger({
       if (error instanceof Error && error.name === 'AbortError') {
         return
       }
-      console.error("Error prefetching product:", error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error("Error prefetching product:", error)
+      }
       hasPrefetchedRef.current = false // Allow retry on next hover
     } finally {
       setIsPrefetching(false)
@@ -128,7 +130,9 @@ export function QuickViewTrigger({
       if (error instanceof Error && error.name === 'AbortError') {
         return
       }
-      console.error("Error fetching product:", error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error("Error fetching product:", error)
+      }
     } finally {
       setIsLoading(false)
     }

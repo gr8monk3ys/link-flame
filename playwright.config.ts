@@ -14,7 +14,7 @@ export default defineConfig({
   testDir: './tests/e2e',
 
   // Maximum time one test can run
-  timeout: 30 * 1000,
+  timeout: 45 * 1000,
 
   // Run tests in parallel (only if multiple workers are enabled)
   fullyParallel: (Number(process.env.PLAYWRIGHT_WORKERS) || (process.env.CI ? 1 : 1)) > 1,

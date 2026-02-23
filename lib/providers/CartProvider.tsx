@@ -25,7 +25,9 @@ async function getCsrfToken(): Promise<string> {
       return token || ''
     }
   } catch (error) {
-    console.error('Error fetching CSRF token:', error)
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error fetching CSRF token:', error)
+    }
   }
   return ''
 }
@@ -52,7 +54,7 @@ const Context = createContext({} as CartContext)
 
 export const useCart = () => useContext(Context)
 
-export const CartProvider = ({ children }: { children: React.ReactNode }) => {
+function useCartProviderValue(): CartContext {
   const { data: session, status } = useSession()
   const [cart, dispatchCart] = useReducer(cartReducer, {
     items: [],
@@ -67,67 +69,72 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const pendingQuantityUpdates = useRef(0)
   const quantityUpdateVersion = useRef(0)
 
+  const syncCartFromLocalStorage = useCallback(async () => {
+    setIsLoading(true)
+    try {
+      const localCart = localStorage.getItem('cart')
+      const parsedCart = JSON.parse(localCart || '{}')
+
+      if (parsedCart?.items && parsedCart?.items?.length > 0) {
+        const initialCart = await Promise.all(
+          parsedCart.items.map(async ({ id, quantity }: { id: string; quantity: number }) => {
+            try {
+              const res = await fetch(`/api/products/${id}`)
+              if (!res.ok) throw new Error('Failed to fetch product')
+              const payload = await res.json()
+              const product = payload?.data ?? payload
+              if (!product?.id) {
+                throw new Error('Invalid product payload')
+              }
+              return {
+                id: product.id,
+                title: product.title,
+                price: product.price,
+                image: product.image,
+                quantity,
+              }
+            } catch (error) {
+              if (process.env.NODE_ENV === 'development') {
+                console.error(`Error fetching product ${id}:`, error)
+              }
+              return null
+            }
+          }),
+        )
+
+        dispatchCart({
+          type: 'SET_CART',
+          payload: {
+            items: initialCart.filter(Boolean),
+          },
+        })
+      } else {
+        dispatchCart({
+          type: 'SET_CART',
+          payload: {
+            items: [],
+          },
+        })
+      }
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error syncing cart from local storage:', error)
+      }
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
   // Check local storage for a cart
   // If there is a cart, fetch the products and hydrate the cart
   useEffect(() => {
-    if (!hasInitialized.current) {
-      hasInitialized.current = true
-
-      const syncCartFromLocalStorage = async () => {
-        setIsLoading(true)
-        try {
-          const localCart = localStorage.getItem('cart')
-          const parsedCart = JSON.parse(localCart || '{}')
-
-          if (parsedCart?.items && parsedCart?.items?.length > 0) {
-            const initialCart = await Promise.all(
-              parsedCart.items.map(async ({ id, quantity }: { id: string; quantity: number }) => {
-                try {
-                  const res = await fetch(`/api/products/${id}`)
-                  if (!res.ok) throw new Error('Failed to fetch product')
-                  const payload = await res.json()
-                  const product = payload?.data ?? payload
-                  if (!product?.id) {
-                    throw new Error('Invalid product payload')
-                  }
-                  return {
-                    id: product.id,
-                    title: product.title,
-                    price: product.price,
-                    image: product.image,
-                    quantity,
-                  }
-                } catch (error) {
-                  console.error(`Error fetching product ${id}:`, error)
-                  return null
-                }
-              }),
-            )
-
-            dispatchCart({
-              type: 'SET_CART',
-              payload: {
-                items: initialCart.filter(Boolean),
-              },
-            })
-          } else {
-            dispatchCart({
-              type: 'SET_CART',
-              payload: {
-                items: [],
-              },
-            })
-          }
-        } catch (error) {
-          console.error('Error syncing cart from local storage:', error)
-        } finally {
-          setIsLoading(false)
-        }
-      }
-
-      syncCartFromLocalStorage()
+    if (hasInitialized.current) {
+      return
     }
-  }, [])
+
+    hasInitialized.current = true
+    void syncCartFromLocalStorage()
+  }, [syncCartFromLocalStorage])
 
   // Fetch cart items from the server
   const fetchCartItems = useCallback(async () => {
@@ -146,14 +153,51 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
           },
         })
       } else {
-        console.error('Failed to fetch cart items')
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Failed to fetch cart items')
+        }
       }
     } catch (error) {
-      console.error('[FETCH_CART_ERROR]', error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[FETCH_CART_ERROR]', error)
+      }
     } finally {
       setIsLoading(false)
     }
   }, [])
+
+  const migrateGuestCart = useCallback(async () => {
+    hasAttemptedCartMigration.current = true
+
+    try {
+      const csrfToken = await getCsrfToken()
+      const response = await fetch('/api/cart/migrate', {
+        method: 'POST',
+        headers: {
+          'X-CSRF-Token': csrfToken,
+        },
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        if (data.total > 0) {
+          toast.success(`Welcome back! ${data.total} item(s) added to your cart`)
+        }
+        // Always refresh after migration attempt because server cart might have changed.
+        await fetchCartItems()
+      } else {
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Failed to migrate guest cart')
+        }
+        hasAttemptedCartMigration.current = false
+      }
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[CART_MIGRATION_ERROR]', error)
+      }
+      hasAttemptedCartMigration.current = false
+    }
+  }, [fetchCartItems])
 
   // Handle cart migration when user logs in
   useEffect(() => {
@@ -162,41 +206,16 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       return
     }
 
-    if (status !== 'authenticated' || !session?.user?.id || hasAttemptedCartMigration.current) {
+    if (
+      status !== 'authenticated' ||
+      !session?.user?.id ||
+      hasAttemptedCartMigration.current
+    ) {
       return
     }
 
-    const migrateGuestCart = async () => {
-      hasAttemptedCartMigration.current = true
-
-      try {
-        const csrfToken = await getCsrfToken()
-        const response = await fetch('/api/cart/migrate', {
-          method: 'POST',
-          headers: {
-            'X-CSRF-Token': csrfToken,
-          },
-        })
-
-        if (response.ok) {
-          const data = await response.json()
-          if (data.total > 0) {
-            toast.success(`Welcome back! ${data.total} item(s) added to your cart`)
-          }
-          // Always refresh after migration attempt because server cart might have changed.
-          await fetchCartItems()
-        } else {
-          console.error('Failed to migrate guest cart')
-          hasAttemptedCartMigration.current = false
-        }
-      } catch (error) {
-        console.error('[CART_MIGRATION_ERROR]', error)
-        hasAttemptedCartMigration.current = false
-      }
-    }
-
-    migrateGuestCart()
-  }, [status, session, fetchCartItems])
+    void migrateGuestCart()
+  }, [migrateGuestCart, session?.user?.id, status])
 
   // Sync cart to local storage - only store IDs, quantities, and variantIds
   const syncCartToLocalStorage = useCallback((currentCart: { items: CartItem[] }) => {
@@ -216,7 +235,9 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       setHasInitialized(true)
       return true
     } catch (error) {
-      console.error('Error syncing cart to local storage:', error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error syncing cart to local storage:', error)
+      }
       return false
     }
   }, [])
@@ -236,7 +257,9 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         return userId || 'guest-user'
       }
     } catch (error) {
-      console.error('Error getting user ID:', error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error getting user ID:', error)
+      }
     }
     return 'guest-user'
   }
@@ -275,7 +298,9 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
       toast.success('Item added to cart')
     } catch (error) {
-      console.error('[ADD_TO_CART_ERROR]', error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[ADD_TO_CART_ERROR]', error)
+      }
       toast.error(error instanceof Error ? error.message : 'Failed to add item to cart')
 
       // Revert optimistic update on error
@@ -319,7 +344,9 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (error) {
       // Only handle error if this is still the latest version
       if (version === quantityUpdateVersion.current) {
-        console.error('[UPDATE_CART_ERROR]', error)
+        if (process.env.NODE_ENV === 'development') {
+          console.error('[UPDATE_CART_ERROR]', error)
+        }
         toast.error(error instanceof Error ? error.message : 'Failed to update quantity')
         // Revert optimistic update on error
         await fetchCartItems()
@@ -393,7 +420,9 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
       toast.success('Item removed from cart')
     } catch (error) {
-      console.error('[REMOVE_ITEM_ERROR]', error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[REMOVE_ITEM_ERROR]', error)
+      }
       toast.error(error instanceof Error ? error.message : 'Failed to remove item')
 
       // Revert optimistic update on error
@@ -457,22 +486,21 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     [cart.items]
   )
 
-  return (
-    <Context.Provider
-      value={{
-        cart: { ...cart, items: cartItems },
-        addItemToCart,
-        updateQuantity,
-        removeItem,
-        clearCart,
-        isProductInCart,
-        cartTotal,
-        hasInitializedCart,
-        isLoading,
-        fetchCartItems,
-      }}
-    >
-      {children}
-    </Context.Provider>
-  )
+  return {
+    cart: { ...cart, items: cartItems },
+    addItemToCart,
+    updateQuantity,
+    removeItem,
+    clearCart,
+    isProductInCart,
+    cartTotal,
+    hasInitializedCart,
+    isLoading,
+    fetchCartItems,
+  }
+}
+
+export const CartProvider = ({ children }: { children: React.ReactNode }) => {
+  const value = useCartProviderValue()
+  return <Context.Provider value={value}>{children}</Context.Provider>
 }

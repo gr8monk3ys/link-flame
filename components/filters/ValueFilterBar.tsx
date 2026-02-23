@@ -122,7 +122,9 @@ export function ValueFilterBar({ className }: ValueFilterBarProps) {
           setValues(valuesArray);
         }
       } catch (error) {
-        console.error('Failed to fetch product values:', error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Failed to fetch product values:', error);
+        }
       } finally {
         setLoading(false);
       }

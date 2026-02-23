@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getCsrfToken } from '@/lib/csrf';
 import { logger } from '@/lib/logger';
 
+export const dynamic = 'force-dynamic'
+
 /**
  * CSRF Token API Endpoint
  *

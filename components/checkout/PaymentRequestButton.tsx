@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useCallback, useEffect, useReducer } from 'react'
 import { PaymentRequest, Stripe, PaymentRequestPaymentMethodEvent } from '@stripe/stripe-js'
 import { getStripeClient, isStripeConfigured } from '@/lib/stripe-client'
 import { useCart } from '@/lib/providers/CartProvider'
@@ -18,6 +18,49 @@ export type PaymentRequestButtonProps = {
 }
 
 type WalletType = 'applePay' | 'googlePay' | 'browserCard' | null
+
+type State = {
+  stripe: Stripe | null
+  paymentRequest: PaymentRequest | null
+  walletType: WalletType
+  isLoading: boolean
+  canMakePayment: boolean
+}
+
+type Action =
+  | { type: 'SET_STRIPE'; stripe: Stripe | null }
+  | { type: 'RESET_UNAVAILABLE' }
+  | { type: 'PAYMENT_READY'; paymentRequest: PaymentRequest; walletType: Exclude<WalletType, null> }
+  | { type: 'PAYMENT_UNAVAILABLE' }
+
+const initialState: State = {
+  stripe: null,
+  paymentRequest: null,
+  walletType: null,
+  isLoading: true,
+  canMakePayment: false,
+}
+
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case 'SET_STRIPE':
+      return { ...state, stripe: action.stripe }
+    case 'RESET_UNAVAILABLE':
+      return { ...state, isLoading: false, canMakePayment: false, paymentRequest: null, walletType: null }
+    case 'PAYMENT_READY':
+      return {
+        ...state,
+        isLoading: false,
+        canMakePayment: true,
+        paymentRequest: action.paymentRequest,
+        walletType: action.walletType,
+      }
+    case 'PAYMENT_UNAVAILABLE':
+      return { ...state, isLoading: false, canMakePayment: false, paymentRequest: null, walletType: null }
+    default:
+      return state
+  }
+}
 
 /**
  * PaymentRequestButton component that displays Apple Pay, Google Pay,
@@ -47,30 +90,28 @@ export function PaymentRequestButton({
   disabled = false,
 }: PaymentRequestButtonProps) {
   const { cart, cartTotal } = useCart()
-  const [stripe, setStripe] = useState<Stripe | null>(null)
-  const [paymentRequest, setPaymentRequest] = useState<PaymentRequest | null>(null)
-  const [walletType, setWalletType] = useState<WalletType>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [canMakePayment, setCanMakePayment] = useState(false)
+  const [state, dispatch] = useReducer(reducer, initialState)
 
   // Initialize Stripe
   useEffect(() => {
     if (!isStripeConfigured()) {
-      queueMicrotask(() => setIsLoading(false))
+      dispatch({ type: 'RESET_UNAVAILABLE' })
       return
     }
 
     getStripeClient().then((stripeInstance) => {
-      setStripe(stripeInstance)
+      dispatch({ type: 'SET_STRIPE', stripe: stripeInstance })
     })
   }, [])
 
   // Create and configure PaymentRequest when Stripe is loaded and cart changes
   useEffect(() => {
-    if (!stripe || cartTotal.raw <= 0) {
-      queueMicrotask(() => setIsLoading(false))
+    if (!state.stripe || cartTotal.raw <= 0) {
+      dispatch({ type: 'RESET_UNAVAILABLE' })
       return
     }
+
+    let isMounted = true
 
     // Build display items from cart
     const displayItems = cart.items.map((item) => ({
@@ -79,7 +120,7 @@ export function PaymentRequestButton({
     }))
 
     // Create PaymentRequest
-    const pr = stripe.paymentRequest({
+    const pr = state.stripe.paymentRequest({
       country: 'US',
       currency: 'usd',
       total: {
@@ -93,25 +134,22 @@ export function PaymentRequestButton({
 
     // Check if the browser supports any payment method
     pr.canMakePayment().then((result) => {
-      setIsLoading(false)
-
-      if (result) {
-        setCanMakePayment(true)
-        setPaymentRequest(pr)
-
-        // Determine which wallet type is available
-        if (result.applePay) {
-          setWalletType('applePay')
-        } else if (result.googlePay) {
-          setWalletType('googlePay')
-        } else {
-          setWalletType('browserCard')
-        }
-      } else {
-        setCanMakePayment(false)
-        setPaymentRequest(null)
-        setWalletType(null)
+      if (!isMounted) {
+        return
       }
+
+      if (!result) {
+        dispatch({ type: 'PAYMENT_UNAVAILABLE' })
+        return
+      }
+
+      const nextWalletType: Exclude<WalletType, null> = result.applePay
+        ? 'applePay'
+        : result.googlePay
+          ? 'googlePay'
+          : 'browserCard'
+
+      dispatch({ type: 'PAYMENT_READY', paymentRequest: pr, walletType: nextWalletType })
     })
 
     // Handle the payment method event
@@ -131,7 +169,9 @@ export function PaymentRequestButton({
         event.complete('success')
         toast.success('Payment initiated successfully!')
       } catch (error) {
-        console.error('Payment failed:', error)
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Payment failed:', error)
+        }
         event.complete('fail')
 
         const errorObj = error instanceof Error ? error : new Error('Payment failed')
@@ -146,24 +186,25 @@ export function PaymentRequestButton({
 
     // Cleanup
     return () => {
+      isMounted = false
       pr.off('paymentmethod', handlePaymentMethod)
     }
-  }, [stripe, cart, cartTotal, onPaymentSuccess, onPaymentError])
+  }, [state.stripe, cart, cartTotal, onPaymentSuccess, onPaymentError])
 
   // Handle button click
   const handleClick = useCallback(() => {
-    if (paymentRequest && !disabled) {
-      paymentRequest.show()
+    if (state.paymentRequest && !disabled) {
+      state.paymentRequest.show()
     }
-  }, [paymentRequest, disabled])
+  }, [state.paymentRequest, disabled])
 
   // Don't render anything if we can't make payments
-  if (!canMakePayment && !isLoading) {
+  if (!state.canMakePayment && !state.isLoading) {
     return null
   }
 
   // Loading state
-  if (isLoading) {
+  if (state.isLoading) {
     return (
       <div className={`animate-pulse ${className}`}>
         <div className="h-12 w-full rounded-md bg-gray-200" />
@@ -176,25 +217,25 @@ export function PaymentRequestButton({
     <button
       type="button"
       onClick={handleClick}
-      disabled={disabled || !paymentRequest}
+      disabled={disabled || !state.paymentRequest}
       className={`
         flex w-full items-center justify-center gap-2 rounded-md px-4 py-3
         font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2
         disabled:cursor-not-allowed disabled:opacity-50
-        ${walletType === 'applePay'
+        ${state.walletType === 'applePay'
           ? 'bg-black text-white hover:bg-gray-800 focus:ring-gray-900'
-          : walletType === 'googlePay'
+          : state.walletType === 'googlePay'
           ? 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-blue-500'
           : 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-blue-500'
         }
         ${className}
       `}
-      aria-label={getButtonAriaLabel(walletType)}
+      aria-label={getButtonAriaLabel(state.walletType)}
     >
-      {walletType === 'applePay' && <ApplePayIcon />}
-      {walletType === 'googlePay' && <GooglePayIcon />}
-      {walletType === 'browserCard' && <CardIcon />}
-      <span>{getButtonLabel(walletType)}</span>
+      {state.walletType === 'applePay' && <ApplePayIcon />}
+      {state.walletType === 'googlePay' && <GooglePayIcon />}
+      {state.walletType === 'browserCard' && <CardIcon />}
+      <span>{getButtonLabel(state.walletType)}</span>
     </button>
   )
 }

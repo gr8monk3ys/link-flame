@@ -45,7 +45,9 @@ export function GiftCardCheckout({
           setCsrfToken(data.token)
         }
       } catch (error) {
-        console.error('Failed to fetch CSRF token:', error)
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Failed to fetch CSRF token:', error)
+        }
       }
     }
     fetchCsrfToken()
@@ -107,7 +109,9 @@ export function GiftCardCheckout({
       onGiftCardApplied?.(result.amountApplied, result)
       toast.success(`Gift card applied! $${result.amountApplied.toFixed(2)} discount`)
     } catch (error) {
-      console.error('Gift card apply error:', error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Gift card apply error:', error)
+      }
       setError(error instanceof Error ? error.message : 'Failed to apply gift card')
     } finally {
       setIsLoading(false)

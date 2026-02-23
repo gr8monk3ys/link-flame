@@ -4,7 +4,11 @@ import { useEffect } from 'react'
 import Link from 'next/link'
 
 export default function AdminError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
-  useEffect(() => { console.error(error) }, [error])
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.error(error)
+    }
+  }, [error])
 
   return (
     <div className="flex min-h-[50vh] flex-col items-center justify-center px-4">

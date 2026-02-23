@@ -1,8 +1,14 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getServerAuth } from '@/lib/auth'
 import { BillingSuccessClient } from '@/components/billing'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'Billing Success | Link Flame',
+  description: 'Confirm and review your subscription checkout status.',
+}
 
 interface BillingSuccessPageProps {
   searchParams: Promise<{ session_id?: string }>
@@ -53,4 +59,3 @@ export default async function BillingSuccessPage({ searchParams }: BillingSucces
 
   return <BillingSuccessClient sessionId={sessionId} />
 }
-

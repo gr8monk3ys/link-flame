@@ -25,6 +25,8 @@ import {
   GIFT_CARD_CONFIG,
 } from '@/lib/gift-cards'
 
+export const dynamic = 'force-dynamic'
+
 interface RouteContext {
   params: Promise<{ code: string }>
 }

@@ -14,6 +14,8 @@ import {
 import { logger } from "@/lib/logger";
 import { moveToWishlist } from "@/lib/wishlists";
 
+export const dynamic = 'force-dynamic'
+
 /**
  * Move Item Between Wishlists API
  *

@@ -20,7 +20,7 @@ const changePasswordSchema = z.object({
   currentPassword: z.string().min(1, "Current password is required"),
   newPassword: z
     .string()
-    .min(6, "New password must be at least 6 characters")
+    .min(8, "New password must be at least 8 characters")
     .max(100, "New password must be less than 100 characters"),
   confirmPassword: z.string().min(1, "Please confirm your new password"),
 }).refine((data) => data.newPassword === data.confirmPassword, {
@@ -54,7 +54,7 @@ export async function PATCH(request: Request) {
     }
 
     // Rate limiting: 5 requests per minute for password changes
-    const identifier = getIdentifier(request);
+    const identifier = getIdentifier(request, userId);
     const { success, reset } = await checkStrictRateLimit(identifier);
 
     if (!success) {

@@ -1,7 +1,7 @@
 'use client';
 
-import { useCallback, useEffect, useState, useMemo } from 'react';
-import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 interface ProductValue {
@@ -15,137 +15,133 @@ interface ProductValue {
 
 interface ActiveFiltersProps {
   className?: string;
+  queryString: string;
 }
 
-export function ActiveFilters({ className }: ActiveFiltersProps) {
+function pushWithParams(
+  pathname: string,
+  router: ReturnType<typeof useRouter>,
+  params: URLSearchParams
+) {
+  const query = params.toString();
+  router.push(query ? `${pathname}?${query}` : pathname);
+}
+
+export function ActiveFilters({ className, queryString }: ActiveFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-
   const [allValues, setAllValues] = useState<ProductValue[]>([]);
 
-  // Get currently selected values from URL - memoized to prevent recalculation
-  const selectedValueSlugs = useMemo(() => {
-    return searchParams.get('values')?.split(',').filter(Boolean) || [];
-  }, [searchParams]);
-  const selectedCategories = useMemo(() => {
-    return searchParams.getAll('category').filter(Boolean);
-  }, [searchParams]);
-  const searchQuery = searchParams.get('search');
-  const rating = searchParams.get('rating');
-  const startDate = searchParams.get('startDate');
-  const endDate = searchParams.get('endDate');
-  const minPrice = searchParams.get('minPrice');
-  const maxPrice = searchParams.get('maxPrice');
-  const imperfect = searchParams.get('imperfect');
-  const subscribable = searchParams.get('subscribable');
+  const params = useMemo(() => new URLSearchParams(queryString), [queryString]);
+  const selectedValueSlugs = useMemo(() => params.get('values')?.split(',').filter(Boolean) || [], [params]);
+  const selectedCategories = useMemo(() => params.getAll('category').filter(Boolean), [params]);
+  const searchQuery = params.get('search');
+  const rating = params.get('rating');
+  const startDate = params.get('startDate');
+  const endDate = params.get('endDate');
+  const minPrice = params.get('minPrice');
+  const maxPrice = params.get('maxPrice');
+  const imperfect = params.get('imperfect');
+  const subscribable = params.get('subscribable');
 
-  // Fetch all values to get names for active filters
-  useEffect(() => {
-    async function fetchValues() {
-      try {
-        const response = await fetch('/api/products/values');
-        if (response.ok) {
-          const data = await response.json();
-          // Handle both wrapped response { data: [...] } and direct array
-          const valuesArray = Array.isArray(data) ? data : (data.data || []);
-          setAllValues(valuesArray);
-        }
-      } catch (error) {
+  const loadValues = useCallback(async () => {
+    try {
+      const response = await fetch('/api/products/values');
+      if (response.ok) {
+        const data = await response.json();
+        const valuesArray = Array.isArray(data) ? data : (data.data || []);
+        setAllValues(valuesArray);
+      }
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
         console.error('Failed to fetch product values:', error);
       }
     }
-    fetchValues();
   }, []);
 
-  // Remove a specific value filter
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void loadValues();
+  }, [loadValues]);
+
   const removeValueFilter = useCallback((slug: string) => {
-    const newParams = new URLSearchParams(searchParams.toString());
-    const newSelectedValues = selectedValueSlugs.filter(v => v !== slug);
+    const nextParams = new URLSearchParams(queryString);
+    const nextSelectedValues = selectedValueSlugs.filter((value) => value !== slug);
 
-    if (newSelectedValues.length > 0) {
-      newParams.set('values', newSelectedValues.join(','));
+    if (nextSelectedValues.length > 0) {
+      nextParams.set('values', nextSelectedValues.join(','));
     } else {
-      newParams.delete('values');
+      nextParams.delete('values');
     }
+    nextParams.delete('page');
+    pushWithParams(pathname, router, nextParams);
+  }, [pathname, queryString, router, selectedValueSlugs]);
 
-    newParams.delete('page');
-    router.push(`${pathname}?${newParams.toString()}`);
-  }, [pathname, router, searchParams, selectedValueSlugs]);
-
-  // Remove a specific category filter
   const removeCategoryFilter = useCallback((categoryName: string) => {
-    const newParams = new URLSearchParams(searchParams.toString());
+    const nextParams = new URLSearchParams(queryString);
     const remaining = selectedCategories.filter((name) => name !== categoryName);
-    newParams.delete('category');
-    remaining.forEach((name) => newParams.append('category', name));
-    newParams.delete('page');
-    router.push(`${pathname}?${newParams.toString()}`);
-  }, [pathname, router, searchParams, selectedCategories]);
+    nextParams.delete('category');
+    remaining.forEach((name) => nextParams.append('category', name));
+    nextParams.delete('page');
+    pushWithParams(pathname, router, nextParams);
+  }, [pathname, queryString, router, selectedCategories]);
 
   const removeSearchFilter = useCallback(() => {
-    const newParams = new URLSearchParams(searchParams.toString());
-    newParams.delete('search');
-    newParams.delete('page');
-    router.push(`${pathname}?${newParams.toString()}`);
-  }, [pathname, router, searchParams]);
+    const nextParams = new URLSearchParams(queryString);
+    nextParams.delete('search');
+    nextParams.delete('page');
+    pushWithParams(pathname, router, nextParams);
+  }, [pathname, queryString, router]);
 
   const removeRatingFilter = useCallback(() => {
-    const newParams = new URLSearchParams(searchParams.toString());
-    newParams.delete('rating');
-    newParams.delete('page');
-    router.push(`${pathname}?${newParams.toString()}`);
-  }, [pathname, router, searchParams]);
+    const nextParams = new URLSearchParams(queryString);
+    nextParams.delete('rating');
+    nextParams.delete('page');
+    pushWithParams(pathname, router, nextParams);
+  }, [pathname, queryString, router]);
 
   const removeDateFilter = useCallback(() => {
-    const newParams = new URLSearchParams(searchParams.toString());
-    newParams.delete('startDate');
-    newParams.delete('endDate');
-    newParams.delete('page');
-    router.push(`${pathname}?${newParams.toString()}`);
-  }, [pathname, router, searchParams]);
+    const nextParams = new URLSearchParams(queryString);
+    nextParams.delete('startDate');
+    nextParams.delete('endDate');
+    nextParams.delete('page');
+    pushWithParams(pathname, router, nextParams);
+  }, [pathname, queryString, router]);
 
-  // Remove price filter
   const removePriceFilter = useCallback(() => {
-    const newParams = new URLSearchParams(searchParams.toString());
-    newParams.delete('minPrice');
-    newParams.delete('maxPrice');
-    newParams.delete('page');
-    router.push(`${pathname}?${newParams.toString()}`);
-  }, [pathname, router, searchParams]);
+    const nextParams = new URLSearchParams(queryString);
+    nextParams.delete('minPrice');
+    nextParams.delete('maxPrice');
+    nextParams.delete('page');
+    pushWithParams(pathname, router, nextParams);
+  }, [pathname, queryString, router]);
 
   const removeImperfectFilter = useCallback(() => {
-    const newParams = new URLSearchParams(searchParams.toString());
-    newParams.delete('imperfect');
-    newParams.delete('page');
-    router.push(`${pathname}?${newParams.toString()}`);
-  }, [pathname, router, searchParams]);
+    const nextParams = new URLSearchParams(queryString);
+    nextParams.delete('imperfect');
+    nextParams.delete('page');
+    pushWithParams(pathname, router, nextParams);
+  }, [pathname, queryString, router]);
 
   const removeSubscribableFilter = useCallback(() => {
-    const newParams = new URLSearchParams(searchParams.toString());
-    newParams.delete('subscribable');
-    newParams.delete('page');
-    router.push(`${pathname}?${newParams.toString()}`);
-  }, [pathname, router, searchParams]);
+    const nextParams = new URLSearchParams(queryString);
+    nextParams.delete('subscribable');
+    nextParams.delete('page');
+    pushWithParams(pathname, router, nextParams);
+  }, [pathname, queryString, router]);
 
-  // Clear all filters
   const clearAllFilters = useCallback(() => {
-    const newParams = new URLSearchParams();
-    // Preserve pageSize if the user chose a custom size.
-    const currentPageSize = searchParams.get('pageSize');
+    const nextParams = new URLSearchParams();
+    const currentPageSize = params.get('pageSize');
     if (currentPageSize) {
-      newParams.set('pageSize', currentPageSize);
+      nextParams.set('pageSize', currentPageSize);
     }
+    pushWithParams(pathname, router, nextParams);
+  }, [params, pathname, router]);
 
-    const url = newParams.toString() ? `${pathname}?${newParams.toString()}` : pathname;
-    router.push(url);
-  }, [pathname, router, searchParams]);
-
-  // Memoize the active filters list to prevent recalculation on every render
   const activeFilters = useMemo(() => {
     const filters: Array<{ type: string; label: string; onRemove: () => void }> = [];
 
-    // Search
     if (searchQuery) {
       filters.push({
         type: 'search',
@@ -154,9 +150,8 @@ export function ActiveFilters({ className }: ActiveFiltersProps) {
       });
     }
 
-    // Add value filters
     selectedValueSlugs.forEach((slug) => {
-      const value = allValues.find(v => v.slug === slug);
+      const value = allValues.find((item) => item.slug === slug);
       if (value) {
         filters.push({
           type: 'value',
@@ -166,7 +161,6 @@ export function ActiveFilters({ className }: ActiveFiltersProps) {
       }
     });
 
-    // Categories (multi)
     selectedCategories.forEach((categoryName) => {
       filters.push({
         type: 'category',
@@ -175,7 +169,6 @@ export function ActiveFilters({ className }: ActiveFiltersProps) {
       });
     });
 
-    // Rating
     if (rating) {
       filters.push({
         type: 'rating',
@@ -184,7 +177,6 @@ export function ActiveFilters({ className }: ActiveFiltersProps) {
       });
     }
 
-    // Date range
     if (startDate || endDate) {
       const label = startDate && endDate
         ? `Date: ${startDate.split('T')[0]} - ${endDate.split('T')[0]}`
@@ -198,7 +190,6 @@ export function ActiveFilters({ className }: ActiveFiltersProps) {
       });
     }
 
-    // Add price filter
     if (minPrice || maxPrice) {
       let priceLabel = 'Price: ';
       if (minPrice && maxPrice) {
@@ -262,9 +253,9 @@ export function ActiveFilters({ className }: ActiveFiltersProps) {
     <div className={cn('flex flex-wrap items-center gap-2', className)}>
       <span className="mr-1 text-sm text-gray-500">Active filters:</span>
 
-      {activeFilters.map((filter, index) => (
+      {activeFilters.map((filter) => (
         <span
-          key={`${filter.type}-${index}`}
+          key={`${filter.type}-${filter.label}`}
           className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 text-sm text-gray-700"
         >
           {filter.label}

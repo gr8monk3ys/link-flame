@@ -33,7 +33,9 @@ async function getFeaturedBrands() {
       productCount: brand._count.products,
     }))
   } catch (error) {
-    console.error('Failed to fetch featured brands:', error instanceof Error ? error.message : error)
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Failed to fetch featured brands:', error instanceof Error ? error.message : error)
+    }
     return []
   }
 }

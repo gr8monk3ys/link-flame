@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { getServerAuth } from '@/lib/auth'
@@ -5,6 +6,11 @@ import { getAllPlans } from '@/lib/billing/plans'
 import { BillingPlansClient } from '@/components/billing'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'Billing Plans | Link Flame',
+  description: 'Choose the right billing plan for your organization.',
+}
 
 export default async function BillingPlansPage() {
   const { userId, user } = await getServerAuth()
@@ -82,4 +88,3 @@ export default async function BillingPlansPage() {
     </div>
   )
 }
-

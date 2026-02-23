@@ -14,6 +14,8 @@ import {
 import { checkRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: Request) {
   try {
     // Apply rate limiting to prevent abuse (public endpoint)

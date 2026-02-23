@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import {
   Accordion,
   AccordionContent,
@@ -5,6 +6,11 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { CONTACT } from "@/config/constants"
+
+export const metadata: Metadata = {
+  title: "FAQ | Link Flame",
+  description: "Answers to common questions about shopping, orders, and sustainability at Link Flame.",
+}
 
 export default function FAQPage() {
   return (

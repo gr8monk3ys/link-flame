@@ -67,7 +67,9 @@ export default function NewBlogPostPage() {
         alert(error.message || 'Failed to create blog post');
       }
     } catch (error) {
-      console.error('Failed to create blog post:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to create blog post:', error);
+      }
       alert('Failed to create blog post');
     } finally {
       setLoading(false);

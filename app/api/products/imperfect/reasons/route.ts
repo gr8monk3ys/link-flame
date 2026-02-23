@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { IMPERFECT_REASONS } from "../route";
 
+export const dynamic = 'force-dynamic'
+
 /**
  * GET /api/products/imperfect/reasons
  * Returns the list of common imperfect reasons for UI display

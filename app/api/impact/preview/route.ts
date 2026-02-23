@@ -17,6 +17,8 @@ import {
 import { checkRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 
+export const dynamic = 'force-dynamic'
+
 const cartItemSchema = z.object({
   productId: z.string().min(1),
   quantity: z.number().int().min(1).max(999),

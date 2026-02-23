@@ -1,4 +1,4 @@
-import { getServerAuth } from "@/lib/auth";
+import { getServerAuth, requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
@@ -36,11 +36,15 @@ export const SHIPPING_STATUS_LABELS: Record<string, string> = {
 /**
  * GET /api/orders
  *
- * Returns paginated list of orders for the authenticated user
+ * Returns paginated list of orders for the authenticated user.
+ * If the user has ADMIN role and passes ?admin=true, returns all orders
+ * (not filtered by userId) with user relation included.
+ *
  * Query params:
  * - page: Page number (default: 1)
  * - limit: Items per page (default: 10, max: 50)
  * - status: Filter by shipping status (optional)
+ * - admin: If "true" and user is ADMIN, returns all orders
  */
 export async function GET(req: Request) {
   try {
@@ -74,8 +78,12 @@ export async function GET(req: Request) {
 
     const { page, limit, status } = validation.data;
 
-    // Build where clause with proper Prisma types
-    const where: Prisma.OrderWhereInput = { userId };
+    // Check if admin mode is requested
+    const adminMode = url.searchParams.get("admin") === "true";
+    const isAdmin = adminMode ? await requireRole(userId, ['ADMIN']) : false;
+
+    // Build where clause - admins see all orders, users see only their own
+    const where: Prisma.OrderWhereInput = isAdmin ? {} : { userId };
 
     // Optional status filter
     if (status && status !== "all") {
@@ -97,6 +105,15 @@ export async function GET(req: Request) {
               },
             },
           },
+          // Include user relation for admin view
+          ...(isAdmin ? {
+            user: {
+              select: {
+                name: true,
+                email: true,
+              },
+            },
+          } : {}),
         },
         orderBy: {
           createdAt: "desc",
@@ -110,6 +127,7 @@ export async function GET(req: Request) {
     // Format orders with status labels and computed fields
     const formattedOrders = orders.map((order) => ({
       ...order,
+      amount: Number(order.amount),
       shippingStatusLabel: order.shippingStatus
         ? SHIPPING_STATUS_LABELS[order.shippingStatus] || order.shippingStatus
         : "Processing",

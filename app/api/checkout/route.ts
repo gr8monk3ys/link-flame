@@ -172,25 +172,67 @@ export async function POST(request: Request) {
 
     try {
       // Create Stripe Checkout Session with automatic payment methods
-      // This enables Apple Pay, Google Pay, and other payment methods based on customer location
       const session = await getStripe().checkout.sessions.create({
         mode: 'payment',
         line_items: lineItems,
-        // Enable automatic payment methods - Stripe will show Apple Pay, Google Pay, etc.
-        // based on what's available on the customer's device and region
         payment_method_types: ['card'],
         payment_method_options: {
           card: {
-            // Enable wallet payment methods (Apple Pay, Google Pay) for card payments
             request_three_d_secure: 'automatic',
           },
         },
+        // Collect shipping address so Stripe Tax can calculate correct rates
+        shipping_address_collection: {
+          allowed_countries: ['US', 'CA'],
+        },
+        // Shipping options: free for orders over $75, flat rate otherwise
+        shipping_options: [
+          ...(serverTotal >= 75
+            ? [
+                {
+                  shipping_rate_data: {
+                    type: 'fixed_amount' as const,
+                    fixed_amount: { amount: 0, currency: 'usd' },
+                    display_name: 'Free Shipping',
+                    delivery_estimate: {
+                      minimum: { unit: 'business_day' as const, value: 5 },
+                      maximum: { unit: 'business_day' as const, value: 7 },
+                    },
+                  },
+                },
+              ]
+            : []),
+          {
+            shipping_rate_data: {
+              type: 'fixed_amount' as const,
+              fixed_amount: { amount: 599, currency: 'usd' },
+              display_name: 'Standard Shipping',
+              delivery_estimate: {
+                minimum: { unit: 'business_day' as const, value: 5 },
+                maximum: { unit: 'business_day' as const, value: 7 },
+              },
+            },
+          },
+          {
+            shipping_rate_data: {
+              type: 'fixed_amount' as const,
+              fixed_amount: { amount: 1499, currency: 'usd' },
+              display_name: 'Express Shipping',
+              delivery_estimate: {
+                minimum: { unit: 'business_day' as const, value: 2 },
+                maximum: { unit: 'business_day' as const, value: 3 },
+              },
+            },
+          },
+        ],
+        // Automatic tax calculation via Stripe Tax
+        // Requires enabling Stripe Tax in dashboard and setting product tax codes
+        automatic_tax: { enabled: true },
         metadata: {
           userId: userIdToUse,
           customerEmail: data.email,
           customerName,
           shippingAddress,
-          // Gift options stored in metadata
           isGift: giftOptions.isGift.toString(),
           giftMessage: giftOptions.giftMessage,
           giftRecipientName: giftOptions.giftRecipientName,
@@ -198,11 +240,9 @@ export async function POST(request: Request) {
           hidePrice: giftOptions.hidePrice.toString(),
         },
         customer_email: data.email,
-        // Billing address collection for better fraud prevention
         billing_address_collection: 'auto',
         success_url: `${getBaseUrl()}/order-confirmation?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${getBaseUrl()}/checkout`,
-        // Expire after 30 minutes
         expires_at: Math.floor(Date.now() / 1000) + (30 * 60),
       });
 

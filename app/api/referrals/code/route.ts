@@ -10,6 +10,8 @@ import { checkRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 import { getBaseUrl } from "@/lib/url";
 
+export const dynamic = 'force-dynamic'
+
 /**
  * GET /api/referrals/code
  * Get the authenticated user's referral code and share links

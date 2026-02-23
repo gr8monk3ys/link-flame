@@ -68,7 +68,9 @@ export const ImperfectProductCard = memo(function ImperfectProductCard({
       });
       toast.success('Product added to cart!');
     } catch (error) {
-      console.error('Error adding to cart:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error adding to cart:', error);
+      }
       toast.error('Failed to add product to cart. Please try again.');
     }
   }, [addItemToCart, product]);

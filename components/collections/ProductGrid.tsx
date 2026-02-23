@@ -3,10 +3,10 @@
 import { memo, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useCart } from "@/lib/providers/CartProvider";
-import { useSavedItems } from "@/hooks/useSavedItems";
-import { toast } from "sonner";
-import { ImperfectBadge } from "@/components/imperfect";
+import { useCart } from '@/lib/providers/CartProvider';
+import { useSavedItems } from '@/hooks/useSavedItems';
+import { toast } from 'sonner';
+import { ImperfectBadge } from '@/components/imperfect';
 
 interface Product {
   id: string;
@@ -53,6 +53,296 @@ const formatPrice = (price: number) => {
   return price.toFixed(2);
 };
 
+function ProductGridLoading() {
+  return (
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {[
+        'product-skeleton-1',
+        'product-skeleton-2',
+        'product-skeleton-3',
+        'product-skeleton-4',
+        'product-skeleton-5',
+        'product-skeleton-6',
+        'product-skeleton-7',
+        'product-skeleton-8',
+      ].map((key) => (
+        <div key={key} className="animate-pulse">
+          <div className="aspect-square w-full rounded-lg bg-gray-200" />
+          <div className="mt-4 space-y-3">
+            <div className="h-4 w-3/4 rounded bg-gray-200" />
+            <div className="h-4 w-1/2 rounded bg-gray-200" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ProductGridEmptyState() {
+  return (
+    <div className="flex min-h-[400px] items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">
+      <div>
+        <h3 className="mt-2 text-sm font-medium text-gray-900">No products found</h3>
+        <p className="mt-1 text-sm text-gray-500">Try adjusting your filters</p>
+      </div>
+    </div>
+  );
+}
+
+function ProductCard({
+  product,
+  currentPage,
+  index,
+  isSaved,
+  onAddToCart,
+  onToggleWishlist,
+}: {
+  product: Product;
+  currentPage: number;
+  index: number;
+  isSaved: boolean;
+  onAddToCart: (product: Product) => void;
+  onToggleWishlist: (product: Product) => Promise<void>;
+}) {
+  return (
+    <div key={product.id} className="group relative" data-testid="product-card">
+      <Link
+        href={`/products/${product.id}`}
+        className="absolute right-4 top-4 z-10 rounded-full bg-white p-2 opacity-0 shadow-md transition-opacity group-hover:opacity-100"
+        aria-label={`View details for ${product.title}`}
+      >
+        <svg className="size-5 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        </svg>
+      </Link>
+
+      <button
+        data-testid="add-to-cart-button"
+        className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-full bg-green-600 px-4 py-2 text-sm font-semibold text-white opacity-0 shadow-md transition-opacity hover:bg-green-500 group-hover:opacity-100"
+        aria-label={`Add ${product.title} to cart`}
+        onClick={() => onAddToCart(product)}
+      >
+        Add to Cart
+      </button>
+
+      <div className="absolute left-4 top-4 z-10 flex flex-col gap-2">
+        {product.isImperfect && product.imperfectDiscount ? (
+          <ImperfectBadge
+            discountPercent={product.imperfectDiscount}
+            size="sm"
+            variant="prominent"
+          />
+        ) : isNewProduct(product.createdAt) ? (
+          <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+            New
+          </span>
+        ) : null}
+
+        {product.isSubscribable ? (
+          <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+            Subscribe &amp; Save
+          </span>
+        ) : null}
+      </div>
+
+      <button
+        className="absolute right-4 top-16 z-10 rounded-full bg-white p-2 opacity-0 shadow-md transition-opacity group-hover:opacity-100"
+        aria-label={`${isSaved ? 'Remove' : 'Add'} ${product.title} ${isSaved ? 'from' : 'to'} wishlist`}
+        aria-pressed={isSaved}
+        onClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          void onToggleWishlist(product);
+        }}
+      >
+        <svg
+          className={`size-5 ${isSaved ? 'text-red-600' : 'text-gray-900'}`}
+          fill={isSaved ? 'currentColor' : 'none'}
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+      </button>
+
+      <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100">
+        <Image
+          src={product.image}
+          alt={product.title}
+          width={400}
+          height={400}
+          className="size-full object-cover object-center transition-opacity group-hover:opacity-75"
+          priority={currentPage === 1 && index < 4}
+          sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+        />
+      </div>
+      <div className="mt-4 space-y-2">
+        <div className="flex justify-between">
+          <h3 className="text-sm text-gray-700">
+            <a href={`/products/${product.id}`}>
+              <span aria-hidden="true" className="absolute inset-0" />
+              {product.title}
+            </a>
+          </h3>
+          <div className="text-sm font-medium">
+            {product.isImperfect && product.imperfectPrice ? (
+              <div className="flex flex-col items-end">
+                <span className="font-bold text-amber-600">${formatPrice(product.imperfectPrice)}</span>
+                <span className="text-xs text-gray-500 line-through">${formatPrice(product.price)}</span>
+              </div>
+            ) : product.salePrice ? (
+              <div className="flex flex-col items-end">
+                <span className="text-red-600">${formatPrice(product.salePrice)}</span>
+                <span className="text-gray-500 line-through">${formatPrice(product.price)}</span>
+              </div>
+            ) : (
+              <span className="text-gray-900">${formatPrice(product.price)}</span>
+            )}
+          </div>
+        </div>
+        <p className="text-sm text-gray-500">{product.category}</p>
+        {product.description && (
+          <p className="line-clamp-2 text-sm text-gray-600">{product.description}</p>
+        )}
+        <div className="flex items-center space-x-2">
+          {getAverageRating(product.reviews) && (
+            <>
+              <div className="flex items-center">
+                <span className="text-sm font-medium text-gray-900">
+                  {getAverageRating(product.reviews)}
+                </span>
+                <span className="ml-1 text-yellow-400">★</span>
+              </div>
+              <span className="text-sm text-gray-500">
+                ({product.reviews.length} reviews)
+              </span>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProductPagination({
+  currentPage,
+  onPageChange,
+  pageSize,
+  onPageSizeChange,
+  totalPages,
+}: {
+  currentPage: number;
+  onPageChange: (page: number) => void;
+  pageSize: number;
+  onPageSizeChange: (size: number) => void;
+  totalPages: number;
+}) {
+  return (
+    <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+      <div className="flex flex-1 justify-between sm:hidden">
+        <button
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="relative inline-flex items-center rounded-md border border-gray-300 bg-white p-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+        >
+          Previous
+        </button>
+        <button
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white p-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
+      <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+        <div>
+          <p className="text-sm text-gray-700">
+            Showing page <span className="font-medium">{currentPage}</span> of{' '}
+            <span className="font-medium">{totalPages}</span>
+          </p>
+        </div>
+        <div className="flex items-center space-x-4">
+          <select
+            value={pageSize}
+            onChange={(e) => onPageSizeChange(Number(e.target.value))}
+            className="rounded-md border border-gray-300 py-2 pl-3 pr-10 text-sm"
+          >
+            {[12, 24, 36, 48].map((size) => (
+              <option key={size} value={size}>
+                Show {size}
+              </option>
+            ))}
+          </select>
+          <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm">
+            <button
+              onClick={() => onPageChange(1)}
+              disabled={currentPage === 1}
+              className="relative inline-flex items-center rounded-l-md p-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
+            >
+              <span className="sr-only">First</span>
+              <svg className="size-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414zm-6 0a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+            <button
+              onClick={() => onPageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="relative inline-flex items-center p-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
+            >
+              <span className="sr-only">Previous</span>
+              <svg className="size-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+            </button>
+            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              const page = currentPage - 2 + i;
+              if (page > 0 && page <= totalPages) {
+                return (
+                  <button
+                    key={page}
+                    onClick={() => onPageChange(page)}
+                    className={`relative inline-flex items-center p-2 text-sm font-semibold ${
+                      page === currentPage
+                        ? 'z-10 bg-green-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600'
+                        : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                );
+              }
+              return null;
+            })}
+            <button
+              onClick={() => onPageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="relative inline-flex items-center p-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
+            >
+              <span className="sr-only">Next</span>
+              <svg className="size-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+              </svg>
+            </button>
+            <button
+              onClick={() => onPageChange(totalPages)}
+              disabled={currentPage === totalPages}
+              className="relative inline-flex items-center rounded-r-md p-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
+            >
+              <span className="sr-only">Last</span>
+              <svg className="size-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M4.293 15.707a1 1 0 010-1.414L8.586 10 4.293 5.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+              </svg>
+            </button>
+          </nav>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ProductGrid({
   products,
   isLoading,
@@ -79,7 +369,9 @@ function ProductGrid({
       await addItemToCart(cartItem);
       toast.success("Product added to cart!");
     } catch (error) {
-      console.error("Error adding to cart:", error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error("Error adding to cart:", error);
+      }
       toast.error("Failed to add product to cart. Please try again.");
     }
   }, [addItemToCart]);
@@ -99,32 +391,11 @@ function ProductGrid({
   );
 
   if (isLoading) {
-    return (
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {[...Array(8)].map((_, i) => (
-          <div key={i} className="animate-pulse">
-            <div className="aspect-square w-full rounded-lg bg-gray-200" />
-            <div className="mt-4 space-y-3">
-              <div className="h-4 w-3/4 rounded bg-gray-200" />
-              <div className="h-4 w-1/2 rounded bg-gray-200" />
-            </div>
-          </div>
-        ))}
-      </div>
-    );
+    return <ProductGridLoading />;
   }
 
   if (products.length === 0) {
-    return (
-      <div className="flex min-h-[400px] items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">
-        <div>
-          <h3 className="mt-2 text-sm font-medium text-gray-900">No products found</h3>
-          <p className="mt-1 text-sm text-gray-500">
-            Try adjusting your filters
-          </p>
-        </div>
-      </div>
-    );
+    return <ProductGridEmptyState />;
   }
 
   return (
@@ -134,236 +405,26 @@ function ProductGrid({
           const isSaved = isItemSaved(product.id);
 
           return (
-          <div key={product.id} className="group relative" data-testid="product-card">
-            {/* Quick view link */}
-            <Link
-              href={`/products/${product.id}`}
-              className="absolute right-4 top-4 z-10 rounded-full bg-white p-2 opacity-0 shadow-md transition-opacity group-hover:opacity-100"
-              aria-label={`View details for ${product.title}`}
-            >
-              <svg className="size-5 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-              </svg>
-            </Link>
-
-            {/* Add to cart button */}
-            <button
-              data-testid="add-to-cart-button"
-              className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-full bg-green-600 px-4 py-2 text-sm font-semibold text-white opacity-0 shadow-md transition-opacity hover:bg-green-500 group-hover:opacity-100"
-              aria-label={`Add ${product.title} to cart`}
-              onClick={() => handleAddToCart(product)}
-            >
-              Add to Cart
-            </button>
-
-            {/* Badges - New or Imperfect */}
-            <div className="absolute left-4 top-4 z-10 flex flex-col gap-2">
-              {/* Imperfect badge takes priority if product is imperfect with discount */}
-              {product.isImperfect && product.imperfectDiscount ? (
-                <ImperfectBadge
-                  discountPercent={product.imperfectDiscount}
-                  size="sm"
-                  variant="prominent"
-                />
-              ) : isNewProduct(product.createdAt) ? (
-                <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                  New
-                </span>
-              ) : null}
-
-              {product.isSubscribable ? (
-                <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                  Subscribe &amp; Save
-                </span>
-              ) : null}
-            </div>
-
-            {/* Wishlist button */}
-            <button
-              className="absolute right-4 top-16 z-10 rounded-full bg-white p-2 opacity-0 shadow-md transition-opacity group-hover:opacity-100"
-              aria-label={`${isSaved ? 'Remove' : 'Add'} ${product.title} ${isSaved ? 'from' : 'to'} wishlist`}
-              aria-pressed={isSaved}
-              onClick={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                void handleWishlist(product);
-              }}
-            >
-              <svg
-                className={`size-5 ${isSaved ? 'text-red-600' : 'text-gray-900'}`}
-                fill={isSaved ? 'currentColor' : 'none'}
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
-            </button>
-
-            <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-100">
-              <Image
-                src={product.image}
-                alt={product.title}
-                width={400}
-                height={400}
-                className="size-full object-cover object-center transition-opacity group-hover:opacity-75"
-                priority={currentPage === 1 && index < 4}
-                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              />
-            </div>
-            <div className="mt-4 space-y-2">
-              <div className="flex justify-between">
-                <h3 className="text-sm text-gray-700">
-                  <a href={`/products/${product.id}`}>
-                    <span aria-hidden="true" className="absolute inset-0" />
-                    {product.title}
-                  </a>
-                </h3>
-                <div className="text-sm font-medium">
-                  {/* Imperfect price display - takes priority */}
-                  {product.isImperfect && product.imperfectPrice ? (
-                    <div className="flex flex-col items-end">
-                      <span className="font-bold text-amber-600">${formatPrice(product.imperfectPrice)}</span>
-                      <span className="text-xs text-gray-500 line-through">${formatPrice(product.price)}</span>
-                    </div>
-                  ) : product.salePrice ? (
-                    <div className="flex flex-col items-end">
-                      <span className="text-red-600">${formatPrice(product.salePrice)}</span>
-                      <span className="text-gray-500 line-through">${formatPrice(product.price)}</span>
-                    </div>
-                  ) : (
-                    <span className="text-gray-900">${formatPrice(product.price)}</span>
-                  )}
-                </div>
-              </div>
-              <p className="text-sm text-gray-500">{product.category}</p>
-              {product.description && (
-                <p className="line-clamp-2 text-sm text-gray-600">{product.description}</p>
-              )}
-              <div className="flex items-center space-x-2">
-                {getAverageRating(product.reviews) && (
-                  <>
-                    <div className="flex items-center">
-                      <span className="text-sm font-medium text-gray-900">
-                        {getAverageRating(product.reviews)}
-                      </span>
-                      <span className="ml-1 text-yellow-400">★</span>
-                    </div>
-                    <span className="text-sm text-gray-500">
-                      ({product.reviews.length} reviews)
-                    </span>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
+            <ProductCard
+              key={product.id}
+              product={product}
+              currentPage={currentPage}
+              index={index}
+              isSaved={isSaved}
+              onAddToCart={handleAddToCart}
+              onToggleWishlist={handleWishlist}
+            />
           );
         })}
       </div>
 
-      {/* Pagination */}
-      <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
-        <div className="flex flex-1 justify-between sm:hidden">
-          <button
-            onClick={() => onPageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="relative inline-flex items-center rounded-md border border-gray-300 bg-white p-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-          >
-            Previous
-          </button>
-          <button
-            onClick={() => onPageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white p-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-          >
-            Next
-          </button>
-        </div>
-        <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm text-gray-700">
-              Showing page <span className="font-medium">{currentPage}</span> of{' '}
-              <span className="font-medium">{totalPages}</span>
-            </p>
-          </div>
-          <div className="flex items-center space-x-4">
-            <select
-              value={pageSize}
-              onChange={(e) => onPageSizeChange(Number(e.target.value))}
-              className="rounded-md border border-gray-300 py-2 pl-3 pr-10 text-sm"
-            >
-              {[12, 24, 36, 48].map((size) => (
-                <option key={size} value={size}>
-                  Show {size}
-                </option>
-              ))}
-            </select>
-            <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm">
-              <button
-                onClick={() => onPageChange(1)}
-                disabled={currentPage === 1}
-                className="relative inline-flex items-center rounded-l-md p-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
-              >
-                <span className="sr-only">First</span>
-                <svg className="size-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414zm-6 0a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
-                </svg>
-              </button>
-              <button
-                onClick={() => onPageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="relative inline-flex items-center p-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
-              >
-                <span className="sr-only">Previous</span>
-                <svg className="size-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-              </button>
-              {/* Page numbers */}
-              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                const page = currentPage - 2 + i;
-                if (page > 0 && page <= totalPages) {
-                  return (
-                    <button
-                      key={page}
-                      onClick={() => onPageChange(page)}
-                      className={`relative inline-flex items-center p-2 text-sm font-semibold ${
-                        page === currentPage
-                          ? 'z-10 bg-green-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600'
-                          : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  );
-                }
-                return null;
-              })}
-              <button
-                onClick={() => onPageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className="relative inline-flex items-center p-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
-              >
-                <span className="sr-only">Next</span>
-                <svg className="size-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                </svg>
-              </button>
-              <button
-                onClick={() => onPageChange(totalPages)}
-                disabled={currentPage === totalPages}
-                className="relative inline-flex items-center rounded-r-md p-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
-              >
-                <span className="sr-only">Last</span>
-                <svg className="size-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M4.293 15.707a1 1 0 010-1.414L8.586 10 4.293 5.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                </svg>
-              </button>
-            </nav>
-          </div>
-        </div>
-      </div>
+      <ProductPagination
+        currentPage={currentPage}
+        onPageChange={onPageChange}
+        pageSize={pageSize}
+        onPageSizeChange={onPageSizeChange}
+        totalPages={totalPages}
+      />
     </div>
   );
 }

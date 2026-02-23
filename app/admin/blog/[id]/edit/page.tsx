@@ -46,7 +46,9 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
         setNotFound(true);
       }
     } catch (error) {
-      console.error('Failed to fetch blog post:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to fetch blog post:', error);
+      }
       setNotFound(true);
     } finally {
       setLoading(false);
@@ -117,7 +119,9 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
         alert(error.message || 'Failed to update blog post');
       }
     } catch (error) {
-      console.error('Failed to update blog post:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to update blog post:', error);
+      }
       alert('Failed to update blog post');
     } finally {
       setSaving(false);

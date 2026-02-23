@@ -47,7 +47,9 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
           setCsrfToken(data.token)
         }
       } catch (error) {
-        console.error('Failed to fetch CSRF token:', error)
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Failed to fetch CSRF token:', error)
+        }
       }
     }
     fetchCsrfToken()
@@ -149,7 +151,9 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
       toast.success('Gift card purchased successfully!')
       onPurchaseComplete?.(giftCard)
     } catch (error) {
-      console.error('Gift card purchase error:', error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Gift card purchase error:', error)
+      }
       toast.error(error instanceof Error ? error.message : 'Failed to purchase gift card')
     } finally {
       setIsLoading(false)

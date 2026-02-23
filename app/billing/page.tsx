@@ -1,9 +1,15 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { getServerAuth } from '@/lib/auth'
 import { BillingDashboardClient } from '@/components/billing'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'Billing Dashboard | Link Flame',
+  description: 'Manage subscriptions, usage, and billing settings for your organizations.',
+}
 
 export default async function BillingPage() {
   const { userId } = await getServerAuth()

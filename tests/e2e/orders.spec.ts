@@ -38,7 +38,7 @@ test.describe('Order Management', () => {
 
       // Navigate to orders page
       await page.goto('/account/orders')
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       // Should be on orders page
       expect(page.url()).toContain('/account/orders')
@@ -57,7 +57,7 @@ test.describe('Order Management', () => {
 
       // Navigate to orders page
       await page.goto('/account/orders')
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       // Should show empty state message
       const emptyState = page.locator('text=/no orders|haven\'t placed|empty/i')
@@ -78,7 +78,7 @@ test.describe('Order Management', () => {
 
       // Navigate to orders page
       await page.goto('/account/orders')
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       // Should show link to browse products
       const browseLink = page.locator('a[href*="/collections"], a[href*="/products"]')
@@ -102,7 +102,7 @@ test.describe('Order Management', () => {
 
       // Navigate to orders page
       await page.goto('/account/orders')
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       // Look for filter dropdown
       const filterSelect = page.locator(
@@ -126,7 +126,7 @@ test.describe('Order Management', () => {
 
       // Navigate to orders page
       await page.goto('/account/orders')
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       // Find and use status filter
       const filterSelect = page.locator('select').first()
@@ -138,7 +138,7 @@ test.describe('Order Management', () => {
           return filterSelect.selectOption('delivered').catch(() => {})
         })
 
-        await page.waitForLoadState('networkidle')
+        await page.waitForLoadState('domcontentloaded')
 
         // URL or page state should reflect filter
         // This depends on implementation
@@ -169,7 +169,7 @@ test.describe('Order Management', () => {
 
       // Try to access non-existent order
       await page.goto('/account/orders/non-existent-order-id')
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       // Should show 404 or error state
       const has404 = await page
@@ -193,7 +193,7 @@ test.describe('Order Management', () => {
 
       // Navigate to orders page first
       await page.goto('/account/orders')
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       // Click on first order if available
       const orderLink = page
@@ -204,7 +204,7 @@ test.describe('Order Management', () => {
 
       if (await orderLink.isVisible({ timeout: 3000 }).catch(() => false)) {
         await orderLink.click()
-        await page.waitForLoadState('networkidle')
+        await page.waitForLoadState('domcontentloaded')
 
         // Should be on order detail page
         expect(page.url()).toMatch(/\/account\/orders\/[a-zA-Z0-9-]+/)
@@ -238,7 +238,7 @@ test.describe('Order Management', () => {
 
       // Navigate to orders page
       await page.goto('/account/orders')
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       // Look for tracking information
       const trackingInfo = page.locator(
@@ -262,7 +262,7 @@ test.describe('Order Management', () => {
 
       // Navigate to orders page
       await page.goto('/account/orders')
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       // Look for status badges
       const statusBadge = page.locator(
@@ -288,7 +288,7 @@ test.describe('Order Management', () => {
 
       // Navigate to orders page
       await page.goto('/account/orders')
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       // Click on first order if available
       const orderLink = page
@@ -297,7 +297,7 @@ test.describe('Order Management', () => {
 
       if (await orderLink.isVisible({ timeout: 3000 }).catch(() => false)) {
         await orderLink.click()
-        await page.waitForLoadState('networkidle')
+        await page.waitForLoadState('domcontentloaded')
 
         // Look for shipping progress
         const progressTracker = page.locator(
@@ -325,7 +325,7 @@ test.describe('Order Management', () => {
 
       // Navigate to orders page
       await page.goto('/account/orders')
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       // Click on first order if available
       const orderLink = page
@@ -334,7 +334,7 @@ test.describe('Order Management', () => {
 
       if (await orderLink.isVisible({ timeout: 3000 }).catch(() => false)) {
         await orderLink.click()
-        await page.waitForLoadState('networkidle')
+        await page.waitForLoadState('domcontentloaded')
 
         // Check for order items section
         const orderItems = page.locator(
@@ -359,7 +359,7 @@ test.describe('Order Management', () => {
 
       // Navigate to orders page
       await page.goto('/account/orders')
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       // Check for order totals
       const orderTotal = page.locator(

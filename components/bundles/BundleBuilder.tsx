@@ -122,7 +122,9 @@ export function BundleBuilder({ bundle }: BundleBuilderProps) {
       // Optionally refresh or redirect
       router.refresh()
     } catch (error) {
-      console.error("Error adding bundle to cart:", error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error("Error adding bundle to cart:", error)
+      }
       toast.error(error instanceof Error ? error.message : "Failed to add bundle to cart")
     } finally {
       setIsAddingToCart(false)

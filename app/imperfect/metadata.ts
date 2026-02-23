@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/images/imperfect-og.jpg',
+        url: '/og.png',
         width: 1200,
         height: 630,
         alt: 'Perfectly Imperfect Collection - Save up to 47%',

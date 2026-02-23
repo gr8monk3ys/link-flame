@@ -9,6 +9,8 @@ import {
 import { checkRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 
+export const dynamic = 'force-dynamic'
+
 /**
  * GET /api/referrals/stats
  * Get referral statistics for the authenticated user

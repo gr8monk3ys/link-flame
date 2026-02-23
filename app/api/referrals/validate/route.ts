@@ -13,6 +13,8 @@ import {
 } from "@/lib/api-response";
 import { logger } from "@/lib/logger";
 
+export const dynamic = 'force-dynamic'
+
 // Validation schema for referral code
 const ValidateCodeSchema = z.object({
   code: z.string().min(1, "Referral code is required").max(50, "Invalid referral code"),

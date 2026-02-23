@@ -152,6 +152,264 @@ export async function sendContactNotification(contactData: {
 }
 
 /**
+ * Send password reset email
+ *
+ * @param to - User email address
+ * @param resetToken - The plaintext reset token (will be included in URL)
+ */
+export async function sendPasswordResetEmail(
+  to: string,
+  resetToken: string
+): Promise<{ success: boolean; error?: unknown }> {
+  if (!resend) {
+    logger.warn('Resend not configured - skipping password reset email');
+    return { success: false, error: 'Email service not configured' };
+  }
+
+  try {
+    const resetUrl = `${getBaseUrl()}/auth/reset-password?token=${encodeURIComponent(resetToken)}`;
+
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      subject: 'Reset Your Password - Link Flame',
+      html: generatePasswordResetHTML(resetUrl),
+    });
+
+    if (error) {
+      logger.error('Failed to send password reset email', error);
+      return { success: false, error };
+    }
+
+    logger.info('Password reset email sent', { to });
+    return { success: true };
+  } catch (error) {
+    logger.error('Error sending password reset email', error);
+    return { success: false, error };
+  }
+}
+
+/**
+ * Send shipping notification email
+ *
+ * @param to - Customer email address
+ * @param orderDetails - Shipping information
+ */
+export async function sendShippingNotificationEmail(
+  to: string,
+  orderDetails: {
+    orderId: string;
+    customerName: string;
+    trackingNumber?: string | null;
+    shippingCarrier?: string | null;
+    estimatedDelivery?: string | null;
+  }
+): Promise<{ success: boolean; error?: unknown }> {
+  if (!resend) {
+    logger.warn('Resend not configured - skipping shipping notification email');
+    return { success: false, error: 'Email service not configured' };
+  }
+
+  try {
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      subject: 'Your Order Has Shipped! - Link Flame',
+      html: generateShippingNotificationHTML(orderDetails),
+    });
+
+    if (error) {
+      logger.error('Failed to send shipping notification', error);
+      return { success: false, error };
+    }
+
+    logger.info('Shipping notification sent', { to, orderId: orderDetails.orderId });
+    return { success: true };
+  } catch (error) {
+    logger.error('Error sending shipping notification', error);
+    return { success: false, error };
+  }
+}
+
+/**
+ * Generate shipping notification HTML email
+ */
+function generateShippingNotificationHTML(orderDetails: {
+  orderId: string;
+  customerName: string;
+  trackingNumber?: string | null;
+  shippingCarrier?: string | null;
+  estimatedDelivery?: string | null;
+}): string {
+  const carrierTrackingUrls: Record<string, string> = {
+    ups: 'https://www.ups.com/track?tracknum=',
+    usps: 'https://tools.usps.com/go/TrackConfirmAction?tLabels=',
+    fedex: 'https://www.fedex.com/fedextrack/?trknbr=',
+    dhl: 'https://www.dhl.com/us-en/home/tracking/tracking-global-forwarding.html?submit=1&tracking-id=',
+  };
+
+  let trackingHTML = '';
+  if (orderDetails.trackingNumber) {
+    const normalizedCarrier = (orderDetails.shippingCarrier || '').toLowerCase().replace(/[^a-z]/g, '');
+    const trackingBaseUrl = carrierTrackingUrls[normalizedCarrier];
+    const carrierLabel = orderDetails.shippingCarrier || 'Carrier';
+
+    if (trackingBaseUrl) {
+      const trackingUrl = `${trackingBaseUrl}${orderDetails.trackingNumber}`;
+      trackingHTML = `
+        <div style="background-color: #f9fafb; border-left: 4px solid #10b981; padding: 16px; margin: 0 0 24px 0; border-radius: 4px;">
+          <p style="margin: 0 0 4px 0; font-size: 14px; color: #6b7280;">Carrier</p>
+          <p style="margin: 0 0 12px 0; font-size: 16px; font-weight: 600; color: #1f2937;">${carrierLabel}</p>
+          <p style="margin: 0 0 4px 0; font-size: 14px; color: #6b7280;">Tracking Number</p>
+          <p style="margin: 0 0 16px 0; font-size: 16px; font-weight: 600; color: #1f2937;">${orderDetails.trackingNumber}</p>
+          <div style="text-align: center;">
+            <a href="${trackingUrl}" style="display: inline-block; background-color: #10b981; color: #ffffff; padding: 12px 32px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">
+              Track Your Package
+            </a>
+          </div>
+        </div>
+      `;
+    } else {
+      trackingHTML = `
+        <div style="background-color: #f9fafb; border-left: 4px solid #10b981; padding: 16px; margin: 0 0 24px 0; border-radius: 4px;">
+          <p style="margin: 0 0 4px 0; font-size: 14px; color: #6b7280;">Carrier</p>
+          <p style="margin: 0 0 12px 0; font-size: 16px; font-weight: 600; color: #1f2937;">${carrierLabel}</p>
+          <p style="margin: 0 0 4px 0; font-size: 14px; color: #6b7280;">Tracking Number</p>
+          <p style="margin: 0; font-size: 16px; font-weight: 600; color: #1f2937;">${orderDetails.trackingNumber}</p>
+        </div>
+      `;
+    }
+  }
+
+  let estimatedDeliveryHTML = '';
+  if (orderDetails.estimatedDelivery) {
+    estimatedDeliveryHTML = `
+      <div style="background-color: #ecfdf5; padding: 16px; margin: 0 0 24px 0; border-radius: 6px; text-align: center;">
+        <p style="margin: 0 0 4px 0; font-size: 14px; color: #6b7280;">Estimated Delivery</p>
+        <p style="margin: 0; font-size: 18px; font-weight: 600; color: #059669;">${orderDetails.estimatedDelivery}</p>
+      </div>
+    `;
+  }
+
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #374151; margin: 0; padding: 0; background-color: #f3f4f6;">
+        <div style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+          <!-- Header -->
+          <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 40px 30px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 600;">Link Flame</h1>
+            <p style="color: rgba(255, 255, 255, 0.9); margin: 10px 0 0 0; font-size: 16px;">Your Order Has Shipped!</p>
+          </div>
+
+          <!-- Content -->
+          <div style="padding: 40px 30px;">
+            <p style="margin: 0 0 20px 0; font-size: 16px;">
+              Hi ${orderDetails.customerName},
+            </p>
+
+            <p style="margin: 0 0 20px 0; font-size: 16px;">
+              Great news! Your order has been shipped and is on its way to you.
+            </p>
+
+            <!-- Order ID -->
+            <div style="background-color: #f9fafb; border-left: 4px solid #10b981; padding: 16px; margin: 0 0 24px 0; border-radius: 4px;">
+              <p style="margin: 0; font-size: 14px; color: #6b7280;">Order ID</p>
+              <p style="margin: 4px 0 0 0; font-size: 18px; font-weight: 600; color: #1f2937;">${orderDetails.orderId}</p>
+            </div>
+
+            <!-- Tracking Info -->
+            ${trackingHTML}
+
+            <!-- Estimated Delivery -->
+            ${estimatedDeliveryHTML}
+
+            <p style="margin: 0 0 20px 0; font-size: 16px;">
+              You can track your order at any time by visiting your account page.
+            </p>
+
+            <div style="text-align: center; margin: 32px 0;">
+              <a href="${getBaseUrl()}/account/orders/${orderDetails.orderId}" style="display: inline-block; background-color: #10b981; color: #ffffff; padding: 12px 32px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">
+                View Order Details
+              </a>
+            </div>
+
+            <p style="margin: 0 0 8px 0; font-size: 16px;">
+              Thank you for supporting sustainable living!
+            </p>
+
+            <p style="margin: 0; font-size: 16px;">
+              The Link Flame Team
+            </p>
+          </div>
+
+          <!-- Footer -->
+          <div style="background-color: #f9fafb; padding: 24px 30px; text-align: center; border-top: 1px solid #e5e7eb;">
+            <p style="margin: 0 0 8px 0; font-size: 14px; color: #6b7280;">
+              Questions? Contact us at support@linkflame.com
+            </p>
+            <p style="margin: 0; font-size: 12px; color: #9ca3af;">
+              &copy; 2026 Link Flame. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+}
+
+/**
+ * Generate password reset HTML email
+ */
+function generatePasswordResetHTML(resetUrl: string): string {
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #374151; margin: 0; padding: 0; background-color: #f3f4f6;">
+        <div style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+          <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 40px 30px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 600;">Link Flame</h1>
+            <p style="color: rgba(255, 255, 255, 0.9); margin: 10px 0 0 0; font-size: 16px;">Password Reset Request</p>
+          </div>
+          <div style="padding: 40px 30px;">
+            <p style="margin: 0 0 20px 0; font-size: 16px;">
+              We received a request to reset your password. Click the button below to choose a new password:
+            </p>
+            <div style="text-align: center; margin: 32px 0;">
+              <a href="${resetUrl}" style="display: inline-block; background-color: #10b981; color: #ffffff; padding: 14px 36px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">
+                Reset Password
+              </a>
+            </div>
+            <p style="margin: 0 0 20px 0; font-size: 14px; color: #6b7280;">
+              This link will expire in 1 hour. If you didn't request a password reset, you can safely ignore this email.
+            </p>
+            <p style="margin: 0 0 8px 0; font-size: 14px; color: #6b7280;">
+              If the button doesn't work, copy and paste this URL into your browser:
+            </p>
+            <p style="margin: 0; font-size: 12px; color: #9ca3af; word-break: break-all;">
+              ${resetUrl}
+            </p>
+          </div>
+          <div style="background-color: #f9fafb; padding: 24px 30px; text-align: center; border-top: 1px solid #e5e7eb;">
+            <p style="margin: 0; font-size: 12px; color: #9ca3af;">
+              &copy; 2026 Link Flame. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+}
+
+/**
  * Generate order confirmation HTML
  */
 function generateOrderConfirmationHTML(orderDetails: {

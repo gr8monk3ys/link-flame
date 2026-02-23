@@ -70,7 +70,9 @@ export function CartImpactPreview({
           setImpacts(data.data || []);
         }
       } catch (err) {
-        console.error("Failed to fetch impact preview:", err);
+        if (process.env.NODE_ENV === 'development') {
+          console.error("Failed to fetch impact preview:", err);
+        }
       } finally {
         setIsLoading(false);
       }

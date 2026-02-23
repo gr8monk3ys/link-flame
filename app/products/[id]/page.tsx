@@ -107,5 +107,51 @@ export default async function ProductPage({ params }: ProductPageProps) {
     })) || [],
   };
 
-  return <ProductDetails product={transformedProduct} averageRating={averageRating} />;
+  // Build JSON-LD structured data for Google Shopping rich snippets
+  // Safe: all values come from our database, not user input
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.title,
+    description: product.description || `Shop ${product.title} - eco-friendly products for sustainable living.`,
+    image: product.image || undefined,
+    brand: {
+      '@type': 'Brand',
+      name: 'Link Flame',
+    },
+    offers: {
+      '@type': 'Offer',
+      url: `${process.env.NEXTAUTH_URL || 'https://linkflame.com'}/products/${product.id}`,
+      priceCurrency: 'USD',
+      price: product.salePrice ? Number(product.salePrice) : Number(product.price),
+      availability: product.inventory > 0
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/OutOfStock',
+      seller: {
+        '@type': 'Organization',
+        name: 'Link Flame',
+      },
+    },
+    ...(averageRating !== null && product.reviews.length > 0
+      ? {
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: averageRating.toFixed(1),
+            reviewCount: product.reviews.length,
+            bestRating: 5,
+            worstRating: 1,
+          },
+        }
+      : {}),
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <ProductDetails product={transformedProduct} averageRating={averageRating} />
+    </>
+  );
 }

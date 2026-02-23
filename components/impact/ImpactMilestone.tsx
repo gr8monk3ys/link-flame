@@ -72,14 +72,21 @@ export function ImpactMilestone({
         "fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm transition-opacity duration-300",
         isExiting ? "opacity-0" : "opacity-100"
       )}
-      onClick={handleClose}
     >
+      <button
+        type="button"
+        aria-label="Dismiss milestone celebration"
+        onClick={handleClose}
+        className="absolute inset-0 z-0"
+      />
       <div
         className={cn(
-          "relative w-full max-w-md rounded-2xl bg-gradient-to-br from-green-50 to-emerald-100 p-8 shadow-2xl transition-all duration-300 dark:from-green-950 dark:to-emerald-900",
+          "relative z-10 w-full max-w-md rounded-2xl bg-gradient-to-br from-green-50 to-emerald-100 p-8 shadow-2xl transition-all duration-300 dark:from-green-950 dark:to-emerald-900",
           isExiting ? "scale-95 opacity-0" : "scale-100 opacity-100"
         )}
-        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="impact-milestone-title"
       >
         {/* Close button */}
         <button
@@ -101,7 +108,10 @@ export function ImpactMilestone({
         </div>
 
         {/* Milestone message */}
-        <h2 className="mb-2 text-center text-2xl font-bold text-green-800 dark:text-green-200">
+        <h2
+          id="impact-milestone-title"
+          className="mb-2 text-center text-2xl font-bold text-green-800 dark:text-green-200"
+        >
           Milestone Achieved!
         </h2>
 

@@ -32,19 +32,19 @@ const teamMembers = [
     name: "Sarah Green",
     role: "Sustainability Expert",
     bio: "With 10+ years in environmental science, Sarah ensures our recommendations truly make a difference.",
-    image: "/images/team/sarah.jpg",
+    image: "/images/team/default-avatar.jpg",
   },
   {
     name: "Mike Rivers",
     role: "Product Research Lead",
     bio: "Mike thoroughly tests and evaluates eco-friendly products to ensure they meet our strict standards.",
-    image: "/images/team/mike.jpg",
+    image: "/images/team/default-avatar.jpg",
   },
   {
     name: "Lisa Chen",
     role: "Content Director",
     bio: "Lisa crafts engaging content that makes sustainable living accessible and appealing to everyone.",
-    image: "/images/team/lisa.jpg",
+    image: "/images/team/default-avatar.jpg",
   },
 ]
 

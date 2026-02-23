@@ -40,7 +40,9 @@ export function BlogSearch({ categories = [], tags = [] }: BlogSearchProps) {
           const data = await response.json()
           setResults(data.data || [])
         } catch (error) {
-          console.error('Error searching posts:', error)
+          if (process.env.NODE_ENV === 'development') {
+            console.error('Error searching posts:', error)
+          }
           setResults([])
         } finally {
           setIsSearching(false)
