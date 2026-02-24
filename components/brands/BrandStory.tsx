@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
-import { BRAND_CERTIFICATIONS, BRAND_VALUES, type BrandCertification, type BrandValue } from '@/app/api/brands/route'
+import { BRAND_CERTIFICATIONS, BRAND_VALUES, type BrandCertification, type BrandValue } from '@/lib/brands/constants'
 import { Quote, Leaf, Award, Heart, Globe } from 'lucide-react'
 
 export interface BrandStoryProps {

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { IMPERFECT_REASONS } from "../route";
+import { IMPERFECT_REASONS } from "@/lib/products/imperfect";
 
 export const dynamic = 'force-dynamic'
 

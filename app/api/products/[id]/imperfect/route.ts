@@ -14,7 +14,7 @@ import {
 import { validateCsrfToken } from "@/lib/csrf";
 import { logger } from "@/lib/logger";
 import { invalidateProductCaches } from "@/lib/cache";
-import { IMPERFECT_REASONS } from "../../imperfect/route";
+import { IMPERFECT_REASONS } from "@/lib/products/imperfect";
 
 export const dynamic = 'force-dynamic'
 

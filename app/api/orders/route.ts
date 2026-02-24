@@ -24,7 +24,7 @@ const queryParamsSchema = z.object({
 });
 
 // Shipping status labels for display
-export const SHIPPING_STATUS_LABELS: Record<string, string> = {
+const SHIPPING_STATUS_LABELS: Record<string, string> = {
   processing: "Processing",
   shipped: "Shipped",
   in_transit: "In Transit",

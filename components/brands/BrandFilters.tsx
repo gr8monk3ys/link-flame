@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { BRAND_CERTIFICATIONS, BRAND_VALUES } from '@/app/api/brands/route'
+import { BRAND_CERTIFICATIONS, BRAND_VALUES } from '@/lib/brands/constants'
 import { Filter, X, ChevronDown, ChevronUp } from 'lucide-react'
 
 export interface BrandFiltersProps {

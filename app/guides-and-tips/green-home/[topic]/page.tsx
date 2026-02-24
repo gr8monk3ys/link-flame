@@ -15,21 +15,24 @@ function humanize(slug: string) {
 export function generateMetadata({
   params,
 }: {
-  params: { topic: string };
-}): Metadata {
-  const topic = humanize(params.topic);
-  return {
-    title: `${topic} | Green Home & Garden | LinkFlame`,
-    description: `Eco-friendly guidance on ${topic.toLowerCase()} for a greener home.`,
-  };
+  params: Promise<{ topic: string }>;
+}): Promise<Metadata> {
+  return params.then(({ topic: rawTopic }) => {
+    const topic = humanize(rawTopic);
+    return {
+      title: `${topic} | Green Home & Garden | LinkFlame`,
+      description: `Eco-friendly guidance on ${topic.toLowerCase()} for a greener home.`,
+    };
+  });
 }
 
-export default function GreenHomeTopicPage({
+export default async function GreenHomeTopicPage({
   params,
 }: {
-  params: { topic: string };
+  params: Promise<{ topic: string }>;
 }) {
-  const topic = humanize(params.topic);
+  const { topic: rawTopic } = await params;
+  const topic = humanize(rawTopic);
 
   return (
     <div className="container max-w-4xl py-10">
@@ -79,4 +82,3 @@ export default function GreenHomeTopicPage({
     </div>
   );
 }
-

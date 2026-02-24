@@ -15,21 +15,24 @@ function humanize(slug: string) {
 export function generateMetadata({
   params,
 }: {
-  params: { topic: string };
-}): Metadata {
-  const topic = humanize(params.topic);
-  return {
-    title: `${topic} | Clean Transportation | LinkFlame`,
-    description: `Sustainable transportation guidance on ${topic.toLowerCase()}.`,
-  };
+  params: Promise<{ topic: string }>;
+}): Promise<Metadata> {
+  return params.then(({ topic: rawTopic }) => {
+    const topic = humanize(rawTopic);
+    return {
+      title: `${topic} | Clean Transportation | LinkFlame`,
+      description: `Sustainable transportation guidance on ${topic.toLowerCase()}.`,
+    };
+  });
 }
 
-export default function CleanTransportTopicPage({
+export default async function CleanTransportTopicPage({
   params,
 }: {
-  params: { topic: string };
+  params: Promise<{ topic: string }>;
 }) {
-  const topic = humanize(params.topic);
+  const { topic: rawTopic } = await params;
+  const topic = humanize(rawTopic);
 
   return (
     <div className="container max-w-4xl py-10">
@@ -76,4 +79,3 @@ export default function CleanTransportTopicPage({
     </div>
   );
 }
-

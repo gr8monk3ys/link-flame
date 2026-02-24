@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
-import { BRAND_CERTIFICATIONS, BRAND_VALUES, type BrandCertification, type BrandValue } from '@/app/api/brands/route'
+import { BRAND_CERTIFICATIONS, BRAND_VALUES, type BrandCertification, type BrandValue } from '@/lib/brands/constants'
 import { Building2, ExternalLink, MapPin, Calendar } from 'lucide-react'
 
 export interface BrandCardProps {
