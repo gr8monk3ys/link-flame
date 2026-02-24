@@ -5,6 +5,7 @@ import { hash } from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
 import { checkStrictRateLimit, getIdentifier, getRateLimitKey } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
+import { validateCsrfToken } from '@/lib/csrf'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,6 +16,14 @@ const resetPasswordSchema = z.object({
 
 export async function POST(request: Request): Promise<NextResponse> {
   try {
+    const csrfValid = await validateCsrfToken(request)
+    if (!csrfValid) {
+      return NextResponse.json(
+        { error: 'Invalid or missing CSRF token.' },
+        { status: 403 }
+      )
+    }
+
     // Rate limit — strict (5 req/min per IP)
     const identifier = getIdentifier(request)
     const rateLimitKey = getRateLimitKey('auth-reset-password', identifier)
@@ -66,7 +75,10 @@ export async function POST(request: Request): Promise<NextResponse> {
     await prisma.$transaction([
       prisma.user.update({
         where: { email: resetToken.email },
-        data: { password: hashedPassword },
+        data: {
+          password: hashedPassword,
+          tokenVersion: { increment: 1 },
+        },
       }),
       prisma.passwordResetToken.update({
         where: { id: resetToken.id },

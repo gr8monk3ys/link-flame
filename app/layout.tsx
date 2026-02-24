@@ -2,6 +2,7 @@ import "@/styles/globals.css"
 import "@/lib/env"
 import { Suspense } from "react"
 import { Metadata, Viewport } from "next"
+import { headers } from "next/headers"
 import { siteConfig } from "@/config/site"
 import { fontSans, fontSerif } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
@@ -14,6 +15,7 @@ import { CartProvider } from "@/lib/providers/CartProvider"
 import ErrorBoundary from "@/components/layout/error-boundary"
 import { ServiceWorkerRegistration } from "@/components/shared/service-worker-registration"
 import { WelcomeBonusNotification } from "@/components/shared/welcome-bonus-notification"
+import { Toaster } from "sonner"
 
 export function getMetadata(): Metadata {
   const metadata: Metadata = {
@@ -78,7 +80,9 @@ interface RootLayoutProps {
   children: React.ReactNode
 }
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default async function RootLayout({ children }: RootLayoutProps) {
+  const nonce = (await headers()).get("x-nonce") ?? ""
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head />
@@ -105,11 +109,12 @@ export default function RootLayout({ children }: RootLayoutProps) {
                   </main>
                   <SiteFooter className="mt-auto" />
                 </div>
-                {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && <Analytics />}
+                {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && <Analytics nonce={nonce} />}
                 <ServiceWorkerRegistration />
                 <Suspense fallback={null}>
                   <WelcomeBonusNotification />
                 </Suspense>
+                <Toaster position="top-right" />
               </ErrorBoundary>
             </CartProvider>
           </ThemeProvider>

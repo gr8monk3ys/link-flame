@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { format } from "date-fns";
 import Link from "next/link";
@@ -45,11 +45,27 @@ export default function AccountSettingsPage() {
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [deletingAccount, setDeletingAccount] = useState(false);
 
+  // CSRF token state
+  const [csrfToken, setCsrfToken] = useState<string | null>(null);
+
+  const fetchCsrfToken = useCallback(async () => {
+    try {
+      const response = await fetch("/api/csrf");
+      const data = await response.json();
+      if (data.token) {
+        setCsrfToken(data.token);
+      }
+    } catch {
+      // CSRF fetch failure is non-fatal; mutations will fail with 403
+    }
+  }, []);
+
   useEffect(() => {
     if (isLoaded && isSignedIn) {
       fetchProfile();
+      fetchCsrfToken();
     }
-  }, [isLoaded, isSignedIn]);
+  }, [isLoaded, isSignedIn, fetchCsrfToken]);
 
   const fetchProfile = async () => {
     try {
@@ -96,7 +112,10 @@ export default function AccountSettingsPage() {
 
       const response = await fetch("/api/account/profile", {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(csrfToken ? { "X-CSRF-Token": csrfToken } : {}),
+        },
         body: JSON.stringify(updateData),
       });
 
@@ -132,8 +151,8 @@ export default function AccountSettingsPage() {
       return;
     }
 
-    if (newPassword.length < 6) {
-      toast.error("New password must be at least 6 characters");
+    if (newPassword.length < 8) {
+      toast.error("New password must be at least 8 characters");
       return;
     }
 
@@ -142,7 +161,10 @@ export default function AccountSettingsPage() {
     try {
       const response = await fetch("/api/account/password", {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(csrfToken ? { "X-CSRF-Token": csrfToken } : {}),
+        },
         body: JSON.stringify({
           currentPassword,
           newPassword,
@@ -186,7 +208,10 @@ export default function AccountSettingsPage() {
     try {
       const response = await fetch("/api/account/delete", {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(csrfToken ? { "X-CSRF-Token": csrfToken } : {}),
+        },
         body: JSON.stringify({
           password: deletePassword,
           confirmation: deleteConfirmation,
@@ -384,7 +409,7 @@ export default function AccountSettingsPage() {
                       placeholder="Enter your new password"
                     />
                     <p className="text-xs text-muted-foreground">
-                      Must be at least 6 characters long
+                      Must be at least 8 characters long
                     </p>
                   </div>
 

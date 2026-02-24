@@ -36,7 +36,7 @@ function buildCspHeader(nonce: string): string {
 
   const scriptSrc = isDevelopment
     ? `'self' 'unsafe-eval' 'unsafe-inline'`
-    : `'self' 'unsafe-inline' 'nonce-${nonce}' https://js.stripe.com https://www.googletagmanager.com https://www.google-analytics.com`
+    : `'self' 'nonce-${nonce}' 'strict-dynamic' https://js.stripe.com https://www.googletagmanager.com https://www.google-analytics.com`
 
   const styleSrc = isDevelopment
     ? `'self' 'unsafe-inline' https://fonts.googleapis.com`
@@ -48,7 +48,7 @@ function buildCspHeader(nonce: string): string {
     `style-src ${styleSrc}`,
     `img-src 'self' https://images.unsplash.com https://*.stripe.com data: blob:`,
     `font-src 'self' https://fonts.gstatic.com`,
-    `connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://analytics.google.com`,
+    `connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://analytics.google.com https://*.ingest.sentry.io`,
     `frame-src 'self' https://js.stripe.com https://hooks.stripe.com`,
     `object-src 'none'`,
     `base-uri 'self'`,

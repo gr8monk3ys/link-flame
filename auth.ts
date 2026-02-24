@@ -17,13 +17,39 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (user) {
         token.role = user.role;
         token.id = user.id as string;
+        token.tokenVersion = user.tokenVersion ?? 0;
+        return token;
       }
+
+      if (!token.id) {
+        return token;
+      }
+
+      const currentUser = await prisma.user.findUnique({
+        where: { id: token.id as string },
+        select: { tokenVersion: true },
+      });
+
+      if (!currentUser) {
+        return {};
+      }
+
+      // Session revocation check: password reset increments tokenVersion.
+      if ((token.tokenVersion ?? 0) !== currentUser.tokenVersion) {
+        return {};
+      }
+
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.role = token.role as string;
-        session.user.id = token.id as string;
+        if (token.id && token.role) {
+          session.user.role = token.role as string;
+          session.user.id = token.id as string;
+        } else {
+          session.user.role = '';
+          session.user.id = '';
+        }
       }
       return session;
     },
@@ -47,6 +73,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         const user = await prisma.user.findUnique({
           where: { email },
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            image: true,
+            role: true,
+            password: true,
+            tokenVersion: true,
+          },
         });
 
         if (!user || !user.password) {
@@ -65,6 +100,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           name: user.name,
           image: user.image,
           role: user.role,
+          tokenVersion: user.tokenVersion,
         };
       },
     }),

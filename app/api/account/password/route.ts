@@ -117,7 +117,10 @@ export async function PATCH(request: Request) {
     // Update password
     await prisma.user.update({
       where: { id: userId },
-      data: { password: hashedPassword },
+      data: {
+        password: hashedPassword,
+        tokenVersion: { increment: 1 },
+      },
     });
 
     return successResponse({

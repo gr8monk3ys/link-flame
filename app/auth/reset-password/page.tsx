@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, Suspense } from "react"
+import { useState, Suspense, useEffect, useCallback } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -18,6 +18,23 @@ function ResetPasswordForm() {
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [csrfToken, setCsrfToken] = useState<string | null>(null)
+
+  const fetchCsrfToken = useCallback(async () => {
+    try {
+      const response = await fetch("/api/csrf")
+      const data = await response.json()
+      if (data.token) {
+        setCsrfToken(data.token)
+      }
+    } catch {
+      // CSRF fetch failures surface as request failure on submit.
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchCsrfToken()
+  }, [fetchCsrfToken])
 
   if (!token) {
     return (
@@ -78,7 +95,10 @@ function ResetPasswordForm() {
     try {
       const response = await fetch("/api/auth/reset-password", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(csrfToken ? { "X-CSRF-Token": csrfToken } : {}),
+        },
         body: JSON.stringify({ token, password }),
       })
 
