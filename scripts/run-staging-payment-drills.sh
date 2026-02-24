@@ -73,16 +73,6 @@ if [[ -z "${STRIPE_WEBHOOK_SECRET:-}" && -z "${STRIPE_SUBSCRIPTION_WEBHOOK_SECRE
   exit 1
 fi
 
-if ! command -v stripe >/dev/null 2>&1; then
-  echo "Stripe CLI is required. Install from https://stripe.com/docs/stripe-cli"
-  exit 1
-fi
-
-if ! command -v jq >/dev/null 2>&1; then
-  echo "jq is required for health checks."
-  exit 1
-fi
-
 echo "==> Stripe account/config verification"
 npm run check:stripe-config
 
