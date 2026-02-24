@@ -57,7 +57,23 @@ jobs:
       - name: Run database migrations
         run: |
           export DIRECT_URL="${DIRECT_URL:-$DATABASE_URL}"
-          npx prisma migrate deploy
+          attempts=5
+          for attempt in $(seq 1 "$attempts"); do
+            echo "Running prisma migrate deploy (attempt $attempt/$attempts)..."
+            if npx prisma migrate deploy; then
+              echo "Migrations applied successfully."
+              exit 0
+            fi
+
+            if [ "$attempt" -lt "$attempts" ]; then
+              sleep_seconds=$((attempt * 10))
+              echo "Migration attempt failed. Retrying in ${sleep_seconds}s..."
+              sleep "$sleep_seconds"
+            fi
+          done
+
+          echo "Migration failed after ${attempts} attempts."
+          exit 1
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           DIRECT_URL: ${{ secrets.DIRECT_URL }}
@@ -195,7 +211,23 @@ jobs:
       - name: Run database migrations
         run: |
           export DIRECT_URL="${DIRECT_URL:-$DATABASE_URL}"
-          npx prisma migrate deploy
+          attempts=5
+          for attempt in $(seq 1 "$attempts"); do
+            echo "Running prisma migrate deploy (attempt $attempt/$attempts)..."
+            if npx prisma migrate deploy; then
+              echo "Migrations applied successfully."
+              exit 0
+            fi
+
+            if [ "$attempt" -lt "$attempts" ]; then
+              sleep_seconds=$((attempt * 10))
+              echo "Migration attempt failed. Retrying in ${sleep_seconds}s..."
+              sleep "$sleep_seconds"
+            fi
+          done
+
+          echo "Migration failed after ${attempts} attempts."
+          exit 1
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           DIRECT_URL: ${{ secrets.DIRECT_URL }}
