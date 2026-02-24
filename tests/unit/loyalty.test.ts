@@ -17,6 +17,7 @@ import {
   awardReviewPoints,
   awardReferralPoints,
   redeemPoints,
+  holdPointsForCheckout,
   getUserPointHistory,
   type LoyaltyTier,
   type PointSource,
@@ -549,6 +550,64 @@ describe('Loyalty Program', () => {
 
       expect(result).toBe(0); // Math.max(0, 100 - 200) = 0
     });
+
+    it('should include pending holds in redemption totals by default', async () => {
+      vi.mocked(prisma.loyaltyPoints.aggregate).mockResolvedValue({
+        _sum: { points: 1000 },
+        _count: 1,
+        _avg: { points: 1000 },
+        _min: { points: 1000 },
+        _max: { points: 1000 },
+      });
+      vi.mocked(prisma.loyaltyRedemption.aggregate).mockResolvedValue({
+        _sum: { pointsUsed: 500 },
+        _count: 2,
+        _avg: { pointsUsed: 250 },
+        _min: { pointsUsed: 200 },
+        _max: { pointsUsed: 300 },
+      });
+
+      const result = await getUserAvailablePoints(mockUserId);
+
+      expect(result).toBe(500);
+      expect(prisma.loyaltyRedemption.aggregate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            userId: mockUserId,
+            status: { in: ['applied', 'pending'] },
+          }),
+        })
+      );
+    });
+
+    it('can exclude pending holds from availability calculations when requested', async () => {
+      vi.mocked(prisma.loyaltyPoints.aggregate).mockResolvedValue({
+        _sum: { points: 1000 },
+        _count: 1,
+        _avg: { points: 1000 },
+        _min: { points: 1000 },
+        _max: { points: 1000 },
+      });
+      vi.mocked(prisma.loyaltyRedemption.aggregate).mockResolvedValue({
+        _sum: { pointsUsed: 300 },
+        _count: 1,
+        _avg: { pointsUsed: 300 },
+        _min: { pointsUsed: 300 },
+        _max: { pointsUsed: 300 },
+      });
+
+      const result = await getUserAvailablePoints(mockUserId, { includePending: false });
+
+      expect(result).toBe(700);
+      expect(prisma.loyaltyRedemption.aggregate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            userId: mockUserId,
+            status: { in: ['applied'] },
+          }),
+        })
+      );
+    });
   });
 
   // ============================================================
@@ -992,6 +1051,107 @@ describe('Loyalty Program', () => {
       expect(result.success).toBe(false);
       expect(result.error).toBe('Failed to redeem points. Please try again.');
       expect(logger.error).toHaveBeenCalled();
+    });
+  });
+
+  // ============================================================
+  // HOLD POINTS FOR CHECKOUT TESTS
+  // ============================================================
+  describe('holdPointsForCheckout', () => {
+    const mockUserId = 'user-123';
+
+    beforeEach(() => {
+      vi.mocked(prisma.$transaction).mockImplementation(async (operations) => {
+        if (typeof operations === 'function') {
+          return operations(prisma as any);
+        }
+        return Promise.all(operations);
+      });
+    });
+
+    it('creates a pending hold and reserves points from applied + pending balance', async () => {
+      vi.mocked(prisma.loyaltyPoints.aggregate).mockResolvedValue({
+        _sum: { points: 1000 },
+        _count: 1,
+        _avg: { points: 1000 },
+        _min: { points: 1000 },
+        _max: { points: 1000 },
+      });
+      vi.mocked(prisma.loyaltyRedemption.aggregate).mockResolvedValue({
+        _sum: { pointsUsed: 300 },
+        _count: 2,
+        _avg: { pointsUsed: 150 },
+        _min: { pointsUsed: 100 },
+        _max: { pointsUsed: 200 },
+      });
+      vi.mocked(prisma.loyaltyRedemption.create).mockResolvedValue({
+        id: 'hold-123',
+      } as any);
+
+      const result = await holdPointsForCheckout(mockUserId, 200);
+
+      expect(result).toEqual({
+        redemptionId: 'hold-123',
+        discountAmount: 2,
+      });
+      expect(prisma.loyaltyRedemption.aggregate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            userId: mockUserId,
+            status: { in: ['applied', 'pending'] },
+          }),
+        })
+      );
+      expect(prisma.loyaltyRedemption.create).toHaveBeenCalledWith({
+        data: {
+          userId: mockUserId,
+          pointsUsed: 200,
+          discount: 2,
+          discountAmount: 2,
+          status: 'pending',
+        },
+        select: { id: true },
+      });
+      expect(prisma.$transaction).toHaveBeenCalledWith(
+        expect.any(Function),
+        expect.objectContaining({
+          isolationLevel: expect.anything(),
+        })
+      );
+    });
+
+    it('throws when requested points exceed available points after pending holds', async () => {
+      vi.mocked(prisma.loyaltyPoints.aggregate).mockResolvedValue({
+        _sum: { points: 300 },
+        _count: 1,
+        _avg: { points: 300 },
+        _min: { points: 300 },
+        _max: { points: 300 },
+      });
+      vi.mocked(prisma.loyaltyRedemption.aggregate).mockResolvedValue({
+        _sum: { pointsUsed: 290 },
+        _count: 2,
+        _avg: { pointsUsed: 145 },
+        _min: { pointsUsed: 90 },
+        _max: { pointsUsed: 200 },
+      });
+
+      await expect(holdPointsForCheckout(mockUserId, 20)).rejects.toThrow('Insufficient points');
+      expect(prisma.loyaltyRedemption.create).not.toHaveBeenCalled();
+    });
+
+    it('retries when serializable transaction conflicts occur', async () => {
+      vi.mocked(prisma.$transaction)
+        .mockRejectedValueOnce({ code: 'P2034' })
+        .mockResolvedValueOnce({ id: 'hold-456' } as any);
+
+      const result = await holdPointsForCheckout(mockUserId, 100);
+
+      expect(result).toEqual({
+        redemptionId: 'hold-456',
+        discountAmount: 1,
+      });
+      expect(prisma.$transaction).toHaveBeenCalledTimes(2);
     });
   });
 

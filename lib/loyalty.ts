@@ -20,6 +20,7 @@
  * - FLOURISH: 3000+ lifetime points (1.5x multiplier)
  */
 
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { logger } from "@/lib/logger";
 
@@ -157,12 +158,19 @@ export function calculatePointsForDiscount(discountAmount: number): number {
   return Math.ceil(discountAmount * LOYALTY_CONFIG.pointsPerDollarDiscount);
 }
 
-/**
- * Get user's current available points (earned minus redeemed)
- */
-export async function getUserAvailablePoints(userId: string): Promise<number> {
+function getRedemptionStatusesForAvailability(includePending: boolean): Array<"applied" | "pending"> {
+  return includePending ? ["applied", "pending"] : ["applied"];
+}
+
+async function getAvailablePointsFromClient(
+  client: Prisma.TransactionClient | typeof prisma,
+  userId: string,
+  options: { includePending?: boolean } = {}
+): Promise<number> {
+  const includePending = options.includePending ?? true;
+
   // Get total earned points
-  const earnedPoints = await prisma.loyaltyPoints.aggregate({
+  const earnedPoints = await client.loyaltyPoints.aggregate({
     where: {
       userId,
       // Only count non-expired points
@@ -176,11 +184,13 @@ export async function getUserAvailablePoints(userId: string): Promise<number> {
     },
   });
 
-  // Get total redeemed points
-  const redeemedPoints = await prisma.loyaltyRedemption.aggregate({
+  // "pending" redemptions are active holds from in-flight checkout sessions.
+  const redeemedPoints = await client.loyaltyRedemption.aggregate({
     where: {
       userId,
-      status: "applied",
+      status: {
+        in: getRedemptionStatusesForAvailability(includePending),
+      },
     },
     _sum: {
       pointsUsed: true,
@@ -191,6 +201,19 @@ export async function getUserAvailablePoints(userId: string): Promise<number> {
   const redeemed = redeemedPoints._sum.pointsUsed || 0;
 
   return Math.max(0, earned - redeemed);
+}
+
+/**
+ * Get user's current available points (earned minus redeemed/held).
+ *
+ * Pending checkout holds are included by default to prevent oversubscription
+ * during concurrent checkout sessions.
+ */
+export async function getUserAvailablePoints(
+  userId: string,
+  options: { includePending?: boolean } = {}
+): Promise<number> {
+  return getAvailablePointsFromClient(prisma, userId, options);
 }
 
 /**
@@ -498,31 +521,64 @@ export async function holdPointsForCheckout(
     throw new Error('Points to redeem must be positive')
   }
 
-  const availablePoints = await getUserAvailablePoints(userId)
-  if (pointsToRedeem > availablePoints) {
-    throw new Error(`Insufficient points. You have ${availablePoints} available.`)
+  const discountAmount = calculateDiscountFromPoints(pointsToRedeem)
+  const maxRetries = 3
+
+  for (let attempt = 1; attempt <= maxRetries; attempt += 1) {
+    try {
+      const redemption = await prisma.$transaction(
+        async (tx) => {
+          const availablePoints = await getAvailablePointsFromClient(tx, userId, {
+            includePending: true,
+          })
+          if (pointsToRedeem > availablePoints) {
+            throw new Error(`Insufficient points. You have ${availablePoints} available.`)
+          }
+
+          return tx.loyaltyRedemption.create({
+            data: {
+              userId,
+              pointsUsed: pointsToRedeem,
+              discount: discountAmount,
+              discountAmount,
+              status: 'pending',
+            },
+            select: {
+              id: true,
+            },
+          })
+        },
+        {
+          isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+        }
+      )
+
+      logger.info('Points held for checkout', {
+        userId,
+        pointsHeld: pointsToRedeem,
+        discountAmount,
+        redemptionId: redemption.id,
+      })
+
+      return { redemptionId: redemption.id, discountAmount }
+    } catch (error) {
+      const isSerializationConflict =
+        (error instanceof Prisma.PrismaClientKnownRequestError &&
+          error.code === 'P2034') ||
+        (!!error &&
+          typeof error === 'object' &&
+          'code' in error &&
+          (error as { code?: string }).code === 'P2034')
+
+      if (isSerializationConflict && attempt < maxRetries) {
+        continue
+      }
+
+      throw error
+    }
   }
 
-  const discountAmount = calculateDiscountFromPoints(pointsToRedeem)
-
-  const redemption = await prisma.loyaltyRedemption.create({
-    data: {
-      userId,
-      pointsUsed: pointsToRedeem,
-      discount: discountAmount,
-      discountAmount,
-      status: 'pending',
-    },
-  })
-
-  logger.info('Points held for checkout', {
-    userId,
-    pointsHeld: pointsToRedeem,
-    discountAmount,
-    redemptionId: redemption.id,
-  })
-
-  return { redemptionId: redemption.id, discountAmount }
+  throw new Error('Unable to hold loyalty points. Please try again.')
 }
 
 /**

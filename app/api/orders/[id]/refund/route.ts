@@ -15,7 +15,7 @@ import {
 import { checkRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { validateCsrfToken } from "@/lib/csrf";
 import { logger } from "@/lib/logger";
-import { processRefund } from "@/lib/refund";
+import { calculateProratedPartialRefund, processRefund, type RefundItemInput } from "@/lib/refund";
 
 export const dynamic = 'force-dynamic'
 
@@ -28,7 +28,10 @@ const RefundBodySchema = z.object({
   items: z.array(z.object({
     orderItemId: z.string(),
     quantity: z.number().int().positive(),
-  })).optional(),
+  })).refine(
+    (items) => new Set(items.map((item) => item.orderItemId)).size === items.length,
+    { message: 'Duplicate orderItemId values are not allowed' }
+  ).optional(),
   reason: z.string().max(500).optional(),
 }).optional()
 
@@ -111,6 +114,7 @@ export async function POST(
         status: true,
         stripeSessionId: true,
         amount: true,
+        refundAmount: true,
         customerEmail: true,
         customerName: true,
         giftCardId: true,
@@ -170,40 +174,22 @@ export async function POST(
 
     // Calculate refund amount
     let stripeRefundAmountCents: number | undefined = undefined // undefined = full refund in Stripe
+    let normalizedRefundItems: RefundItemInput[] | undefined = undefined
+    let partialRefundAmount = 0
 
     if (isPartial) {
-      // For partial refunds, calculate the amount from specified items
-      let partialTotal = 0
-      for (const refundItem of body!.items!) {
-        const orderItem = order.items.find((oi) => oi.id === refundItem.orderItemId)
-        if (!orderItem) {
-          return errorResponse(
-            `Order item not found: ${refundItem.orderItemId}`,
-            "INVALID_ORDER_ITEM",
-            undefined,
-            400
-          )
-        }
-
-        const availableToRefund = orderItem.quantity - orderItem.refundedQuantity
-        if (refundItem.quantity > availableToRefund) {
-          return errorResponse(
-            `Cannot refund ${refundItem.quantity} of item "${orderItem.title}". Only ${availableToRefund} available for refund.`,
-            "QUANTITY_EXCEEDS_AVAILABLE",
-            undefined,
-            400
-          )
-        }
-
-        partialTotal += Number(orderItem.price) * refundItem.quantity
-      }
-
-      stripeRefundAmountCents = Math.round(partialTotal * 100)
-
-      if (stripeRefundAmountCents <= 0) {
+      try {
+        const partialCalculation = calculateProratedPartialRefund(order, body!.items!)
+        normalizedRefundItems = partialCalculation.normalizedItems
+        partialRefundAmount = partialCalculation.refundAmount
+        stripeRefundAmountCents = partialCalculation.refundAmountCents
+      } catch (calculationError) {
+        const message = calculationError instanceof Error
+          ? calculationError.message
+          : 'Invalid partial refund request'
         return errorResponse(
-          "Refund amount must be greater than zero",
-          "INVALID_REFUND_AMOUNT",
+          message,
+          "INVALID_REFUND_REQUEST",
           undefined,
           400
         )
@@ -241,8 +227,9 @@ export async function POST(
     // Process all refund side-effects (inventory, loyalty, order status)
     const refundResult = await processRefund({
       orderId: id,
-      items: body?.items,
+      items: normalizedRefundItems,
       reason: body?.reason,
+      refundAmount: isPartial ? partialRefundAmount : undefined,
     })
 
     logger.info("Order refund completed", {

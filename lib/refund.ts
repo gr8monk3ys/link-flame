@@ -21,12 +21,149 @@ import { refundGiftCard } from '@/lib/gift-cards'
 type TransactionClient = Prisma.TransactionClient
 
 /**
+ * Partial refund item request shape.
+ */
+export interface RefundItemInput {
+  orderItemId: string
+  quantity: number
+}
+
+interface RefundableOrderItem {
+  id: string
+  price: Prisma.Decimal | number
+  quantity: number
+  refundedQuantity: number
+  title?: string | null
+}
+
+interface RefundableOrderSummary {
+  amount: Prisma.Decimal | number
+  refundAmount?: Prisma.Decimal | number | null
+  items: RefundableOrderItem[]
+}
+
+export interface PartialRefundCalculation {
+  normalizedItems: RefundItemInput[]
+  selectedSubtotal: number
+  refundableSubtotal: number
+  remainingRefundableAmount: number
+  refundAmount: number
+  refundAmountCents: number
+}
+
+function roundToCents(amount: number): number {
+  return Math.round((amount + Number.EPSILON) * 100) / 100
+}
+
+function normalizeRefundItems(items: RefundItemInput[]): RefundItemInput[] {
+  const quantityByOrderItemId = new Map<string, number>()
+
+  for (const item of items) {
+    const current = quantityByOrderItemId.get(item.orderItemId) ?? 0
+    quantityByOrderItemId.set(item.orderItemId, current + item.quantity)
+  }
+
+  return Array.from(quantityByOrderItemId.entries()).map(([orderItemId, quantity]) => ({
+    orderItemId,
+    quantity,
+  }))
+}
+
+/**
+ * Calculates a partial refund amount using proportional allocation against
+ * the order's remaining refundable amount.
+ *
+ * This keeps Stripe refund amounts aligned with discounts and prior refunds.
+ */
+export function calculateProratedPartialRefund(
+  order: RefundableOrderSummary,
+  requestedItems: RefundItemInput[]
+): PartialRefundCalculation {
+  if (requestedItems.length === 0) {
+    throw new Error('At least one refund item is required for partial refunds')
+  }
+
+  const normalizedItems = normalizeRefundItems(requestedItems)
+
+  const remainingRefundableAmount = roundToCents(
+    Number(order.amount) - Number(order.refundAmount || 0)
+  )
+  if (remainingRefundableAmount <= 0) {
+    throw new Error('Order has no remaining refundable amount')
+  }
+
+  let selectedSubtotal = 0
+  for (const refundItem of normalizedItems) {
+    const orderItem = order.items.find((item) => item.id === refundItem.orderItemId)
+    if (!orderItem) {
+      throw new Error(`Order item not found: ${refundItem.orderItemId}`)
+    }
+
+    const availableToRefund = orderItem.quantity - orderItem.refundedQuantity
+    if (availableToRefund <= 0) {
+      throw new Error(`Item "${orderItem.title || orderItem.id}" is already fully refunded`)
+    }
+
+    if (refundItem.quantity > availableToRefund) {
+      throw new Error(
+        `Cannot refund ${refundItem.quantity} of item "${orderItem.title || orderItem.id}". Only ${availableToRefund} available for refund.`
+      )
+    }
+
+    selectedSubtotal += Number(orderItem.price) * refundItem.quantity
+  }
+
+  const refundableSubtotal = order.items.reduce((sum, item) => {
+    const remainingQuantity = item.quantity - item.refundedQuantity
+    if (remainingQuantity <= 0) {
+      return sum
+    }
+    return sum + Number(item.price) * remainingQuantity
+  }, 0)
+
+  if (selectedSubtotal <= 0 || refundableSubtotal <= 0) {
+    throw new Error('Refund amount must be greater than zero')
+  }
+
+  const selectedSubtotalRounded = roundToCents(selectedSubtotal)
+  const refundableSubtotalRounded = roundToCents(refundableSubtotal)
+
+  let refundAmount = 0
+  if (selectedSubtotalRounded >= refundableSubtotalRounded) {
+    refundAmount = remainingRefundableAmount
+  } else {
+    refundAmount = roundToCents(
+      remainingRefundableAmount * (selectedSubtotalRounded / refundableSubtotalRounded)
+    )
+  }
+
+  if (refundAmount <= 0) {
+    refundAmount = Math.min(remainingRefundableAmount, 0.01)
+  }
+
+  if (refundAmount > remainingRefundableAmount) {
+    refundAmount = remainingRefundableAmount
+  }
+
+  return {
+    normalizedItems,
+    selectedSubtotal: selectedSubtotalRounded,
+    refundableSubtotal: refundableSubtotalRounded,
+    remainingRefundableAmount,
+    refundAmount,
+    refundAmountCents: Math.round(refundAmount * 100),
+  }
+}
+
+/**
  * Request shape for processRefund
  */
 export interface RefundRequest {
   orderId: string
-  items?: Array<{ orderItemId: string; quantity: number }> // omit for full refund
+  items?: RefundItemInput[] // omit for full refund
   reason?: string
+  // Optional explicit amount (used to keep DB state aligned with Stripe partial refund amount)
+  refundAmount?: number
 }
 
 /**
@@ -143,8 +280,7 @@ export async function reverseLoyaltyPointsAwarded(
  * Reverse loyalty points that were redeemed for an order.
  *
  * Finds LoyaltyRedemption records matching userId, orderId, and status "applied",
- * then updates their status to "refunded". This effectively restores the points
- * since getUserAvailablePoints only subtracts redemptions with status "applied".
+ * then updates their status to "refunded". This restores point availability.
  */
 export async function reverseLoyaltyPointsRedeemed(
   tx: TransactionClient,
@@ -196,7 +332,7 @@ export async function reverseLoyaltyPointsRedeemed(
  *   gift card for partial refunds.
  */
 export async function processRefund(request: RefundRequest): Promise<RefundResult> {
-  const { orderId, items: refundItems, reason } = request
+  const { orderId, items: refundItems, reason, refundAmount: explicitRefundAmount } = request
 
   logger.info('Processing refund', { orderId, isPartial: !!refundItems, reason })
 
@@ -225,10 +361,13 @@ export async function processRefund(request: RefundRequest): Promise<RefundResul
 
   await prisma.$transaction(async (tx) => {
     if (isPartial) {
+      const partialCalculation = calculateProratedPartialRefund(order, refundItems)
+      const normalizedRefundItems = partialCalculation.normalizedItems
+
       // Partial refund: only restore specified items
       const inventoryItems: Array<{ productId: string; variantId: string | null; quantity: number }> = []
 
-      for (const refundItem of refundItems) {
+      for (const refundItem of normalizedRefundItems) {
         const orderItem = order.items.find((oi) => oi.id === refundItem.orderItemId)
         if (!orderItem) {
           throw new Error(`Order item not found: ${refundItem.orderItemId}`)
@@ -241,8 +380,6 @@ export async function processRefund(request: RefundRequest): Promise<RefundResul
           )
         }
 
-        refundedAmount += Number(orderItem.price) * refundItem.quantity
-
         inventoryItems.push({
           productId: orderItem.productId,
           variantId: orderItem.variantId,
@@ -254,6 +391,21 @@ export async function processRefund(request: RefundRequest): Promise<RefundResul
           where: { id: orderItem.id },
           data: { refundedQuantity: { increment: refundItem.quantity } },
         })
+      }
+
+      if (explicitRefundAmount !== undefined) {
+        const remainingRefundableAmount = roundToCents(orderAmount - previousRefundAmount)
+        refundedAmount = roundToCents(explicitRefundAmount)
+
+        if (refundedAmount <= 0) {
+          throw new Error('Refund amount must be greater than zero')
+        }
+
+        if (refundedAmount > remainingRefundableAmount) {
+          throw new Error('Refund amount exceeds the order remaining refundable amount')
+        }
+      } else {
+        refundedAmount = partialCalculation.refundAmount
       }
 
       await restoreInventory(tx, inventoryItems)
