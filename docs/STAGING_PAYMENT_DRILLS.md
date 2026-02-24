@@ -18,6 +18,26 @@ What it verifies:
 - API health endpoint responds
 - Targeted checkout session creation E2E probes pass
 
+### CI automation
+
+The deploy workflow now runs a post-staging `Staging Payment Drills` job.
+
+Required staging environment secrets/vars in GitHub:
+
+- `STRIPE_SECRET_KEY`
+- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
+- `STRIPE_WEBHOOK_SECRET` (or `STRIPE_SUBSCRIPTION_WEBHOOK_SECRET`)
+- `STRIPE_STARTER_MONTHLY_PRICE_ID`
+- `STRIPE_STARTER_YEARLY_PRICE_ID`
+- `STRIPE_PRO_MONTHLY_PRICE_ID`
+- `STRIPE_PRO_YEARLY_PRICE_ID`
+- `DATABASE_URL` (unless DB check is skipped)
+- `vars.STAGING_URL`
+
+Optional variable:
+
+- `vars.STAGING_PAYMENT_DRILLS_SKIP_DB_CHECK=true` to skip Prisma DB connectivity probe in CI.
+
 ## 2. Manual Drill: Partial Refund on Discounted Order
 
 Goal: ensure partial refunds are prorated correctly when order-level discounts exist.

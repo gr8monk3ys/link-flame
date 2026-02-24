@@ -96,6 +96,58 @@ jobs:
         if: failure()
         run: echo "Deployment to staging failed!"
 
+  staging-payment-drills:
+    name: Staging Payment Drills
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+    if: |
+      (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'staging')) &&
+      needs.deploy-staging.result == 'success'
+    environment:
+      name: staging
+      url: ${{ vars.STAGING_URL }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run staging payment drills
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL || secrets.DATABASE_URL }}
+          NEXTAUTH_URL: ${{ vars.STAGING_URL }}
+          NEXT_PUBLIC_APP_URL: ${{ vars.STAGING_URL }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+          STRIPE_SUBSCRIPTION_WEBHOOK_SECRET: ${{ secrets.STRIPE_SUBSCRIPTION_WEBHOOK_SECRET }}
+          STRIPE_STARTER_MONTHLY_PRICE_ID: ${{ secrets.STRIPE_STARTER_MONTHLY_PRICE_ID }}
+          STRIPE_STARTER_YEARLY_PRICE_ID: ${{ secrets.STRIPE_STARTER_YEARLY_PRICE_ID }}
+          STRIPE_PRO_MONTHLY_PRICE_ID: ${{ secrets.STRIPE_PRO_MONTHLY_PRICE_ID }}
+          STRIPE_PRO_YEARLY_PRICE_ID: ${{ secrets.STRIPE_PRO_YEARLY_PRICE_ID }}
+        run: |
+          FLAGS="--base-url ${{ vars.STAGING_URL }} --skip-playwright"
+          if [ "${{ vars.STAGING_PAYMENT_DRILLS_SKIP_DB_CHECK }}" = "true" ]; then
+            FLAGS="$FLAGS --skip-db-check"
+          fi
+          scripts/run-staging-payment-drills.sh $FLAGS
+
+      - name: Notify payment drill success
+        if: success()
+        run: echo "Staging payment drills passed."
+
+      - name: Notify payment drill failure
+        if: failure()
+        run: echo "Staging payment drills failed."
+
   # Deploy to production (manual trigger only)
   deploy-production:
     name: Deploy to Production
