@@ -50,8 +50,10 @@ type FilterStatus = 'all' | SubscriptionStatus;
 
 const filterOptions: { value: FilterStatus; label: string }[] = [
   { value: 'all', label: 'All subscriptions' },
+  { value: 'PENDING', label: 'Pending' },
   { value: 'ACTIVE', label: 'Active' },
   { value: 'PAUSED', label: 'Paused' },
+  { value: 'PAYMENT_FAILED', label: 'Payment failed' },
   { value: 'CANCELLED', label: 'Cancelled' },
 ];
 

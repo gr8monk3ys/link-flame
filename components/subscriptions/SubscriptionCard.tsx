@@ -54,20 +54,33 @@ interface SubscriptionCardProps {
 }
 
 const statusColors: Record<SubscriptionStatus, string> = {
+  PENDING: 'bg-blue-100 text-blue-800',
   ACTIVE: 'bg-green-100 text-green-800',
   PAUSED: 'bg-yellow-100 text-yellow-800',
+  PAYMENT_FAILED: 'bg-orange-100 text-orange-800',
   CANCELLED: 'bg-red-100 text-red-800',
 };
 
 const statusLabels: Record<SubscriptionStatus, string> = {
+  PENDING: 'Pending checkout',
   ACTIVE: 'Active',
   PAUSED: 'Paused',
+  PAYMENT_FAILED: 'Payment failed',
   CANCELLED: 'Cancelled',
 };
 
 export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+
+  const getCsrfToken = async () => {
+    const response = await fetch('/api/csrf', { cache: 'no-store' });
+    if (!response.ok) {
+      return null;
+    }
+    const data = await response.json();
+    return typeof data?.token === 'string' ? data.token : null;
+  };
 
   // Memoize subscription total calculation to avoid recalculating on every render
   const totals = useMemo(
@@ -77,15 +90,21 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
   const nextDeliveryDate = new Date(subscription.nextDeliveryDate);
   const isActive = subscription.status === 'ACTIVE';
   const isPaused = subscription.status === 'PAUSED';
+  const isPending = subscription.status === 'PENDING';
+  const isPaymentFailed = subscription.status === 'PAYMENT_FAILED';
   const isCancelled = subscription.status === 'CANCELLED';
 
   const handlePauseResume = async () => {
     setIsLoading(true);
     try {
+      const csrfToken = await getCsrfToken();
       const newStatus = isActive ? 'PAUSED' : 'ACTIVE';
       const response = await fetch(`/api/subscriptions/${subscription.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {}),
+        },
         body: JSON.stringify({ status: newStatus }),
       });
 
@@ -106,8 +125,12 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
   const handleSkipDelivery = async () => {
     setIsLoading(true);
     try {
+      const csrfToken = await getCsrfToken();
       const response = await fetch(`/api/subscriptions/${subscription.id}/skip`, {
         method: 'POST',
+        headers: {
+          ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {}),
+        },
       });
 
       if (!response.ok) {
@@ -131,8 +154,12 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
 
     setIsLoading(true);
     try {
+      const csrfToken = await getCsrfToken();
       const response = await fetch(`/api/subscriptions/${subscription.id}`, {
         method: 'DELETE',
+        headers: {
+          ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {}),
+        },
       });
 
       if (!response.ok) {
@@ -144,6 +171,35 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
       onUpdate?.();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to cancel subscription');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleManageBilling = async () => {
+    setIsLoading(true);
+    try {
+      const csrfToken = await getCsrfToken();
+      const response = await fetch(`/api/subscriptions/${subscription.id}/portal`, {
+        method: 'POST',
+        headers: {
+          ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {}),
+        },
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error?.message || 'Failed to open billing portal');
+      }
+
+      const sessionUrl = data?.data?.sessionUrl;
+      if (!sessionUrl) {
+        throw new Error('Billing portal session URL is missing');
+      }
+
+      window.location.href = sessionUrl;
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to open billing portal');
     } finally {
       setIsLoading(false);
     }
@@ -244,6 +300,24 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
             <Pause className="mr-2 size-5 text-yellow-600" />
             <span className="text-sm text-yellow-800">
               Subscription is paused. Resume to continue deliveries.
+            </span>
+          </div>
+        )}
+
+        {isPending && (
+          <div className="mt-4 flex items-center rounded-lg bg-blue-50 px-3 py-2">
+            <CalendarDays className="mr-2 size-5 text-blue-600" />
+            <span className="text-sm text-blue-800">
+              Complete checkout to activate this subscription.
+            </span>
+          </div>
+        )}
+
+        {isPaymentFailed && (
+          <div className="mt-4 flex items-center rounded-lg bg-orange-50 px-3 py-2">
+            <RefreshCw className="mr-2 size-5 text-orange-600" />
+            <span className="text-sm text-orange-800">
+              Payment failed. Update billing details to resume deliveries.
             </span>
           </div>
         )}
@@ -349,6 +423,17 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
               >
                 <Play className="mr-1.5 size-4" />
                 Resume
+              </button>
+            )}
+            {(isActive || isPaused || isPaymentFailed) && (
+              <button
+                type="button"
+                onClick={handleManageBilling}
+                disabled={isLoading}
+                className="inline-flex items-center rounded-md border border-blue-300 bg-white px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <CalendarDays className="mr-1.5 size-4" />
+                Update billing
               </button>
             )}
             <button

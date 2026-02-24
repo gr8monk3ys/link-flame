@@ -7,7 +7,12 @@
 export type SubscriptionFrequency = 'WEEKLY' | 'BIWEEKLY' | 'MONTHLY' | 'BIMONTHLY';
 
 // Subscription status types
-export type SubscriptionStatus = 'ACTIVE' | 'PAUSED' | 'CANCELLED';
+export type SubscriptionStatus =
+  | 'PENDING'
+  | 'ACTIVE'
+  | 'PAUSED'
+  | 'PAYMENT_FAILED'
+  | 'CANCELLED';
 
 // Discount structure based on frequency
 // More frequent = better discount (competitor parity)
@@ -156,5 +161,5 @@ export function isValidFrequency(frequency: string): frequency is SubscriptionFr
  * Validate subscription status
  */
 export function isValidStatus(status: string): status is SubscriptionStatus {
-  return ['ACTIVE', 'PAUSED', 'CANCELLED'].includes(status);
+  return ['PENDING', 'ACTIVE', 'PAUSED', 'PAYMENT_FAILED', 'CANCELLED'].includes(status);
 }

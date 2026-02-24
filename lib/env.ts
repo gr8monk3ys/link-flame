@@ -24,6 +24,7 @@ const envSchema = z.object({
   // Stripe (Required for payment processing, optional in build-time)
   STRIPE_SECRET_KEY: z.string().startsWith('sk_', 'STRIPE_SECRET_KEY must start with sk_').optional(),
   STRIPE_WEBHOOK_SECRET: z.string().startsWith('whsec_', 'STRIPE_WEBHOOK_SECRET must start with whsec_').optional(),
+  STRIPE_SUBSCRIPTION_WEBHOOK_SECRET: z.string().startsWith('whsec_', 'STRIPE_SUBSCRIPTION_WEBHOOK_SECRET must start with whsec_').optional(),
 
   // Public Environment Variables
   NEXT_PUBLIC_APP_URL: z.string().url('NEXT_PUBLIC_APP_URL must be a valid URL').optional(),
@@ -41,6 +42,9 @@ const envSchema = z.object({
 
   // Optional: Resend (for email notifications)
   RESEND_API_KEY: z.string().startsWith('re_', 'RESEND_API_KEY must start with re_').optional(),
+
+  // Optional: Sentry (for error tracking)
+  SENTRY_DSN: z.string().url().optional(),
 });
 
 // Parse and validate environment variables
@@ -54,12 +58,14 @@ function validateEnv() {
       NEXTAUTH_URL: process.env.NEXTAUTH_URL,
       STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
       STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+      STRIPE_SUBSCRIPTION_WEBHOOK_SECRET: process.env.STRIPE_SUBSCRIPTION_WEBHOOK_SECRET,
       NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
       NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
       NODE_ENV: process.env.NODE_ENV,
       UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
       UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
       RESEND_API_KEY: process.env.RESEND_API_KEY,
+      SENTRY_DSN: process.env.SENTRY_DSN,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -87,6 +93,15 @@ if (env.NODE_ENV === 'production') {
   }
   if (env.STRIPE_SECRET_KEY && !env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
     console.warn('⚠️  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is required when Stripe is enabled');
+  }
+  if (!env.UPSTASH_REDIS_REST_URL) {
+    console.warn('⚠️  UPSTASH_REDIS_REST_URL is not set. Rate limiting is disabled.');
+  }
+  if (!env.SENTRY_DSN) {
+    console.warn('⚠️  SENTRY_DSN is not set. Error tracking is disabled.');
+  }
+  if (!env.RESEND_API_KEY) {
+    console.warn('⚠️  RESEND_API_KEY is not set. Email notifications are disabled.');
   }
 }
 

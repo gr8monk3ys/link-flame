@@ -383,9 +383,16 @@ function AddToCartButton({
 
       // Handle subscription purchase
       if (isSubscription && subscriptionFrequency) {
+        const csrfResponse = await fetch('/api/csrf', { cache: 'no-store' });
+        const csrfData = await csrfResponse.json();
+        const csrfToken = typeof csrfData?.token === 'string' ? csrfData.token : null;
+
         const response = await fetch('/api/subscriptions', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {}),
+          },
           body: JSON.stringify({
             frequency: subscriptionFrequency,
             items: [{
@@ -396,17 +403,19 @@ function AddToCartButton({
           }),
         });
 
+        const responseData = await response.json();
+
         if (!response.ok) {
-          const error = await response.json();
-          throw new Error(error.error?.message || 'Failed to create subscription');
+          throw new Error(responseData.error?.message || 'Failed to create subscription');
         }
 
-        toast.success("Subscription created! View it in your account.", {
-          action: {
-            label: "View",
-            onClick: () => window.location.href = "/account/subscriptions",
-          },
-        });
+        const sessionUrl =
+          responseData?.data?.sessionUrl || responseData?.sessionUrl;
+        if (!sessionUrl) {
+          throw new Error('Stripe checkout URL is missing');
+        }
+
+        window.location.href = sessionUrl;
         return;
       }
 

@@ -2,6 +2,8 @@ import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerAuth } from '@/lib/auth';
 import { validateCsrfToken } from '@/lib/csrf';
+import { getStripe } from '@/lib/stripe-server';
+import { logger } from '@/lib/logger';
 import {
   successResponse,
   unauthorizedResponse,
@@ -32,6 +34,12 @@ interface RouteParams {
  */
 export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
+    const identifier = getIdentifier(request);
+    const { success, reset } = await checkRateLimit(`subscription-skip:${identifier}`);
+    if (!success) {
+      return rateLimitErrorResponse(reset);
+    }
+
     // CSRF protection
     const csrfValid = await validateCsrfToken(request);
     if (!csrfValid) {
@@ -69,11 +77,38 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       return forbiddenResponse(`Cannot skip delivery for a ${subscription.status.toLowerCase()} subscription`);
     }
 
-    // Calculate new next delivery date (push forward by one period)
-    const newNextDeliveryDate = calculateNextDeliveryDate(
+    let newNextDeliveryDate = calculateNextDeliveryDate(
       subscription.frequency as SubscriptionFrequency,
       subscription.nextDeliveryDate
     );
+    let stripeStatus = subscription.stripeStatus;
+
+    if (subscription.stripeSubscriptionId) {
+      const stripeSubscription = await getStripe().subscriptions.retrieve(
+        subscription.stripeSubscriptionId
+      );
+      const currentPeriodEnd = stripeSubscription.current_period_end
+        ? new Date(stripeSubscription.current_period_end * 1000)
+        : subscription.nextDeliveryDate;
+
+      // Skip one cycle by pausing collection until one period past current period end.
+      newNextDeliveryDate = calculateNextDeliveryDate(
+        subscription.frequency as SubscriptionFrequency,
+        currentPeriodEnd
+      );
+
+      const resumedAtTimestamp = Math.floor(newNextDeliveryDate.getTime() / 1000);
+      const pausedSubscription = await getStripe().subscriptions.update(
+        subscription.stripeSubscriptionId,
+        {
+          pause_collection: {
+            behavior: 'void',
+            resumes_at: resumedAtTimestamp,
+          },
+        }
+      );
+      stripeStatus = pausedSubscription.status;
+    }
 
     // Update the subscription
     const updatedSubscription = await prisma.subscription.update({
@@ -81,6 +116,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       data: {
         nextDeliveryDate: newNextDeliveryDate,
         skipNextDelivery: false, // Reset skip flag after skipping
+        stripeStatus,
       },
       include: {
         items: {
@@ -117,6 +153,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       message: `Next delivery skipped. New delivery date: ${newNextDeliveryDate.toLocaleDateString()}`,
     });
   } catch (error) {
+    logger.error('Failed to skip subscription delivery', error);
     return handleApiError(error);
   }
 }

@@ -3,6 +3,8 @@ import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { getServerAuth } from '@/lib/auth';
 import { validateCsrfToken } from '@/lib/csrf';
+import { logger } from '@/lib/logger';
+import { getStripe } from '@/lib/stripe-server';
 import {
   successResponse,
   paginatedResponse,
@@ -20,6 +22,10 @@ import {
   getDiscountForFrequency,
   isValidFrequency,
 } from '@/lib/subscriptions';
+import {
+  archiveStripePrices,
+  createSubscriptionCheckout,
+} from '@/lib/stripe-subscription';
 
 export const dynamic = 'force-dynamic'
 
@@ -46,7 +52,7 @@ const createSubscriptionSchema = z.object({
  * Query Parameters:
  * - page: number (optional, default: 1) - Page number
  * - limit: number (optional, default: 10, max: 50) - Items per page
- * - status: string (optional) - Filter by status (ACTIVE, PAUSED, CANCELLED)
+ * - status: string (optional) - Filter by status
  *
  * Response: 200 OK
  * {
@@ -100,7 +106,7 @@ export async function GET(request: NextRequest) {
 
     // Build where clause
     const where: Record<string, unknown> = { userId };
-    if (status && ['ACTIVE', 'PAUSED', 'CANCELLED'].includes(status)) {
+    if (status && ['PENDING', 'ACTIVE', 'PAUSED', 'PAYMENT_FAILED', 'CANCELLED'].includes(status)) {
       where.status = status;
     }
 
@@ -220,6 +226,8 @@ export async function POST(request: NextRequest) {
     // Create a map for quick lookup
     const productMap = new Map(products.map(p => [p.id, p]));
 
+    const discountPercent = getDiscountForFrequency(frequency);
+
     // Validate each item
     const subscriptionItems: Array<{
       productId: string;
@@ -260,7 +268,7 @@ export async function POST(request: NextRequest) {
         variantId: item.variantId || null,
         quantity: item.quantity,
         priceAtSubscription: price,
-        discountPercent: getDiscountForFrequency(frequency),
+        discountPercent,
       });
     }
 
@@ -279,14 +287,15 @@ export async function POST(request: NextRequest) {
     // Calculate next delivery date
     const nextDeliveryDate = calculateNextDeliveryDate(frequency);
 
-    // Create the subscription with items
+    // Create local subscription first (PENDING until Stripe checkout is completed).
     const subscription = await prisma.subscription.create({
       data: {
         visibleId,
         userId,
-        status: 'ACTIVE',
+        status: 'PENDING',
         frequency,
         nextDeliveryDate,
+        stripeStatus: 'checkout_pending',
         items: {
           create: subscriptionItems,
         },
@@ -298,9 +307,6 @@ export async function POST(request: NextRequest) {
               select: {
                 id: true,
                 title: true,
-                image: true,
-                price: true,
-                salePrice: true,
               },
             },
             variant: {
@@ -309,11 +315,7 @@ export async function POST(request: NextRequest) {
                 sku: true,
                 size: true,
                 color: true,
-                colorCode: true,
                 material: true,
-                price: true,
-                salePrice: true,
-                image: true,
               },
             },
           },
@@ -321,7 +323,149 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return successResponse(subscription, undefined, 201);
+    const checkoutItems = subscription.items.map((item) => {
+      const discountedUnitPrice =
+        Number(item.priceAtSubscription) * (1 - item.discountPercent / 100);
+      const titleSuffix = item.variant
+        ? [item.variant.size, item.variant.color, item.variant.material]
+            .filter(Boolean)
+            .join(', ')
+        : '';
+
+      return {
+        subscriptionItemId: item.id,
+        title: titleSuffix ? `${item.product.title} (${titleSuffix})` : item.product.title,
+        quantity: item.quantity,
+        unitPrice: Math.max(0.01, Math.round(discountedUnitPrice * 100) / 100),
+      };
+    });
+
+    let checkoutResult: Awaited<ReturnType<typeof createSubscriptionCheckout>>;
+    try {
+      checkoutResult = await createSubscriptionCheckout(
+        userId,
+        subscription.id,
+        frequency,
+        checkoutItems
+      );
+    } catch (stripeError) {
+      logger.error('Failed to create Stripe subscription checkout session', stripeError, {
+        userId,
+        subscriptionId: subscription.id,
+      });
+
+      await prisma.subscription.update({
+        where: { id: subscription.id },
+        data: {
+          status: 'CANCELLED',
+          cancelledAt: new Date(),
+          stripeStatus: 'checkout_failed',
+        },
+      });
+
+      return errorResponse(
+        'Failed to create subscription checkout session. Please try again.',
+        'SUBSCRIPTION_CHECKOUT_FAILED',
+        undefined,
+        500
+      );
+    }
+
+    if (!checkoutResult.session.url) {
+      logger.error('Stripe subscription checkout returned no URL', {
+        userId,
+        subscriptionId: subscription.id,
+        sessionId: checkoutResult.session.id,
+      });
+
+      await prisma.subscription.update({
+        where: { id: subscription.id },
+        data: {
+          status: 'CANCELLED',
+          cancelledAt: new Date(),
+          stripeStatus: 'checkout_url_missing',
+        },
+      });
+
+      return errorResponse(
+        'Stripe checkout session could not be initialized.',
+        'SUBSCRIPTION_CHECKOUT_MISSING_URL',
+        undefined,
+        500
+      );
+    }
+
+    const stripePriceBySubscriptionItemId = new Map(
+      checkoutResult.priceMappings.map((mapping) => [
+        mapping.subscriptionItemId,
+        mapping.priceId,
+      ])
+    );
+
+    try {
+      await prisma.$transaction(async (tx) => {
+        for (const item of subscription.items) {
+          const stripePriceId = stripePriceBySubscriptionItemId.get(item.id);
+          if (!stripePriceId) {
+            continue;
+          }
+
+          await tx.subscriptionItem.update({
+            where: { id: item.id },
+            data: { stripePriceId },
+          });
+        }
+
+        await tx.subscription.update({
+          where: { id: subscription.id },
+          data: {
+            stripeStatus: 'checkout_session_created',
+          },
+        });
+      });
+    } catch (syncError) {
+      logger.error('Failed to persist subscription checkout metadata', syncError, {
+        userId,
+        subscriptionId: subscription.id,
+      });
+
+      try {
+        await getStripe().checkout.sessions.expire(checkoutResult.session.id);
+      } catch (expireError) {
+        logger.error('Failed to expire Stripe subscription checkout session', expireError, {
+          sessionId: checkoutResult.session.id,
+        });
+      }
+
+      await archiveStripePrices(checkoutResult.priceMappings.map((mapping) => mapping.priceId));
+
+      await prisma.subscription.update({
+        where: { id: subscription.id },
+        data: {
+          status: 'CANCELLED',
+          cancelledAt: new Date(),
+          stripeStatus: 'checkout_sync_failed',
+        },
+      });
+
+      return errorResponse(
+        'Failed to initialize subscription checkout. Please try again.',
+        'SUBSCRIPTION_CHECKOUT_SYNC_FAILED',
+        undefined,
+        500
+      );
+    }
+
+    return successResponse(
+      {
+        subscriptionId: subscription.id,
+        status: 'PENDING',
+        sessionId: checkoutResult.session.id,
+        sessionUrl: checkoutResult.session.url,
+      },
+      undefined,
+      201
+    );
   } catch (error) {
     return handleApiError(error);
   }
