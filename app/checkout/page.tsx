@@ -11,8 +11,11 @@ import type { CartItem } from "@/types/cart";
 import CheckoutForm from "@/components/checkout/checkout-form";
 import ErrorBoundary from "@/components/layout/error-boundary";
 import { LoadingShimmer } from "@/components/ui/loading-shimmer";
-import { Toaster } from "sonner";
 import { CarbonNeutralBanner, CarbonNeutralShippingLine } from "@/components/sustainability";
+import {
+  DEFAULT_CHECKOUT_DISCOUNT_STATE,
+  type CheckoutDiscountState,
+} from "@/components/checkout/DiscountSection";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -24,8 +27,13 @@ export default function CheckoutPage() {
     hasInitializedCart,
     fetchCartItems
   } = useCart();
+  const [discounts, setDiscounts] = useState<CheckoutDiscountState>(
+    DEFAULT_CHECKOUT_DISCOUNT_STATE
+  );
 
   const items = cart.items || [];
+  const totalDiscount = discounts.totalDiscount || 0;
+  const discountedSubtotal = Math.max(0, cartTotal.raw - totalDiscount);
 
   // Fetch cart items when the page loads
   useEffect(() => {
@@ -56,7 +64,6 @@ export default function CheckoutPage() {
 
   return (
     <>
-      <Toaster position="top-right" />
       <div className="container py-8">
         <h1 className="mb-4 text-3xl font-bold">Checkout</h1>
         
@@ -82,7 +89,7 @@ export default function CheckoutPage() {
             {/* Checkout Form - Left Side */}
             <div className="lg:col-span-7">
               <ErrorBoundary>
-                <CheckoutForm />
+                <CheckoutForm onDiscountChange={setDiscounts} />
               </ErrorBoundary>
             </div>
             
@@ -126,6 +133,18 @@ export default function CheckoutPage() {
                     <span>Subtotal</span>
                     <span className="font-medium">{cartTotal.formatted}</span>
                   </div>
+                  {discounts.loyaltyDiscountAmount > 0 && (
+                    <div className="flex items-center justify-between text-sm">
+                      <span>Loyalty discount</span>
+                      <span>-{formatPrice(discounts.loyaltyDiscountAmount)}</span>
+                    </div>
+                  )}
+                  {(discounts.giftCardAmount || 0) > 0 && (
+                    <div className="flex items-center justify-between text-sm">
+                      <span>Gift card</span>
+                      <span>-{formatPrice(discounts.giftCardAmount || 0)}</span>
+                    </div>
+                  )}
                   <div className="flex items-center justify-between">
                     <span>Shipping</span>
                     <span className="text-sm text-muted-foreground">
@@ -136,7 +155,7 @@ export default function CheckoutPage() {
                   <CarbonNeutralShippingLine />
                   <div className="flex items-center justify-between border-t pt-4" data-testid="total">
                     <span className="text-lg font-medium">Total</span>
-                    <span className="text-lg font-bold">{cartTotal.formatted}</span>
+                    <span className="text-lg font-bold">{formatPrice(discountedSubtotal)}</span>
                   </div>
                 </div>
                 

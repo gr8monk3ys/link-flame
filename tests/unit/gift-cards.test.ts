@@ -98,6 +98,7 @@ describe('Gift Card Configuration', () => {
       PURCHASE: 'PURCHASE',
       REDEMPTION: 'REDEMPTION',
       REFUND: 'REFUND',
+      HOLD: 'HOLD',
     })
   })
 })

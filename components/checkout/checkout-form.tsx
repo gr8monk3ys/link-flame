@@ -7,27 +7,31 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useCart } from "@/lib/providers/CartProvider";
 import { LoadingShimmer } from "@/components/ui/loading-shimmer";
-import { InlineRedeemWidget } from "@/components/loyalty";
-import { ReferralCodeInput } from "@/components/referrals/ReferralCodeInput";
 import { toast } from "sonner";
 import { CarbonNeutralBanner } from "@/components/sustainability";
 import { ExpressCheckout } from "./ExpressCheckout";
 import { GiftOptions, GiftOptionsData } from "./GiftOptions";
+import {
+  DiscountSection,
+  DEFAULT_CHECKOUT_DISCOUNT_STATE,
+  type CheckoutDiscountState,
+} from "./DiscountSection";
 
 // Form validation types
 type FormErrors = {
   [key: string]: string;
 };
 
-export default function CheckoutForm() {
+interface CheckoutFormProps {
+  onDiscountChange?: (discounts: CheckoutDiscountState) => void;
+}
+
+export default function CheckoutForm({ onDiscountChange }: CheckoutFormProps) {
   const router = useRouter();
   const { cart, cartTotal } = useCart();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
-  const [loyaltyDiscount, setLoyaltyDiscount] = useState<number>(0);
-  const [referralCode, setReferralCode] = useState<string | null>(null);
-  const [referralDiscount, setReferralDiscount] = useState<number>(0);
   const [csrfToken, setCsrfToken] = useState<string | null>(null);
   const [giftOptions, setGiftOptions] = useState<GiftOptionsData>({
     isGift: false,
@@ -36,6 +40,9 @@ export default function CheckoutForm() {
     giftRecipientEmail: "",
     hidePrice: false,
   });
+  const [discounts, setDiscounts] = useState<CheckoutDiscountState>(
+    DEFAULT_CHECKOUT_DISCOUNT_STATE
+  );
   const [formData, setFormData] = useState({
     email: "",
     firstName: "",
@@ -44,13 +51,7 @@ export default function CheckoutForm() {
     city: "",
     state: "",
     zipCode: "",
-    paymentMethod: "credit-card",
   });
-
-  // Calculate referral discount amount and final total
-  const referralDiscountAmount = referralDiscount > 0 ? (cartTotal.raw * referralDiscount) / 100 : 0;
-  const totalDiscount = loyaltyDiscount + referralDiscountAmount;
-  const finalTotal = Math.max(0, cartTotal.raw - totalDiscount);
 
   // Disable checkout button if cart is empty
   const isCheckoutDisabled = cart.items.length === 0 || isLoading;
@@ -73,6 +74,14 @@ export default function CheckoutForm() {
   useEffect(() => {
     fetchCsrfToken();
   }, [fetchCsrfToken]);
+
+  const handleDiscountChange = useCallback(
+    (nextDiscounts: CheckoutDiscountState) => {
+      setDiscounts(nextDiscounts);
+      onDiscountChange?.(nextDiscounts);
+    },
+    [onDiscountChange]
+  );
 
   // Clear form errors when input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -140,16 +149,16 @@ export default function CheckoutForm() {
       const orderData = {
         ...formData,
         items: cart.items,
-        total: finalTotal,
-        loyaltyDiscount: loyaltyDiscount,
-        referralCode: referralCode,
-        referralDiscount: referralDiscountAmount,
+        total: cartTotal.raw,
         // Gift options
         isGift: giftOptions.isGift,
         giftMessage: giftOptions.giftMessage,
         giftRecipientName: giftOptions.giftRecipientName,
         giftRecipientEmail: giftOptions.giftRecipientEmail,
         hidePrice: giftOptions.hidePrice,
+        loyaltyPointsToRedeem: discounts.loyaltyPointsToRedeem,
+        giftCardCode: discounts.giftCardCode,
+        giftCardAmount: discounts.giftCardAmount,
       };
 
       const headers: Record<string, string> = {
@@ -358,115 +367,19 @@ export default function CheckoutForm() {
         />
       </div>
 
-      {/* Referral Code Section */}
       <div className="border-t pt-4">
-        <ReferralCodeInput
-          onCodeApplied={(code, discount) => {
-            setReferralCode(code);
-            setReferralDiscount(discount);
-          }}
-          onCodeRemoved={() => {
-            setReferralCode(null);
-            setReferralDiscount(0);
-          }}
+        <DiscountSection
+          cartTotal={cartTotal.raw}
           disabled={isLoading}
+          onDiscountChange={handleDiscountChange}
         />
       </div>
-
-      {/* Loyalty Points Redemption */}
-      <div className="border-t pt-4">
-        <h3 className="mb-3 text-sm font-medium">Loyalty Rewards</h3>
-        <InlineRedeemWidget
-          onDiscountApplied={(discount) => setLoyaltyDiscount(discount)}
-          maxOrderTotal={cartTotal.raw}
-        />
-      </div>
-
-      {/* Show discount summary if any discount applied */}
-      {totalDiscount > 0 && (
-        <div className="space-y-2 rounded-md border border-green-200 bg-green-50 p-4">
-          <div className="flex justify-between text-sm">
-            <span>Subtotal</span>
-            <span>${cartTotal.raw.toFixed(2)}</span>
-          </div>
-          {referralDiscountAmount > 0 && (
-            <div className="flex justify-between text-sm text-green-700">
-              <span>Referral Discount ({referralDiscount}%)</span>
-              <span>-${referralDiscountAmount.toFixed(2)}</span>
-            </div>
-          )}
-          {loyaltyDiscount > 0 && (
-            <div className="flex justify-between text-sm text-green-700">
-              <span>Loyalty Points Discount</span>
-              <span>-${loyaltyDiscount.toFixed(2)}</span>
-            </div>
-          )}
-          <div className="flex justify-between border-t border-green-200 pt-2 font-semibold">
-            <span>Total</span>
-            <span>${finalTotal.toFixed(2)}</span>
-          </div>
-        </div>
-)}
 
       {/* Carbon Neutral Shipping Notice */}
       <div className="border-t pt-4">
         <CarbonNeutralBanner variant="compact" showLearnMore={false} />
       </div>
 
-      <div className="space-y-2">
-        <Label id="payment-method-label">Payment Method</Label>
-        <div className="sr-only" id="payment-method-instructions">
-          Select a payment method by pressing one of the following buttons
-        </div>
-        <div className="grid grid-cols-4 gap-2" role="radiogroup" aria-labelledby="payment-method-label" aria-describedby="payment-method-instructions">
-          <Button 
-            type="button" 
-            variant={formData.paymentMethod === "credit-card" ? "default" : "outline"}
-            onClick={() => setFormData(prev => ({ ...prev, paymentMethod: "credit-card" }))}
-            disabled={isLoading}
-            className="flex items-center justify-center"
-            role="radio"
-            aria-checked={formData.paymentMethod === "credit-card"}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 size-4">
-              <rect width="20" height="14" x="2" y="5" rx="2" />
-              <line x1="2" x2="22" y1="10" y2="10" />
-            </svg>
-            Card
-          </Button>
-          <Button 
-            type="button" 
-            variant={formData.paymentMethod === "paypal" ? "default" : "outline"}
-            onClick={() => setFormData(prev => ({ ...prev, paymentMethod: "paypal" }))}
-            disabled={isLoading}
-            role="radio"
-            aria-checked={formData.paymentMethod === "paypal"}
-          >
-            PayPal
-          </Button>
-          <Button 
-            type="button" 
-            variant={formData.paymentMethod === "apple-pay" ? "default" : "outline"}
-            onClick={() => setFormData(prev => ({ ...prev, paymentMethod: "apple-pay" }))}
-            disabled={isLoading}
-            role="radio"
-            aria-checked={formData.paymentMethod === "apple-pay"}
-          >
-            Apple Pay
-          </Button>
-          <Button 
-            type="button" 
-            variant={formData.paymentMethod === "google-pay" ? "default" : "outline"}
-            onClick={() => setFormData(prev => ({ ...prev, paymentMethod: "google-pay" }))}
-            disabled={isLoading}
-            role="radio"
-            aria-checked={formData.paymentMethod === "google-pay"}
-          >
-            Google Pay
-          </Button>
-        </div>
-      </div>
-      
       <div className="flex justify-between pt-4">
         <Button 
           type="button" 

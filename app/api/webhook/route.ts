@@ -5,10 +5,11 @@ import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { errorResponse } from "@/lib/api-response";
 import { logger } from "@/lib/logger";
-import { sendOrderConfirmation, isEmailConfigured } from "@/lib/email";
-import { awardPurchasePoints } from "@/lib/loyalty";
+import { sendOrderConfirmation, isEmailConfigured, sendOutOfStockRefundEmail } from "@/lib/email";
+import { awardPurchasePoints, finalizePointsRedemption, reversePointsHold } from "@/lib/loyalty";
 import { storeOrderImpact } from "@/lib/impact";
 import { getStripe } from "@/lib/stripe-server";
+import { finalizeGiftCardHold, reverseGiftCardHold } from "@/lib/gift-cards";
 
 export const dynamic = 'force-dynamic'
 
@@ -142,6 +143,139 @@ async function finalizePendingOrderFromCheckout(
       },
     });
   });
+}
+
+async function deleteStripeCouponIfPresent(couponId: string | null | undefined) {
+  if (!couponId) {
+    return;
+  }
+
+  try {
+    await getStripe().coupons.del(couponId);
+  } catch (error) {
+    const stripeError = error as { code?: string; type?: string; message?: string };
+    // Idempotent cleanup: missing coupon is fine.
+    if (stripeError.code === 'resource_missing' || stripeError.type === 'invalid_request_error') {
+      logger.info('Stripe coupon already deleted', { couponId });
+      return;
+    }
+    throw error;
+  }
+}
+
+async function finalizeCheckoutDiscountHolds(
+  order: OrderWithItems,
+  session: Stripe.Checkout.Session
+) {
+  const giftCardHoldTransactionId = session.metadata?.giftCardHoldTransactionId;
+
+  if (order.loyaltyRedemptionId) {
+    await finalizePointsRedemption(order.loyaltyRedemptionId, order.id);
+  }
+
+  if (order.giftCardId && giftCardHoldTransactionId) {
+    await finalizeGiftCardHold(giftCardHoldTransactionId, order.id);
+  }
+
+  await deleteStripeCouponIfPresent(order.stripeCouponId);
+}
+
+async function reverseCheckoutDiscountHolds(
+  order: Pick<OrderWithItems, "id" | "loyaltyRedemptionId" | "giftCardId" | "giftCardAmountUsed" | "stripeCouponId">,
+  session: Stripe.Checkout.Session
+) {
+  if (order.loyaltyRedemptionId) {
+    await reversePointsHold(order.loyaltyRedemptionId);
+  }
+
+  const giftCardHoldTransactionId = session.metadata?.giftCardHoldTransactionId;
+  if (
+    order.giftCardId &&
+    order.giftCardAmountUsed &&
+    giftCardHoldTransactionId
+  ) {
+    await reverseGiftCardHold(
+      giftCardHoldTransactionId,
+      order.giftCardId,
+      Number(order.giftCardAmountUsed)
+    );
+  }
+
+  await deleteStripeCouponIfPresent(order.stripeCouponId);
+}
+
+/**
+ * Handles auto-refund when inventory is exhausted between checkout and payment.
+ * Issues a full Stripe refund, updates the order status, and notifies the customer.
+ */
+async function handleOutOfStockAutoRefund(
+  session: Stripe.Checkout.Session,
+  pendingOrder: OrderWithItems,
+  reason: string
+) {
+  const paymentIntentId = session.payment_intent as string;
+
+  if (paymentIntentId) {
+    try {
+      await getStripe().refunds.create({ payment_intent: paymentIntentId });
+    } catch (refundError) {
+      logger.error('Failed to auto-refund out-of-stock order', refundError, {
+        orderId: pendingOrder.id,
+        paymentIntentId,
+      });
+      throw refundError;
+    }
+  }
+
+  await prisma.order.update({
+    where: { id: pendingOrder.id },
+    data: {
+      status: 'refunded',
+      refundReason: `out_of_stock: ${reason}`,
+      refundedAt: new Date(),
+      refundAmount: (session.amount_total || Math.round(Number(pendingOrder.amount) * 100)) / 100,
+    },
+  });
+
+  // Best-effort cleanup for checkout discount holds.
+  try {
+    await reverseCheckoutDiscountHolds(
+      {
+        id: pendingOrder.id,
+        loyaltyRedemptionId: pendingOrder.loyaltyRedemptionId,
+        giftCardId: pendingOrder.giftCardId,
+        giftCardAmountUsed: pendingOrder.giftCardAmountUsed,
+        stripeCouponId: pendingOrder.stripeCouponId,
+      },
+      session
+    );
+  } catch (holdError) {
+    logger.error('Failed to reverse discount holds for out-of-stock refund', holdError, {
+      orderId: pendingOrder.id,
+      sessionId: session.id,
+    });
+  }
+
+  logger.warn('Order auto-refunded due to inventory exhaustion', {
+    orderId: pendingOrder.id,
+    sessionId: session.id,
+    reason,
+  });
+
+  // Send out-of-stock notification email
+  if (pendingOrder.customerEmail) {
+    try {
+      await sendOutOfStockRefundEmail(
+        pendingOrder.customerEmail,
+        pendingOrder.id,
+        pendingOrder.customerName || 'Customer'
+      );
+    } catch (emailError) {
+      logger.error('Failed to send out-of-stock email', emailError, {
+        orderId: pendingOrder.id,
+      });
+    }
+  }
 }
 
 /**
@@ -284,7 +418,16 @@ export async function POST(req: Request) {
       }
 
       // Finalize pending order and apply inventory/cart updates atomically.
-      const order = await finalizePendingOrderFromCheckout(session, pendingOrder);
+      let order: OrderWithItems;
+      try {
+        order = await finalizePendingOrderFromCheckout(session, pendingOrder);
+      } catch (error) {
+        if (error instanceof Error && error.message.startsWith('Insufficient')) {
+          await handleOutOfStockAutoRefund(session, pendingOrder, error.message);
+          return new NextResponse(null, { status: 200 });
+        }
+        throw error;
+      }
 
       logger.info('Order created from webhook', {
         orderId: order.id,
@@ -295,6 +438,9 @@ export async function POST(req: Request) {
         inventoryUpdated: true,
         isGift: order.isGift,
       });
+
+      // Finalize discount holds created during checkout.
+      await finalizeCheckoutDiscountHolds(order, session);
 
       // Send order confirmation email
       await sendOrderConfirmationEmail(order.id, order.customerEmail || '');
@@ -355,6 +501,51 @@ export async function POST(req: Request) {
             orderId: order.id,
           });
         }
+      }
+    } else if (event.type === "checkout.session.expired") {
+      logger.info('Processing checkout.session.expired', {
+        sessionId: session.id,
+        userId,
+      });
+
+      // Find pending order by stripeSessionId and mark as failed
+      const pendingOrder = await prisma.order.findUnique({
+        where: { stripeSessionId: session.id },
+        select: {
+          id: true,
+          status: true,
+          userId: true,
+          stripeCouponId: true,
+          loyaltyRedemptionId: true,
+          giftCardId: true,
+          giftCardAmountUsed: true,
+          customerEmail: true,
+          customerName: true,
+        },
+      });
+
+      if (pendingOrder && pendingOrder.status === "pending") {
+        await prisma.order.update({
+          where: { id: pendingOrder.id },
+          data: { status: "failed" },
+        });
+
+        await reverseCheckoutDiscountHolds(
+          {
+            id: pendingOrder.id,
+            loyaltyRedemptionId: pendingOrder.loyaltyRedemptionId,
+            giftCardId: pendingOrder.giftCardId,
+            giftCardAmountUsed: pendingOrder.giftCardAmountUsed,
+            stripeCouponId: pendingOrder.stripeCouponId,
+          },
+          session
+        );
+
+        logger.info('Expired checkout order marked as failed', {
+          orderId: pendingOrder.id,
+          sessionId: session.id,
+          userId: pendingOrder.userId,
+        });
       }
     }
 

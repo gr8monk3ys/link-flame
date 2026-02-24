@@ -17,6 +17,10 @@ export const CheckoutSchema = z.object({
   state: z.string().min(1, 'State is required'),
   zipCode: z.string().regex(/^\d{5}(-\d{4})?$/, 'Invalid ZIP code format'),
   ...GiftOptionsSchema.shape,
+  // Optional discount fields
+  loyaltyPointsToRedeem: z.number().int().positive().optional(),
+  giftCardCode: z.string().trim().min(1).max(20).optional(),
+  giftCardAmount: z.number().positive().optional(),
 })
 
 export type CheckoutInput = z.infer<typeof CheckoutSchema>

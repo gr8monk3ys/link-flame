@@ -16,6 +16,8 @@ import { getBaseUrl } from "@/lib/url";
 import { getStripe } from "@/lib/stripe-server";
 import Stripe from "stripe";
 import { CheckoutSchema } from "@/lib/validations/checkout";
+import { holdPointsForCheckout, reversePointsHold } from "@/lib/loyalty";
+import { holdGiftCardBalance, reverseGiftCardHold } from "@/lib/gift-cards";
 
 export const dynamic = 'force-dynamic'
 
@@ -90,7 +92,8 @@ export async function POST(request: Request) {
       const product = item.product;
       const variant = item.variant;
 
-      // Check inventory availability (variant or product level)
+      // Best-effort pre-check only. Inventory is decremented atomically in webhook
+      // finalization and can still fail there due to concurrent purchases.
       const availableInventory = variant ? variant.inventory : product.inventory;
       const inventorySource = variant ? `${product.title} (${[variant.size, variant.color, variant.material].filter(Boolean).join(', ')})` : product.title;
 
@@ -151,22 +154,137 @@ export async function POST(request: Request) {
       });
     }
 
-    // Extract gift options from validated data
-    const giftOptions = {
-      isGift: validation.data.isGift || false,
-      giftMessage: validation.data.giftMessage || '',
-      giftRecipientName: validation.data.giftRecipientName || '',
-      giftRecipientEmail: validation.data.giftRecipientEmail || '',
-      hidePrice: validation.data.hidePrice || false,
+    const checkoutData = validation.data;
+
+    let loyaltyPointsUsed: number | null = null;
+    let loyaltyDiscountAmount = 0;
+    let loyaltyRedemptionId: string | null = null;
+    let giftCardId: string | null = null;
+    let giftCardAmountUsed = 0;
+    let giftCardHoldTransactionId: string | null = null;
+    let stripeCouponId: string | null = null;
+
+    const cleanupDiscountArtifacts = async () => {
+      if (loyaltyRedemptionId) {
+        try {
+          await reversePointsHold(loyaltyRedemptionId);
+        } catch (error) {
+          logger.error("Failed to reverse loyalty points hold", error, {
+            loyaltyRedemptionId,
+          });
+        }
+      }
+
+      if (giftCardHoldTransactionId && giftCardId && giftCardAmountUsed > 0) {
+        try {
+          await reverseGiftCardHold(
+            giftCardHoldTransactionId,
+            giftCardId,
+            giftCardAmountUsed
+          );
+        } catch (error) {
+          logger.error("Failed to reverse gift card hold", error, {
+            giftCardHoldTransactionId,
+            giftCardId,
+            giftCardAmountUsed,
+          });
+        }
+      }
+
+      if (stripeCouponId) {
+        try {
+          await getStripe().coupons.del(stripeCouponId);
+        } catch (error) {
+          logger.error("Failed to delete Stripe checkout coupon", error, {
+            stripeCouponId,
+          });
+        }
+      }
     };
 
-    const customerName = `${validation.data.firstName} ${validation.data.lastName}`;
-    const shippingAddress = `${validation.data.address}, ${validation.data.city}, ${validation.data.state} ${validation.data.zipCode}`;
+    // Place discount holds before creating the Stripe session.
+    try {
+      if (checkoutData.loyaltyPointsToRedeem) {
+        if (!userId || userIdToUse.startsWith("guest_")) {
+          return errorResponse(
+            "You must be signed in to redeem loyalty points.",
+            "LOYALTY_AUTH_REQUIRED",
+            undefined,
+            401
+          );
+        }
+
+        const pointsHold = await holdPointsForCheckout(
+          userId,
+          checkoutData.loyaltyPointsToRedeem
+        );
+        loyaltyPointsUsed = checkoutData.loyaltyPointsToRedeem;
+        loyaltyDiscountAmount = pointsHold.discountAmount;
+        loyaltyRedemptionId = pointsHold.redemptionId;
+      }
+
+      if (checkoutData.giftCardCode) {
+        const remainingAfterLoyalty = Math.max(0, serverTotal - loyaltyDiscountAmount);
+        if (remainingAfterLoyalty <= 0) {
+          throw new Error("Gift card amount cannot exceed order total.");
+        }
+
+        const requestedGiftCardAmount = checkoutData.giftCardAmount ?? remainingAfterLoyalty;
+        const giftCardHold = await holdGiftCardBalance(
+          checkoutData.giftCardCode,
+          Math.min(requestedGiftCardAmount, remainingAfterLoyalty)
+        );
+        giftCardId = giftCardHold.giftCardId;
+        giftCardAmountUsed = giftCardHold.amountApplied;
+        giftCardHoldTransactionId = giftCardHold.transactionId;
+      }
+
+      const totalDiscount = loyaltyDiscountAmount + giftCardAmountUsed;
+      if (totalDiscount > serverTotal) {
+        throw new Error("Total discount cannot exceed order subtotal");
+      }
+
+      if (totalDiscount > 0) {
+        const coupon = await getStripe().coupons.create({
+          amount_off: Math.round(totalDiscount * 100),
+          currency: "usd",
+          max_redemptions: 1,
+          duration: "once",
+        });
+        stripeCouponId = coupon.id;
+      }
+    } catch (discountError) {
+      await cleanupDiscountArtifacts();
+      logger.error("Failed to prepare checkout discounts", discountError, {
+        userId: userIdToUse,
+      });
+
+      const message =
+        discountError instanceof Error
+          ? discountError.message
+          : "Failed to apply checkout discounts";
+      return errorResponse(message, "DISCOUNT_PREP_FAILED", undefined, 400);
+    }
+
+    const totalDiscount = loyaltyDiscountAmount + giftCardAmountUsed;
+
+    // Extract gift options from validated data
+    const giftOptions = {
+      isGift: checkoutData.isGift || false,
+      giftMessage: checkoutData.giftMessage || '',
+      giftRecipientName: checkoutData.giftRecipientName || '',
+      giftRecipientEmail: checkoutData.giftRecipientEmail || '',
+      hidePrice: checkoutData.hidePrice || false,
+    };
+
+    const customerName = `${checkoutData.firstName} ${checkoutData.lastName}`;
+    const shippingAddress = `${checkoutData.address}, ${checkoutData.city}, ${checkoutData.state} ${checkoutData.zipCode}`;
 
     logger.info('Creating Stripe checkout session', {
       userId: userIdToUse,
       itemCount: cartItems.length,
       total: serverTotal,
+      totalDiscount,
       isGift: giftOptions.isGift,
     });
 
@@ -175,6 +293,7 @@ export async function POST(request: Request) {
       const session = await getStripe().checkout.sessions.create({
         mode: 'payment',
         line_items: lineItems,
+        discounts: stripeCouponId ? [{ coupon: stripeCouponId }] : undefined,
         payment_method_types: ['card'],
         payment_method_options: {
           card: {
@@ -230,7 +349,7 @@ export async function POST(request: Request) {
         automatic_tax: { enabled: true },
         metadata: {
           userId: userIdToUse,
-          customerEmail: data.email,
+          customerEmail: checkoutData.email,
           customerName,
           shippingAddress,
           isGift: giftOptions.isGift.toString(),
@@ -238,8 +357,11 @@ export async function POST(request: Request) {
           giftRecipientName: giftOptions.giftRecipientName,
           giftRecipientEmail: giftOptions.giftRecipientEmail,
           hidePrice: giftOptions.hidePrice.toString(),
+          loyaltyRedemptionId: loyaltyRedemptionId || '',
+          giftCardHoldTransactionId: giftCardHoldTransactionId || '',
+          stripeCouponId: stripeCouponId || '',
         },
-        customer_email: data.email,
+        customer_email: checkoutData.email,
         billing_address_collection: 'auto',
         success_url: `${getBaseUrl()}/order-confirmation?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${getBaseUrl()}/checkout`,
@@ -256,7 +378,7 @@ export async function POST(request: Request) {
             amount: serverTotal,
             status: "pending",
             paymentMethod: "stripe_checkout",
-            customerEmail: data.email,
+            customerEmail: checkoutData.email,
             customerName,
             shippingAddress,
             isGift: giftOptions.isGift,
@@ -264,6 +386,13 @@ export async function POST(request: Request) {
             giftRecipientName: giftOptions.giftRecipientName || null,
             giftRecipientEmail: giftOptions.giftRecipientEmail || null,
             hidePrice: giftOptions.hidePrice,
+            loyaltyPointsUsed,
+            loyaltyDiscountAmount: loyaltyDiscountAmount > 0 ? loyaltyDiscountAmount : null,
+            loyaltyRedemptionId,
+            giftCardId,
+            giftCardAmountUsed: giftCardAmountUsed > 0 ? giftCardAmountUsed : null,
+            stripeCouponId,
+            discountTotal: totalDiscount > 0 ? totalDiscount : null,
             items: {
               create: pendingOrderItems,
             },
@@ -284,6 +413,8 @@ export async function POST(request: Request) {
           });
         }
 
+        await cleanupDiscountArtifacts();
+
         return errorResponse(
           "Failed to initialize checkout session. Please try again.",
           undefined,
@@ -296,11 +427,12 @@ export async function POST(request: Request) {
         sessionId: session.id,
         userId: userIdToUse,
         amount: serverTotal,
+        totalDiscount,
       });
 
       // Return session URL for redirect to Stripe
-      // NOTE: Order is NOT created yet - it will be created by the webhook
-      // after successful payment
+      // NOTE: A pending snapshot order already exists and will be finalized
+      // by the webhook after successful payment.
       return NextResponse.json({
         sessionUrl: session.url,
         sessionId: session.id,
@@ -309,6 +441,9 @@ export async function POST(request: Request) {
       logger.error('Stripe checkout session creation failed', stripeError, {
         userId: userIdToUse,
       });
+
+      await cleanupDiscountArtifacts();
+
       return errorResponse(
         "Failed to create checkout session. Please try again.",
         undefined,

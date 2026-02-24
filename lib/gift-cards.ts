@@ -39,6 +39,7 @@ export const GIFT_CARD_CONFIG = {
     PURCHASE: 'PURCHASE',
     REDEMPTION: 'REDEMPTION',
     REFUND: 'REFUND',
+    HOLD: 'HOLD',
   } as const,
 }
 
@@ -387,6 +388,209 @@ export async function redeemGiftCard(
       remainingBalance: newBalance,
       amountApplied: amountToApply,
     }
+  })
+}
+
+/**
+ * Hold gift card balance during checkout session creation.
+ *
+ * Deducts balance immediately and writes a HOLD transaction. This hold is later
+ * finalized to REDEMPTION when payment succeeds, or reversed if checkout fails/expires.
+ */
+export async function holdGiftCardBalance(
+  code: string,
+  amount: number
+): Promise<{ giftCardId: string; amountApplied: number; transactionId: string }> {
+  if (amount <= 0) {
+    throw new Error('Gift card hold amount must be greater than zero')
+  }
+
+  const normalizedCode = normalizeGiftCardCode(code)
+
+  return await prisma.$transaction(async (tx) => {
+    const giftCard = await tx.giftCard.findUnique({
+      where: { code: normalizedCode },
+    })
+
+    if (!giftCard) {
+      throw new Error('Gift card not found')
+    }
+
+    const validation = validateGiftCardForUse({
+      status: giftCard.status,
+      currentBalance: Number(giftCard.currentBalance),
+      expiresAt: giftCard.expiresAt,
+    })
+    if (!validation.valid) {
+      throw new Error(validation.reason || 'Gift card is not valid')
+    }
+
+    const amountToApply = Math.min(amount, Number(giftCard.currentBalance))
+    if (amountToApply <= 0) {
+      throw new Error('Gift card has no remaining balance')
+    }
+
+    const newBalance = Number(giftCard.currentBalance) - amountToApply
+    const newStatus =
+      newBalance <= 0 ? GIFT_CARD_CONFIG.STATUS.REDEEMED : GIFT_CARD_CONFIG.STATUS.ACTIVE
+
+    await tx.giftCard.update({
+      where: { id: giftCard.id },
+      data: {
+        currentBalance: newBalance,
+        status: newStatus,
+      },
+    })
+
+    const holdTransaction = await tx.giftCardTransaction.create({
+      data: {
+        giftCardId: giftCard.id,
+        amount: -amountToApply,
+        type: GIFT_CARD_CONFIG.TRANSACTION_TYPES.HOLD,
+        description: 'Gift card balance held for checkout',
+      },
+      select: {
+        id: true,
+      },
+    })
+
+    logger.info('Gift card balance held for checkout', {
+      giftCardId: giftCard.id,
+      amountHeld: amountToApply,
+      remainingBalance: newBalance,
+      transactionId: holdTransaction.id,
+    })
+
+    return {
+      giftCardId: giftCard.id,
+      amountApplied: amountToApply,
+      transactionId: holdTransaction.id,
+    }
+  })
+}
+
+/**
+ * Finalize a gift card hold after successful payment.
+ *
+ * Idempotent: if the transaction is already finalized/deleted, this is a no-op.
+ */
+export async function finalizeGiftCardHold(
+  transactionId: string,
+  orderId?: string
+): Promise<void> {
+  const existingTransaction = await prisma.giftCardTransaction.findUnique({
+    where: { id: transactionId },
+    select: {
+      id: true,
+      type: true,
+      orderId: true,
+    },
+  })
+
+  if (!existingTransaction) {
+    logger.info('Gift card hold transaction already finalized or missing', { transactionId })
+    return
+  }
+
+  if (existingTransaction.type === GIFT_CARD_CONFIG.TRANSACTION_TYPES.REDEMPTION) {
+    logger.info('Gift card hold already finalized', { transactionId })
+    return
+  }
+
+  if (existingTransaction.type !== GIFT_CARD_CONFIG.TRANSACTION_TYPES.HOLD) {
+    throw new Error(`Cannot finalize non-hold transaction: ${existingTransaction.type}`)
+  }
+
+  await prisma.giftCardTransaction.update({
+    where: { id: transactionId },
+    data: {
+      type: GIFT_CARD_CONFIG.TRANSACTION_TYPES.REDEMPTION,
+      orderId: orderId || existingTransaction.orderId,
+      description: orderId
+        ? `Gift card redeemed for order ${orderId}`
+        : 'Gift card redeemed',
+    },
+  })
+
+  logger.info('Gift card hold finalized', { transactionId, orderId })
+}
+
+/**
+ * Reverse a pending gift card hold (e.g., failed/expired checkout).
+ *
+ * Idempotent: if hold is missing or already finalized, this is a no-op.
+ */
+export async function reverseGiftCardHold(
+  transactionId: string,
+  giftCardId: string,
+  amount: number
+): Promise<void> {
+  if (amount <= 0) {
+    return
+  }
+
+  await prisma.$transaction(async (tx) => {
+    const holdTransaction = await tx.giftCardTransaction.findUnique({
+      where: { id: transactionId },
+      select: {
+        id: true,
+        giftCardId: true,
+        type: true,
+      },
+    })
+
+    if (!holdTransaction) {
+      logger.info('Gift card hold transaction missing; assuming already reversed', { transactionId })
+      return
+    }
+
+    if (holdTransaction.type !== GIFT_CARD_CONFIG.TRANSACTION_TYPES.HOLD) {
+      logger.info('Gift card hold already finalized; skip reverse', {
+        transactionId,
+        type: holdTransaction.type,
+      })
+      return
+    }
+
+    if (holdTransaction.giftCardId !== giftCardId) {
+      throw new Error('Gift card hold does not match provided gift card')
+    }
+
+    const giftCard = await tx.giftCard.findUnique({
+      where: { id: giftCardId },
+      select: {
+        id: true,
+        currentBalance: true,
+        initialBalance: true,
+      },
+    })
+
+    if (!giftCard) {
+      throw new Error('Gift card not found while reversing hold')
+    }
+
+    const newBalance = Math.min(
+      Number(giftCard.currentBalance) + amount,
+      Number(giftCard.initialBalance)
+    )
+
+    await tx.giftCard.update({
+      where: { id: giftCardId },
+      data: {
+        currentBalance: newBalance,
+        status: GIFT_CARD_CONFIG.STATUS.ACTIVE,
+      },
+    })
+
+    await tx.giftCardTransaction.delete({
+      where: { id: transactionId },
+    })
+  })
+
+  logger.info('Gift card hold reversed', {
+    transactionId,
+    giftCardId,
+    amount,
   })
 }
 

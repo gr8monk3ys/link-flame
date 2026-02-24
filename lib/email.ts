@@ -363,6 +363,170 @@ function generateShippingNotificationHTML(orderDetails: {
 }
 
 /**
+ * Send out-of-stock refund notification email
+ *
+ * @param to - Customer email address
+ * @param orderId - The order ID that was refunded
+ * @param customerName - Customer display name
+ */
+export async function sendOutOfStockRefundEmail(
+  to: string,
+  orderId: string,
+  customerName: string
+): Promise<{ success: boolean; error?: unknown }> {
+  if (!resend) {
+    logger.warn('Resend not configured - skipping out-of-stock refund email');
+    return { success: false, error: 'Email service not configured' };
+  }
+
+  try {
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      subject: 'Your Order Has Been Refunded - Link Flame',
+      html: generateOutOfStockRefundHTML(orderId, customerName),
+    });
+
+    if (error) {
+      logger.error('Failed to send out-of-stock refund email', error);
+      return { success: false, error };
+    }
+
+    logger.info('Out-of-stock refund email sent', { to, orderId });
+    return { success: true };
+  } catch (error) {
+    logger.error('Error sending out-of-stock refund email', error);
+    return { success: false, error };
+  }
+}
+
+/**
+ * Generate out-of-stock refund notification HTML email
+ */
+function generateOutOfStockRefundHTML(orderId: string, customerName: string): string {
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+      <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #374151; margin: 0; padding: 0; background-color: #f3f4f6;">
+        <div style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+          <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 40px 30px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Link Flame</h1>
+            <p style="color: rgba(255, 255, 255, 0.9); margin: 10px 0 0 0;">Order Refund Notification</p>
+          </div>
+          <div style="padding: 40px 30px;">
+            <p>Hi ${customerName},</p>
+            <p>We're sorry, but one or more items in your order <strong>${orderId}</strong> went out of stock between checkout and payment processing.</p>
+            <p>A <strong>full refund</strong> has been automatically issued to your original payment method. Please allow 5-10 business days for the refund to appear.</p>
+            <p>We sincerely apologize for the inconvenience. Please visit our store to find similar products.</p>
+            <div style="text-align: center; margin: 32px 0;">
+              <a href="${getBaseUrl()}/collections" style="display: inline-block; background-color: #10b981; color: #ffffff; padding: 12px 32px; text-decoration: none; border-radius: 6px; font-weight: 600;">Browse Products</a>
+            </div>
+            <p>The Link Flame Team</p>
+          </div>
+          <div style="background-color: #f9fafb; padding: 24px 30px; text-align: center; border-top: 1px solid #e5e7eb;">
+            <p style="margin: 0; font-size: 12px; color: #9ca3af;">&copy; 2026 Link Flame. All rights reserved.</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+}
+
+/**
+ * Send subscription payment failure notification email
+ */
+export async function sendSubscriptionPaymentFailedEmail(
+  to: string,
+  subscriptionVisibleId: string,
+  customerName: string,
+  failedAttemptCount: number
+): Promise<{ success: boolean; error?: unknown }> {
+  if (!resend) {
+    logger.warn('Resend not configured - skipping subscription payment failure email');
+    return { success: false, error: 'Email service not configured' };
+  }
+
+  try {
+    const { error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      subject: 'Action needed: Subscription payment failed - Link Flame',
+      html: generateSubscriptionPaymentFailedHTML(
+        subscriptionVisibleId,
+        customerName,
+        failedAttemptCount
+      ),
+    });
+
+    if (error) {
+      logger.error('Failed to send subscription payment failed email', error, {
+        to,
+        subscriptionVisibleId,
+        failedAttemptCount,
+      });
+      return { success: false, error };
+    }
+
+    logger.info('Subscription payment failed email sent', {
+      to,
+      subscriptionVisibleId,
+      failedAttemptCount,
+    });
+    return { success: true };
+  } catch (error) {
+    logger.error('Error sending subscription payment failed email', error, {
+      to,
+      subscriptionVisibleId,
+      failedAttemptCount,
+    });
+    return { success: false, error };
+  }
+}
+
+function generateSubscriptionPaymentFailedHTML(
+  subscriptionVisibleId: string,
+  customerName: string,
+  failedAttemptCount: number
+): string {
+  const failureNotice =
+    failedAttemptCount >= 3
+      ? 'We have temporarily paused this subscription after multiple failed attempts. Please update your payment method to resume deliveries.'
+      : 'Please update your payment method to avoid interruption to your next delivery.';
+
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+      <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #374151; margin: 0; padding: 0; background-color: #f3f4f6;">
+        <div style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+          <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); padding: 40px 30px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Link Flame</h1>
+            <p style="color: rgba(255, 255, 255, 0.9); margin: 10px 0 0 0;">Subscription Payment Issue</p>
+          </div>
+          <div style="padding: 40px 30px;">
+            <p>Hi ${customerName},</p>
+            <p>We couldn't process payment for your subscription <strong>${subscriptionVisibleId}</strong>.</p>
+            <p>This is failed payment attempt #${failedAttemptCount}.</p>
+            <p>${failureNotice}</p>
+            <div style="text-align: center; margin: 32px 0;">
+              <a href="${getBaseUrl()}/account/subscriptions" style="display: inline-block; background-color: #10b981; color: #ffffff; padding: 12px 32px; text-decoration: none; border-radius: 6px; font-weight: 600;">
+                Manage Subscription
+              </a>
+            </div>
+            <p>If you've already updated your payment details, no further action is needed.</p>
+            <p>The Link Flame Team</p>
+          </div>
+          <div style="background-color: #f9fafb; padding: 24px 30px; text-align: center; border-top: 1px solid #e5e7eb;">
+            <p style="margin: 0; font-size: 12px; color: #9ca3af;">&copy; 2026 Link Flame. All rights reserved.</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+}
+
+/**
  * Generate password reset HTML email
  */
 function generatePasswordResetHTML(resetUrl: string): string {

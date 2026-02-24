@@ -487,6 +487,99 @@ export async function redeemPoints(params: {
 }
 
 /**
+ * Hold points for checkout (creates pending redemption, not yet applied).
+ * Called during checkout before Stripe session creation.
+ */
+export async function holdPointsForCheckout(
+  userId: string,
+  pointsToRedeem: number
+): Promise<{ redemptionId: string; discountAmount: number }> {
+  if (pointsToRedeem <= 0) {
+    throw new Error('Points to redeem must be positive')
+  }
+
+  const availablePoints = await getUserAvailablePoints(userId)
+  if (pointsToRedeem > availablePoints) {
+    throw new Error(`Insufficient points. You have ${availablePoints} available.`)
+  }
+
+  const discountAmount = calculateDiscountFromPoints(pointsToRedeem)
+
+  const redemption = await prisma.loyaltyRedemption.create({
+    data: {
+      userId,
+      pointsUsed: pointsToRedeem,
+      discount: discountAmount,
+      discountAmount,
+      status: 'pending',
+    },
+  })
+
+  logger.info('Points held for checkout', {
+    userId,
+    pointsHeld: pointsToRedeem,
+    discountAmount,
+    redemptionId: redemption.id,
+  })
+
+  return { redemptionId: redemption.id, discountAmount }
+}
+
+/**
+ * Finalize a pending points redemption after successful payment.
+ */
+export async function finalizePointsRedemption(
+  redemptionId: string,
+  orderId?: string
+): Promise<void> {
+  const redemption = await prisma.loyaltyRedemption.findUnique({
+    where: { id: redemptionId },
+    select: {
+      id: true,
+      status: true,
+      orderId: true,
+    },
+  })
+
+  if (!redemption) {
+    logger.info('Points redemption already finalized or missing', { redemptionId })
+    return
+  }
+
+  if (redemption.status === 'applied' && (!orderId || redemption.orderId === orderId)) {
+    logger.info('Points redemption already applied', { redemptionId, orderId })
+    return
+  }
+
+  await prisma.loyaltyRedemption.update({
+    where: { id: redemptionId },
+    data: {
+      status: 'applied',
+      orderId: orderId || redemption.orderId,
+    },
+  })
+
+  logger.info('Points redemption finalized', { redemptionId, orderId })
+}
+
+/**
+ * Reverse a pending points hold (e.g., when checkout session expires).
+ */
+export async function reversePointsHold(redemptionId: string): Promise<void> {
+  const result = await prisma.loyaltyRedemption.deleteMany({
+    where: {
+      id: redemptionId,
+      status: 'pending',
+    },
+  })
+
+  logger.info('Points hold reversed', {
+    redemptionId,
+    deletedCount: result.count,
+  })
+}
+
+/**
  * Get user's point history (paginated)
  */
 export async function getUserPointHistory(
