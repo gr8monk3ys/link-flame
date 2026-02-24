@@ -34,6 +34,7 @@ interface Product {
 
 interface FilterState {
   search: string;
+  sortBy: 'newest' | 'price_asc' | 'price_desc' | 'rating';
   categories: string[];
   rating: number | null;
   dateRange: {
@@ -84,9 +85,17 @@ function parseFiltersFromSearchParams(searchParams: URLSearchParams): FilterStat
     .split(',')
     .map((value) => value.trim())
     .filter(Boolean);
+  const sortByParam = searchParams.get('sortBy');
+  const sortBy: FilterState['sortBy'] =
+    sortByParam === 'price_asc' ||
+    sortByParam === 'price_desc' ||
+    sortByParam === 'rating'
+      ? sortByParam
+      : 'newest';
 
   return {
     search: searchParams.get('search') || '',
+    sortBy,
     categories: searchParams.getAll('category').filter(Boolean),
     rating: (() => {
       const value = parseNumberParam(searchParams.get('rating'));
@@ -111,6 +120,7 @@ function parseFiltersFromSearchParams(searchParams: URLSearchParams): FilterStat
 function serializeFilters(value: FilterState): string {
   return JSON.stringify({
     search: value.search,
+    sortBy: value.sortBy,
     categories: [...value.categories].sort(),
     rating: value.rating,
     startDate: value.dateRange.start?.toISOString() ?? null,
@@ -168,6 +178,12 @@ function useCollectionsPageState() {
         params.set('search', nextFilters.search);
       } else {
         params.delete('search');
+      }
+
+      if (nextFilters.sortBy !== 'newest') {
+        params.set('sortBy', nextFilters.sortBy);
+      } else {
+        params.delete('sortBy');
       }
 
       params.delete('category');
@@ -246,6 +262,7 @@ function useCollectionsPageState() {
     const params = new URLSearchParams();
 
     if (debouncedSearch) params.append('search', debouncedSearch);
+    if (filters.sortBy) params.append('sortBy', filters.sortBy);
     if (filters.categories.length > 0) {
       filters.categories.forEach((category) => params.append('category', category));
     }
@@ -271,6 +288,7 @@ function useCollectionsPageState() {
     filters.dateRange,
     filters.imperfect,
     filters.rating,
+    filters.sortBy,
     filters.subscribable,
     filters.values,
     pageSize,

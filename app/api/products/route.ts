@@ -80,6 +80,13 @@ export async function GET(request: NextRequest) {
     const endDate = searchParams.get('endDate');
     const minPrice = searchParams.get('minPrice') ? Number(searchParams.get('minPrice')) : null;
     const maxPrice = searchParams.get('maxPrice') ? Number(searchParams.get('maxPrice')) : null;
+    const sortByParam = searchParams.get('sortBy');
+    const sortBy: 'newest' | 'price_asc' | 'price_desc' | 'rating' =
+      sortByParam === 'price_asc' ||
+      sortByParam === 'price_desc' ||
+      sortByParam === 'rating'
+        ? sortByParam
+        : 'newest';
     const page = Number(searchParams.get('page')) || 1;
     const pageSize = Number(searchParams.get('pageSize')) || 12;
     // Imperfect products filter
@@ -157,30 +164,67 @@ export async function GET(request: NextRequest) {
         where.id = { in: qualifiedProductIds }
       }
 
-      // Query count + items separately so transient pooled-connection hiccups can be retried safely.
-      const total = await prisma.product.count({ where })
-      const products = await prisma.product.findMany({
-        where,
-        include: {
-          reviews: {
-            select: {
-              rating: true,
-            },
+      const includeConfig = {
+        reviews: {
+          select: {
+            rating: true,
           },
-          // Include product values for "Shop by Values" badges
-          values: {
-            include: {
-              value: {
-                select: {
-                  id: true,
-                  name: true,
-                  slug: true,
-                  iconName: true,
-                },
+        },
+        // Include product values for "Shop by Values" badges
+        values: {
+          include: {
+            value: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                iconName: true,
               },
             },
           },
         },
+      } satisfies Prisma.ProductInclude
+
+      if (sortBy === 'rating') {
+        const allProducts = await prisma.product.findMany({
+          where,
+          include: includeConfig,
+        })
+
+        const sorted = allProducts.sort((a, b) => {
+          const ratingA =
+            a.reviews.length > 0
+              ? a.reviews.reduce((sum, review) => sum + review.rating, 0) / a.reviews.length
+              : 0
+          const ratingB =
+            b.reviews.length > 0
+              ? b.reviews.reduce((sum, review) => sum + review.rating, 0) / b.reviews.length
+              : 0
+
+          if (ratingB !== ratingA) {
+            return ratingB - ratingA
+          }
+          return b.createdAt.getTime() - a.createdAt.getTime()
+        })
+
+        const total = sorted.length
+        const products = sorted.slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize)
+        return { total, products }
+      }
+
+      const orderBy: Prisma.ProductOrderByWithRelationInput =
+        sortBy === 'price_asc'
+          ? { price: 'asc' }
+          : sortBy === 'price_desc'
+            ? { price: 'desc' }
+            : { createdAt: 'desc' }
+
+      // Query count + items separately so transient pooled-connection hiccups can be retried safely.
+      const total = await prisma.product.count({ where })
+      const products = await prisma.product.findMany({
+        where,
+        include: includeConfig,
+        orderBy,
         skip: (page - 1) * pageSize,
         take: pageSize,
       })

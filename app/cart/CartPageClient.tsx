@@ -13,7 +13,6 @@ import type { CartItem } from "@/types/cart";
 import CheckoutForm from "@/components/checkout/checkout-form";
 import ErrorBoundary from "@/components/layout/error-boundary";
 import { LoadingShimmer } from "@/components/ui/loading-shimmer";
-import { Toaster } from "sonner";
 import { CarbonNeutralBanner, CarbonNeutralShippingLine } from "@/components/sustainability";
 
 // Lazy load non-critical components
@@ -223,7 +222,6 @@ export default function CartPageClient() {
 
   return (
     <>
-      <Toaster position="top-right" />
       <div className="container py-8">
         <h1 className="mb-4 text-3xl font-bold">Shopping Cart</h1>
         {/* Carbon-neutral shipping banner */}

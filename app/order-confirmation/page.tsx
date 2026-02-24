@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/providers/CartProvider";
-import { Toaster } from "sonner";
 import { Gift, Check } from "lucide-react";
 
 interface OrderDetails {
@@ -75,7 +74,6 @@ function OrderConfirmationContent() {
 
   return (
     <div className="container py-12">
-      <Toaster position="top-right" />
       <div className="mx-auto max-w-lg space-y-8">
         <div className="rounded-lg border bg-card p-8 shadow-sm">
           <div className="mb-6 flex flex-col items-center space-y-4 text-center">

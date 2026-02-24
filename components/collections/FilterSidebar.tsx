@@ -6,6 +6,7 @@ import Link from 'next/link';
 
 interface FilterState {
   search: string;
+  sortBy: 'newest' | 'price_asc' | 'price_desc' | 'rating';
   categories: string[];
   rating: number | null;
   dateRange: {
@@ -28,6 +29,37 @@ interface FilterSidebarProps {
 interface CategoryFilter {
   name: string;
   count: number;
+}
+
+function SortSection({
+  filters,
+  onFilterChange,
+}: FilterSidebarProps) {
+  return (
+    <div>
+      <h3 className="text-lg font-medium text-gray-900">Sort</h3>
+      <div className="mt-4">
+        <label htmlFor="sortBy" className="sr-only">
+          Sort products
+        </label>
+        <select
+          id="sortBy"
+          value={filters.sortBy}
+          onChange={(event) =>
+            onFilterChange({
+              sortBy: event.target.value as FilterState["sortBy"],
+            })
+          }
+          className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-ring"
+        >
+          <option value="newest">Newest</option>
+          <option value="price_asc">Price: Low to High</option>
+          <option value="price_desc">Price: High to Low</option>
+          <option value="rating">Top Rated</option>
+        </select>
+      </div>
+    </div>
+  );
 }
 
 function SearchSection({
@@ -418,6 +450,7 @@ export default function FilterSidebar({
 
   return (
     <div className="space-y-8">
+      <SortSection filters={filters} onFilterChange={onFilterChange} />
       <SearchSection filters={filters} onFilterChange={onFilterChange} />
       <CategoriesSection
         categories={categories}
