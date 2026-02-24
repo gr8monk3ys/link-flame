@@ -38,6 +38,11 @@ if [[ -f .env ]]; then
   set +a
 fi
 
+# Prisma datasource requires non-empty DIRECT_URL in this codebase.
+if [[ -z "${DIRECT_URL:-}" && -n "${DATABASE_URL:-}" ]]; then
+  export DIRECT_URL="$DATABASE_URL"
+fi
+
 echo "==> Staging Payment Drills Preflight"
 
 required_vars=(

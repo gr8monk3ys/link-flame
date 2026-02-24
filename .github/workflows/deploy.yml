@@ -46,7 +46,7 @@ jobs:
         run: npm run build
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DIRECT_URL: ${{ secrets.DIRECT_URL || secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
           NEXTAUTH_URL: ${{ vars.STAGING_URL }}
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
           NEXT_PUBLIC_APP_URL: ${{ vars.STAGING_URL }}
@@ -55,10 +55,12 @@ jobs:
           STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
 
       - name: Run database migrations
-        run: npx prisma migrate deploy
+        run: |
+          export DIRECT_URL="${DIRECT_URL:-$DATABASE_URL}"
+          npx prisma migrate deploy
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DIRECT_URL: ${{ secrets.DIRECT_URL || secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
 
       # Vercel deployment (if using Vercel)
       - name: Deploy to Vercel (Staging)
@@ -122,7 +124,7 @@ jobs:
       - name: Run staging payment drills
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DIRECT_URL: ${{ secrets.DIRECT_URL || secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
           NEXTAUTH_URL: ${{ vars.STAGING_URL }}
           NEXT_PUBLIC_APP_URL: ${{ vars.STAGING_URL }}
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
@@ -176,7 +178,7 @@ jobs:
         run: npm run build
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DIRECT_URL: ${{ secrets.DIRECT_URL || secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
           NEXTAUTH_URL: ${{ vars.PRODUCTION_URL }}
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
           NEXT_PUBLIC_APP_URL: ${{ vars.PRODUCTION_URL }}
@@ -191,10 +193,12 @@ jobs:
           # For PostgreSQL: pg_dump $DATABASE_URL > backup_$(date +%Y%m%d_%H%M%S).sql
 
       - name: Run database migrations
-        run: npx prisma migrate deploy
+        run: |
+          export DIRECT_URL="${DIRECT_URL:-$DATABASE_URL}"
+          npx prisma migrate deploy
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DIRECT_URL: ${{ secrets.DIRECT_URL || secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
 
       # Vercel deployment (if using Vercel)
       - name: Deploy to Vercel (Production)
