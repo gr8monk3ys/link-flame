@@ -33,6 +33,11 @@ model User {
   // Referral program fields
   referralCode String? @unique // User's own referral code
 
+  // Stripe customer ID for subscription billing
+  stripeCustomerId String? @unique
+  // Increment on password reset to invalidate existing JWTs
+  tokenVersion     Int     @default(0)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -51,6 +56,7 @@ model User {
 
   @@index([email])
   @@index([referralCode])
+  @@index([stripeCustomerId])
 }
 
 model Product {
@@ -293,11 +299,29 @@ model Order {
   giftRecipientEmail String?
   hidePrice          Boolean @default(false) // Hide price on packing slip
 
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  items        OrderItem[]
-  carbonOffset CarbonOffset?
-  orderImpacts OrderImpact[]
+  // Refund tracking
+  refundReason  String?
+  refundedAt    DateTime?
+  refundAmount  Decimal?  @db.Decimal(10, 2)
+
+  // Discount tracking (for refund reversal)
+  loyaltyPointsUsed     Int?
+  loyaltyDiscountAmount Decimal? @db.Decimal(10, 2)
+  loyaltyRedemptionId   String?
+  giftCardId            String?
+  giftCardAmountUsed    Decimal? @db.Decimal(10, 2)
+  stripeCouponId        String?
+  discountTotal         Decimal? @db.Decimal(10, 2)
+
+  // Subscription origin
+  subscriptionId String?
+
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  items              OrderItem[]
+  carbonOffset       CarbonOffset?
+  orderImpacts       OrderImpact[]
+  subscriptionOrders SubscriptionOrder[]
 
   @@index([userId])
   @@index([stripeSessionId])
@@ -319,8 +343,9 @@ model OrderItem {
   variantSku      String?
   variantSize     String?
   variantColor    String?
-  variantMaterial String?
-  createdAt       DateTime        @default(now())
+  variantMaterial  String?
+  refundedQuantity Int             @default(0)
+  createdAt        DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
   order           Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product         Product         @relation(fields: [productId], references: [id])
@@ -662,24 +687,30 @@ model Subscription {
   id               String    @id @default(cuid())
   visibleId        String    @unique // User-facing ID (e.g., SUB-ABC123)
   userId           String
-  status           String    @default("ACTIVE") // ACTIVE, PAUSED, CANCELLED
+  status           String    @default("ACTIVE") // PENDING, ACTIVE, PAUSED, PAYMENT_FAILED, CANCELLED
   frequency        String // WEEKLY, BIWEEKLY, MONTHLY, BIMONTHLY
   nextDeliveryDate DateTime
   lastDeliveryDate DateTime?
   skipNextDelivery Boolean   @default(false) // Whether to skip the next delivery
-  pausedAt         DateTime?
-  cancelledAt      DateTime?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  pausedAt             DateTime?
+  cancelledAt          DateTime?
+  stripeSubscriptionId String?   @unique
+  stripeStatus         String?
+  paymentFailedAt      DateTime?
+  paymentFailedCount   Int       @default(0)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 
-  user   User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  items  SubscriptionItem[]
-  pauses SubscriptionPause[]
+  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items              SubscriptionItem[]
+  pauses             SubscriptionPause[]
+  subscriptionOrders SubscriptionOrder[]
 
   @@index([userId])
   @@index([status])
   @@index([userId, status])
   @@index([nextDeliveryDate])
+  @@index([stripeSubscriptionId])
 }
 
 // Individual items within a subscription
@@ -691,6 +722,7 @@ model SubscriptionItem {
   quantity            Int      @default(1)
   priceAtSubscription Decimal @db.Decimal(10, 2) // Price locked in at subscription time
   discountPercent     Float    @default(0) // Discount applied to this item
+  stripePriceId       String?
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
@@ -719,6 +751,21 @@ model SubscriptionPause {
 
   @@index([subscriptionId])
   @@index([subscriptionId, resumedAt])
+}
+
+// Links subscription billing cycles to orders for idempotent webhook processing
+model SubscriptionOrder {
+  id              String   @id @default(cuid())
+  subscriptionId  String
+  orderId         String
+  stripeInvoiceId String   @unique
+  createdAt       DateTime @default(now())
+
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  order        Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([subscriptionId])
+  @@index([orderId])
 }
 
 // ===========================================
