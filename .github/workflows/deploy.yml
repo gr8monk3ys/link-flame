@@ -1,8 +1,6 @@
 name: Deploy
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
     inputs:
       environment:
@@ -18,11 +16,11 @@ env:
   NODE_VERSION: '20'
 
 jobs:
-  # Deploy to staging on push to main
+  # Deploy to staging by manual dispatch
   deploy-staging:
     name: Deploy to Staging
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'staging')
+    if: github.event_name == 'workflow_dispatch' && inputs.environment == 'staging'
     environment:
       name: staging
       url: ${{ vars.STAGING_URL }}
@@ -118,9 +116,7 @@ jobs:
     name: Staging Payment Drills
     runs-on: ubuntu-latest
     needs: deploy-staging
-    if: |
-      (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'staging')) &&
-      needs.deploy-staging.result == 'success'
+    if: github.event_name == 'workflow_dispatch' && inputs.environment == 'staging' && needs.deploy-staging.result == 'success'
     environment:
       name: staging
       url: ${{ vars.STAGING_URL }}
