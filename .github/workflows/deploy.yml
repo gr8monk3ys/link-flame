@@ -1,0 +1,272 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  # Deploy to staging by manual dispatch
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && inputs.environment == 'staging'
+    environment:
+      name: staging
+      url: ${{ vars.STAGING_URL }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Build application
+        run: npm run build
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+          NEXTAUTH_URL: ${{ vars.STAGING_URL }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          NEXT_PUBLIC_APP_URL: ${{ vars.STAGING_URL }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+
+      - name: Run database migrations
+        run: |
+          export DIRECT_URL="${DIRECT_URL:-$DATABASE_URL}"
+          attempts=5
+          for attempt in $(seq 1 "$attempts"); do
+            echo "Running prisma migrate deploy (attempt $attempt/$attempts)..."
+            if npx prisma migrate deploy; then
+              echo "Migrations applied successfully."
+              exit 0
+            fi
+
+            if [ "$attempt" -lt "$attempts" ]; then
+              sleep_seconds=$((attempt * 10))
+              echo "Migration attempt failed. Retrying in ${sleep_seconds}s..."
+              sleep "$sleep_seconds"
+            fi
+          done
+
+          echo "Migration failed after ${attempts} attempts."
+          exit 1
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+
+      # Vercel deployment (if using Vercel)
+      - name: Deploy to Vercel (Staging)
+        if: vars.DEPLOY_PLATFORM == 'vercel'
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./
+          alias-domains: |
+            staging.link-flame.com
+
+      # Alternative: Deploy to custom server via SSH
+      - name: Deploy to Server (SSH)
+        if: vars.DEPLOY_PLATFORM == 'ssh'
+        uses: appleboy/ssh-action@v1.2.5
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/link-flame-staging
+            git pull origin main
+            npm ci --production
+            npx prisma generate
+            npx prisma migrate deploy
+            pm2 restart link-flame-staging
+
+      - name: Notify deployment success
+        if: success()
+        run: echo "Successfully deployed to staging!"
+
+      - name: Notify deployment failure
+        if: failure()
+        run: echo "Deployment to staging failed!"
+
+  staging-payment-drills:
+    name: Staging Payment Drills
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+    if: github.event_name == 'workflow_dispatch' && inputs.environment == 'staging' && needs.deploy-staging.result == 'success'
+    environment:
+      name: staging
+      url: ${{ vars.STAGING_URL }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run staging payment drills
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+          NEXTAUTH_URL: ${{ vars.STAGING_URL }}
+          NEXT_PUBLIC_APP_URL: ${{ vars.STAGING_URL }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+          STRIPE_SUBSCRIPTION_WEBHOOK_SECRET: ${{ secrets.STRIPE_SUBSCRIPTION_WEBHOOK_SECRET }}
+          STRIPE_STARTER_MONTHLY_PRICE_ID: ${{ secrets.STRIPE_STARTER_MONTHLY_PRICE_ID }}
+          STRIPE_STARTER_YEARLY_PRICE_ID: ${{ secrets.STRIPE_STARTER_YEARLY_PRICE_ID }}
+          STRIPE_PRO_MONTHLY_PRICE_ID: ${{ secrets.STRIPE_PRO_MONTHLY_PRICE_ID }}
+          STRIPE_PRO_YEARLY_PRICE_ID: ${{ secrets.STRIPE_PRO_YEARLY_PRICE_ID }}
+        run: |
+          FLAGS="--base-url ${{ vars.STAGING_URL }} --skip-playwright"
+          if [ "${{ vars.STAGING_PAYMENT_DRILLS_SKIP_DB_CHECK }}" = "true" ]; then
+            FLAGS="$FLAGS --skip-db-check"
+          fi
+          scripts/run-staging-payment-drills.sh $FLAGS
+
+      - name: Notify payment drill success
+        if: success()
+        run: echo "Staging payment drills passed."
+
+      - name: Notify payment drill failure
+        if: failure()
+        run: echo "Staging payment drills failed."
+
+  # Deploy to production (manual trigger only)
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && inputs.environment == 'production'
+    environment:
+      name: production
+      url: ${{ vars.PRODUCTION_URL }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Build application
+        run: npm run build
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+          NEXTAUTH_URL: ${{ vars.PRODUCTION_URL }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          NEXT_PUBLIC_APP_URL: ${{ vars.PRODUCTION_URL }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+
+      - name: Create database backup
+        run: |
+          echo "Creating database backup before migration..."
+          # Add your backup command here based on your database provider
+          # For PostgreSQL: pg_dump $DATABASE_URL > backup_$(date +%Y%m%d_%H%M%S).sql
+
+      - name: Run database migrations
+        run: |
+          export DIRECT_URL="${DIRECT_URL:-$DATABASE_URL}"
+          attempts=5
+          for attempt in $(seq 1 "$attempts"); do
+            echo "Running prisma migrate deploy (attempt $attempt/$attempts)..."
+            if npx prisma migrate deploy; then
+              echo "Migrations applied successfully."
+              exit 0
+            fi
+
+            if [ "$attempt" -lt "$attempts" ]; then
+              sleep_seconds=$((attempt * 10))
+              echo "Migration attempt failed. Retrying in ${sleep_seconds}s..."
+              sleep "$sleep_seconds"
+            fi
+          done
+
+          echo "Migration failed after ${attempts} attempts."
+          exit 1
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+
+      # Vercel deployment (if using Vercel)
+      - name: Deploy to Vercel (Production)
+        if: vars.DEPLOY_PLATFORM == 'vercel'
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: ./
+
+      # Alternative: Deploy to custom server via SSH
+      - name: Deploy to Server (SSH)
+        if: vars.DEPLOY_PLATFORM == 'ssh'
+        uses: appleboy/ssh-action@v1.2.5
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/link-flame-production
+            git pull origin main
+            npm ci --production
+            npx prisma generate
+            npx prisma migrate deploy
+            pm2 restart link-flame-production
+
+      - name: Health check
+        run: |
+          echo "Running health check..."
+          sleep 30
+          curl -f ${{ vars.PRODUCTION_URL }}/api/health || exit 1
+
+      - name: Notify deployment success
+        if: success()
+        run: echo "Successfully deployed to production!"
+
+      - name: Rollback on failure
+        if: failure()
+        run: |
+          echo "Production deployment failed! Manual rollback may be required."
+          # Add rollback commands here if needed
