@@ -1,11 +1,12 @@
 version: 2
 updates:
   # Enable version updates for npm
+  # npm version bumps handled by the dep-hygiene loop (Dependabot can't regen bun.lock)
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 2
+    open-pull-requests-limit: 0
     groups:
       development-dependencies:
         dependency-type: "development"
