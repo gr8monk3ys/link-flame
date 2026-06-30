@@ -79,7 +79,7 @@ jobs:
       # Vercel deployment (if using Vercel)
       - name: Deploy to Vercel (Staging)
         if: vars.DEPLOY_PLATFORM == 'vercel'
-        uses: amondnet/vercel-action@v25
+        uses: amondnet/vercel-action@v42
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
@@ -231,7 +231,7 @@ jobs:
       # Vercel deployment (if using Vercel)
       - name: Deploy to Vercel (Production)
         if: vars.DEPLOY_PLATFORM == 'vercel'
-        uses: amondnet/vercel-action@v25
+        uses: amondnet/vercel-action@v42
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
