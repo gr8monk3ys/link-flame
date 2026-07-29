@@ -1,5 +1,9 @@
 # 🌱 Link Flame - E-commerce & Blog Platform
 
+<p align="center">
+  <img src="docs/assets/hero.png" alt="link-flame preview" width="640">
+</p>
+
 A Next.js 16 full-stack application demonstrating modern web development patterns with blog management, e-commerce functionality, user authentication, and AI coding agent integration via MCP.
 
 ## Project Status
