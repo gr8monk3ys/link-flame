@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { ZodError } from 'zod'
+import * as Sentry from '@sentry/nextjs'
 import { logger } from '@/lib/logger'
 
 /**
@@ -216,6 +217,11 @@ export function handleApiError(error: unknown): NextResponse<ApiResponse<never>>
   if (error instanceof ZodError) {
     return validationErrorResponse(error)
   }
+
+  // Everything below produces a 5xx, so it is a server fault rather than a
+  // malformed request. Report only these: capturing client errors would bury
+  // real incidents under bot traffic and typo'd payloads.
+  Sentry.captureException(error)
 
   // Known error with message - sanitize in production to prevent information leakage
   if (error instanceof Error) {

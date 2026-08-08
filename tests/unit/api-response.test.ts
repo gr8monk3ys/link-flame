@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ZodError, z } from 'zod';
+import * as Sentry from '@sentry/nextjs';
 import {
   successResponse,
   errorResponse,
@@ -18,8 +19,16 @@ import {
   type ErrorCode,
 } from '@/lib/api-response'
 
+vi.mock('@sentry/nextjs', () => ({
+  captureException: vi.fn(),
+}));
+
 describe('API Response Helpers', () => {
   beforeEach(() => {
+    // Reset captureException call history so the "should NOT report"
+    // assertions cannot pass on a stale empty mock or fail on a shared one.
+    vi.mocked(Sentry.captureException).mockClear();
+
     // Mock console.error to avoid cluttering test output
     vi.spyOn(console, 'error').mockImplementation(() => {});
   });
@@ -250,6 +259,40 @@ describe('API Response Helpers', () => {
         expect.objectContaining({ message: 'Test' }),
         expect.anything()
       );
+    });
+
+    it('should report server faults to Sentry', () => {
+      const error = new Error('Database connection lost');
+      handleApiError(error);
+
+      expect(Sentry.captureException).toHaveBeenCalledWith(error);
+    });
+
+    it('should report non-Error throws to Sentry', () => {
+      handleApiError('unknown error');
+
+      expect(Sentry.captureException).toHaveBeenCalledWith('unknown error');
+    });
+
+    it('should NOT report validation errors to Sentry', () => {
+      const schema = z.object({ name: z.string() });
+
+      try {
+        schema.parse({ name: 123 });
+      } catch (error) {
+        handleApiError(error);
+      }
+
+      // Client errors produce a 4xx; reporting them would bury real
+      // incidents under bot traffic and typo'd payloads.
+      expect(Sentry.captureException).not.toHaveBeenCalled();
+    });
+
+    it('should NOT report malformed JSON bodies to Sentry', () => {
+      const error = new SyntaxError('Unexpected token } in JSON at position 4');
+      handleApiError(error);
+
+      expect(Sentry.captureException).not.toHaveBeenCalled();
     });
   });
 
