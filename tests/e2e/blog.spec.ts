@@ -285,38 +285,38 @@ test.describe('Blog', () => {
 
   test.describe('Category Filtering', () => {
     test('can navigate to category page', async ({ page }) => {
-      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
-      await page.waitForLoadState('domcontentloaded')
+      // Wait for `load`, not just `domcontentloaded`: the blog index renders
+      // hero images without intrinsic sizing (they show up as LCP warnings),
+      // so a late image load shifts layout and can move a link out from under
+      // an in-flight click, leaving the URL unchanged.
+      await page.goto('/blogs')
+      await page.waitForLoadState('load')
 
-      // Navigation timeouts here are generous on purpose: the suite runs
-      // against `next dev` (playwright.config.ts), so the first visit to
-      // /blogs/categories/[slug] pays for an on-demand route compile. Under a
-      // single CI worker that alone can exceed a 15s budget, which is what
-      // made this test fail intermittently.
-      const categoryLink = page.locator(
-        'a[href*="/blogs/categories/"], a[href*="/categories/"], [data-testid="category-link"]'
-      )
+      const categoryLink = page
+        .locator('a[href*="/blogs/categories/"], a[href*="/categories/"], [data-testid="category-link"]')
+        .first()
 
-      if (await categoryLink.first().isVisible({ timeout: 5000 }).catch(() => false)) {
-        const link = categoryLink.first()
-        const categoryHref = await link.getAttribute('href')
+      if (!(await categoryLink.isVisible({ timeout: 5000 }).catch(() => false))) {
+        return
+      }
 
-        await link.click()
-        await page.waitForLoadState('domcontentloaded')
+      const categoryHref = await categoryLink.getAttribute('href')
 
-        if (categoryHref?.includes('/blogs/categories/')) {
-          await expect
-            .poll(() => page.url(), { timeout: 30000 })
-            .toContain(categoryHref)
-        } else {
-          // Fallback for alternate category URL structures.
-          await expect
-            .poll(() => page.url(), { timeout: 30000 })
-            .toMatch(/\/blogs\/categories\/[a-zA-Z0-9-]+|\/categories\/[a-zA-Z0-9-]+/)
-        }
+      // Race the wait against the click so navigation cannot be missed. The
+      // budget is generous because the suite runs against `next dev`, so the
+      // first visit to /blogs/categories/[slug] pays for a route compile.
+      await Promise.all([
+        page.waitForURL(/\/(blogs\/)?categories\/.+/, { timeout: 30000 }),
+        categoryLink.click(),
+      ])
 
-        // Should be on category page
-        expect(page.url()).toMatch(/\/blogs\/categories\/[a-zA-Z0-9-]+|\/categories\/[a-zA-Z0-9-]+/)
+      // Compare decoded: some seeded category slugs contain spaces
+      // ("/blogs/categories/green home"), which the browser percent-encodes,
+      // so a raw substring check against the address bar would never match.
+      if (categoryHref) {
+        expect(decodeURIComponent(new URL(page.url()).pathname)).toContain(
+          decodeURIComponent(categoryHref)
+        )
       }
     })
 
@@ -365,25 +365,28 @@ test.describe('Blog', () => {
 
   test.describe('Tag Filtering', () => {
     test('can navigate to tag page', async ({ page }) => {
-      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
-      await page.waitForLoadState('domcontentloaded')
+      // `load` rather than `domcontentloaded`, for the same reason as the
+      // category test: late-loading hero images shift layout under the click.
+      await page.goto('/blogs')
+      await page.waitForLoadState('load')
 
-      // Find tag link
-      const tagLink = page.locator(
-        'a[href*="/blogs/tags/"], a[href*="/tags/"], [data-testid="tag-link"]'
-      )
+      const tagLink = page
+        .locator('a[href*="/blogs/tags/"], a[href*="/tags/"], [data-testid="tag-link"]')
+        .first()
 
-      if (await tagLink.first().isVisible({ timeout: 5000 }).catch(() => false)) {
-        await Promise.all([
-          // Generous for the same reason as the category test: the first visit
-          // to /blogs/tags/[slug] pays for an on-demand dev compile.
-          page.waitForURL(/\/blogs\/tags\/[a-zA-Z0-9-]+/, { timeout: 30000 }),
-          tagLink.first().click(),
-        ])
-
-        // Should be on tag page
-        expect(page.url()).toContain('/tags/')
+      if (!(await tagLink.isVisible({ timeout: 5000 }).catch(() => false))) {
+        return
       }
+
+      await Promise.all([
+        // `.+` rather than [a-zA-Z0-9-]+: seeded slugs can contain spaces,
+        // which arrive percent-encoded and would not match a strict class.
+        // Budget is generous because the first visit compiles the route.
+        page.waitForURL(/\/(blogs\/)?tags\/.+/, { timeout: 30000 }),
+        tagLink.click(),
+      ])
+
+      expect(page.url()).toContain('/tags/')
     })
 
     test('tag page shows filtered posts', async ({ page }) => {
