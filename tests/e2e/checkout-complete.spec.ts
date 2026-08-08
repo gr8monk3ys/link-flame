@@ -144,30 +144,27 @@ test.describe('Complete Checkout Flow', () => {
       await page.goto('/checkout')
       await page.waitForLoadState('domcontentloaded')
 
-      // Should show cart items or order summary
-      const hasSummary = await page
-        .locator(
-          '[data-testid="cart-summary"], [data-testid="order-summary"], .cart-summary, .order-summary'
-        )
-        .isVisible({ timeout: 3000 })
-        .catch(() => false)
+      // Should show cart items or order summary.
+      // The price check is a separate getByText: `text=` is a Playwright
+      // selector engine, not CSS, so mixing it into a comma-separated CSS list
+      // throws a parse error instead of matching. That throw used to be
+      // swallowed by .catch(() => false), so this condition never actually ran.
+      const summary = page.locator(
+        '[data-testid="cart-summary"], [data-testid="order-summary"], .cart-summary, .order-summary'
+      )
+      const products = page.locator(
+        '[data-testid="cart-item"], [data-testid="checkout-item"], .checkout-item'
+      )
+      const total = page.locator('[data-testid="total"], .total')
+      const priceText = page.getByText(/\$[0-9]+/)
 
-      const hasProducts = await page
-        .locator(
-          '[data-testid="cart-item"], [data-testid="checkout-item"], .checkout-item'
-        )
-        .first()
-        .isVisible({ timeout: 3000 })
-        .catch(() => false)
-
-      const hasTotal = await page
-        .locator('[data-testid="total"], .total, text=/\\$[0-9]+/')
-        .first()
-        .isVisible({ timeout: 3000 })
-        .catch(() => false)
-
-      // At least one of these should be visible
-      expect(hasSummary || hasProducts || hasTotal).toBeTruthy()
+      // One web-first assertion over the union rather than independent
+      // isVisible races: the cart is seeded over the API, so the summary only
+      // renders once the client CartProvider has fetched it, and on a cold dev
+      // server the first compile of /checkout can exceed a short fixed budget.
+      await expect(
+        summary.or(products).or(total).or(priceText).first()
+      ).toBeVisible({ timeout: 30000 })
     })
 
     test('can complete checkout flow to payment', async ({ page }) => {

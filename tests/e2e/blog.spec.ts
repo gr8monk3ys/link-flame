@@ -288,7 +288,11 @@ test.describe('Blog', () => {
       await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
       await page.waitForLoadState('domcontentloaded')
 
-      // Find category link
+      // Navigation timeouts here are generous on purpose: the suite runs
+      // against `next dev` (playwright.config.ts), so the first visit to
+      // /blogs/categories/[slug] pays for an on-demand route compile. Under a
+      // single CI worker that alone can exceed a 15s budget, which is what
+      // made this test fail intermittently.
       const categoryLink = page.locator(
         'a[href*="/blogs/categories/"], a[href*="/categories/"], [data-testid="category-link"]'
       )
@@ -302,12 +306,12 @@ test.describe('Blog', () => {
 
         if (categoryHref?.includes('/blogs/categories/')) {
           await expect
-            .poll(() => page.url(), { timeout: 15000 })
+            .poll(() => page.url(), { timeout: 30000 })
             .toContain(categoryHref)
         } else {
           // Fallback for alternate category URL structures.
           await expect
-            .poll(() => page.url(), { timeout: 15000 })
+            .poll(() => page.url(), { timeout: 30000 })
             .toMatch(/\/blogs\/categories\/[a-zA-Z0-9-]+|\/categories\/[a-zA-Z0-9-]+/)
         }
 
@@ -371,7 +375,9 @@ test.describe('Blog', () => {
 
       if (await tagLink.first().isVisible({ timeout: 5000 }).catch(() => false)) {
         await Promise.all([
-          page.waitForURL(/\/blogs\/tags\/[a-zA-Z0-9-]+/, { timeout: 10000 }),
+          // Generous for the same reason as the category test: the first visit
+          // to /blogs/tags/[slug] pays for an on-demand dev compile.
+          page.waitForURL(/\/blogs\/tags\/[a-zA-Z0-9-]+/, { timeout: 30000 }),
           tagLink.first().click(),
         ])
 
@@ -660,7 +666,9 @@ test.describe('Blog', () => {
 
       if (await tagLink.first().isVisible({ timeout: 3000 }).catch(() => false)) {
         await Promise.all([
-          page.waitForURL(/\/blogs\/tags\/[a-zA-Z0-9-]+/, { timeout: 10000 }),
+          // Generous for the same reason as the category test: the first visit
+          // to /blogs/tags/[slug] pays for an on-demand dev compile.
+          page.waitForURL(/\/blogs\/tags\/[a-zA-Z0-9-]+/, { timeout: 30000 }),
           tagLink.first().click(),
         ])
 
