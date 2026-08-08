@@ -373,12 +373,14 @@ test.describe('Checkout Flow - End to End', () => {
     const productName = page.locator('[data-testid="cart-item"], [data-testid="checkout-item"], .cart-item h3, .cart-item h4')
     const totalAmount = page.locator('[data-testid="total"], .total, text=/\\$[0-9]+/')
 
-    // At least one of these should be visible to confirm cart info is shown
-    const hasSummary = await cartSummary.isVisible({ timeout: 3000 }).catch(() => false)
-    const hasProductName = await productName.first().isVisible({ timeout: 3000 }).catch(() => false)
-    const hasTotal = await totalAmount.first().isVisible({ timeout: 3000 }).catch(() => false)
-
-    expect(hasSummary || hasProductName || hasTotal).toBeTruthy()
+    // Any one of these confirms cart info rendered. Use a single web-first
+    // assertion over the union rather than three independent isVisible races:
+    // the cart is seeded over the API, so the summary only appears once the
+    // client CartProvider has fetched it, and on a cold dev server the first
+    // compile of /checkout can alone exceed a short fixed timeout.
+    await expect(
+      cartSummary.or(productName).or(totalAmount).first()
+    ).toBeVisible({ timeout: 30000 })
   })
 })
 
