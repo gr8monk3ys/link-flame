@@ -98,7 +98,7 @@ const brands = [
     slug: 'pela-case',
     name: 'Pela Case',
     description: 'The world is first 100% compostable phone case company. Protecting your phone and the planet.',
-    logo: 'https://images.unsplash.com/photo-1580910051074-3eb694886f2e?w=400&q=80',
+    logo: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=400&q=80',
     website: 'https://pelacase.com',
     story: 'Pela was inspired by a simple observation: why do we protect our phones with cases that will outlast us for hundreds of years? We created the first phone case that breaks down in backyard compost.\n\nOur proprietary Flaxstic material is made from plant-based materials and can fully decompose in just a few years. Since launching, we have saved millions of pounds of plastic from being produced.',
     foundedYear: 2016,
@@ -380,11 +380,15 @@ async function main() {
   await prisma.brand.deleteMany();
   console.log('Cleared existing brands');
 
-  // Seed brands
+  // Seed brands. Ids are kept so products can be attached below — without a
+  // brandId every partner card renders "0 products" and links to an empty
+  // brand page.
+  const createdBrandIds: string[] = [];
   for (const brand of brands) {
-    await prisma.brand.create({
+    const created = await prisma.brand.create({
       data: brand,
     });
+    createdBrandIds.push(created.id);
   }
   console.log('Created partner brands');
 
@@ -536,7 +540,7 @@ async function main() {
 
   // Create products with sustainability fields
   const createdProducts: Record<string, string> = {};
-  for (const product of products) {
+  for (const [productIndex, product] of products.entries()) {
     const sustainabilityData = productSustainabilityData[product.title] || {
       isPlasticFree: false,
       isVegan: false,
@@ -549,6 +553,10 @@ async function main() {
     const created = await prisma.product.create({
       data: {
         ...product,
+        // Round-robin rather than random so reseeding is reproducible.
+        brandId: createdBrandIds.length
+          ? createdBrandIds[productIndex % createdBrandIds.length]
+          : undefined,
         inventory: Math.floor(Math.random() * 50) + 10, // Random inventory between 10-59
         isPlasticFree: sustainabilityData.isPlasticFree,
         isVegan: sustainabilityData.isVegan,
