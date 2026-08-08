@@ -119,9 +119,16 @@ test.describe('Checkout Form Validation', () => {
     await page.goto('/checkout')
     await page.waitForLoadState('domcontentloaded')
 
-    // Fill email with invalid format
-    const emailInput = page.locator('input[name="email"], input[type="email"], #email')
-    if (await emailInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+    // Scoped to the page body and taken .first(): the site footer renders a
+    // newsletter input[type="email"] on every page, so an unscoped locator
+    // matches two elements and every strict action (fill/blur) throws. That
+    // used to be masked because isVisible() returned false while /checkout was
+    // still compiling, which skipped this whole block and passed the test
+    // without asserting anything.
+    const emailInput = page
+      .locator('main input[name="email"], main input[type="email"], main #email')
+      .first()
+    if (await emailInput.isVisible({ timeout: 15000 }).catch(() => false)) {
       await emailInput.fill('invalid-email')
 
       // Trigger validation
