@@ -368,18 +368,23 @@ test.describe('Checkout Flow - End to End', () => {
     await page.goto('/checkout')
     await page.waitForLoadState('domcontentloaded')
 
-    // Should show cart items or order summary
+    // Should show cart items or order summary.
+    // Note the price check is a separate getByText: `text=` is a Playwright
+    // selector engine, not CSS, so mixing it into a comma-separated CSS list
+    // ("[data-testid=\"total\"], .total, text=/\\$[0-9]+/") throws a parse
+    // error rather than matching anything.
     const cartSummary = page.locator('[data-testid="cart-summary"], [data-testid="order-summary"], .cart-summary, .order-summary')
     const productName = page.locator('[data-testid="cart-item"], [data-testid="checkout-item"], .cart-item h3, .cart-item h4')
-    const totalAmount = page.locator('[data-testid="total"], .total, text=/\\$[0-9]+/')
+    const totalAmount = page.locator('[data-testid="total"], .total')
+    const priceText = page.getByText(/\$[0-9]+/)
 
     // Any one of these confirms cart info rendered. Use a single web-first
-    // assertion over the union rather than three independent isVisible races:
-    // the cart is seeded over the API, so the summary only appears once the
-    // client CartProvider has fetched it, and on a cold dev server the first
-    // compile of /checkout can alone exceed a short fixed timeout.
+    // assertion over the union rather than independent isVisible races: the
+    // cart is seeded over the API, so the summary only appears once the client
+    // CartProvider has fetched it, and on a cold dev server the first compile
+    // of /checkout can alone exceed a short fixed timeout.
     await expect(
-      cartSummary.or(productName).or(totalAmount).first()
+      cartSummary.or(productName).or(totalAmount).or(priceText).first()
     ).toBeVisible({ timeout: 30000 })
   })
 })
