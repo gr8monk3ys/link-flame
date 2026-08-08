@@ -95,11 +95,11 @@ export function ValueFilterSidebar({
   if (loading) {
     return (
       <div className={cn('space-y-3', className)}>
-        <div className="h-6 w-32 animate-pulse rounded bg-gray-100" />
+        <div className="h-6 w-32 animate-pulse rounded bg-muted" />
         {[1, 2, 3, 4, 5].map((i) => (
           <div key={i} className="flex items-center gap-2">
-            <div className="size-4 animate-pulse rounded bg-gray-100" />
-            <div className="h-4 w-24 animate-pulse rounded bg-gray-100" />
+            <div className="size-4 animate-pulse rounded bg-muted" />
+            <div className="h-4 w-24 animate-pulse rounded bg-muted" />
           </div>
         ))}
       </div>
@@ -122,7 +122,7 @@ export function ValueFilterSidebar({
         role={collapsible ? 'button' : undefined}
         aria-expanded={collapsible ? expanded : undefined}
       >
-        <h3 className="text-sm font-semibold text-gray-900">{title}</h3>
+        <h3 className="text-sm font-semibold text-foreground">{title}</h3>
         <div className="flex items-center gap-2">
           {selectedValues.length > 0 && (
             <button
@@ -130,7 +130,7 @@ export function ValueFilterSidebar({
                 e.stopPropagation();
                 clearAll();
               }}
-              className="text-xs text-gray-500 underline hover:text-gray-700"
+              className="text-xs text-muted-foreground underline hover:text-foreground"
             >
               Clear
             </button>
@@ -138,7 +138,7 @@ export function ValueFilterSidebar({
           {collapsible && (
             <svg
               className={cn(
-                'size-4 text-gray-400 transition-transform',
+                'size-4 text-muted-foreground transition-transform',
                 expanded && 'rotate-180'
               )}
               fill="none"
@@ -164,9 +164,9 @@ export function ValueFilterSidebar({
                 className={cn(
                   'flex cursor-pointer items-center gap-3 rounded-md p-2 transition-colors',
                   hasProducts
-                    ? 'hover:bg-gray-50'
+                    ? 'hover:bg-muted/50'
                     : 'cursor-not-allowed opacity-50',
-                  isSelected && 'bg-green-50'
+                  isSelected && 'bg-primary/10'
                 )}
               >
                 <input
@@ -175,9 +175,9 @@ export function ValueFilterSidebar({
                   onChange={() => hasProducts && toggleValue(value.slug)}
                   disabled={!hasProducts}
                   className={cn(
-                    'size-4 rounded border-gray-300',
+                    'size-4 rounded border-border',
                     'focus:ring-ring focus:ring-offset-0',
-                    'text-green-600',
+                    'text-primary',
                     !hasProducts && 'cursor-not-allowed'
                   )}
                 />
@@ -185,16 +185,16 @@ export function ValueFilterSidebar({
                   <div className="flex items-center justify-between">
                     <span className={cn(
                       'text-sm',
-                      isSelected ? 'font-medium text-gray-900' : 'text-gray-700'
+                      isSelected ? 'font-medium text-foreground' : 'text-foreground'
                     )}>
                       {value.name}
                     </span>
-                    <span className="ml-2 text-xs text-gray-400">
+                    <span className="ml-2 text-xs text-muted-foreground">
                       {value.productCount}
                     </span>
                   </div>
                   {value.description && (
-                    <p className="mt-0.5 truncate text-xs text-gray-500">
+                    <p className="mt-0.5 truncate text-xs text-muted-foreground">
                       {value.description}
                     </p>
                   )}

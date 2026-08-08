@@ -185,7 +185,7 @@ export function ValueFilterBar({ className }: ValueFilterBarProps) {
         {[1, 2, 3, 4, 5].map((i) => (
           <div
             key={i}
-            className="h-9 w-28 shrink-0 animate-pulse rounded-full bg-gray-100"
+            className="h-9 w-28 shrink-0 animate-pulse rounded-full bg-muted"
           />
         ))}
       </div>
@@ -222,8 +222,8 @@ export function ValueFilterBar({ className }: ValueFilterBarProps) {
                 'shrink-0 whitespace-nowrap border',
                 'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
                 isSelected
-                  ? 'border-green-600 bg-green-600 text-white hover:bg-green-700'
-                  : 'border-gray-200 bg-white text-gray-700 hover:border-green-300 hover:bg-green-50'
+                  ? 'border-primary bg-primary text-white hover:bg-primary/90'
+                  : 'border-border bg-white text-foreground hover:border-primary/40 hover:bg-primary/10'
               )}
               aria-pressed={isSelected}
               title={value.description || value.name}
@@ -232,7 +232,7 @@ export function ValueFilterBar({ className }: ValueFilterBarProps) {
               <span>{value.name}</span>
               <span className={cn(
                 'rounded-full px-1.5 py-0.5 text-xs',
-                isSelected ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-600'
+                isSelected ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'
               )}>
                 {value.productCount}
               </span>
