@@ -99,6 +99,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
             defaultTheme="light"
             enableSystem={true}
             disableTransitionOnChange
+            nonce={nonce}
           >
             <CartProvider>
               <ErrorBoundary>
