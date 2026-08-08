@@ -50,6 +50,7 @@ function buildCspHeader(nonce: string): string {
     `font-src 'self' https://fonts.gstatic.com`,
     `connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://analytics.google.com https://*.ingest.sentry.io`,
     `frame-src 'self' https://js.stripe.com https://hooks.stripe.com`,
+    `manifest-src 'self'`,
     `object-src 'none'`,
     `base-uri 'self'`,
     `form-action 'self'`,
