@@ -30,7 +30,7 @@ export function ImperfectBadge({
   const variantClasses = {
     default: 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 border border-amber-200 dark:border-amber-900/50',
     minimal: 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300',
-    prominent: 'bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-md',
+    prominent: 'bg-gradient-to-r from-amber-400 to-orange-700 text-white shadow-md',
   };
 
   const iconSizeClasses = {

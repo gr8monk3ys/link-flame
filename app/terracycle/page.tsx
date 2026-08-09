@@ -276,7 +276,7 @@ export default function TerraCyclePage() {
       {/* Get Started CTA Section */}
       <section
         id="get-started"
-        className="bg-gradient-to-b from-emerald-600 to-teal-700 py-20 dark:from-emerald-800 dark:to-teal-900"
+        className="bg-gradient-to-b from-emerald-700 to-teal-700 py-20 dark:from-emerald-800 dark:to-teal-900"
       >
         <div className="container mx-auto px-4 text-center">
           <RecycleIcon className="mx-auto mb-6 size-16 text-white/80" />

@@ -40,8 +40,15 @@ interface Failure {
  * nearest painted ancestor background falls below the WCAG AA threshold for its
  * size (3:1 for large text, 4.5:1 otherwise).
  *
- * Elements over a background *image* or gradient are skipped: the effective
- * backdrop there is whatever the image paints, which this cannot sample.
+ * Two things this deliberately does NOT measure, both of which hid real bugs:
+ *
+ *  - Text over a background *image*. The effective backdrop is whatever the
+ *    photo paints, which cannot be sampled from the CSSOM. Those nodes are
+ *    skipped, so a green run is not a statement about them.
+ *  - Anything outside main/header/footer.
+ *
+ * Gradient-clipped text used to fall in the first hole and no longer does: it
+ * is measured stop by stop, composited over the backdrop.
  */
 function auditContrast(): Failure[] {
   const parse = (value: string): number[] | null => {
@@ -57,22 +64,68 @@ function auditContrast(): Failure[] {
     return 0.2126 * channel(rgb[0]) + 0.7152 * channel(rgb[1]) + 0.0722 * channel(rgb[2])
   }
 
-  const backdropOf = (el: Element): number[] | null => {
-    let node: Element | null = el
+  /**
+   * Candidate backdrop colours behind an element, worst case included.
+   *
+   * A single colour is not enough. A section painted with a gradient has a
+   * different backdrop at each end, and text spanning it has to stay legible
+   * across all of them. Returns null only when the backdrop genuinely cannot
+   * be known from the CSSOM - a raster `url()` background.
+   */
+  const backdropsOf = (el: Element, skipSelf = false): number[][] | null => {
+    let node: Element | null = skipSelf ? el.parentElement : el
     while (node && node !== document.documentElement) {
       const style = getComputedStyle(node)
       const parts = style.backgroundColor.match(/[\d.]+/g)
       const opaque = parts && (parts.length < 4 || Number(parts[3]) > 0.5)
-      if (opaque) return parse(style.backgroundColor)
-      if (style.backgroundImage && style.backgroundImage !== 'none') return null
+      if (opaque) {
+        const solid = parse(style.backgroundColor)
+        return solid ? [solid] : null
+      }
+
+      const image = style.backgroundImage
+      if (image && image !== 'none') {
+        // A photo cannot be sampled here; a gradient can, by resolving what is
+        // behind it and compositing each stop onto that.
+        if (image.includes('url(')) return null
+        const behind = node.parentElement ? backdropsOf(node.parentElement) : [[255, 255, 255]]
+        if (!behind) return null
+        const base = behind[0]
+        const stops = gradientStopsOver(image, base)
+        return stops.length ? stops : behind
+      }
+
       node = node.parentElement
     }
-    return [0, 0, 0]
+    return [[255, 255, 255]]
   }
 
   const ratio = (a: number[], b: number[]): number => {
     const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x)
     return (hi + 0.05) / (lo + 0.05)
+  }
+
+  /** rgb/rgba -> [r, g, b, a]; alpha defaults to 1. */
+  const parse4 = (value: string): number[] | null => {
+    const parts = value.match(/[\d.]+/g)
+    if (!parts) return null
+    const [r, g, b, a] = parts.map(Number)
+    return [r, g, b, a === undefined ? 1 : a]
+  }
+
+  /**
+   * Colour stops of a CSS gradient, each composited over `backdrop` so a
+   * translucent stop is judged as it actually renders. `to-accent/70` measured
+   * as opaque amber looks acceptable; blended onto cream it is 1.55:1.
+   */
+  const gradientStopsOver = (backgroundImage: string, backdrop: number[]): number[][] => {
+    const matches = backgroundImage.match(/rgba?\([^)]+\)/g) ?? []
+    return matches.map((raw) => {
+      const c = parse4(raw)
+      if (!c) return backdrop
+      const alpha = c[3]
+      return [0, 1, 2].map((i) => Math.round(c[i] * alpha + backdrop[i] * (1 - alpha)))
+    })
   }
 
   const failures: Failure[] = []
@@ -88,21 +141,49 @@ function auditContrast(): Failure[] {
     const style = getComputedStyle(el)
     if (style.visibility === 'hidden' || style.opacity === '0') return
 
-    const fg = parse(style.color)
-    const bg = backdropOf(el)
-    if (!fg || !bg) return
+    // Gradient-clipped text paints from its background, not its color, so
+    // `color` computes to rgba(0,0,0,0) and a naive read scores it as a perfect
+    // ratio against anything. A homepage headline hid a 1.55:1 stop this way.
+    // Every stop has to clear the bar, because the text crosses all of them.
+    const clipsToText =
+      style.webkitBackgroundClip === 'text' || style.backgroundClip === 'text'
+    const transparentText = (parse4(style.color)?.[3] ?? 1) === 0
+
+    // When the element's own background IS the text, it is not also the
+    // backdrop - resolve that from its ancestors instead.
+    const backdrops = backdropsOf(el, clipsToText && transparentText)
+    if (!backdrops || !backdrops.length) return
 
     const size = parseFloat(style.fontSize)
     const large = size >= 24 || (size >= 18.66 && parseInt(style.fontWeight, 10) >= 700)
     const need = large ? 3 : 4.5
-    const measured = ratio(fg, bg)
 
-    if (measured < need) {
+    // Worst pairing of any text colour against any backdrop colour.
+    let worst: { fg: string; bg: number[]; ratio: number } | null = null
+
+    for (const bg of backdrops) {
+      const foregrounds: Array<[string, number[]]> =
+        clipsToText && transparentText
+          ? gradientStopsOver(style.backgroundImage, bg).map(
+              (stop) => [`gradient stop rgb(${stop.join(', ')})`, stop] as [string, number[]],
+            )
+          : (() => {
+              const solid = parse(style.color)
+              return solid ? [[style.color, solid] as [string, number[]]] : []
+            })()
+
+      for (const [label, fg] of foregrounds) {
+        const measured = ratio(fg, bg)
+        if (!worst || measured < worst.ratio) worst = { fg: label, bg, ratio: measured }
+      }
+    }
+
+    if (worst && worst.ratio < need) {
       failures.push({
         text: text.slice(0, 40),
-        fg: style.color,
-        bg: `rgb(${bg.join(', ')})`,
-        ratio: Number(measured.toFixed(2)),
+        fg: worst.fg,
+        bg: `rgb(${worst.bg.join(', ')})`,
+        ratio: Number(worst.ratio.toFixed(2)),
         need,
         cls: String(el.className).slice(0, 80),
       })
