@@ -382,6 +382,18 @@ export default function CollectionsPageClient() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {/* The catalogue had no h1 at all, so the document outline started at h2
+          and screen-reader users landed on a page that never named itself. */}
+      <div className="pt-8">
+        <h1 className="font-serif text-3xl tracking-tight text-foreground sm:text-4xl">
+          Shop all products
+        </h1>
+        <p className="mt-2 max-w-prose text-muted-foreground">
+          Every product is screened for what it is made of and who made it.
+          Filter by the values that matter to you.
+        </p>
+      </div>
+
       <div className="border-b border-border py-6">
         <h2 className="mb-4 text-lg font-semibold text-foreground">Shop by Values</h2>
         <ValueFilterBar />

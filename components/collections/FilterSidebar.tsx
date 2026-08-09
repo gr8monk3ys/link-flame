@@ -70,6 +70,11 @@ function SearchSection({
     <div>
       <h3 className="text-lg font-medium text-foreground">Search</h3>
       <div className="mt-4">
+        {/* The "Search" heading above is not a label - nothing associates it
+            with the field, so assistive tech announced an unnamed textbox. */}
+        <label htmlFor="search" className="sr-only">
+          Search products
+        </label>
         <input
           type="text"
           id="search"
