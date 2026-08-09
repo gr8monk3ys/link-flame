@@ -163,7 +163,7 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
   return (
     <div className="min-h-screen bg-muted/50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-green-50 via-white to-emerald-50 py-12 dark:from-green-950/40 dark:to-emerald-950/40 lg:py-16">
+      <section className="bg-gradient-to-br from-green-50 via-white to-emerald-50 py-12 dark:from-green-950/40 dark:via-background dark:to-emerald-950/40 lg:py-16">
         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
           <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
             <Building2 className="size-8 text-green-700 dark:text-green-400" />

@@ -47,7 +47,7 @@ export function BrandHero({ brand, className }: BrandHeroProps) {
   return (
     <section
       className={cn(
-        'relative overflow-hidden bg-gradient-to-br from-green-50 via-white to-emerald-50 dark:from-green-950/40 dark:to-emerald-950/40',
+        'relative overflow-hidden bg-gradient-to-br from-green-50 via-white to-emerald-50 dark:from-green-950/40 dark:via-background dark:to-emerald-950/40',
         className
       )}
     >

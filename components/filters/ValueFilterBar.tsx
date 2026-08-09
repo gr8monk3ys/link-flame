@@ -192,7 +192,17 @@ export function ValueFilterBar({ className }: ValueFilterBarProps) {
     );
   }
 
-  if (values.length === 0) {
+  // A chip whose count is zero is a dead end: tapping it swaps the grid for an
+  // empty state. Worse, in a horizontally scrolled rail those chips push the
+  // filters that do return products off the right edge. The sidebar still lists
+  // every value (disabled, with its zero), so nothing is hidden - it just stops
+  // occupying the shortcut rail. A value already selected stays visible so the
+  // chip that produced the current URL can always be switched back off.
+  const shownValues = values.filter(
+    (value) => value.productCount > 0 || selectedValues.includes(value.slug)
+  );
+
+  if (shownValues.length === 0) {
     return null;
   }
 
@@ -200,7 +210,7 @@ export function ValueFilterBar({ className }: ValueFilterBarProps) {
     <div className={cn('relative', className)}>
       {/* Left scroll indicator */}
       {showLeftScroll && (
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-white to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-background to-transparent" />
       )}
 
       {/* Scrollable container */}
@@ -209,7 +219,7 @@ export function ValueFilterBar({ className }: ValueFilterBarProps) {
         className="scrollbar-hide flex gap-2 overflow-x-auto px-0.5 py-1"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
-        {values.map((value) => {
+        {shownValues.map((value) => {
           const isSelected = selectedValues.includes(value.slug);
           const icon = valueIcons[value.slug] || defaultIcon;
 
@@ -243,7 +253,7 @@ export function ValueFilterBar({ className }: ValueFilterBarProps) {
 
       {/* Right scroll indicator */}
       {showRightScroll && (
-        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-white to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-background to-transparent" />
       )}
     </div>
   );
