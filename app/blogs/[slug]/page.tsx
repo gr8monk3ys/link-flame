@@ -197,7 +197,7 @@ export default async function BlogPost({ params }: PageProps<{ slug: string }>) 
       <article className="prose lg:prose-xl mx-auto px-4 py-8">
         <header className="mb-8">
           <h1>{post.title}</h1>
-          <div className="not-prose flex items-center gap-4 text-gray-500">
+          <div className="not-prose flex items-center gap-4 text-muted-foreground">
             <div className="flex items-center gap-2">
               {post.author.image && (
                 <Image
@@ -209,7 +209,7 @@ export default async function BlogPost({ params }: PageProps<{ slug: string }>) 
                 />
               )}
               <div>
-                <p className="font-medium text-gray-900">{post.author.name}</p>
+                <p className="font-medium text-foreground">{post.author.name}</p>
                 <p className="text-sm">{post.author.role}</p>
               </div>
             </div>
@@ -253,7 +253,7 @@ export default async function BlogPost({ params }: PageProps<{ slug: string }>) 
               <a
                 key={tag}
                 href={`/blogs/tags/${tag.toLowerCase()}`}
-                className="inline-block rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-600 hover:bg-gray-200"
+                className="inline-block rounded-full bg-muted px-3 py-1 text-sm text-muted-foreground hover:bg-muted"
               >
                 #{tag}
               </a>
@@ -266,7 +266,7 @@ export default async function BlogPost({ params }: PageProps<{ slug: string }>) 
 
         {/* Article Footer */}
         <footer className="not-prose mt-12 border-t pt-8">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-muted-foreground">
             Last updated: {format(typeof updatedAt === 'string' ? parseISO(updatedAt) : new Date(updatedAt), 'MMMM d, yyyy')}
           </p>
         </footer>

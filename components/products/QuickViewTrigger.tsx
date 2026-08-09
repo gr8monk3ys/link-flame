@@ -218,11 +218,11 @@ export function QuickViewTrigger({
         className={cn(
           // Base styles
           "group relative flex items-center justify-center rounded-full",
-          "bg-white/90 shadow-md backdrop-blur-sm",
-          "border border-gray-200",
+          "bg-card/90 shadow-md backdrop-blur-sm",
+          "border border-border",
           "transition-all duration-200 ease-in-out",
           // Hover/Focus states
-          "hover:scale-105 hover:bg-white hover:shadow-lg",
+          "hover:scale-105 hover:bg-card hover:shadow-lg",
           "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
           // Active state
           "active:scale-95",
@@ -242,12 +242,12 @@ export function QuickViewTrigger({
         aria-expanded={isOpen}
       >
         {isLoading ? (
-          <Loader2 className={cn(iconSizes[size], "animate-spin text-gray-600")} />
+          <Loader2 className={cn(iconSizes[size], "animate-spin text-muted-foreground")} />
         ) : (
           <Eye
             className={cn(
               iconSizes[size],
-              "text-gray-600 transition-colors group-hover:text-green-600"
+              "text-muted-foreground transition-colors group-hover:text-green-700"
             )}
           />
         )}

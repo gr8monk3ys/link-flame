@@ -26,18 +26,18 @@ export function ImperfectBanner({
     return (
       <div
         className={cn(
-          'rounded-lg border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 p-4',
+          'rounded-lg border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 p-4 dark:border-amber-900/50 dark:from-amber-950/40 dark:to-orange-950/40',
           className
         )}
       >
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-amber-100">
-              <LeafIcon className="size-5 text-amber-600" />
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
+              <LeafIcon className="size-5 text-amber-600 dark:text-amber-400" />
             </div>
             <div>
-              <p className="font-medium text-amber-900">Perfectly Imperfect Deals</p>
-              <p className="text-sm text-amber-700">Up to 47% off on items that reduce waste</p>
+              <p className="font-medium text-amber-900 dark:text-amber-100">Perfectly Imperfect Deals</p>
+              <p className="text-sm text-amber-700 dark:text-amber-300">Up to 47% off on items that reduce waste</p>
             </div>
           </div>
           {showCTA && (
@@ -57,7 +57,7 @@ export function ImperfectBanner({
     return (
       <section
         className={cn(
-          'relative overflow-hidden bg-gradient-to-br from-amber-100 via-orange-50 to-yellow-100',
+          'relative overflow-hidden bg-gradient-to-br from-amber-100 via-orange-50 to-yellow-100 dark:from-amber-900/30 dark:via-orange-950/40 dark:to-yellow-900/30',
           className
         )}
       >
@@ -69,7 +69,7 @@ export function ImperfectBanner({
                 <path
                   d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z"
                   fill="currentColor"
-                  className="text-amber-800"
+                  className="text-amber-800 dark:text-amber-200"
                 />
               </pattern>
             </defs>
@@ -79,16 +79,16 @@ export function ImperfectBanner({
 
         <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
           <div className="text-center">
-            <span className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-sm font-medium text-amber-800 backdrop-blur-sm">
+            <span className="mb-6 inline-flex items-center gap-2 rounded-full bg-card/80 px-4 py-2 text-sm font-medium text-amber-800 backdrop-blur-sm dark:text-amber-200">
               <LeafIcon className="size-4" />
               Reduce Waste, Save More
             </span>
 
-            <h1 className="text-4xl font-bold tracking-tight text-amber-900 sm:text-5xl lg:text-6xl">
+            <h1 className="text-4xl font-bold tracking-tight text-amber-900 dark:text-amber-100 sm:text-5xl lg:text-6xl">
               Perfectly Imperfect
             </h1>
 
-            <p className="mx-auto mt-6 max-w-2xl text-lg text-amber-800">
+            <p className="mx-auto mt-6 max-w-2xl text-lg text-amber-800 dark:text-amber-200">
               Same great products, just not picture-perfect. Give these items a second chance
               and save up to <span className="font-bold">47%</span> while reducing waste.
             </p>
@@ -105,7 +105,7 @@ export function ImperfectBanner({
               )}
               <Link
                 href="/imperfect#how-it-works"
-                className="inline-flex items-center gap-2 rounded-xl bg-white/80 px-8 py-4 font-semibold text-amber-800 backdrop-blur-sm transition-colors hover:bg-white"
+                className="inline-flex items-center gap-2 rounded-xl bg-card/80 px-8 py-4 font-semibold text-amber-800 backdrop-blur-sm transition-colors hover:bg-card dark:text-amber-200"
               >
                 Learn More
                 <ArrowRightIcon className="size-5" />
@@ -114,17 +114,17 @@ export function ImperfectBanner({
 
             {/* Stats */}
             <div className="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-3">
-              <div className="rounded-2xl bg-white/60 p-6 backdrop-blur-sm">
-                <p className="text-3xl font-bold text-amber-900">47%</p>
-                <p className="mt-1 text-sm text-amber-700">Average Savings</p>
+              <div className="rounded-2xl bg-card/60 p-6 backdrop-blur-sm">
+                <p className="text-3xl font-bold text-amber-900 dark:text-amber-100">47%</p>
+                <p className="mt-1 text-sm text-amber-700 dark:text-amber-300">Average Savings</p>
               </div>
-              <div className="rounded-2xl bg-white/60 p-6 backdrop-blur-sm">
-                <p className="text-3xl font-bold text-amber-900">100%</p>
-                <p className="mt-1 text-sm text-amber-700">Same Quality</p>
+              <div className="rounded-2xl bg-card/60 p-6 backdrop-blur-sm">
+                <p className="text-3xl font-bold text-amber-900 dark:text-amber-100">100%</p>
+                <p className="mt-1 text-sm text-amber-700 dark:text-amber-300">Same Quality</p>
               </div>
-              <div className="rounded-2xl bg-white/60 p-6 backdrop-blur-sm">
-                <p className="text-3xl font-bold text-amber-900">Zero</p>
-                <p className="mt-1 text-sm text-amber-700">Waste Created</p>
+              <div className="rounded-2xl bg-card/60 p-6 backdrop-blur-sm">
+                <p className="text-3xl font-bold text-amber-900 dark:text-amber-100">Zero</p>
+                <p className="mt-1 text-sm text-amber-700 dark:text-amber-300">Waste Created</p>
               </div>
             </div>
           </div>
@@ -137,38 +137,38 @@ export function ImperfectBanner({
   return (
     <div
       className={cn(
-        'rounded-2xl bg-gradient-to-r from-amber-100 to-orange-100 p-8 lg:p-12',
+        'rounded-2xl bg-gradient-to-r from-amber-100 to-orange-100 p-8 dark:from-amber-900/30 dark:to-orange-900/30 lg:p-12',
         className
       )}
     >
       <div className="flex flex-col items-center gap-8 lg:flex-row">
         <div className="shrink-0">
-          <div className="flex size-24 items-center justify-center rounded-full bg-amber-200">
-            <LeafIcon className="size-12 text-amber-700" />
+          <div className="flex size-24 items-center justify-center rounded-full bg-amber-200 dark:bg-amber-900/40">
+            <LeafIcon className="size-12 text-amber-700 dark:text-amber-300" />
           </div>
         </div>
 
         <div className="flex-1 text-center lg:text-left">
-          <h2 className="text-2xl font-bold text-amber-900 lg:text-3xl">
+          <h2 className="text-2xl font-bold text-amber-900 dark:text-amber-100 lg:text-3xl">
             Perfectly Imperfect Collection
           </h2>
-          <p className="mt-3 max-w-2xl text-amber-800">
+          <p className="mt-3 max-w-2xl text-amber-800 dark:text-amber-200">
             These products have minor cosmetic imperfections but work just as well.
             By choosing imperfect items, you help reduce waste and get amazing deals
             with savings up to <span className="font-semibold">47% off</span>.
           </p>
 
           <div className="mt-6 flex flex-wrap items-center justify-center gap-4 lg:justify-start">
-            <div className="flex items-center gap-2 text-sm text-amber-700">
-              <CheckCircleIcon className="size-5 text-amber-600" />
+            <div className="flex items-center gap-2 text-sm text-amber-700 dark:text-amber-300">
+              <CheckCircleIcon className="size-5 text-amber-600 dark:text-amber-400" />
               <span>Same quality guaranteed</span>
             </div>
-            <div className="flex items-center gap-2 text-sm text-amber-700">
-              <CheckCircleIcon className="size-5 text-amber-600" />
+            <div className="flex items-center gap-2 text-sm text-amber-700 dark:text-amber-300">
+              <CheckCircleIcon className="size-5 text-amber-600 dark:text-amber-400" />
               <span>Reduces landfill waste</span>
             </div>
-            <div className="flex items-center gap-2 text-sm text-amber-700">
-              <CheckCircleIcon className="size-5 text-amber-600" />
+            <div className="flex items-center gap-2 text-sm text-amber-700 dark:text-amber-300">
+              <CheckCircleIcon className="size-5 text-amber-600 dark:text-amber-400" />
               <span>Full warranty included</span>
             </div>
           </div>

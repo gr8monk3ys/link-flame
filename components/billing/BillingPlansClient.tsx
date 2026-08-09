@@ -257,7 +257,7 @@ export function BillingPlansClient(props: {
                 <ul className="space-y-2 text-sm">
                   {plan.features.slice(0, 8).map((feature) => (
                     <li key={feature} className="flex items-start gap-2">
-                      <Check className="mt-0.5 size-4 text-green-600" />
+                      <Check className="mt-0.5 size-4 text-green-700 dark:text-green-400" />
                       <span>{feature}</span>
                     </li>
                   ))}

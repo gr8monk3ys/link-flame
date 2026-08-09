@@ -76,7 +76,7 @@ export default async function SharedWishlistPage({ params }: SharedWishlistPageP
                 <div className="mt-2 flex items-center gap-2">
                   {item.product.salePrice ? (
                     <>
-                      <span className="font-semibold text-red-600">
+                      <span className="font-semibold text-red-600 dark:text-red-400">
                         {formatPrice(Number(item.product.salePrice))}
                       </span>
                       <span className="text-sm text-muted-foreground line-through">

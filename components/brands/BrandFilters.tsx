@@ -80,7 +80,7 @@ export function BrandFilters({ className }: BrandFiltersProps) {
             {activeCertification && (
               <Badge
                 variant="secondary"
-                className="cursor-pointer bg-green-100 text-green-800 hover:bg-green-200"
+                className="cursor-pointer bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-200"
                 onClick={() => updateFilter('certification', null)}
               >
                 {BRAND_CERTIFICATIONS.find((c) => c.slug === activeCertification)?.name || activeCertification}
@@ -90,7 +90,7 @@ export function BrandFilters({ className }: BrandFiltersProps) {
             {activeValue && (
               <Badge
                 variant="secondary"
-                className="cursor-pointer border-blue-200 text-blue-700"
+                className="cursor-pointer border-blue-200 text-blue-700 dark:border-blue-900/50 dark:text-blue-300"
                 onClick={() => updateFilter('value', null)}
               >
                 {BRAND_VALUES.find((v) => v.slug === activeValue)?.name || activeValue}
@@ -128,16 +128,16 @@ export function BrandFilters({ className }: BrandFiltersProps) {
                   className={cn(
                     'flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors',
                     isActive
-                      ? 'bg-green-100 text-green-800'
-                      : 'hover:bg-gray-100'
+                      ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200'
+                      : 'hover:bg-muted'
                   )}
                 >
                   <div
                     className={cn(
                       'flex size-4 items-center justify-center rounded border-2',
                       isActive
-                        ? 'border-green-600 bg-green-600'
-                        : 'border-gray-300'
+                        ? 'border-green-600 bg-green-700'
+                        : 'border-border'
                     )}
                   >
                     {isActive && (
@@ -191,8 +191,8 @@ export function BrandFilters({ className }: BrandFiltersProps) {
                   className={cn(
                     'flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors',
                     isActive
-                      ? 'bg-blue-50 text-blue-700'
-                      : 'hover:bg-gray-100'
+                      ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300'
+                      : 'hover:bg-muted'
                   )}
                 >
                   <div
@@ -200,7 +200,7 @@ export function BrandFilters({ className }: BrandFiltersProps) {
                       'flex size-4 items-center justify-center rounded border-2',
                       isActive
                         ? 'border-blue-600 bg-blue-600'
-                        : 'border-gray-300'
+                        : 'border-border'
                     )}
                   >
                     {isActive && (

@@ -132,12 +132,12 @@ export default function ContactPage() {
             </button>
 
             {status === "success" && (
-              <p className="mt-2 text-sm text-green-600">
+              <p className="mt-2 text-sm text-green-700 dark:text-green-400">
                 Thank you for your message! We&apos;ll get back to you soon.
               </p>
             )}
             {status === "error" && (
-              <p className="mt-2 text-sm text-red-600">
+              <p className="mt-2 text-sm text-red-600 dark:text-red-400">
                 Something went wrong. Please try again later.
               </p>
             )}

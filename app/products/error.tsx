@@ -15,8 +15,8 @@ export default function ProductsError({ error, reset }: { error: Error & { diges
       <h2 className="mb-2 text-xl font-semibold">Could not load products</h2>
       <p className="mb-6 text-muted-foreground">We had trouble loading the product catalog.</p>
       <div className="flex gap-3">
-        <button onClick={() => reset()} className="rounded-md bg-green-600 px-4 py-2 text-sm text-white hover:bg-green-700">Try again</button>
-        <Link href="/" className="rounded-md bg-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-300">Go home</Link>
+        <button onClick={() => reset()} className="rounded-md bg-green-700 px-4 py-2 text-sm text-white hover:bg-green-700">Try again</button>
+        <Link href="/" className="rounded-md bg-muted px-4 py-2 text-sm text-foreground hover:bg-muted">Go home</Link>
       </div>
     </div>
   )

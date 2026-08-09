@@ -42,7 +42,7 @@ function ProductCard({ product }: { product: BrandProduct }) {
       className="group block overflow-hidden rounded-lg border bg-card transition-all hover:shadow-md"
     >
       {/* Image */}
-      <div className="relative aspect-square bg-gray-100">
+      <div className="relative aspect-square bg-muted">
         <Image
           src={product.image}
           alt={product.title}
@@ -68,12 +68,12 @@ function ProductCard({ product }: { product: BrandProduct }) {
         {/* Eco badges */}
         <div className="absolute right-2 top-2 flex flex-col gap-1">
           {product.isPlasticFree && (
-            <Badge variant="outline" className="bg-white/90 text-xs">
+            <Badge variant="outline" className="bg-card/90 text-xs">
               Plastic-Free
             </Badge>
           )}
           {product.isVegan && (
-            <Badge variant="outline" className="bg-white/90 text-xs">
+            <Badge variant="outline" className="bg-card/90 text-xs">
               <Leaf className="mr-1 size-3" />
               Vegan
             </Badge>
@@ -108,7 +108,7 @@ function ProductCard({ product }: { product: BrandProduct }) {
                     'size-3',
                     star < Math.round(product.averageRating!)
                       ? 'fill-yellow-400 text-yellow-400'
-                      : 'text-gray-300'
+                      : 'text-muted-foreground/40'
                   )}
                 />
               ))}
@@ -142,8 +142,8 @@ export function BrandProducts({ products, brandName, className }: BrandProductsP
         <h2 className="mb-8 text-2xl font-bold">
           Products from {brandName}
         </h2>
-        <div className="rounded-lg border bg-gray-50 py-12 text-center">
-          <ShoppingBag className="mx-auto size-12 text-gray-400" />
+        <div className="rounded-lg border bg-muted py-12 text-center">
+          <ShoppingBag className="mx-auto size-12 text-muted-foreground" />
           <p className="mt-4 text-muted-foreground">
             No products available from this brand yet.
           </p>

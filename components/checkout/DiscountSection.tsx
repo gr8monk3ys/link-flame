@@ -217,7 +217,7 @@ export function DiscountSection({
         </div>
 
         {giftCardError && (
-          <p className="text-sm text-red-600" role="alert">
+          <p className="text-sm text-red-600 dark:text-red-400" role="alert">
             {giftCardError}
           </p>
         )}

@@ -98,11 +98,11 @@ function BrandsLoading() {
           key={i}
           className="animate-pulse overflow-hidden rounded-xl border bg-card"
         >
-          <div className="aspect-square bg-gray-200" />
+          <div className="aspect-square bg-muted" />
           <div className="space-y-3 p-4">
-            <div className="h-5 w-3/4 rounded bg-gray-200" />
-            <div className="h-4 w-full rounded bg-gray-200" />
-            <div className="h-4 w-2/3 rounded bg-gray-200" />
+            <div className="h-5 w-3/4 rounded bg-muted" />
+            <div className="h-4 w-full rounded bg-muted" />
+            <div className="h-4 w-2/3 rounded bg-muted" />
           </div>
         </div>
       ))}
@@ -145,7 +145,7 @@ async function BrandsContent({
               className={`rounded-lg border px-4 py-2 ${
                 pageNum === page
                   ? 'bg-primary text-primary-foreground'
-                  : 'bg-white hover:bg-gray-50'
+                  : 'bg-card hover:bg-muted'
               }`}
             >
               {pageNum}
@@ -161,14 +161,14 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
   const resolvedSearchParams = await searchParams
 
   return (
-    <div className="min-h-screen bg-gray-50/50">
+    <div className="min-h-screen bg-muted/50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-green-50 via-white to-emerald-50 py-12 lg:py-16">
+      <section className="bg-gradient-to-br from-green-50 via-white to-emerald-50 py-12 dark:from-green-950/40 dark:to-emerald-950/40 lg:py-16">
         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-          <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-green-100">
-            <Building2 className="size-8 text-green-600" />
+          <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
+            <Building2 className="size-8 text-green-700 dark:text-green-400" />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl lg:text-5xl">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
             Brand Directory
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
@@ -184,7 +184,7 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
           {/* Filters Sidebar */}
           <div className="hidden lg:block">
             <div className="sticky top-4">
-              <Suspense fallback={<div className="h-96 animate-pulse rounded-lg bg-gray-200" />}>
+              <Suspense fallback={<div className="h-96 animate-pulse rounded-lg bg-muted" />}>
                 <BrandFilters />
               </Suspense>
             </div>
@@ -194,12 +194,12 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
           <div className="lg:col-span-3">
             {/* Mobile Filters */}
             <div className="mb-6 lg:hidden">
-              <details className="rounded-lg border bg-white p-4">
+              <details className="rounded-lg border bg-card p-4">
                 <summary className="cursor-pointer font-medium">
                   Filters
                 </summary>
                 <div className="mt-4">
-                  <Suspense fallback={<div className="h-48 animate-pulse rounded-lg bg-gray-200" />}>
+                  <Suspense fallback={<div className="h-48 animate-pulse rounded-lg bg-muted" />}>
                     <BrandFilters />
                   </Suspense>
                 </div>

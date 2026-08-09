@@ -115,25 +115,25 @@ export function SubscriptionDashboard() {
   if (authStatus === 'loading') {
     return (
       <div className="flex items-center justify-center py-12">
-        <RefreshCw className="size-8 animate-spin text-gray-400" />
+        <RefreshCw className="size-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
 
   if (authStatus === 'unauthenticated') {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
-        <Sparkles className="mx-auto size-12 text-gray-400" />
-        <h3 className="mt-4 text-lg font-semibold text-gray-900">
+      <div className="rounded-lg border border-border bg-card p-8 text-center">
+        <Sparkles className="mx-auto size-12 text-muted-foreground" />
+        <h3 className="mt-4 text-lg font-semibold text-foreground">
           Sign in to manage subscriptions
         </h3>
-        <p className="mt-2 text-sm text-gray-500">
+        <p className="mt-2 text-sm text-muted-foreground">
           Create an account or sign in to view and manage your Subscribe &amp; Save subscriptions.
         </p>
         <div className="mt-6">
           <Link
             href="/auth/signin"
-            className="inline-flex items-center rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
+            className="inline-flex items-center rounded-md bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
           >
             Sign in
           </Link>
@@ -147,16 +147,16 @@ export function SubscriptionDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">
+          <h2 className="text-2xl font-bold text-foreground">
             Subscribe & Save
           </h2>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-muted-foreground">
             Manage your recurring deliveries and save up to 20%
           </p>
         </div>
         <Link
           href="/products"
-          className="inline-flex items-center rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
+          className="inline-flex items-center rounded-md bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
         >
           <Plus className="mr-2 size-4" />
           Add subscription
@@ -166,27 +166,27 @@ export function SubscriptionDashboard() {
       {/* Stats */}
       {subscriptions.length > 0 && (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <div className="rounded-lg border border-gray-200 bg-white p-4">
-            <p className="text-sm text-gray-500">Total subscriptions</p>
-            <p className="mt-1 text-2xl font-semibold text-gray-900">
+          <div className="rounded-lg border border-border bg-card p-4">
+            <p className="text-sm text-muted-foreground">Total subscriptions</p>
+            <p className="mt-1 text-2xl font-semibold text-foreground">
               {subscriptions.length}
             </p>
           </div>
-          <div className="rounded-lg border border-gray-200 bg-white p-4">
-            <p className="text-sm text-gray-500">Active</p>
-            <p className="mt-1 text-2xl font-semibold text-green-600">
+          <div className="rounded-lg border border-border bg-card p-4">
+            <p className="text-sm text-muted-foreground">Active</p>
+            <p className="mt-1 text-2xl font-semibold text-green-700 dark:text-green-400">
               {activeCount}
             </p>
           </div>
-          <div className="rounded-lg border border-gray-200 bg-white p-4">
-            <p className="text-sm text-gray-500">Paused</p>
-            <p className="mt-1 text-2xl font-semibold text-yellow-600">
+          <div className="rounded-lg border border-border bg-card p-4">
+            <p className="text-sm text-muted-foreground">Paused</p>
+            <p className="mt-1 text-2xl font-semibold text-yellow-600 dark:text-yellow-400">
               {pausedCount}
             </p>
           </div>
-          <div className="rounded-lg border border-gray-200 bg-white p-4">
-            <p className="text-sm text-gray-500">Avg. savings</p>
-            <p className="mt-1 text-2xl font-semibold text-green-600">
+          <div className="rounded-lg border border-border bg-card p-4">
+            <p className="text-sm text-muted-foreground">Avg. savings</p>
+            <p className="mt-1 text-2xl font-semibold text-green-700 dark:text-green-400">
               15%
             </p>
           </div>
@@ -202,8 +202,8 @@ export function SubscriptionDashboard() {
             onClick={() => setFilter(option.value)}
             className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
               filter === option.value
-                ? 'bg-green-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-green-700 text-white'
+                : 'bg-muted text-foreground hover:bg-muted'
             }`}
           >
             {option.label}
@@ -213,7 +213,7 @@ export function SubscriptionDashboard() {
           type="button"
           onClick={fetchSubscriptions}
           disabled={isLoading}
-          className="ml-auto inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+          className="ml-auto inline-flex items-center rounded-md border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
         >
           <RefreshCw className={`mr-1.5 size-4 ${isLoading ? 'animate-spin' : ''}`} />
           Refresh
@@ -223,7 +223,7 @@ export function SubscriptionDashboard() {
       {/* Subscriptions list */}
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
-          <RefreshCw className="size-8 animate-spin text-gray-400" />
+          <RefreshCw className="size-8 animate-spin text-muted-foreground" />
         </div>
       ) : filteredSubscriptions.length > 0 ? (
         <div className="space-y-4">
@@ -236,14 +236,14 @@ export function SubscriptionDashboard() {
           ))}
         </div>
       ) : (
-        <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-12 text-center">
-          <Inbox className="mx-auto size-12 text-gray-400" />
-          <h3 className="mt-4 text-lg font-semibold text-gray-900">
+        <div className="rounded-lg border border-dashed border-border bg-muted p-12 text-center">
+          <Inbox className="mx-auto size-12 text-muted-foreground" />
+          <h3 className="mt-4 text-lg font-semibold text-foreground">
             {filter === 'all'
               ? 'No subscriptions yet'
               : `No ${filter.toLowerCase()} subscriptions`}
           </h3>
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-sm text-muted-foreground">
             {filter === 'all'
               ? 'Start saving with Subscribe & Save on your favorite products.'
               : 'Try changing the filter to see other subscriptions.'}
@@ -252,7 +252,7 @@ export function SubscriptionDashboard() {
             <div className="mt-6">
               <Link
                 href="/products"
-                className="inline-flex items-center rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
+                className="inline-flex items-center rounded-md bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
               >
                 <Sparkles className="mr-2 size-4" />
                 Browse products
@@ -263,49 +263,49 @@ export function SubscriptionDashboard() {
       )}
 
       {/* Help section */}
-      <div className="rounded-lg border border-gray-200 bg-gray-50 p-6">
-        <h3 className="text-lg font-semibold text-gray-900">
+      <div className="rounded-lg border border-border bg-muted p-6">
+        <h3 className="text-lg font-semibold text-foreground">
           Subscribe & Save Benefits
         </h3>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="flex items-start gap-3">
-            <div className="flex size-8 items-center justify-center rounded-full bg-green-100 text-green-600">
+            <div className="flex size-8 items-center justify-center rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
               <Sparkles className="size-4" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-900">Save up to 20%</p>
-              <p className="text-xs text-gray-500">On every delivery</p>
+              <p className="text-sm font-medium text-foreground">Save up to 20%</p>
+              <p className="text-xs text-muted-foreground">On every delivery</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
-            <div className="flex size-8 items-center justify-center rounded-full bg-green-100 text-green-600">
+            <div className="flex size-8 items-center justify-center rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
               <RefreshCw className="size-4" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-900">Flexible schedule</p>
-              <p className="text-xs text-gray-500">Weekly to bimonthly</p>
+              <p className="text-sm font-medium text-foreground">Flexible schedule</p>
+              <p className="text-xs text-muted-foreground">Weekly to bimonthly</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
-            <div className="flex size-8 items-center justify-center rounded-full bg-green-100 text-green-600">
+            <div className="flex size-8 items-center justify-center rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
               <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-900">Skip anytime</p>
-              <p className="text-xs text-gray-500">No commitment required</p>
+              <p className="text-sm font-medium text-foreground">Skip anytime</p>
+              <p className="text-xs text-muted-foreground">No commitment required</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
-            <div className="flex size-8 items-center justify-center rounded-full bg-green-100 text-green-600">
+            <div className="flex size-8 items-center justify-center rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
               <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-900">Cancel anytime</p>
-              <p className="text-xs text-gray-500">No cancellation fees</p>
+              <p className="text-sm font-medium text-foreground">Cancel anytime</p>
+              <p className="text-xs text-muted-foreground">No cancellation fees</p>
             </div>
           </div>
         </div>

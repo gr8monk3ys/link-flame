@@ -135,7 +135,7 @@ export function ImpactShareCard({ metrics, onClose }: ImpactShareCardProps) {
             <h2 className="mb-1 text-2xl font-bold text-green-800 dark:text-green-200">
               My Environmental Impact
             </h2>
-            <p className="text-sm text-green-600 dark:text-green-400">
+            <p className="text-sm text-green-700 dark:text-green-400">
               Making a difference, one purchase at a time
             </p>
           </div>
@@ -147,12 +147,12 @@ export function ImpactShareCard({ metrics, onClose }: ImpactShareCardProps) {
               return (
                 <div
                   key={metric.metricId}
-                  className="rounded-xl bg-white/60 p-4 text-center dark:bg-black/20"
+                  className="rounded-xl bg-card/60 p-4 text-center dark:bg-black/20"
                 >
                   <div className="mb-2 flex justify-center">
-                    <Icon className="size-8 text-green-600 dark:text-green-400" />
+                    <Icon className="size-8 text-green-700 dark:text-green-400" />
                   </div>
-                  <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                  <div className="text-2xl font-bold text-green-700 dark:text-green-400">
                     {formatValue(metric.totalValue)}
                   </div>
                   <div className="text-xs text-muted-foreground">{metric.unit}</div>
@@ -210,7 +210,7 @@ export function ImpactShareCard({ metrics, onClose }: ImpactShareCardProps) {
               onClick={handleCopy}
             >
               {copied ? (
-                <Check className="size-4 text-green-600" />
+                <Check className="size-4 text-green-700 dark:text-green-400" />
               ) : (
                 <Copy className="size-4" />
               )}

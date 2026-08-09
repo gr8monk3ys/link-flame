@@ -56,7 +56,7 @@ export const BrandCard = memo(function BrandCard({ brand, variant = 'default', c
         )}
       >
         {/* Logo */}
-        <div className="relative size-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
+        <div className="relative size-16 shrink-0 overflow-hidden rounded-lg bg-muted">
           {brand.logo ? (
             <Image
               src={brand.logo}
@@ -67,7 +67,7 @@ export const BrandCard = memo(function BrandCard({ brand, variant = 'default', c
             />
           ) : (
             <div className="flex size-full items-center justify-center">
-              <Building2 className="size-8 text-gray-400" />
+              <Building2 className="size-8 text-muted-foreground" />
             </div>
           )}
         </div>
@@ -97,7 +97,7 @@ export const BrandCard = memo(function BrandCard({ brand, variant = 'default', c
         )}
       >
         {/* Logo Header */}
-        <div className="relative aspect-[16/9] bg-gradient-to-br from-green-50 to-emerald-100">
+        <div className="relative aspect-[16/9] bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-950/40 dark:to-emerald-900/30">
           {brand.logo ? (
             <Image
               src={brand.logo}
@@ -132,7 +132,7 @@ export const BrandCard = memo(function BrandCard({ brand, variant = 'default', c
                 <Badge
                   key={cert.slug}
                   variant="secondary"
-                  className="bg-green-100 text-green-800 hover:bg-green-200"
+                  className="bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-200"
                 >
                   {cert.name}
                 </Badge>
@@ -167,7 +167,7 @@ export const BrandCard = memo(function BrandCard({ brand, variant = 'default', c
       )}
     >
       {/* Logo */}
-      <div className="relative aspect-square bg-gray-50 p-6">
+      <div className="relative aspect-square bg-muted p-6">
         {brand.logo ? (
           <Image
             src={brand.logo}
@@ -178,7 +178,7 @@ export const BrandCard = memo(function BrandCard({ brand, variant = 'default', c
           />
         ) : (
           <div className="flex size-full items-center justify-center">
-            <Building2 className="size-16 text-gray-300" />
+            <Building2 className="size-16 text-muted-foreground/40" />
           </div>
         )}
 
@@ -224,7 +224,7 @@ export const BrandCard = memo(function BrandCard({ brand, variant = 'default', c
               <Badge
                 key={cert.slug}
                 variant="secondary"
-                className="bg-green-100 text-xs text-green-800"
+                className="bg-green-100 text-xs text-green-800 dark:bg-green-900/30 dark:text-green-200"
               >
                 {cert.name}
               </Badge>
@@ -244,7 +244,7 @@ export const BrandCard = memo(function BrandCard({ brand, variant = 'default', c
               <Badge
                 key={val.slug}
                 variant="outline"
-                className="border-blue-200 text-xs text-blue-700"
+                className="border-blue-200 text-xs text-blue-700 dark:border-blue-900/50 dark:text-blue-300"
               >
                 {val.name}
               </Badge>

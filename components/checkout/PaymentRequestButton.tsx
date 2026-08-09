@@ -207,7 +207,7 @@ export function PaymentRequestButton({
   if (state.isLoading) {
     return (
       <div className={`animate-pulse ${className}`}>
-        <div className="h-12 w-full rounded-md bg-gray-200" />
+        <div className="h-12 w-full rounded-md bg-muted" />
       </div>
     )
   }
@@ -225,8 +225,8 @@ export function PaymentRequestButton({
         ${state.walletType === 'applePay'
           ? 'bg-black text-white hover:bg-gray-800 focus:ring-gray-900'
           : state.walletType === 'googlePay'
-          ? 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-blue-500'
-          : 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-blue-500'
+          ? 'border border-border bg-card text-foreground hover:bg-muted focus:ring-blue-500'
+          : 'border border-border bg-card text-foreground hover:bg-muted focus:ring-blue-500'
         }
         ${className}
       `}

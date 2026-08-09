@@ -58,15 +58,15 @@ const VERY_LOW_STOCK_THRESHOLD = 2;
 
 function getStockStatus(inventory: number): { label: string; color: string; isAvailable: boolean } {
   if (inventory <= 0) {
-    return { label: 'Out of Stock', color: 'text-red-600 bg-red-50', isAvailable: false };
+    return { label: 'Out of Stock', color: 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40', isAvailable: false };
   }
   if (inventory <= VERY_LOW_STOCK_THRESHOLD) {
-    return { label: 'Only ' + inventory + ' left!', color: 'text-orange-600 bg-orange-50', isAvailable: true };
+    return { label: 'Only ' + inventory + ' left!', color: 'text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/40', isAvailable: true };
   }
   if (inventory <= LOW_STOCK_THRESHOLD) {
-    return { label: 'Low Stock - ' + inventory + ' left', color: 'text-amber-600 bg-amber-50', isAvailable: true };
+    return { label: 'Low Stock - ' + inventory + ' left', color: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40', isAvailable: true };
   }
-  return { label: 'In Stock', color: 'text-green-600 bg-green-50', isAvailable: true };
+  return { label: 'In Stock', color: 'text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/40', isAvailable: true };
 }
 
 export default function ProductDetails({ product, averageRating }: ProductDetailsProps) {
@@ -155,7 +155,7 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
               {product.isImperfect && product.imperfectDiscount ? (
                 <div className="space-y-2">
                   <div className="flex items-baseline gap-3">
-                    <p className="text-3xl font-bold tracking-tight text-amber-600">
+                    <p className="text-3xl font-bold tracking-tight text-amber-600 dark:text-amber-400">
                       {'$' + (displayPrice * (1 - product.imperfectDiscount / 100)).toFixed(2)}
                     </p>
                     <p className="text-xl text-muted-foreground line-through">
@@ -223,7 +223,7 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
                     {[0, 1, 2, 3, 4].map((index) => (
                       <div key={index} className="shrink-0">
                         <Star
-                          className={`size-5 ${index < Math.round(averageRating!) ? 'text-amber-400' : 'text-gray-300'}`}
+                          className={`size-5 ${index < Math.round(averageRating!) ? 'text-amber-400' : 'text-muted-foreground/40'}`}
                           fill={index < Math.round(averageRating!) ? 'currentColor' : 'none'}
                           aria-hidden="true"
                         />

@@ -16,17 +16,17 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
     return (
       <div
         className={cn(
-          'rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 p-6',
+          'rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 p-6 dark:border-amber-900/50 dark:from-amber-950/40 dark:to-orange-950/40',
           className
         )}
       >
         <div className="flex items-start gap-4">
-          <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-amber-100">
-            <QuestionMarkIcon className="size-6 text-amber-700" />
+          <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/30">
+            <QuestionMarkIcon className="size-6 text-amber-700 dark:text-amber-300" />
           </div>
           <div>
-            <h3 className="font-semibold text-amber-900">What does &quot;Perfectly Imperfect&quot; mean?</h3>
-            <p className="mt-2 text-sm text-amber-800">
+            <h3 className="font-semibold text-amber-900 dark:text-amber-100">What does &quot;Perfectly Imperfect&quot; mean?</h3>
+            <p className="mt-2 text-sm text-amber-800 dark:text-amber-200">
               These products have minor cosmetic issues like dented packaging or label misprints,
               but the quality inside is 100% the same. You get the same great product at a
               significantly reduced price while helping reduce waste.
@@ -40,7 +40,7 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
   if (variant === 'faq') {
     return (
       <div className={cn('space-y-6', className)}>
-        <h2 className="text-2xl font-bold text-gray-900">
+        <h2 className="text-2xl font-bold text-foreground">
           Frequently Asked Questions
         </h2>
 
@@ -48,14 +48,14 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
           {FAQ_ITEMS.map((faq, index) => (
             <details
               key={index}
-              className="group overflow-hidden rounded-xl border border-gray-200 bg-white"
+              className="group overflow-hidden rounded-xl border border-border bg-card"
             >
               <summary className="flex cursor-pointer list-none items-center justify-between p-6">
-                <span className="font-medium text-gray-900">{faq.question}</span>
-                <ChevronDownIcon className="size-5 text-gray-500 transition-transform group-open:rotate-180" />
+                <span className="font-medium text-foreground">{faq.question}</span>
+                <ChevronDownIcon className="size-5 text-muted-foreground transition-transform group-open:rotate-180" />
               </summary>
               <div className="px-6 pb-6">
-                <p className="text-gray-600">{faq.answer}</p>
+                <p className="text-muted-foreground">{faq.answer}</p>
               </div>
             </details>
           ))}
@@ -68,14 +68,14 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
   return (
     <section className={cn('py-16', className)} id="how-it-works">
       <div className="mb-12 text-center">
-        <span className="inline-flex items-center gap-2 rounded-full bg-amber-100 px-4 py-2 text-sm font-medium text-amber-800">
+        <span className="inline-flex items-center gap-2 rounded-full bg-amber-100 px-4 py-2 text-sm font-medium text-amber-800 dark:bg-amber-900/30 dark:text-amber-200">
           <LeafIcon className="size-4" />
           Reduce Waste, Save More
         </span>
-        <h2 className="mt-6 text-3xl font-bold text-gray-900 sm:text-4xl">
+        <h2 className="mt-6 text-3xl font-bold text-foreground sm:text-4xl">
           How Perfectly Imperfect Works
         </h2>
-        <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
+        <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
           Same quality products at lower prices. Here&apos;s why choosing imperfect is the smart
           (and sustainable) choice.
         </p>
@@ -85,18 +85,18 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
       <div className="mb-16 grid grid-cols-1 gap-8 md:grid-cols-3">
         {STEPS.map((step, index) => (
           <div key={index} className="text-center">
-            <div className="mb-6 inline-flex size-16 items-center justify-center rounded-2xl bg-amber-100">
-              <step.icon className="size-8 text-amber-600" />
+            <div className="mb-6 inline-flex size-16 items-center justify-center rounded-2xl bg-amber-100 dark:bg-amber-900/30">
+              <step.icon className="size-8 text-amber-600 dark:text-amber-400" />
             </div>
-            <h3 className="mb-3 text-xl font-semibold text-gray-900">{step.title}</h3>
-            <p className="text-gray-600">{step.description}</p>
+            <h3 className="mb-3 text-xl font-semibold text-foreground">{step.title}</h3>
+            <p className="text-muted-foreground">{step.description}</p>
           </div>
         ))}
       </div>
 
       {/* Common imperfections */}
-      <div className="rounded-3xl border border-gray-100 bg-white p-8 shadow-lg md:p-12">
-        <h3 className="mb-8 text-center text-2xl font-bold text-gray-900">
+      <div className="rounded-3xl border border-border bg-card p-8 shadow-lg md:p-12">
+        <h3 className="mb-8 text-center text-2xl font-bold text-foreground">
           What makes something &quot;Imperfect&quot;?
         </h3>
 
@@ -104,29 +104,29 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
           {IMPERFECT_TYPES.map((type, index) => (
             <div
               key={index}
-              className="flex items-start gap-4 rounded-xl bg-gray-50 p-4"
+              className="flex items-start gap-4 rounded-xl bg-muted p-4"
             >
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-amber-100">
-                <type.icon className="size-5 text-amber-600" />
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30">
+                <type.icon className="size-5 text-amber-600 dark:text-amber-400" />
               </div>
               <div>
-                <p className="font-medium text-gray-900">{type.label}</p>
-                <p className="mt-1 text-sm text-gray-600">{type.description}</p>
+                <p className="font-medium text-foreground">{type.label}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{type.description}</p>
               </div>
             </div>
           ))}
         </div>
 
         {/* Quality guarantee */}
-        <div className="mt-12 flex items-center gap-6 rounded-2xl bg-green-50 p-6">
-          <div className="flex size-16 shrink-0 items-center justify-center rounded-full bg-green-100">
-            <CheckCircleIcon className="size-8 text-green-600" />
+        <div className="mt-12 flex items-center gap-6 rounded-2xl bg-green-50 p-6 dark:bg-green-950/40">
+          <div className="flex size-16 shrink-0 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
+            <CheckCircleIcon className="size-8 text-green-700 dark:text-green-400" />
           </div>
           <div>
-            <h4 className="text-lg font-semibold text-green-900">
+            <h4 className="text-lg font-semibold text-green-900 dark:text-green-50">
               100% Quality Guarantee
             </h4>
-            <p className="mt-1 text-green-800">
+            <p className="mt-1 text-green-800 dark:text-green-200">
               Every imperfect item comes with the same quality guarantee as our regular products.
               If you&apos;re not satisfied for any reason, return it for a full refund.
             </p>
@@ -135,12 +135,12 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
       </div>
 
       {/* Environmental impact */}
-      <div className="mt-16 rounded-3xl bg-gradient-to-br from-green-50 to-emerald-50 p-8 md:p-12">
+      <div className="mt-16 rounded-3xl bg-gradient-to-br from-green-50 to-emerald-50 p-8 dark:from-green-950/40 dark:to-emerald-950/40 md:p-12">
         <div className="mb-10 text-center">
-          <h3 className="text-2xl font-bold text-green-900">
+          <h3 className="text-2xl font-bold text-green-900 dark:text-green-50">
             Your Impact
           </h3>
-          <p className="mt-2 text-green-800">
+          <p className="mt-2 text-green-800 dark:text-green-200">
             By choosing imperfect, you&apos;re helping make a difference
           </p>
         </div>
@@ -148,8 +148,8 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           {IMPACT_STATS.map((stat, index) => (
             <div key={index} className="text-center">
-              <p className="text-4xl font-bold text-green-900">{stat.value}</p>
-              <p className="mt-2 text-green-800">{stat.label}</p>
+              <p className="text-4xl font-bold text-green-900 dark:text-green-50">{stat.value}</p>
+              <p className="mt-2 text-green-800 dark:text-green-200">{stat.label}</p>
             </div>
           ))}
         </div>

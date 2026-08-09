@@ -147,7 +147,7 @@ export function GiftOptions({
                   isAtLimit
                     ? "text-red-500"
                     : isNearLimit
-                    ? "text-yellow-600"
+                    ? "text-yellow-600 dark:text-yellow-400"
                     : "text-muted-foreground"
                 )}
                 aria-live="polite"

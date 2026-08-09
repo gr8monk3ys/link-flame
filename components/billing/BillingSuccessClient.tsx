@@ -65,9 +65,9 @@ export function BillingSuccessClient(props: { sessionId: string }) {
         <CardHeader>
           <div className="flex items-start gap-3">
             {error ? (
-              <AlertTriangle className="mt-1 size-6 text-yellow-600" />
+              <AlertTriangle className="mt-1 size-6 text-yellow-600 dark:text-yellow-400" />
             ) : (
-              <CheckCircle2 className="mt-1 size-6 text-green-600" />
+              <CheckCircle2 className="mt-1 size-6 text-green-700 dark:text-green-400" />
             )}
             <div className="space-y-1">
               <CardTitle>{error ? 'Payment received' : 'Subscription activated'}</CardTitle>

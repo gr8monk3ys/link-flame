@@ -70,13 +70,13 @@ const certificationIcons: Record<string, React.ReactNode> = {
 
 // Colors for different certifications
 const certificationColors: Record<string, string> = {
-  "1% for the Planet": "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300",
-  "B Corp Certified": "bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300",
-  "Climate Neutral": "bg-teal-100 text-teal-800 border-teal-200 dark:bg-teal-900/30 dark:text-teal-300",
-  "Plastic Free": "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300",
-  "Vegan": "bg-lime-100 text-lime-800 border-lime-200 dark:bg-lime-900/30 dark:text-lime-300",
-  "Cruelty Free": "bg-pink-100 text-pink-800 border-pink-200 dark:bg-pink-900/30 dark:text-pink-300",
-  "USDA Organic": "bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300",
+  "1% for the Planet": "bg-blue-100 text-blue-800 border-blue-200 dark:border-blue-900/50 dark:bg-blue-900/30 dark:text-blue-300",
+  "B Corp Certified": "bg-emerald-100 text-emerald-800 border-emerald-200 dark:border-emerald-900/50 dark:bg-emerald-900/30 dark:text-emerald-300",
+  "Climate Neutral": "bg-teal-100 text-teal-800 border-teal-200 dark:border-teal-900/50 dark:bg-teal-900/30 dark:text-teal-300",
+  "Plastic Free": "bg-green-100 text-green-800 border-green-200 dark:border-green-900/50 dark:bg-green-900/30 dark:text-green-300",
+  "Vegan": "bg-lime-100 text-lime-800 border-lime-200 dark:border-lime-900/50 dark:bg-lime-900/30 dark:text-lime-300",
+  "Cruelty Free": "bg-pink-100 text-pink-800 border-pink-200 dark:border-pink-900/50 dark:bg-pink-900/30 dark:text-pink-300",
+  "USDA Organic": "bg-amber-100 text-amber-800 border-amber-200 dark:border-amber-900/50 dark:bg-amber-900/30 dark:text-amber-300",
 };
 
 const sizeClasses = {
@@ -121,7 +121,7 @@ export function CertificationBadges({
             className={cn(
               "flex cursor-default items-center transition-colors",
               badgeSizeClasses[size],
-              certificationColors[cert.name] || "border-gray-200 bg-gray-100 text-gray-800"
+              certificationColors[cert.name] || "border-border bg-muted text-foreground"
             )}
             title={cert.description || cert.name}
           >
@@ -151,7 +151,7 @@ export function CertificationBadges({
             className={cn(
               "flex cursor-default items-center justify-center rounded-full border transition-colors",
               iconContainerSizeClasses[size],
-              certificationColors[cert.name] || "border-gray-200 bg-gray-100 text-gray-800"
+              certificationColors[cert.name] || "border-border bg-muted text-foreground"
             )}
             role="img"
             aria-label={cert.name}

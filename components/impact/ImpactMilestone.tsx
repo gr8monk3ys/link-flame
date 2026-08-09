@@ -120,14 +120,14 @@ export function ImpactMilestone({
         </p>
 
         {/* Metric display */}
-        <div className="rounded-xl bg-white/50 p-6 text-center dark:bg-black/20">
+        <div className="rounded-xl bg-card/50 p-6 text-center dark:bg-black/20">
           <div className="mb-3 flex justify-center">
             <div className="flex size-16 items-center justify-center rounded-full bg-green-500/20">
-              <Icon className="size-8 text-green-600 dark:text-green-400" />
+              <Icon className="size-8 text-green-700 dark:text-green-400" />
             </div>
           </div>
 
-          <div className="mb-1 text-4xl font-bold text-green-600 dark:text-green-400">
+          <div className="mb-1 text-4xl font-bold text-green-700 dark:text-green-400">
             {milestone.milestone}
           </div>
           <div className="mb-2 text-lg text-muted-foreground">

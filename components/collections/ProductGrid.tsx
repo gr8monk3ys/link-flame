@@ -108,7 +108,7 @@ function ProductCard({
     <div key={product.id} className="group relative" data-testid="product-card">
       <Link
         href={`/products/${product.id}`}
-        className="absolute right-4 top-4 z-10 rounded-full bg-white p-2 opacity-0 shadow-md transition-opacity group-hover:opacity-100"
+        className="absolute right-4 top-4 z-10 rounded-full bg-card p-2 opacity-0 shadow-md transition-opacity group-hover:opacity-100"
         aria-label={`View details for ${product.title}`}
       >
         <svg className="size-5 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -140,14 +140,14 @@ function ProductCard({
         ) : null}
 
         {product.isSubscribable ? (
-          <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+          <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900/30 dark:text-blue-200">
             Subscribe &amp; Save
           </span>
         ) : null}
       </div>
 
       <button
-        className="absolute right-4 top-16 z-10 rounded-full bg-white p-2 opacity-0 shadow-md transition-opacity group-hover:opacity-100"
+        className="absolute right-4 top-16 z-10 rounded-full bg-card p-2 opacity-0 shadow-md transition-opacity group-hover:opacity-100"
         aria-label={`${isSaved ? 'Remove' : 'Add'} ${product.title} ${isSaved ? 'from' : 'to'} wishlist`}
         aria-pressed={isSaved}
         onClick={(event) => {
@@ -157,7 +157,7 @@ function ProductCard({
         }}
       >
         <svg
-          className={`size-5 ${isSaved ? 'text-red-600' : 'text-foreground'}`}
+          className={`size-5 ${isSaved ? 'text-red-600 dark:text-red-400' : 'text-foreground'}`}
           fill={isSaved ? 'currentColor' : 'none'}
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -189,12 +189,12 @@ function ProductCard({
           <div className="text-sm font-medium">
             {product.isImperfect && product.imperfectPrice ? (
               <div className="flex flex-col items-end">
-                <span className="font-bold text-amber-600">${formatPrice(product.imperfectPrice)}</span>
+                <span className="font-bold text-amber-600 dark:text-amber-400">${formatPrice(product.imperfectPrice)}</span>
                 <span className="text-xs text-muted-foreground line-through">${formatPrice(product.price)}</span>
               </div>
             ) : product.salePrice ? (
               <div className="flex flex-col items-end">
-                <span className="text-red-600">${formatPrice(product.salePrice)}</span>
+                <span className="text-red-600 dark:text-red-400">${formatPrice(product.salePrice)}</span>
                 <span className="text-muted-foreground line-through">${formatPrice(product.price)}</span>
               </div>
             ) : (
@@ -240,19 +240,19 @@ function ProductPagination({
   totalPages: number;
 }) {
   return (
-    <div className="flex items-center justify-between border-t border-border bg-white px-4 py-3 sm:px-6">
+    <div className="flex items-center justify-between border-t border-border bg-card px-4 py-3 sm:px-6">
       <div className="flex flex-1 justify-between sm:hidden">
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="relative inline-flex items-center rounded-md border border-border bg-white p-2 text-sm font-medium text-foreground hover:bg-muted/50 disabled:opacity-50"
+          className="relative inline-flex items-center rounded-md border border-border bg-card p-2 text-sm font-medium text-foreground hover:bg-muted/50 disabled:opacity-50"
         >
           Previous
         </button>
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="relative ml-3 inline-flex items-center rounded-md border border-border bg-white p-2 text-sm font-medium text-foreground hover:bg-muted/50 disabled:opacity-50"
+          className="relative ml-3 inline-flex items-center rounded-md border border-border bg-card p-2 text-sm font-medium text-foreground hover:bg-muted/50 disabled:opacity-50"
         >
           Next
         </button>

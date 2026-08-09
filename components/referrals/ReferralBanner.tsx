@@ -83,7 +83,7 @@ export function ReferralBanner({
               <Gift className="size-8 text-primary" />
             </div>
             <div className="absolute -bottom-2 -right-2 flex size-10 items-center justify-center rounded-full bg-green-500/20">
-              <Users className="size-5 text-green-600" />
+              <Users className="size-5 text-green-700 dark:text-green-400" />
             </div>
           </div>
         </div>

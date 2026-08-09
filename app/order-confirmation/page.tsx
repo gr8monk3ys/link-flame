@@ -77,7 +77,7 @@ function OrderConfirmationContent() {
       <div className="mx-auto max-w-lg space-y-8">
         <div className="rounded-lg border bg-card p-8 shadow-sm">
           <div className="mb-6 flex flex-col items-center space-y-4 text-center">
-            <div className="rounded-full bg-green-100 p-3 text-green-600">
+            <div className="rounded-full bg-green-100 p-3 text-green-700 dark:bg-green-900/30 dark:text-green-400">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -118,8 +118,8 @@ function OrderConfirmationContent() {
 
           {/* Gift Message Section */}
           {orderDetails?.isGift && (
-            <div className="mb-6 space-y-3 rounded-lg border border-green-200 bg-green-50 p-4">
-              <div className="flex items-center gap-2 text-green-700">
+            <div className="mb-6 space-y-3 rounded-lg border border-green-200 bg-green-50 p-4 dark:border-green-900/50 dark:bg-green-950/40">
+              <div className="flex items-center gap-2 text-green-700 dark:text-green-300">
                 <Gift className="size-5" aria-hidden="true" />
                 <span className="font-medium">Gift Order</span>
               </div>
@@ -134,21 +134,21 @@ function OrderConfirmationContent() {
               {orderDetails.giftMessage && (
                 <div className="text-sm">
                   <span className="mb-1 block font-medium">Gift Message:</span>
-                  <p className="rounded border border-green-200 bg-white p-3 italic text-muted-foreground">
+                  <p className="rounded border border-green-200 bg-card p-3 italic text-muted-foreground dark:border-green-900/50">
                     &ldquo;{orderDetails.giftMessage}&rdquo;
                   </p>
                 </div>
               )}
 
               {orderDetails.hidePrice && (
-                <div className="flex items-center gap-2 text-sm text-green-700">
+                <div className="flex items-center gap-2 text-sm text-green-700 dark:text-green-300">
                   <Check className="size-4" aria-hidden="true" />
                   <span>Prices will be hidden on the packing slip</span>
                 </div>
               )}
 
               {orderDetails.giftRecipientEmail && (
-                <div className="flex items-center gap-2 text-sm text-green-700">
+                <div className="flex items-center gap-2 text-sm text-green-700 dark:text-green-300">
                   <Check className="size-4" aria-hidden="true" />
                   <span>Gift recipient will be notified when shipped</span>
                 </div>

@@ -117,9 +117,9 @@ export default function SustainabilityPage() {
               <LeafIcon className="size-4" />
               Our Commitment
             </div>
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl lg:text-6xl">
+            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
               Building a More{" "}
-              <span className="text-green-600 dark:text-green-400">Sustainable</span>{" "}
+              <span className="text-green-700 dark:text-green-400">Sustainable</span>{" "}
               Future
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
@@ -132,13 +132,13 @@ export default function SustainabilityPage() {
       </section>
 
       {/* Impact Stats */}
-      <section className="bg-green-600 py-12 dark:bg-green-800">
+      <section className="bg-green-700 py-12 dark:bg-green-800">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
             {impactStats.map((stat) => (
               <div key={stat.label} className="text-center">
                 <div className="text-3xl font-bold text-white md:text-4xl">{stat.value}</div>
-                <div className="mt-1 text-sm text-green-100">{stat.label}</div>
+                <div className="mt-1 text-sm text-green-50">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -149,7 +149,7 @@ export default function SustainabilityPage() {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
+            <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
               Our Sustainability Pillars
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
@@ -161,18 +161,18 @@ export default function SustainabilityPage() {
             {sustainabilityPillars.map((pillar) => (
               <div
                 key={pillar.title}
-                className="rounded-2xl border bg-white p-8 shadow-sm dark:border-gray-800 dark:bg-gray-900"
+                className="rounded-2xl border bg-card p-8 shadow-sm"
               >
                 <div className="flex items-start gap-4">
-                  <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400">
+                  <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-400">
                     {pillar.icon}
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                      <h3 className="text-xl font-semibold text-foreground">
                         {pillar.title}
                       </h3>
-                      <span className="text-sm font-medium text-green-600 dark:text-green-400">
+                      <span className="text-sm font-medium text-green-700 dark:text-green-400">
                         {pillar.stats}
                       </span>
                     </div>
@@ -186,11 +186,11 @@ export default function SustainabilityPage() {
       </section>
 
       {/* Carbon Neutral Section */}
-      <section className="bg-gray-50 py-20 dark:bg-gray-900/50">
+      <section className="bg-muted py-20">
         <div className="container mx-auto px-4">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <div>
-              <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
+              <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
                 Carbon-Neutral From Day One
               </h2>
               <p className="mt-4 text-lg text-muted-foreground">
@@ -205,15 +205,15 @@ export default function SustainabilityPage() {
                   "Transparent reporting on our carbon footprint",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3">
-                    <CheckIcon className="mt-0.5 size-5 shrink-0 text-green-600 dark:text-green-400" />
-                    <span className="text-gray-700 dark:text-gray-300">{item}</span>
+                    <CheckIcon className="mt-0.5 size-5 shrink-0 text-green-700 dark:text-green-400" />
+                    <span className="text-foreground">{item}</span>
                   </li>
                 ))}
               </ul>
               <div className="mt-8">
                 <Link
                   href="/impact"
-                  className="inline-flex items-center gap-2 font-medium text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
+                  className="inline-flex items-center gap-2 font-medium text-green-700 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
                 >
                   View our impact report
                   <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -242,7 +242,7 @@ export default function SustainabilityPage() {
                 </svg>
                 Recycling Partnership
               </div>
-              <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
+              <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
                 TerraCycle Recycling Program
               </h2>
               <p className="mt-4 text-lg text-muted-foreground">
@@ -258,15 +258,15 @@ export default function SustainabilityPage() {
                   "100% of materials recycled or upcycled",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3">
-                    <CheckIcon className="mt-0.5 size-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-                    <span className="text-gray-700 dark:text-gray-300">{item}</span>
+                    <CheckIcon className="mt-0.5 size-5 shrink-0 text-emerald-700 dark:text-emerald-400" />
+                    <span className="text-foreground">{item}</span>
                   </li>
                 ))}
               </ul>
               <div className="mt-8">
                 <Link
                   href="/terracycle"
-                  className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-6 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-emerald-700"
+                  className="inline-flex items-center gap-2 rounded-lg bg-emerald-700 px-6 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-emerald-700"
                 >
                   Learn About TerraCycle
                   <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -280,19 +280,19 @@ export default function SustainabilityPage() {
                 <h3 className="mb-6 text-2xl font-bold">Program Impact</h3>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between border-b border-emerald-400/30 py-3">
-                    <span className="text-emerald-100">Items Recycled</span>
+                    <span className="text-emerald-50">Items Recycled</span>
                     <span className="text-2xl font-bold">15,000+</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-emerald-400/30 py-3">
-                    <span className="text-emerald-100">Waste Diverted</span>
+                    <span className="text-emerald-50">Waste Diverted</span>
                     <span className="text-2xl font-bold">2,500 kg</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-emerald-400/30 py-3">
-                    <span className="text-emerald-100">Participants</span>
+                    <span className="text-emerald-50">Participants</span>
                     <span className="text-2xl font-bold">3,200+</span>
                   </div>
                   <div className="flex items-center justify-between py-3">
-                    <span className="text-emerald-100">Recycling Rate</span>
+                    <span className="text-emerald-50">Recycling Rate</span>
                     <span className="text-2xl font-bold">98%</span>
                   </div>
                 </div>
@@ -306,7 +306,7 @@ export default function SustainabilityPage() {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
+            <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
               Our Certification Partners
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
@@ -318,12 +318,12 @@ export default function SustainabilityPage() {
             {certificationPartners.map((partner) => (
               <div
                 key={partner.name}
-                className="rounded-xl border bg-white p-6 text-center shadow-sm dark:border-gray-800 dark:bg-gray-900"
+                className="rounded-xl border bg-card p-6 text-center shadow-sm"
               >
                 <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-green-50 dark:bg-green-900/30">
-                  <LeafIcon className="size-8 text-green-600 dark:text-green-400" />
+                  <LeafIcon className="size-8 text-green-700 dark:text-green-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                <h3 className="text-lg font-semibold text-foreground">
                   {partner.name}
                 </h3>
                 <p className="mt-2 text-sm text-muted-foreground">{partner.description}</p>
@@ -331,7 +331,7 @@ export default function SustainabilityPage() {
                   href={partner.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-green-600 hover:text-green-700 dark:text-green-400"
+                  className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-green-700 hover:text-green-700 dark:text-green-400"
                 >
                   Learn more
                   <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -347,19 +347,19 @@ export default function SustainabilityPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-green-600 py-20 dark:bg-green-800">
+      <section className="bg-green-700 py-20 dark:bg-green-800">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
             Join Us in Making a Difference
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-green-100">
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-green-50">
             Every purchase you make supports our mission to protect the planet.
             Shop sustainably and make your voice heard.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link
               href="/products"
-              className="inline-flex items-center rounded-lg bg-white px-6 py-3 text-sm font-medium text-green-600 shadow-sm transition-colors hover:bg-gray-100"
+              className="inline-flex items-center rounded-lg bg-card px-6 py-3 text-sm font-medium text-green-700 shadow-sm transition-colors hover:bg-muted dark:text-green-400"
             >
               Shop Sustainable Products
             </Link>

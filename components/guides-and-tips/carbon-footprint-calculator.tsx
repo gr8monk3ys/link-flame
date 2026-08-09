@@ -278,7 +278,7 @@ export function CarbonFootprintCalculator() {
                     }
                   })
                 }
-                className="size-4 rounded border-gray-300"
+                className="size-4 rounded border-border"
               />
               <Label>Regular Recycling</Label>
             </div>
@@ -295,7 +295,7 @@ export function CarbonFootprintCalculator() {
                     }
                   })
                 }
-                className="size-4 rounded border-gray-300"
+                className="size-4 rounded border-border"
               />
               <Label>Home Composting</Label>
             </div>

@@ -33,34 +33,34 @@ export default async function AdminLayout({
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted">
       {/* Admin Navbar */}
-      <nav className="sticky top-0 z-10 border-b border-gray-200 bg-white">
+      <nav className="sticky top-0 z-10 border-b border-border bg-card">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 justify-between">
             <div className="flex">
               <Link href="/admin" className="flex items-center">
-                <span className="text-xl font-bold text-green-600">
+                <span className="text-xl font-bold text-green-700 dark:text-green-400">
                   Link Flame
                 </span>
-                <span className="ml-2 rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
+                <span className="ml-2 rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-200">
                   Admin
                 </span>
               </Link>
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-700">
+              <span className="text-sm text-foreground">
                 {user?.name || user?.email}
               </span>
               <Link
                 href="/"
-                className="text-sm text-gray-600 hover:text-gray-900"
+                className="text-sm text-muted-foreground hover:text-foreground"
               >
                 View Site
               </Link>
               <Link
                 href="/auth/signout"
-                className="flex items-center gap-1 text-sm text-red-600 hover:text-red-700"
+                className="flex items-center gap-1 text-sm text-red-600 hover:text-red-700 dark:text-red-400"
               >
                 <LogOut className="size-4" />
                 Sign Out
@@ -81,7 +81,7 @@ export default async function AdminLayout({
                   <Link
                     key={item.name}
                     href={item.href}
-                    className="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900"
+                    className="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted hover:text-foreground"
                   >
                     <Icon className="size-5" />
                     {item.name}

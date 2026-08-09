@@ -76,9 +76,9 @@ export function TerraCycleHero({ className }: TerraCycleHeroProps) {
               Official Partner
             </div>
 
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl lg:text-6xl">
+            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
               TerraCycle{" "}
-              <span className="text-emerald-600 dark:text-emerald-400">
+              <span className="text-emerald-700 dark:text-emerald-400">
                 Recycling Program
               </span>
             </h1>
@@ -98,8 +98,8 @@ export function TerraCycleHero({ className }: TerraCycleHeroProps) {
                 "100% of items recycled or upcycled",
               ].map((benefit) => (
                 <li key={benefit} className="flex items-start gap-3">
-                  <CheckIcon className="mt-0.5 size-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-                  <span className="text-gray-700 dark:text-gray-300">{benefit}</span>
+                  <CheckIcon className="mt-0.5 size-5 shrink-0 text-emerald-700 dark:text-emerald-400" />
+                  <span className="text-foreground">{benefit}</span>
                 </li>
               ))}
             </ul>
@@ -108,13 +108,13 @@ export function TerraCycleHero({ className }: TerraCycleHeroProps) {
             <div className="mt-10 flex flex-wrap gap-4">
               <Link
                 href="#get-started"
-                className="inline-flex items-center rounded-lg bg-emerald-600 px-6 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-emerald-700"
+                className="inline-flex items-center rounded-lg bg-emerald-700 px-6 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-emerald-700"
               >
                 Get Started
               </Link>
               <Link
                 href="#how-it-works"
-                className="inline-flex items-center rounded-lg border border-gray-300 px-6 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+                className="inline-flex items-center rounded-lg border border-border px-6 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted"
               >
                 How It Works
               </Link>
@@ -124,8 +124,8 @@ export function TerraCycleHero({ className }: TerraCycleHeroProps) {
           {/* Visual Element / Partnership Badge */}
           <div className="relative mx-auto lg:mx-0">
             <div className="relative rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 p-8 shadow-xl">
-              <div className="absolute -right-4 -top-4 flex size-20 items-center justify-center rounded-full bg-white shadow-lg dark:bg-gray-900">
-                <LeafIcon className="size-10 text-emerald-600 dark:text-emerald-400" />
+              <div className="absolute -right-4 -top-4 flex size-20 items-center justify-center rounded-full bg-card shadow-lg">
+                <LeafIcon className="size-10 text-emerald-700 dark:text-emerald-400" />
               </div>
 
               <div className="text-white">
@@ -133,21 +133,21 @@ export function TerraCycleHero({ className }: TerraCycleHeroProps) {
                   <RecycleIcon className="size-12" />
                   <div>
                     <div className="text-2xl font-bold">TerraCycle</div>
-                    <div className="text-emerald-100">Certified Partner</div>
+                    <div className="text-emerald-50">Certified Partner</div>
                   </div>
                 </div>
 
                 <div className="space-y-4 border-t border-emerald-400/30 pt-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-emerald-100">Items Recycled</span>
+                    <span className="text-emerald-50">Items Recycled</span>
                     <span className="text-2xl font-bold">15,000+</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-emerald-100">Waste Diverted</span>
+                    <span className="text-emerald-50">Waste Diverted</span>
                     <span className="text-2xl font-bold">2,500 kg</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-emerald-100">Active Participants</span>
+                    <span className="text-emerald-50">Active Participants</span>
                     <span className="text-2xl font-bold">3,200+</span>
                   </div>
                 </div>

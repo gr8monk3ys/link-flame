@@ -223,7 +223,7 @@ export function ValueFilterBar({ className }: ValueFilterBarProps) {
                 'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
                 isSelected
                   ? 'border-primary bg-primary text-white hover:bg-primary/90'
-                  : 'border-border bg-white text-foreground hover:border-primary/40 hover:bg-primary/10'
+                  : 'border-border bg-card text-foreground hover:border-primary/40 hover:bg-primary/10'
               )}
               aria-pressed={isSelected}
               title={value.description || value.name}

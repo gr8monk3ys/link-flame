@@ -43,8 +43,8 @@ export function BrandStory({ story, certifications, values, className }: BrandSt
         {story && (
           <div className="mb-12">
             <div className="mb-6 flex items-center gap-3">
-              <div className="rounded-full bg-green-100 p-2">
-                <Quote className="size-5 text-green-600" />
+              <div className="rounded-full bg-green-100 p-2 dark:bg-green-900/30">
+                <Quote className="size-5 text-green-700 dark:text-green-400" />
               </div>
               <h2 className="text-2xl font-bold">Our Story</h2>
             </div>
@@ -62,8 +62,8 @@ export function BrandStory({ story, certifications, values, className }: BrandSt
         {certificationDetails.length > 0 && (
           <div className="mb-12">
             <div className="mb-6 flex items-center gap-3">
-              <div className="rounded-full bg-amber-100 p-2">
-                <Award className="size-5 text-amber-600" />
+              <div className="rounded-full bg-amber-100 p-2 dark:bg-amber-900/30">
+                <Award className="size-5 text-amber-600 dark:text-amber-400" />
               </div>
               <h2 className="text-2xl font-bold">Certifications</h2>
             </div>
@@ -73,8 +73,8 @@ export function BrandStory({ story, certifications, values, className }: BrandSt
                   key={cert.slug}
                   className="flex items-start gap-4 rounded-lg border bg-card p-4"
                 >
-                  <div className="shrink-0 rounded-full bg-green-100 p-2">
-                    <Leaf className="size-4 text-green-600" />
+                  <div className="shrink-0 rounded-full bg-green-100 p-2 dark:bg-green-900/30">
+                    <Leaf className="size-4 text-green-700 dark:text-green-400" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-foreground">
@@ -94,8 +94,8 @@ export function BrandStory({ story, certifications, values, className }: BrandSt
         {valueDetails.length > 0 && (
           <div>
             <div className="mb-6 flex items-center gap-3">
-              <div className="rounded-full bg-blue-100 p-2">
-                <Heart className="size-5 text-blue-600" />
+              <div className="rounded-full bg-blue-100 p-2 dark:bg-blue-900/30">
+                <Heart className="size-5 text-blue-600 dark:text-blue-400" />
               </div>
               <h2 className="text-2xl font-bold">Our Values</h2>
             </div>
@@ -105,8 +105,8 @@ export function BrandStory({ story, certifications, values, className }: BrandSt
                   key={val.slug}
                   className="flex items-start gap-4 rounded-lg border bg-card p-4"
                 >
-                  <div className="shrink-0 rounded-full bg-blue-50 p-2">
-                    <Globe className="size-4 text-blue-600" />
+                  <div className="shrink-0 rounded-full bg-blue-50 p-2 dark:bg-blue-950/40">
+                    <Globe className="size-4 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-foreground">

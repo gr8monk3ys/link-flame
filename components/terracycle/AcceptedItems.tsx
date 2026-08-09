@@ -150,7 +150,7 @@ const acceptedCategories = [
       "Air freshener containers",
       "Candle jars (wax removed)",
     ],
-    color: "text-green-600 dark:text-green-400",
+    color: "text-green-700 dark:text-green-400",
     bgColor: "bg-green-100 dark:bg-green-900/30",
   },
 ];
@@ -166,11 +166,11 @@ const notAccepted = [
 
 export function AcceptedItems({ className }: AcceptedItemsProps) {
   return (
-    <section className={cn("bg-gray-50 py-20 dark:bg-gray-900/50", className)}>
+    <section className={cn("bg-muted py-20", className)}>
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="mb-16 text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
+          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             What You Can Recycle
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
@@ -184,7 +184,7 @@ export function AcceptedItems({ className }: AcceptedItemsProps) {
           {acceptedCategories.map((category) => (
             <div
               key={category.name}
-              className="rounded-xl border bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900"
+              className="rounded-xl border bg-card p-6 shadow-sm"
             >
               {/* Category Header */}
               <div className="mb-4 flex items-center gap-3">
@@ -196,7 +196,7 @@ export function AcceptedItems({ className }: AcceptedItemsProps) {
                 >
                   <span className={category.color}>{category.icon}</span>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                <h3 className="text-lg font-semibold text-foreground">
                   {category.name}
                 </h3>
               </div>
@@ -205,8 +205,8 @@ export function AcceptedItems({ className }: AcceptedItemsProps) {
               <ul className="space-y-2">
                 {category.items.map((item) => (
                   <li key={item} className="flex items-start gap-2 text-sm">
-                    <CheckCircleIcon className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
-                    <span className="text-gray-600 dark:text-gray-400">{item}</span>
+                    <CheckCircleIcon className="mt-0.5 size-4 shrink-0 text-emerald-700 dark:text-emerald-400" />
+                    <span className="text-muted-foreground">{item}</span>
                   </li>
                 ))}
               </ul>

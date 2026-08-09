@@ -66,7 +66,7 @@ class ErrorBoundaryClass extends Component<Props, State> {
       // Compact fallback UI for non-critical components
       if (this.props.compact) {
         return (
-          <div className="rounded-md border border-red-200 bg-red-50 p-4">
+          <div className="rounded-md border border-red-200 bg-red-50 p-4 dark:border-red-900/50 dark:bg-red-950/40">
             <div className="flex">
               <div className="shrink-0">
                 <svg className="size-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
@@ -74,8 +74,8 @@ class ErrorBoundaryClass extends Component<Props, State> {
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-red-800">Error loading component</h3>
-                <div className="mt-2 text-sm text-red-700">
+                <h3 className="text-sm font-medium text-red-800 dark:text-red-200">Error loading component</h3>
+                <div className="mt-2 text-sm text-red-700 dark:text-red-300">
                   <p>We encountered an error loading this section.</p>
                   <Button 
                     variant="outline" 
@@ -95,7 +95,7 @@ class ErrorBoundaryClass extends Component<Props, State> {
       // Default fallback UI
       return (
         <div className="flex h-[70vh] w-full flex-col items-center justify-center p-4 text-center">
-          <div className="mb-4 rounded-full bg-red-100 p-3 text-red-600">
+          <div className="mb-4 rounded-full bg-red-100 p-3 text-red-600 dark:bg-red-900/30 dark:text-red-400">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"

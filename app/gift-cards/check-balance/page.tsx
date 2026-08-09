@@ -41,9 +41,9 @@ export default function CheckBalancePage() {
 
       {/* Page Header */}
       <div className="mb-8 text-center">
-        <div className="mb-4 inline-flex items-center justify-center rounded-full bg-green-100 p-3">
+        <div className="mb-4 inline-flex items-center justify-center rounded-full bg-green-100 p-3 dark:bg-green-900/30">
           <svg
-            className="size-8 text-green-600"
+            className="size-8 text-green-700 dark:text-green-400"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -75,7 +75,7 @@ export default function CheckBalancePage() {
         </h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-lg border bg-card p-5">
-            <div className="mb-3 inline-flex size-10 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+            <div className="mb-3 inline-flex size-10 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
               <svg
                 className="size-5"
                 fill="none"
@@ -97,7 +97,7 @@ export default function CheckBalancePage() {
             </p>
           </div>
           <div className="rounded-lg border bg-card p-5">
-            <div className="mb-3 inline-flex size-10 items-center justify-center rounded-full bg-purple-100 text-purple-600">
+            <div className="mb-3 inline-flex size-10 items-center justify-center rounded-full bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400">
               <svg
                 className="size-5"
                 fill="none"
@@ -119,7 +119,7 @@ export default function CheckBalancePage() {
             </p>
           </div>
           <div className="rounded-lg border bg-card p-5">
-            <div className="mb-3 inline-flex size-10 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+            <div className="mb-3 inline-flex size-10 items-center justify-center rounded-full bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400">
               <svg
                 className="size-5"
                 fill="none"
@@ -141,7 +141,7 @@ export default function CheckBalancePage() {
             </p>
           </div>
           <div className="rounded-lg border bg-card p-5">
-            <div className="mb-3 inline-flex size-10 items-center justify-center rounded-full bg-green-100 text-green-600">
+            <div className="mb-3 inline-flex size-10 items-center justify-center rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
               <svg
                 className="size-5"
                 fill="none"
@@ -172,7 +172,7 @@ export default function CheckBalancePage() {
         </p>
         <Link
           href="/contact"
-          className="mt-3 inline-flex items-center text-sm font-medium text-green-600 hover:text-green-700"
+          className="mt-3 inline-flex items-center text-sm font-medium text-green-700 hover:text-green-700 dark:text-green-400"
         >
           Contact Support
           <svg

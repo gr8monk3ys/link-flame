@@ -127,9 +127,9 @@ export function VariantSelector({
       {hasSizes && (
         <div>
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-medium text-gray-900">Size</h3>
+            <h3 className="text-sm font-medium text-foreground">Size</h3>
             {selectedSize && (
-              <span className="text-sm text-gray-500">{selectedSize}</span>
+              <span className="text-sm text-muted-foreground">{selectedSize}</span>
             )}
           </div>
           <div className="mt-3 flex flex-wrap gap-2">
@@ -147,10 +147,10 @@ export function VariantSelector({
                     relative min-w-12 rounded-md border px-4 py-2 text-sm font-medium
                     transition-all duration-150
                     ${isSelected
-                      ? "border-green-600 bg-green-600 text-white"
+                      ? "border-green-600 bg-green-700 text-white"
                       : isAvailable
-                        ? "border-gray-300 bg-white text-gray-900 hover:border-gray-400"
-                        : "cursor-not-allowed border-gray-200 bg-gray-50 text-gray-300"
+                        ? "border-border bg-card text-foreground hover:border-border"
+                        : "cursor-not-allowed border-border bg-muted text-muted-foreground/40"
                     }
                     ${!isAvailable && !isSelected ? "line-through" : ""}
                   `}
@@ -167,9 +167,9 @@ export function VariantSelector({
       {hasColors && (
         <div>
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-medium text-gray-900">Color</h3>
+            <h3 className="text-sm font-medium text-foreground">Color</h3>
             {selectedColor && (
-              <span className="text-sm text-gray-500">{selectedColor}</span>
+              <span className="text-sm text-muted-foreground">{selectedColor}</span>
             )}
           </div>
           <div className="mt-3 flex flex-wrap gap-3">
@@ -193,19 +193,19 @@ export function VariantSelector({
                 >
                   {colorCode ? (
                     <span
-                      className="size-8 rounded-full border border-gray-300"
+                      className="size-8 rounded-full border border-border"
                       style={{ backgroundColor: colorCode }}
                     >
                       {isSelected && (
-                        <Check className={`m-1.5 size-5 ${isLightColor(colorCode) ? "text-gray-800" : "text-white"}`} />
+                        <Check className={`m-1.5 size-5 ${isLightColor(colorCode) ? "text-foreground" : "text-white"}`} />
                       )}
                     </span>
                   ) : (
                     <span className={`
                       rounded-full border px-3 py-1 text-sm
                       ${isSelected
-                        ? "border-green-600 bg-green-600 text-white"
-                        : "border-gray-300 bg-white text-gray-900"
+                        ? "border-green-600 bg-green-700 text-white"
+                        : "border-border bg-card text-foreground"
                       }
                     `}>
                       {value as string}
@@ -227,9 +227,9 @@ export function VariantSelector({
       {hasMaterials && (
         <div>
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-medium text-gray-900">Material</h3>
+            <h3 className="text-sm font-medium text-foreground">Material</h3>
             {selectedMaterial && (
-              <span className="text-sm text-gray-500">{selectedMaterial}</span>
+              <span className="text-sm text-muted-foreground">{selectedMaterial}</span>
             )}
           </div>
           <div className="mt-3 flex flex-wrap gap-2">
@@ -247,10 +247,10 @@ export function VariantSelector({
                     relative rounded-md border px-4 py-2 text-sm font-medium
                     transition-all duration-150
                     ${isSelected
-                      ? "border-green-600 bg-green-600 text-white"
+                      ? "border-green-600 bg-green-700 text-white"
                       : isAvailable
-                        ? "border-gray-300 bg-white text-gray-900 hover:border-gray-400"
-                        : "cursor-not-allowed border-gray-200 bg-gray-50 text-gray-300"
+                        ? "border-border bg-card text-foreground hover:border-border"
+                        : "cursor-not-allowed border-border bg-muted text-muted-foreground/40"
                     }
                     ${!isAvailable && !isSelected ? "line-through" : ""}
                   `}
@@ -265,7 +265,7 @@ export function VariantSelector({
 
       {/* Variant SKU (if available) */}
       {selectedVariant?.sku && (
-        <p className="text-xs text-gray-500">
+        <p className="text-xs text-muted-foreground">
           SKU: {selectedVariant.sku}
         </p>
       )}

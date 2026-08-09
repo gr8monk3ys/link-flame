@@ -92,7 +92,7 @@ export function TerraCycleFAQ({ className }: TerraCycleFAQProps) {
             <QuestionIcon className="size-4" />
             Got Questions?
           </div>
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
+          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             Frequently Asked Questions
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
@@ -108,9 +108,9 @@ export function TerraCycleFAQ({ className }: TerraCycleFAQProps) {
               <AccordionItem
                 key={index}
                 value={`item-${index}`}
-                className="border-b border-gray-200 dark:border-gray-800"
+                className="border-b border-border"
               >
-                <AccordionTrigger className="w-full text-left text-gray-900 hover:text-emerald-600 dark:text-white dark:hover:text-emerald-400">
+                <AccordionTrigger className="w-full text-left text-foreground hover:text-emerald-700 dark:text-white dark:hover:text-emerald-400">
                   {item.question}
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground">
@@ -128,7 +128,7 @@ export function TerraCycleFAQ({ className }: TerraCycleFAQProps) {
           </p>
           <a
             href="/contact"
-            className="inline-flex items-center gap-2 font-medium text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300"
+            className="inline-flex items-center gap-2 font-medium text-emerald-700 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300"
           >
             Contact our support team
             <svg

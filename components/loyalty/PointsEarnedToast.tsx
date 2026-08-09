@@ -85,8 +85,8 @@ export function PointsEarnedToast({
       {/* Content */}
       <div className="p-4">
         <div className="flex items-center gap-4">
-          <div className="flex size-12 items-center justify-center rounded-full bg-green-100">
-            <span className="text-xl font-bold text-green-600">+{points}</span>
+          <div className="flex size-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
+            <span className="text-xl font-bold text-green-700 dark:text-green-400">+{points}</span>
           </div>
           <div className="flex-1">
             <p className="font-medium text-foreground">
@@ -116,7 +116,7 @@ export function PointsEarnedToast({
       </div>
 
       {/* Progress bar for auto-dismiss */}
-      <div className="h-1 bg-gray-200">
+      <div className="h-1 bg-muted">
         <div
           className="h-full bg-green-500 transition-all ease-linear"
           style={{
@@ -269,8 +269,8 @@ export function PointsEarnedToastWithStyle({
 
       <div className="p-4">
         <div className="flex items-center gap-4">
-          <div className="flex size-12 items-center justify-center rounded-full bg-green-100">
-            <span className="text-xl font-bold text-green-600">+{points}</span>
+          <div className="flex size-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
+            <span className="text-xl font-bold text-green-700 dark:text-green-400">+{points}</span>
           </div>
           <div className="flex-1">
             <p className="font-medium text-foreground">
@@ -298,7 +298,7 @@ export function PointsEarnedToastWithStyle({
         </button>
       </div>
 
-      <div className="h-1 bg-gray-200">
+      <div className="h-1 bg-muted">
         <div
           className="h-full bg-green-500"
           style={{

@@ -40,7 +40,7 @@ export function ProductDisplay({
           <Star
             key={i}
             className={`size-4 ${
-              i < Math.floor(rating) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
+              i < Math.floor(rating) ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/40"
             }`}
           />
         ))}
@@ -97,7 +97,7 @@ export function ProductDisplay({
                     <h4 className="mb-2 font-semibold">Pros</h4>
                     <ul className="list-disc space-y-1 pl-5">
                       {product.pros.map((pro, index) => (
-                        <li key={index} className="text-green-600">{pro}</li>
+                        <li key={index} className="text-green-700 dark:text-green-400">{pro}</li>
                       ))}
                     </ul>
                   </div>
@@ -108,7 +108,7 @@ export function ProductDisplay({
                     <h4 className="mb-2 font-semibold">Cons</h4>
                     <ul className="list-disc space-y-1 pl-5">
                       {product.cons.map((con, index) => (
-                        <li key={index} className="text-red-600">{con}</li>
+                        <li key={index} className="text-red-600 dark:text-red-400">{con}</li>
                       ))}
                     </ul>
                   </div>

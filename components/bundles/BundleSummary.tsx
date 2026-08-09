@@ -100,7 +100,7 @@ export function BundleSummary({
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span>Your Bundle</span>
-          <Badge variant="secondary" className="ml-2 text-green-600">
+          <Badge variant="secondary" className="ml-2 text-green-700 dark:text-green-400">
             <Tag className="mr-1 size-3" />
             {discountPercent}% Off
           </Badge>
@@ -156,7 +156,7 @@ export function BundleSummary({
                 <span>${subtotal.toFixed(2)}</span>
               </div>
 
-              <div className="flex justify-between text-sm text-green-600">
+              <div className="flex justify-between text-sm text-green-700 dark:text-green-400">
                 <span className="flex items-center">
                   <Tag className="mr-1 size-3" />
                   Bundle Discount ({discountPercent}%)
@@ -222,7 +222,7 @@ export function BundleSummary({
         </Button>
 
         {meetsMinimum && !exceedsMaximum && (
-          <p className="flex items-center justify-center gap-1 text-xs text-green-600">
+          <p className="flex items-center justify-center gap-1 text-xs text-green-700 dark:text-green-400">
             <Check className="size-3" />
             Bundle requirements met
           </p>

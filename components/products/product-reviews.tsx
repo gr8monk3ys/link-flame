@@ -148,7 +148,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
                 className={`size-5 ${
                   star <= Math.round(averageRating)
                     ? 'fill-yellow-400 text-yellow-400'
-                    : 'text-gray-300'
+                    : 'text-muted-foreground/40'
                 }`}
               />
             ))}
@@ -167,7 +167,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
             return (
               <div key={rating} className="flex items-center gap-2">
                 <span className="w-16 text-sm">{rating} star</span>
-                <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
+                <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
                   <div
                     className="h-full bg-yellow-400 transition-all"
                     style={{ width: `${percentage}%` }}
@@ -212,7 +212,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
                         className={`size-8 ${
                           star <= (hoverRating || rating)
                             ? 'fill-yellow-400 text-yellow-400'
-                            : 'text-gray-300'
+                            : 'text-muted-foreground/40'
                         }`}
                       />
                     </button>
@@ -290,8 +290,8 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
                       className="size-10 rounded-full"
                     />
                   ) : (
-                    <div className="flex size-10 items-center justify-center rounded-full bg-gray-200">
-                      <span className="font-medium text-gray-600">
+                    <div className="flex size-10 items-center justify-center rounded-full bg-muted">
+                      <span className="font-medium text-muted-foreground">
                         {review.user.name?.charAt(0) || 'U'}
                       </span>
                     </div>
@@ -315,14 +315,14 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
                           className={`size-4 ${
                             star <= review.rating
                               ? 'fill-yellow-400 text-yellow-400'
-                              : 'text-gray-300'
+                              : 'text-muted-foreground/40'
                           }`}
                         />
                       ))}
                     </div>
 
                     {review.comment && (
-                      <p className="whitespace-pre-wrap text-gray-700">
+                      <p className="whitespace-pre-wrap text-foreground">
                         {review.comment}
                       </p>
                     )}

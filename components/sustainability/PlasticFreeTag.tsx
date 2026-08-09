@@ -65,7 +65,7 @@ export function PlasticFreeTag({
         role="img"
         aria-label="Plastic-Free"
       >
-        <PlasticFreeIcon className={cn(config.icon, "text-green-600 dark:text-green-400")} />
+        <PlasticFreeIcon className={cn(config.icon, "text-green-700 dark:text-green-400")} />
       </div>
     );
   }
@@ -90,7 +90,7 @@ export function PlasticFreeTag({
     return (
       <div
         className={cn(
-          "absolute -right-8 top-4 rotate-45 bg-green-600 text-center font-semibold leading-tight text-white shadow-sm",
+          "absolute -right-8 top-4 rotate-45 bg-green-700 text-center font-semibold leading-tight text-white shadow-sm",
           config.corner,
           className
         )}
@@ -147,14 +147,14 @@ export function SustainabilityTags({
     tags.push({
       label: "Plastic-Free",
       icon: <PlasticFreeIcon className={sizeConfig[size].icon} />,
-      color: "bg-green-50 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-300",
+      color: "bg-green-50 text-green-700 border-green-200 dark:border-green-900/50 dark:bg-green-900/30 dark:text-green-300",
     });
   }
   if (isVegan) {
     tags.push({
       label: "Vegan",
       icon: <LeafIcon className={sizeConfig[size].icon} />,
-      color: "bg-lime-50 text-lime-700 border-lime-200 dark:bg-lime-900/30 dark:text-lime-300",
+      color: "bg-lime-50 text-lime-700 border-lime-200 dark:border-lime-900/50 dark:bg-lime-900/30 dark:text-lime-300",
     });
   }
   if (isCrueltyFree) {
@@ -165,7 +165,7 @@ export function SustainabilityTags({
           <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
         </svg>
       ),
-      color: "bg-pink-50 text-pink-700 border-pink-200 dark:bg-pink-900/30 dark:text-pink-300",
+      color: "bg-pink-50 text-pink-700 border-pink-200 dark:border-pink-900/50 dark:bg-pink-900/30 dark:text-pink-300",
     });
   }
   if (isOrganicCertified) {
@@ -177,7 +177,7 @@ export function SustainabilityTags({
           <path d="M9 12l2 2 4-4" />
         </svg>
       ),
-      color: "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300",
+      color: "bg-amber-50 text-amber-700 border-amber-200 dark:border-amber-900/50 dark:bg-amber-900/30 dark:text-amber-300",
     });
   }
 

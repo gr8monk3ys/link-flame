@@ -110,7 +110,7 @@ export function CartImpactPreview({
       )}
     >
       <div className="mb-3 flex items-center gap-2">
-        <Sparkles className="size-4 text-green-600" />
+        <Sparkles className="size-4 text-green-700 dark:text-green-400" />
         <span className="text-sm font-medium text-green-800 dark:text-green-200">
           Your cart will make a difference!
         </span>
@@ -123,11 +123,11 @@ export function CartImpactPreview({
           return (
             <div
               key={impact.metricId}
-              className="flex items-center gap-2 rounded-full bg-white/60 px-3 py-1.5 dark:bg-black/20"
+              className="flex items-center gap-2 rounded-full bg-card/60 px-3 py-1.5 dark:bg-black/20"
             >
-              <Icon className="size-4 text-green-600 dark:text-green-400" />
+              <Icon className="size-4 text-green-700 dark:text-green-400" />
               <span className="text-sm">
-                <span className="font-semibold text-green-600 dark:text-green-400">
+                <span className="font-semibold text-green-700 dark:text-green-400">
                   {formatValue(impact.estimatedValue)}
                 </span>
                 <span className="ml-1 text-muted-foreground">

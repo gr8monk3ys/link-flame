@@ -64,7 +64,7 @@ export function FrequencySelector({
           id="frequency-select"
           value={selectedFrequency}
           onChange={(e) => onFrequencyChange(e.target.value as SubscriptionFrequency)}
-          className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-primary focus:outline-none focus:ring-ring sm:text-sm"
+          className="block w-full rounded-md border-border py-2 pl-3 pr-10 text-base focus:border-primary focus:outline-none focus:ring-ring sm:text-sm"
         >
           {frequencyOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -88,8 +88,8 @@ export function FrequencySelector({
               cn(
                 active ? 'ring-2 ring-green-500 ring-offset-2' : '',
                 checked
-                  ? 'border-green-600 bg-green-50'
-                  : 'border-gray-200 bg-white hover:bg-gray-50',
+                  ? 'border-green-600 bg-green-50 dark:bg-green-950/40'
+                  : 'border-border bg-card hover:bg-muted',
                 'relative flex cursor-pointer rounded-lg border p-4 focus:outline-none'
               )
             }
@@ -102,7 +102,7 @@ export function FrequencySelector({
                       <RadioGroup.Label
                         as="p"
                         className={cn(
-                          checked ? 'text-green-900' : 'text-gray-900',
+                          checked ? 'text-green-900 dark:text-green-50' : 'text-foreground',
                           'font-medium'
                         )}
                       >
@@ -111,7 +111,7 @@ export function FrequencySelector({
                       <RadioGroup.Description
                         as="span"
                         className={cn(
-                          checked ? 'text-green-700' : 'text-gray-500',
+                          checked ? 'text-green-700 dark:text-green-300' : 'text-muted-foreground',
                           'inline text-xs'
                         )}
                       >
@@ -122,14 +122,14 @@ export function FrequencySelector({
                   <div className="flex items-center gap-2">
                     <span
                       className={cn(
-                        checked ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-800',
+                        checked ? 'bg-green-700 text-white' : 'bg-muted text-foreground',
                         'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold'
                       )}
                     >
                       Save {option.discount}%
                     </span>
                     {checked && (
-                      <CheckCircle2 className="size-5 text-green-600" fill="currentColor" aria-hidden="true" />
+                      <CheckCircle2 className="size-5 text-green-700 dark:text-green-400" fill="currentColor" aria-hidden="true" />
                     )}
                   </div>
                 </div>

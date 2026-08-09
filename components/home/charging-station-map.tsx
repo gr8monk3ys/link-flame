@@ -98,12 +98,12 @@ export function ChargingStationMap() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="size-full overflow-y-scroll bg-gray-100"
+        className="size-full overflow-y-scroll bg-muted"
       >
         {filteredStations.map((station) => (
           <motion.div
             key={station.id}
-            className="cursor-pointer border-b border-gray-200 p-4 hover:bg-gray-50"
+            className="cursor-pointer border-b border-border p-4 hover:bg-muted"
             onClick={() => setSelectedStation(station)}
             whileHover={{ backgroundColor: "#f0f0f0" }}
           >
@@ -130,7 +130,7 @@ export function ChargingStationMap() {
                   </p>
                 </div>
                 <motion.button
-                  className="rounded-full p-1 hover:bg-gray-100"
+                  className="rounded-full p-1 hover:bg-muted"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setSelectedStation(null)}
@@ -198,7 +198,7 @@ export function ChargingStationMap() {
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              className="rounded-full bg-white p-2 shadow-lg"
+              className="rounded-full bg-card p-2 shadow-lg"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -217,7 +217,7 @@ export function ChargingStationMap() {
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              className="rounded-full bg-white p-2 shadow-lg"
+              className="rounded-full bg-card p-2 shadow-lg"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

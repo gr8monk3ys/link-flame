@@ -133,7 +133,7 @@ export default function OrdersPage() {
         <Card>
           <CardHeader>
             <CardTitle>Error</CardTitle>
-            <CardDescription className="text-red-600">{error}</CardDescription>
+            <CardDescription className="text-red-600 dark:text-red-400">{error}</CardDescription>
           </CardHeader>
         </Card>
       </div>
@@ -233,10 +233,10 @@ export default function OrdersPage() {
                         <span
                           className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
                             order.status === "paid"
-                              ? "bg-green-100 text-green-800"
+                              ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200"
                               : order.status === "refunded"
-                              ? "bg-red-100 text-red-800"
-                              : "bg-gray-100 text-gray-800"
+                              ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200"
+                              : "bg-muted text-foreground"
                           }`}
                         >
                           {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
@@ -248,7 +248,7 @@ export default function OrdersPage() {
                         </Badge>
                         {/* Gift indicator */}
                         {order.isGift && (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-pink-100 px-2 py-0.5 text-xs font-medium text-pink-800">
+                          <span className="inline-flex items-center gap-1 rounded-full bg-pink-100 px-2 py-0.5 text-xs font-medium text-pink-800 dark:bg-pink-900/30 dark:text-pink-200">
                             <Gift className="size-3" />
                             Gift
                           </span>

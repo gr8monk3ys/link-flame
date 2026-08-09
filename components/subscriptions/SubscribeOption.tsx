@@ -52,23 +52,23 @@ export function SubscribeOption({
   const discountPercent = getDiscountForFrequency(frequency);
 
   return (
-    <div className="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
+    <div className="mt-6 rounded-lg border border-border bg-muted p-4">
       {/* Header with toggle */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-full bg-green-100">
-            <Sparkles className="size-5 text-green-600" />
+          <div className="flex size-10 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
+            <Sparkles className="size-5 text-green-700 dark:text-green-400" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-gray-900">Subscribe & Save</h3>
-            <p className="text-xs text-gray-500">Save up to 20% on recurring orders</p>
+            <h3 className="text-sm font-semibold text-foreground">Subscribe & Save</h3>
+            <p className="text-xs text-muted-foreground">Save up to 20% on recurring orders</p>
           </div>
         </div>
         <Switch
           checked={isSubscription}
           onChange={handleSubscriptionToggle}
           className={cn(
-            isSubscription ? 'bg-green-600' : 'bg-gray-200',
+            isSubscription ? 'bg-green-700' : 'bg-muted',
             'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2'
           )}
         >
@@ -77,7 +77,7 @@ export function SubscribeOption({
             aria-hidden="true"
             className={cn(
               isSubscription ? 'translate-x-5' : 'translate-x-0',
-              'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out'
+              'pointer-events-none inline-block size-5 rounded-full bg-card shadow ring-0 transition duration-200 ease-in-out'
             )}
           />
         </Switch>
@@ -91,18 +91,18 @@ export function SubscribeOption({
           onClick={() => handleSubscriptionToggle(false)}
           className={cn(
             !isSubscription
-              ? 'border-green-600 bg-white ring-2 ring-green-600'
-              : 'border-gray-200 bg-white hover:border-gray-300',
+              ? 'border-green-600 bg-card ring-2 ring-green-600'
+              : 'border-border bg-card hover:border-border',
             'relative flex w-full cursor-pointer items-center justify-between rounded-lg border p-3 focus:outline-none'
           )}
         >
           <div className="flex items-center">
             {!isSubscription && (
-              <Check className="mr-2 size-5 text-green-600" />
+              <Check className="mr-2 size-5 text-green-700 dark:text-green-400" />
             )}
-            <span className="text-sm font-medium text-gray-900">One-time purchase</span>
+            <span className="text-sm font-medium text-foreground">One-time purchase</span>
           </div>
-          <span className="text-sm font-semibold text-gray-900">
+          <span className="text-sm font-semibold text-foreground">
             ${originalPrice.toFixed(2)}
           </span>
         </button>
@@ -113,32 +113,32 @@ export function SubscribeOption({
           onClick={() => handleSubscriptionToggle(true)}
           className={cn(
             isSubscription
-              ? 'border-green-600 bg-green-50 ring-2 ring-green-600'
-              : 'border-gray-200 bg-white hover:border-gray-300',
+              ? 'border-green-600 bg-green-50 ring-2 ring-green-600 dark:bg-green-950/40'
+              : 'border-border bg-card hover:border-border',
             'relative flex w-full cursor-pointer flex-col rounded-lg border p-3 focus:outline-none'
           )}
         >
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center">
               {isSubscription && (
-                <Check className="mr-2 size-5 text-green-600" />
+                <Check className="mr-2 size-5 text-green-700 dark:text-green-400" />
               )}
-              <span className="text-sm font-medium text-gray-900">Subscribe & Save</span>
-              <span className="ml-2 inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-800">
+              <span className="text-sm font-medium text-foreground">Subscribe & Save</span>
+              <span className="ml-2 inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-800 dark:bg-green-900/30 dark:text-green-200">
                 Save {discountPercent}%
               </span>
             </div>
             <div className="text-right">
-              <span className="text-sm font-semibold text-green-600">
+              <span className="text-sm font-semibold text-green-700 dark:text-green-400">
                 ${discountedPrice.toFixed(2)}
               </span>
-              <span className="ml-1 text-xs text-gray-500 line-through">
+              <span className="ml-1 text-xs text-muted-foreground line-through">
                 ${originalPrice.toFixed(2)}
               </span>
             </div>
           </div>
           {isSubscription && (
-            <div className="mt-1 flex items-center text-xs text-green-700">
+            <div className="mt-1 flex items-center text-xs text-green-700 dark:text-green-300">
               <CalendarDays className="mr-1 size-4" />
               <span>
                 You save ${savings.toFixed(2)} per delivery
@@ -150,8 +150,8 @@ export function SubscribeOption({
 
       {/* Frequency selector (only shown when subscription is selected) */}
       {isSubscription && (
-        <div className="mt-4 border-t border-gray-200 pt-4">
-          <label className="mb-2 block text-sm font-medium text-gray-900">
+        <div className="mt-4 border-t border-border pt-4">
+          <label className="mb-2 block text-sm font-medium text-foreground">
             Delivery frequency
           </label>
           <FrequencySelector
@@ -164,11 +164,11 @@ export function SubscribeOption({
 
       {/* Benefits */}
       {isSubscription && (
-        <div className="mt-4 rounded-md bg-green-50 p-3">
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-green-800">
+        <div className="mt-4 rounded-md bg-green-50 p-3 dark:bg-green-950/40">
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-green-800 dark:text-green-200">
             Subscription Benefits
           </h4>
-          <ul className="mt-2 space-y-1 text-xs text-green-700">
+          <ul className="mt-2 space-y-1 text-xs text-green-700 dark:text-green-300">
             <li className="flex items-center">
               <Check className="mr-2 size-4" />
               Save {discountPercent}% on every delivery

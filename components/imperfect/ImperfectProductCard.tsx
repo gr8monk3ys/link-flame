@@ -99,10 +99,10 @@ export const ImperfectProductCard = memo(function ImperfectProductCard({
       {/* Wishlist button - top right */}
       <button
         className={cn(
-          'absolute right-4 top-4 z-10 rounded-full bg-white p-2 shadow-md transition-all',
+          'absolute right-4 top-4 z-10 rounded-full bg-card p-2 shadow-md transition-all',
           isWishlisted
             ? 'text-red-500 opacity-100'
-            : 'text-gray-900 opacity-0 group-hover:opacity-100'
+            : 'text-foreground opacity-0 group-hover:opacity-100'
         )}
         aria-label={
           isWishlisted
@@ -124,7 +124,7 @@ export const ImperfectProductCard = memo(function ImperfectProductCard({
       </button>
 
       {/* Product image */}
-      <div className="aspect-square w-full overflow-hidden rounded-xl bg-gray-100">
+      <div className="aspect-square w-full overflow-hidden rounded-xl bg-muted">
         <Link href={`/products/${product.id}`}>
           <Image
             src={product.image}
@@ -142,21 +142,21 @@ export const ImperfectProductCard = memo(function ImperfectProductCard({
       <div className="mt-4 space-y-2">
         {/* Title and category */}
         <div>
-          <h3 className="text-sm font-medium text-gray-900">
+          <h3 className="text-sm font-medium text-foreground">
             <Link href={`/products/${product.id}`}>
               <span aria-hidden="true" className="absolute inset-0" />
               {product.title}
             </Link>
           </h3>
-          <p className="text-sm text-gray-500">{product.category}</p>
+          <p className="text-sm text-muted-foreground">{product.category}</p>
         </div>
 
         {/* Price display - emphasize savings */}
         <div className="flex items-baseline gap-2">
-          <span className="text-lg font-bold text-amber-600">
+          <span className="text-lg font-bold text-amber-600 dark:text-amber-400">
             ${product.imperfectPrice.toFixed(2)}
           </span>
-          <span className="text-sm text-gray-500 line-through">
+          <span className="text-sm text-muted-foreground line-through">
             ${product.originalPrice.toFixed(2)}
           </span>
         </div>
@@ -182,13 +182,13 @@ export const ImperfectProductCard = memo(function ImperfectProductCard({
         {product.averageRating && (
           <div className="flex items-center space-x-2">
             <div className="flex items-center">
-              <span className="text-sm font-medium text-gray-900">
+              <span className="text-sm font-medium text-foreground">
                 {product.averageRating.toFixed(1)}
               </span>
               <span className="ml-1 text-yellow-400">&#9733;</span>
             </div>
             {product.reviewCount !== undefined && (
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-muted-foreground">
                 ({product.reviewCount} reviews)
               </span>
             )}
@@ -223,11 +223,11 @@ export function ImperfectProductGrid({
       >
         {[...Array(8)].map((_, i) => (
           <div key={i} className="animate-pulse">
-            <div className="aspect-square w-full rounded-xl bg-gray-200" />
+            <div className="aspect-square w-full rounded-xl bg-muted" />
             <div className="mt-4 space-y-3">
-              <div className="h-4 w-3/4 rounded bg-gray-200" />
-              <div className="h-4 w-1/2 rounded bg-gray-200" />
-              <div className="h-4 w-1/3 rounded bg-gray-200" />
+              <div className="h-4 w-3/4 rounded bg-muted" />
+              <div className="h-4 w-1/2 rounded bg-muted" />
+              <div className="h-4 w-1/3 rounded bg-muted" />
             </div>
           </div>
         ))}
@@ -237,13 +237,13 @@ export function ImperfectProductGrid({
 
   if (products.length === 0) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center rounded-lg border-2 border-dashed border-amber-300 bg-amber-50 p-12 text-center">
+      <div className="flex min-h-[400px] items-center justify-center rounded-lg border-2 border-dashed border-amber-300 bg-amber-50 p-12 text-center dark:border-amber-800 dark:bg-amber-950/40">
         <div>
-          <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-amber-100">
-            <LeafIcon className="size-8 text-amber-600" />
+          <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
+            <LeafIcon className="size-8 text-amber-600 dark:text-amber-400" />
           </div>
-          <h3 className="text-lg font-medium text-amber-900">No imperfect items available</h3>
-          <p className="mt-2 text-sm text-amber-700">
+          <h3 className="text-lg font-medium text-amber-900 dark:text-amber-100">No imperfect items available</h3>
+          <p className="mt-2 text-sm text-amber-700 dark:text-amber-300">
             Check back soon! We regularly add new imperfect items with great savings.
           </p>
         </div>

@@ -118,7 +118,7 @@ export default async function BrandPage({ params }: BrandPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-card">
       {/* Breadcrumb */}
       <div className="mx-auto max-w-7xl p-4 sm:px-6 lg:px-8">
         <Link
