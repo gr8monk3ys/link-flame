@@ -7,6 +7,7 @@ import { Share2, Heart, MessageSquare, Bookmark } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { buttonVariants } from "@/components/ui/button"
 import DOMPurify from "isomorphic-dompurify"
+import { slugify } from "@/lib/utils"
 
 interface Author {
   name: string
@@ -48,7 +49,7 @@ export function BlogPost({
           <div className="space-y-2">
             {category && (
               <a
-                href={`/blogs/${category.toLowerCase()}`}
+                href={`/blogs/categories/${slugify(category)}`}
                 className="text-sm font-medium text-primary hover:underline"
               >
                 {category}

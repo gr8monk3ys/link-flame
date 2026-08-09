@@ -3,6 +3,7 @@ import Link from "next/link"
 import { format, parseISO } from "date-fns"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import type { BlogPost } from "@/lib/blog"
+import { slugify } from "@/lib/utils"
 
 interface BlogCardProps {
   post: BlogPost
@@ -15,7 +16,7 @@ export function BlogCard({ post, featured = false }: BlogCardProps) {
     ? format(parseISO(publishedAt), "MMM d, yyyy")
     : format(publishedAt, "MMM d, yyyy")
 
-  const categorySlug = category ? category.toLowerCase() : 'uncategorized'
+  const categorySlug = category ? slugify(category) : 'uncategorized'
 
   return (
     <article data-testid="blog-card" className="h-full">

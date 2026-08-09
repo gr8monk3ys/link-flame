@@ -4,6 +4,7 @@ import { NewsletterSignup } from "@/components/shared/newsletter-signup"
 import { TagCloud } from "@/components/blogs/tag-cloud"
 import { PageProps } from "@/types/next"
 import { Metadata } from "next"
+import { slugify } from "@/lib/utils"
 
 // Render at request time — DB not available during Vercel build
 export const dynamic = 'force-dynamic';
@@ -13,7 +14,9 @@ export async function generateStaticParams() {
     const posts = await getAllPosts()
     const categories = [...new Set(posts.map(post => post.category).filter((cat): cat is string => cat !== undefined))]
     return categories.map(category => ({
-      category: encodeURIComponent(category)
+      // Must match the form the links use, or the prerendered params and the
+      // hrefs disagree.
+      category: slugify(category)
     }))
   } catch {
     return []

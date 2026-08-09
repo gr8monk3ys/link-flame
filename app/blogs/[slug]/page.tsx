@@ -6,6 +6,7 @@ import { notFound } from 'next/navigation'
 import { format, parseISO } from 'date-fns'
 import DOMPurify from 'isomorphic-dompurify'
 import { getBaseUrl } from '@/lib/url'
+import { slugify } from "@/lib/utils"
 
 // Render at request time — DB not available during Vercel build
 export const dynamic = 'force-dynamic';
@@ -170,7 +171,7 @@ export default async function BlogPost({ params }: PageProps<{ slug: string }>) 
         '@type': 'ListItem',
         position: 3,
         name: post.category,
-        item: `${siteUrl}/blogs/categories/${post.category?.toLowerCase()}`,
+        item: `${siteUrl}/blogs/categories/${post.category ? slugify(post.category) : ''}`,
       },
       {
         '@type': 'ListItem',
@@ -243,7 +244,7 @@ export default async function BlogPost({ params }: PageProps<{ slug: string }>) 
           <div className="not-prose mt-4 flex flex-wrap gap-2">
             {post.category && (
               <a
-                href={`/blogs/categories/${post.category.toLowerCase()}`}
+                href={`/blogs/categories/${slugify(post.category)}`}
                 className="inline-block rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary hover:bg-primary/20"
               >
                 {post.category}

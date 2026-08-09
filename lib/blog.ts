@@ -1,6 +1,7 @@
 import { Author, BlogPost } from '@/types/blog'
 import { prisma } from './prisma'
 import { transformPrismaPost } from './transformations/blog'
+import { slugify } from './utils'
 
 export type { BlogPost, Author }
 
@@ -117,15 +118,20 @@ export async function getFeaturedPosts(): Promise<BlogPost[]> {
 export async function getPostsByCategory(category: string): Promise<BlogPost[]> {
   if (typeof window === 'undefined') {
     try {
+      // Categories are stored as a display name only, so the URL segment is
+      // always a derived form of it. Comparing slugified name to slugified
+      // segment accepts every form the app links with - "Green Home",
+      // "green home", "green-home" - which matters because the app really did
+      // emit two of them: the post header linked "green home" (4 posts) while
+      // the card linked "green-home" (0 posts, and still a 200).
+      const wanted = slugify(category)
+      const match = (await prisma.category.findMany({ select: { id: true, name: true } }))
+        .find(candidate => slugify(candidate.name) === wanted)
+
+      if (!match) return []
+
       const posts = await prisma.blogPost.findMany({
-        where: {
-          // Case-insensitive because the links that reach this page lowercase
-          // the name (`/blogs/categories/${post.category.toLowerCase()}`) while
-          // the stored name keeps its capitalisation. A case-sensitive `equals`
-          // meant every category that was not already lowercase - "Green Home",
-          // "Guides" - rendered "(0 articles)".
-          category: { name: { equals: category, mode: 'insensitive' } },
-        },
+        where: { categoryId: match.id },
         include: { author: true, category: true },
         orderBy: { publishedAt: 'desc' },
       })
@@ -137,8 +143,9 @@ export async function getPostsByCategory(category: string): Promise<BlogPost[]> 
     }
   }
   const posts = await getAllPosts()
+  const wanted = slugify(category)
   return posts.filter(post =>
-    post.category && post.category.toLowerCase() === category.toLowerCase()
+    post.category && slugify(post.category) === wanted
   ).sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
 }
 
