@@ -56,19 +56,25 @@ export function NewsletterSignup({
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex gap-4">
+          {/* Wraps rather than squeezing. This same component sits in a wide
+              page section and in a narrow footer column; on one fixed row the
+              footer copy squeezed the field until its own placeholder read
+              "Enter yc". A min width plus wrapping keeps one row where there is
+              space and drops the button below where there is not. */}
+          <div className="flex flex-wrap gap-2">
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
-              className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              aria-label="Email address"
+              className="flex h-10 w-full min-w-44 flex-1 rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               disabled={status === "loading"}
               required
             />
             <button
               type="submit"
-              className={buttonVariants()}
+              className={`${buttonVariants()} shrink-0`}
               disabled={status === "loading"}
             >
               {status === "loading" ? "Subscribing..." : "Subscribe"}
