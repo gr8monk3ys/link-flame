@@ -19,9 +19,15 @@ export default function ForgotPasswordPage() {
     setLoading(true)
 
     try {
+      // /api/csrf issues a double-submit cookie and works for signed-out
+      // visitors, which is what this page always is.
+      const csrfResponse = await fetch("/api/csrf", { cache: "no-store" })
+      if (!csrfResponse.ok) throw new Error("Failed to get CSRF token")
+      const { token } = await csrfResponse.json()
+
       const response = await fetch("/api/auth/forgot-password", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "X-CSRF-Token": token },
         body: JSON.stringify({ email }),
       })
 

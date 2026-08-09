@@ -15,26 +15,12 @@ import {
   createOrderFromSubscriptionInvoice,
   type SubscriptionInvoiceContext,
 } from '@/lib/stripe-subscription';
+import { resolveWebhookSecret } from '@/lib/stripe-webhook-secret';
 
 export const dynamic = 'force-dynamic';
 
 function getWebhookSecret(): string {
-  const dedicatedSecret = process.env.STRIPE_SUBSCRIPTION_WEBHOOK_SECRET;
-  if (dedicatedSecret) {
-    return dedicatedSecret;
-  }
-
-  const sharedSecret = process.env.STRIPE_WEBHOOK_SECRET;
-  if (!sharedSecret) {
-    throw new Error(
-      'Missing STRIPE_SUBSCRIPTION_WEBHOOK_SECRET or STRIPE_WEBHOOK_SECRET'
-    );
-  }
-
-  logger.warn(
-    'STRIPE_SUBSCRIPTION_WEBHOOK_SECRET not set; using STRIPE_WEBHOOK_SECRET fallback'
-  );
-  return sharedSecret;
+  return resolveWebhookSecret('STRIPE_SUBSCRIPTION_WEBHOOK_SECRET');
 }
 
 function validateWebhookSignature(body: string, signature: string): Stripe.Event {
