@@ -147,7 +147,7 @@ export function BundleBuilder({ bundle }: BundleBuilderProps) {
                 priority
                 sizes="(max-width: 1024px) 100vw, 33vw"
               />
-              <Badge className="absolute left-4 top-4 bg-green-600 px-4 py-1 text-lg text-white">
+              <Badge className="absolute left-4 top-4 bg-green-700 px-4 py-1 text-lg text-white">
                 Save {bundle.discountPercent}%
               </Badge>
             </div>
@@ -201,7 +201,7 @@ export function BundleBuilder({ bundle }: BundleBuilderProps) {
                 <span className="text-lg text-muted-foreground line-through">
                   ${bundle.pricing.basePrice.toFixed(2)}
                 </span>
-                <span className="text-lg font-medium text-green-600">
+                <span className="text-lg font-medium text-green-700 dark:text-green-400">
                   Save ${bundle.pricing.savings.toFixed(2)}
                 </span>
               </div>

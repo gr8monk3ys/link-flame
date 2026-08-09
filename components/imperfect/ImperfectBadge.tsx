@@ -28,8 +28,8 @@ export function ImperfectBadge({
   };
 
   const variantClasses = {
-    default: 'bg-amber-100 text-amber-800 border border-amber-200',
-    minimal: 'bg-amber-50 text-amber-700',
+    default: 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 border border-amber-200 dark:border-amber-900/50',
+    minimal: 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300',
     prominent: 'bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-md',
   };
 
@@ -94,7 +94,7 @@ export function ImperfectLabel({ size = 'md', className }: ImperfectLabelProps) 
     <span
       className={cn(
         'inline-flex items-center gap-1.5 rounded-full font-medium',
-        'border border-amber-200 bg-amber-100 text-amber-800',
+        'border border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-900/50 dark:bg-amber-900/30 dark:text-amber-200',
         sizeClasses[size],
         className
       )}
@@ -140,7 +140,7 @@ export function ImperfectSavingsBadge({
   return (
     <span
       className={cn(
-        'inline-flex items-center font-semibold text-green-600',
+        'inline-flex items-center font-semibold text-green-700 dark:text-green-400',
         sizeClasses[size],
         className
       )}

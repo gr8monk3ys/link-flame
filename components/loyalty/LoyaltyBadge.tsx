@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge'
 // Tier colors and icons
 const TIER_CONFIG = {
   SEEDLING: {
-    color: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+    color: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-900/50',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -23,7 +23,7 @@ const TIER_CONFIG = {
     label: 'Seedling',
   },
   SPROUT: {
-    color: 'bg-green-100 text-green-800 border-green-200',
+    color: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 border-green-200 dark:border-green-900/50',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -37,7 +37,7 @@ const TIER_CONFIG = {
     label: 'Sprout',
   },
   BLOOM: {
-    color: 'bg-pink-100 text-pink-800 border-pink-200',
+    color: 'bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-200 border-pink-200 dark:border-pink-900/50',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -51,7 +51,7 @@ const TIER_CONFIG = {
     label: 'Bloom',
   },
   FLOURISH: {
-    color: 'bg-amber-100 text-amber-800 border-amber-200',
+    color: 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 border-amber-200 dark:border-amber-900/50',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"

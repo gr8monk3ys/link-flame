@@ -129,12 +129,12 @@ export function GiftCardCheckout({
   // If a gift card is applied, show the applied state
   if (appliedCard) {
     return (
-      <div className={cn('rounded-lg border bg-green-50 p-4', className)}>
+      <div className={cn('rounded-lg border bg-green-50 p-4 dark:bg-green-950/40', className)}>
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-3">
-            <div className="flex size-8 items-center justify-center rounded-full bg-green-100">
+            <div className="flex size-8 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
               <svg
-                className="size-4 text-green-600"
+                className="size-4 text-green-700 dark:text-green-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -148,9 +148,9 @@ export function GiftCardCheckout({
               </svg>
             </div>
             <div>
-              <p className="font-medium text-green-800">Gift Card Applied</p>
-              <p className="font-mono text-sm text-green-700">{appliedCard.code}</p>
-              <p className="mt-1 text-sm text-green-600">
+              <p className="font-medium text-green-800 dark:text-green-200">Gift Card Applied</p>
+              <p className="font-mono text-sm text-green-700 dark:text-green-300">{appliedCard.code}</p>
+              <p className="mt-1 text-sm text-green-700 dark:text-green-400">
                 ${appliedCard.amountApplied.toFixed(2)} discount applied
                 {appliedCard.remainingBalance > 0 && (
                   <span className="text-green-500">
@@ -167,7 +167,7 @@ export function GiftCardCheckout({
             size="sm"
             onClick={handleRemove}
             disabled={disabled}
-            className="text-green-700 hover:bg-green-100 hover:text-green-800"
+            className="text-green-700 hover:bg-green-100 hover:text-green-800 dark:text-green-300"
           >
             Remove
           </Button>
@@ -186,7 +186,7 @@ export function GiftCardCheckout({
       >
         <div className="flex items-center gap-2">
           <svg
-            className="size-5 text-gray-500"
+            className="size-5 text-muted-foreground"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -198,11 +198,11 @@ export function GiftCardCheckout({
               d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"
             />
           </svg>
-          <span className="font-medium text-gray-700">Have a gift card?</span>
+          <span className="font-medium text-foreground">Have a gift card?</span>
         </div>
         <svg
           className={cn(
-            'size-5 text-gray-400 transition-transform',
+            'size-5 text-muted-foreground transition-transform',
             isExpanded && 'rotate-180'
           )}
           fill="none"
@@ -271,7 +271,7 @@ export function GiftCardCheckout({
               </Button>
             </div>
             {error && (
-              <p className="text-sm text-red-600" role="alert">
+              <p className="text-sm text-red-600 dark:text-red-400" role="alert">
                 {error}
               </p>
             )}

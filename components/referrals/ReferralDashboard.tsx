@@ -248,7 +248,7 @@ export function ReferralDashboard() {
                   <div className="flex items-center gap-4">
                     <StatusBadge status={referral.status} />
                     {referral.status === "REWARDED" && (
-                      <span className="text-sm font-medium text-green-600">
+                      <span className="text-sm font-medium text-green-700 dark:text-green-400">
                         +{referral.rewardPoints} pts
                       </span>
                     )}
@@ -311,25 +311,25 @@ function StatusBadge({ status }: { status: string }) {
   switch (status) {
     case "PENDING":
       return (
-        <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+        <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200">
           Pending
         </Badge>
       );
     case "COMPLETED":
       return (
-        <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+        <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200">
           Completed
         </Badge>
       );
     case "REWARDED":
       return (
-        <Badge variant="secondary" className="bg-green-100 text-green-800">
+        <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200">
           Rewarded
         </Badge>
       );
     case "EXPIRED":
       return (
-        <Badge variant="secondary" className="bg-gray-100 text-gray-800">
+        <Badge variant="secondary" className="bg-muted text-foreground">
           Expired
         </Badge>
       );

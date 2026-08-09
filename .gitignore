@@ -46,3 +46,4 @@ prisma/dev.db
 
 # Local agent/tooling settings
 .claude/settings.local.json
+.playwright-mcp/

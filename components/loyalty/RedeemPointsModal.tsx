@@ -203,12 +203,12 @@ export function RedeemPointsModal({
           </div>
         ) : preview.availablePoints < preview.minimumRedemption ? (
           <div className="py-8 text-center">
-            <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-amber-100">
+            <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="size-8 text-amber-600"
+                className="size-8 text-amber-600 dark:text-amber-400"
               >
                 <path
                   fillRule="evenodd"
@@ -279,15 +279,15 @@ export function RedeemPointsModal({
             )}
 
             {/* Discount Preview */}
-            <div className="rounded-lg border border-green-200 bg-green-50 p-4">
+            <div className="rounded-lg border border-green-200 bg-green-50 p-4 dark:border-green-900/50 dark:bg-green-950/40">
               <div className="flex items-center justify-between">
-                <span className="font-medium text-green-800">Your Discount</span>
-                <span className="text-2xl font-bold text-green-600">
+                <span className="font-medium text-green-800 dark:text-green-200">Your Discount</span>
+                <span className="text-2xl font-bold text-green-700 dark:text-green-400">
                   ${discount.toFixed(2)}
                 </span>
               </div>
               {maxOrderTotal !== undefined && discount > maxOrderTotal && (
-                <p className="mt-2 text-sm text-amber-600">
+                <p className="mt-2 text-sm text-amber-600 dark:text-amber-400">
                   Note: Discount will be capped at your order total (${maxOrderTotal.toFixed(2)})
                 </p>
               )}
@@ -295,7 +295,7 @@ export function RedeemPointsModal({
 
             {/* Error message */}
             {error && (
-              <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+              <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400">
                 {error}
               </div>
             )}
@@ -309,7 +309,7 @@ export function RedeemPointsModal({
           <Button
             onClick={handleRedeem}
             disabled={!canRedeem || redeeming}
-            className="bg-green-600 hover:bg-green-700"
+            className="bg-green-700 hover:bg-green-700"
           >
             {redeeming ? (
               <>
@@ -487,12 +487,12 @@ export function InlineRedeemWidget({
 
   if (appliedDiscount !== null) {
     return (
-      <div className="flex items-center justify-between rounded-lg border border-green-200 bg-green-50 p-3">
+      <div className="flex items-center justify-between rounded-lg border border-green-200 bg-green-50 p-3 dark:border-green-900/50 dark:bg-green-950/40">
         <div>
-          <span className="font-medium text-green-800">
+          <span className="font-medium text-green-800 dark:text-green-200">
             ${appliedDiscount.toFixed(2)} discount applied
           </span>
-          <span className="ml-2 text-sm text-green-600">
+          <span className="ml-2 text-sm text-green-700 dark:text-green-400">
             ({pointsToRedeem} points)
           </span>
         </div>
@@ -500,7 +500,7 @@ export function InlineRedeemWidget({
           variant="ghost"
           size="sm"
           onClick={handleRemoveDiscount}
-          className="text-red-600 hover:bg-red-50 hover:text-red-700"
+          className="text-red-600 hover:bg-red-50 hover:text-red-700 dark:text-red-400"
         >
           Remove
         </Button>
@@ -540,14 +540,14 @@ export function InlineRedeemWidget({
         <div className="flex items-center justify-between">
           <span className="text-sm">
             Use {pointsToRedeem.toLocaleString()} points for{' '}
-            <span className="font-medium text-green-600">${discount.toFixed(2)} off</span>
+            <span className="font-medium text-green-700 dark:text-green-400">${discount.toFixed(2)} off</span>
           </span>
           <Button
             size="sm"
             onClick={handleApplyDiscount}
             disabled={!canApply || applying}
             className={cn(
-              'bg-green-600 hover:bg-green-700',
+              'bg-green-700 hover:bg-green-700',
               applying && 'opacity-50'
             )}
           >
@@ -557,7 +557,7 @@ export function InlineRedeemWidget({
       )}
 
       {error && (
-        <p className="text-sm text-red-600">{error}</p>
+        <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
       )}
     </div>
   )

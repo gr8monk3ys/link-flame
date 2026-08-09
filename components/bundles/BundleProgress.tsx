@@ -34,7 +34,7 @@ export function BundleProgress({
       <div className="flex items-center justify-between">
         <div className="text-sm font-medium">
           {isComplete ? (
-            <span className="text-green-600">Bundle complete!</span>
+            <span className="text-green-700 dark:text-green-400">Bundle complete!</span>
           ) : (
             <span className="text-muted-foreground">
               Select {itemsNeeded} more item{itemsNeeded !== 1 ? "s" : ""} to complete your bundle
@@ -44,7 +44,7 @@ export function BundleProgress({
         <div className="text-sm">
           <span className={cn(
             "font-semibold",
-            isComplete ? "text-green-600" : "text-foreground",
+            isComplete ? "text-green-700 dark:text-green-400" : "text-foreground",
             isOverMax && "text-destructive"
           )}>
             {currentItems}

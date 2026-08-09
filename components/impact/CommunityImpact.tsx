@@ -124,7 +124,7 @@ export function CommunityImpact({
             Every sustainable purchase adds up to meaningful change.
           </p>
           {totalContributors > 0 && (
-            <div className="mt-4 flex items-center justify-center gap-2 text-green-600">
+            <div className="mt-4 flex items-center justify-center gap-2 text-green-700 dark:text-green-400">
               <Users className="size-5" />
               <span className="font-medium">
                 {totalContributors.toLocaleString()} eco-conscious shoppers
@@ -146,10 +146,10 @@ export function CommunityImpact({
               <CardContent className="pb-4 pt-6">
                 <div className="mb-3 flex justify-center">
                   <div className="flex size-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
-                    <Icon className="size-6 text-green-600 dark:text-green-400" />
+                    <Icon className="size-6 text-green-700 dark:text-green-400" />
                   </div>
                 </div>
-                <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                <div className="text-2xl font-bold text-green-700 dark:text-green-400">
                   {formatValue(metric.totalValue)}
                 </div>
                 <div className="mb-1 text-sm text-muted-foreground">

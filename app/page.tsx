@@ -18,7 +18,10 @@ export const metadata: Metadata = {
 
 export default function IndexPage() {
   return (
-    <div className="space-y-24 lg:space-y-32">
+    // No wrapper spacing: every section below owns its own vertical padding
+    // (py-12 through py-28). Adding space-y here stacked on top of that and
+    // pushed adjacent sections ~288px apart.
+    <div>
       <HeroSection />
 
       {/* Trust / value props (inspired by leading eco-stores) */}

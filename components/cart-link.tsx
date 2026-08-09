@@ -39,7 +39,7 @@ export function CartLink({ className }: CartLinkProps) {
         <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
       </svg>
       {hasInitializedCart && itemCount > 0 && (
-        <span className="absolute -right-1 -top-1 flex size-5 items-center justify-center rounded-full bg-green-600 text-xs font-bold text-white">
+        <span className="absolute -right-1 -top-1 flex size-5 items-center justify-center rounded-full bg-green-700 text-xs font-bold text-white">
           {itemCount}
         </span>
       )}

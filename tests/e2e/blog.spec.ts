@@ -68,7 +68,9 @@ test.describe('Blog', () => {
 
       // Should have author or date
       const hasMetadata = await firstPost
-        .locator('time, text=/by /i, text=/\\d{4}/i')
+        .locator('time')
+        .or(firstPost.getByText(/by /i))
+        .or(firstPost.getByText(/\d{4}/))
         .first()
         .isVisible({ timeout: 3000 })
         .catch(() => false)
@@ -98,9 +100,9 @@ test.describe('Blog', () => {
       await page.waitForLoadState('domcontentloaded')
 
       // Look for featured section
-      const featuredSection = page.locator(
-        'text=/featured/i, [data-testid="featured-posts"]'
-      )
+      const featuredSection = page
+        .getByText(/featured/i)
+        .or(page.locator('[data-testid="featured-posts"]'))
       const hasFeatured = await featuredSection
         .isVisible({ timeout: 5000 })
         .catch(() => false)
@@ -175,9 +177,9 @@ test.describe('Blog', () => {
       ])
 
       // Should show author info
-      const authorInfo = page.locator(
-        'text=/by /i, [data-testid="author"], .author, img[alt*="author"]'
-      )
+      const authorInfo = page
+        .getByText(/by /i)
+        .or(page.locator('[data-testid="author"], .author, img[alt*="author"]'))
       const hasAuthor = await authorInfo
         .first()
         .isVisible({ timeout: 3000 })
@@ -201,7 +203,7 @@ test.describe('Blog', () => {
       ])
 
       // Should show date
-      const dateElement = page.locator('time, text=/\\d{4}/i')
+      const dateElement = page.locator('time').or(page.getByText(/\d{4}/))
       const hasDate = await dateElement
         .first()
         .isVisible({ timeout: 3000 })
@@ -226,7 +228,7 @@ test.describe('Blog', () => {
       await page.waitForSelector('article', { timeout: 10000 })
 
       // Should show reading time
-      const readingTime = page.locator('text=/min read/i, text=/minute/i')
+      const readingTime = page.getByText(/min read|minute/i)
       const hasReadingTime = await readingTime
         .first()
         .isVisible({ timeout: 3000 })
@@ -271,9 +273,9 @@ test.describe('Blog', () => {
       await page.waitForSelector('article', { timeout: 10000 })
 
       // Should show category or tags
-      const categoryTags = page.locator(
-        'a[href*="/categories/"], a[href*="/tags/"], text=/#/i'
-      )
+      const categoryTags = page
+        .locator('a[href*="/categories/"], a[href*="/tags/"]')
+        .or(page.getByText(/#/))
       const hasCategoryTags = await categoryTags
         .first()
         .isVisible({ timeout: 3000 })
@@ -285,34 +287,38 @@ test.describe('Blog', () => {
 
   test.describe('Category Filtering', () => {
     test('can navigate to category page', async ({ page }) => {
-      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
-      await page.waitForLoadState('domcontentloaded')
+      // Wait for `load`, not just `domcontentloaded`: the blog index renders
+      // hero images without intrinsic sizing (they show up as LCP warnings),
+      // so a late image load shifts layout and can move a link out from under
+      // an in-flight click, leaving the URL unchanged.
+      await page.goto('/blogs')
+      await page.waitForLoadState('load')
 
-      // Find category link
-      const categoryLink = page.locator(
-        'a[href*="/blogs/categories/"], a[href*="/categories/"], [data-testid="category-link"]'
-      )
+      const categoryLink = page
+        .locator('a[href*="/blogs/categories/"], a[href*="/categories/"], [data-testid="category-link"]')
+        .first()
 
-      if (await categoryLink.first().isVisible({ timeout: 5000 }).catch(() => false)) {
-        const link = categoryLink.first()
-        const categoryHref = await link.getAttribute('href')
+      if (!(await categoryLink.isVisible({ timeout: 5000 }).catch(() => false))) {
+        return
+      }
 
-        await link.click()
-        await page.waitForLoadState('domcontentloaded')
+      const categoryHref = await categoryLink.getAttribute('href')
 
-        if (categoryHref?.includes('/blogs/categories/')) {
-          await expect
-            .poll(() => page.url(), { timeout: 15000 })
-            .toContain(categoryHref)
-        } else {
-          // Fallback for alternate category URL structures.
-          await expect
-            .poll(() => page.url(), { timeout: 15000 })
-            .toMatch(/\/blogs\/categories\/[a-zA-Z0-9-]+|\/categories\/[a-zA-Z0-9-]+/)
-        }
+      // Race the wait against the click so navigation cannot be missed. The
+      // budget is generous because the suite runs against `next dev`, so the
+      // first visit to /blogs/categories/[slug] pays for a route compile.
+      await Promise.all([
+        page.waitForURL(/\/(blogs\/)?categories\/.+/, { timeout: 30000 }),
+        categoryLink.click(),
+      ])
 
-        // Should be on category page
-        expect(page.url()).toMatch(/\/blogs\/categories\/[a-zA-Z0-9-]+|\/categories\/[a-zA-Z0-9-]+/)
+      // Compare decoded: some seeded category slugs contain spaces
+      // ("/blogs/categories/green home"), which the browser percent-encodes,
+      // so a raw substring check against the address bar would never match.
+      if (categoryHref) {
+        expect(decodeURIComponent(new URL(page.url()).pathname)).toContain(
+          decodeURIComponent(categoryHref)
+        )
       }
     })
 
@@ -361,23 +367,28 @@ test.describe('Blog', () => {
 
   test.describe('Tag Filtering', () => {
     test('can navigate to tag page', async ({ page }) => {
-      await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
-      await page.waitForLoadState('domcontentloaded')
+      // `load` rather than `domcontentloaded`, for the same reason as the
+      // category test: late-loading hero images shift layout under the click.
+      await page.goto('/blogs')
+      await page.waitForLoadState('load')
 
-      // Find tag link
-      const tagLink = page.locator(
-        'a[href*="/blogs/tags/"], a[href*="/tags/"], [data-testid="tag-link"]'
-      )
+      const tagLink = page
+        .locator('a[href*="/blogs/tags/"], a[href*="/tags/"], [data-testid="tag-link"]')
+        .first()
 
-      if (await tagLink.first().isVisible({ timeout: 5000 }).catch(() => false)) {
-        await Promise.all([
-          page.waitForURL(/\/blogs\/tags\/[a-zA-Z0-9-]+/, { timeout: 10000 }),
-          tagLink.first().click(),
-        ])
-
-        // Should be on tag page
-        expect(page.url()).toContain('/tags/')
+      if (!(await tagLink.isVisible({ timeout: 5000 }).catch(() => false))) {
+        return
       }
+
+      await Promise.all([
+        // `.+` rather than [a-zA-Z0-9-]+: seeded slugs can contain spaces,
+        // which arrive percent-encoded and would not match a strict class.
+        // Budget is generous because the first visit compiles the route.
+        page.waitForURL(/\/(blogs\/)?tags\/.+/, { timeout: 30000 }),
+        tagLink.click(),
+      ])
+
+      expect(page.url()).toContain('/tags/')
     })
 
     test('tag page shows filtered posts', async ({ page }) => {
@@ -660,7 +671,9 @@ test.describe('Blog', () => {
 
       if (await tagLink.first().isVisible({ timeout: 3000 }).catch(() => false)) {
         await Promise.all([
-          page.waitForURL(/\/blogs\/tags\/[a-zA-Z0-9-]+/, { timeout: 10000 }),
+          // Generous for the same reason as the category test: the first visit
+          // to /blogs/tags/[slug] pays for an on-demand dev compile.
+          page.waitForURL(/\/blogs\/tags\/[a-zA-Z0-9-]+/, { timeout: 30000 }),
           tagLink.first().click(),
         ])
 

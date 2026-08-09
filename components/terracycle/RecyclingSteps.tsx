@@ -89,7 +89,7 @@ const steps = [
     description:
       "Save your empty product packaging from Link Flame purchases. This includes bottles, tubes, jars, pumps, and caps from our sustainable products.",
     tip: "Keep a small bin in your bathroom or kitchen to collect empties",
-    color: "text-emerald-600 dark:text-emerald-400",
+    color: "text-emerald-700 dark:text-emerald-400",
     bgColor: "bg-emerald-100 dark:bg-emerald-900/50",
     borderColor: "border-emerald-200 dark:border-emerald-800",
   },
@@ -100,7 +100,7 @@ const steps = [
     description:
       "Once you have collected enough empties, request a free prepaid shipping label from our TerraCycle program page. Pack your items and drop off at any shipping location.",
     tip: "No minimum required, but we recommend waiting until you have 10+ items",
-    color: "text-teal-600 dark:text-teal-400",
+    color: "text-teal-700 dark:text-teal-400",
     bgColor: "bg-teal-100 dark:bg-teal-900/50",
     borderColor: "border-teal-200 dark:border-teal-800",
   },
@@ -111,7 +111,7 @@ const steps = [
     description:
       "TerraCycle receives your packaging and sorts it by material type. Items are then cleaned and processed to be recycled into new raw materials or upcycled into new products.",
     tip: "Your packaging could become playground equipment, park benches, or new containers",
-    color: "text-cyan-600 dark:text-cyan-400",
+    color: "text-cyan-700 dark:text-cyan-400",
     bgColor: "bg-cyan-100 dark:bg-cyan-900/50",
     borderColor: "border-cyan-200 dark:border-cyan-800",
   },
@@ -122,7 +122,7 @@ const steps = [
     description:
       "Track your recycling impact in your account dashboard. Earn loyalty points for each shipment, plus exclusive discounts and early access to new sustainable products.",
     tip: "Every shipment earns you 50 loyalty points toward your next purchase",
-    color: "text-green-600 dark:text-green-400",
+    color: "text-green-700 dark:text-green-400",
     bgColor: "bg-green-100 dark:bg-green-900/50",
     borderColor: "border-green-200 dark:border-green-800",
   },
@@ -134,7 +134,7 @@ export function RecyclingSteps({ className }: RecyclingStepsProps) {
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="mb-16 text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
+          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             How It Works
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
@@ -153,7 +153,7 @@ export function RecyclingSteps({ className }: RecyclingStepsProps) {
               <div
                 key={step.number}
                 className={cn(
-                  "relative rounded-2xl border bg-white p-6 shadow-sm transition-all hover:shadow-md dark:bg-gray-900",
+                  "relative rounded-2xl border bg-card p-6 shadow-sm transition-all hover:shadow-md",
                   step.borderColor
                 )}
               >
@@ -188,7 +188,7 @@ export function RecyclingSteps({ className }: RecyclingStepsProps) {
                 </div>
 
                 {/* Content */}
-                <h3 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">
+                <h3 className="mb-2 text-xl font-semibold text-foreground">
                   {step.title}
                 </h3>
                 <p className="mb-4 text-sm text-muted-foreground">
@@ -203,7 +203,7 @@ export function RecyclingSteps({ className }: RecyclingStepsProps) {
                   )}
                 >
                   <span className={cn("font-semibold", step.color)}>Tip:</span>{" "}
-                  <span className="text-gray-700 dark:text-gray-300">{step.tip}</span>
+                  <span className="text-foreground">{step.tip}</span>
                 </div>
               </div>
             ))}

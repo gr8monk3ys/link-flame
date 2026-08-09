@@ -47,7 +47,7 @@ export function BrandHero({ brand, className }: BrandHeroProps) {
   return (
     <section
       className={cn(
-        'relative overflow-hidden bg-gradient-to-br from-green-50 via-white to-emerald-50',
+        'relative overflow-hidden bg-gradient-to-br from-green-50 via-white to-emerald-50 dark:from-green-950/40 dark:via-background dark:to-emerald-950/40',
         className
       )}
     >
@@ -55,7 +55,7 @@ export function BrandHero({ brand, className }: BrandHeroProps) {
         <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
           {/* Logo Section */}
           <div className="relative mx-auto w-full max-w-md lg:max-w-none">
-            <div className="relative aspect-square rounded-2xl border bg-white p-8 shadow-lg">
+            <div className="relative aspect-square rounded-2xl border bg-card p-8 shadow-lg">
               {brand.logo ? (
                 <Image
                   src={brand.logo}
@@ -67,7 +67,7 @@ export function BrandHero({ brand, className }: BrandHeroProps) {
                 />
               ) : (
                 <div className="flex size-full items-center justify-center">
-                  <Building2 className="size-32 text-gray-300" />
+                  <Building2 className="size-32 text-muted-foreground/40" />
                 </div>
               )}
 
@@ -81,7 +81,7 @@ export function BrandHero({ brand, className }: BrandHeroProps) {
 
           {/* Content Section */}
           <div className="text-center lg:text-left">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl lg:text-5xl">
+            <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
               {brand.name}
             </h1>
 
@@ -110,7 +110,7 @@ export function BrandHero({ brand, className }: BrandHeroProps) {
             {/* Certifications */}
             {certificationDetails.length > 0 && (
               <div className="mt-6">
-                <h3 className="mb-3 text-sm font-medium text-gray-900">
+                <h3 className="mb-3 text-sm font-medium text-foreground">
                   Certifications
                 </h3>
                 <div className="flex flex-wrap justify-center gap-2 lg:justify-start">
@@ -118,7 +118,7 @@ export function BrandHero({ brand, className }: BrandHeroProps) {
                     <Badge
                       key={cert.slug}
                       variant="secondary"
-                      className="bg-green-100 text-green-800 hover:bg-green-200"
+                      className="bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-200"
                       title={cert.description}
                     >
                       {cert.name}
@@ -131,7 +131,7 @@ export function BrandHero({ brand, className }: BrandHeroProps) {
             {/* Values */}
             {valueDetails.length > 0 && (
               <div className="mt-4">
-                <h3 className="mb-3 text-sm font-medium text-gray-900">
+                <h3 className="mb-3 text-sm font-medium text-foreground">
                   Brand Values
                 </h3>
                 <div className="flex flex-wrap justify-center gap-2 lg:justify-start">
@@ -139,7 +139,7 @@ export function BrandHero({ brand, className }: BrandHeroProps) {
                     <Badge
                       key={val.slug}
                       variant="outline"
-                      className="border-blue-200 text-blue-700"
+                      className="border-blue-200 text-blue-700 dark:border-blue-900/50 dark:text-blue-300"
                       title={val.description}
                     >
                       {val.name}

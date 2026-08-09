@@ -186,9 +186,9 @@ test.describe('Product Browsing', () => {
       await page.goto('/collections', { waitUntil: 'domcontentloaded' })
 
       // Should show loading state (skeletons or spinner)
-      const loadingState = page.locator(
-        '.animate-pulse, [data-testid="loading"], text=/loading/i'
-      )
+      const loadingState = page
+        .locator('.animate-pulse, [data-testid="loading"]')
+        .or(page.getByText(/loading/i))
 
       // Loading state may be brief, just verify page loads
       await page.waitForLoadState('domcontentloaded')
@@ -469,9 +469,9 @@ test.describe('Product Browsing', () => {
       await goToFirstProduct(page)
 
       // Check for reviews section
-      const reviews = page.locator(
-        'text=/reviews?/i, [data-testid="reviews"], .reviews'
-      )
+      const reviews = page
+        .getByText(/reviews?/i)
+        .or(page.locator('[data-testid="reviews"], .reviews'))
       const hasReviews = await reviews
         .first()
         .isVisible({ timeout: 3000 })
@@ -487,9 +487,9 @@ test.describe('Product Browsing', () => {
       await goToFirstProduct(page)
 
       // Check for sustainability/eco information
-      const ecoInfo = page.locator(
-        'text=/vegan|organic|plastic.free|cruelty.free|carbon/i, [data-testid="eco-impact"]'
-      )
+      const ecoInfo = page
+        .getByText(/vegan|organic|plastic.free|cruelty.free|carbon/i)
+        .or(page.locator('[data-testid="eco-impact"]'))
       const hasEcoInfo = await ecoInfo
         .first()
         .isVisible({ timeout: 3000 })
@@ -522,9 +522,10 @@ test.describe('Product Browsing', () => {
       await waitForCartUpdate(page)
 
       // Verify item was added (toast notification or cart count)
-      const toast = page.locator(
-        '[data-sonner-toast], .toast, text=/added to cart/i'
-      )
+      const toast = page
+        .locator('[data-sonner-toast], .toast')
+        .or(page.getByText(/added to cart/i))
+        .first()
       const hasToast = await toast
         .isVisible({ timeout: 3000 })
         .catch(() => false)
@@ -601,9 +602,10 @@ test.describe('Product Browsing', () => {
         await waitForCartUpdate(page)
 
         // Verify success
-        const toast = page.locator(
-          '[data-sonner-toast], .toast, text=/added to cart/i'
-        )
+        const toast = page
+          .locator('[data-sonner-toast], .toast')
+          .or(page.getByText(/added to cart/i))
+          .first()
         const hasToast = await toast
           .isVisible({ timeout: 3000 })
           .catch(() => false)

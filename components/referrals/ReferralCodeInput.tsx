@@ -101,23 +101,23 @@ export function ReferralCodeInput({
           <Tag className="size-4" />
           Referral Code Applied
         </Label>
-        <div className="flex items-center gap-2 rounded-md border border-green-200 bg-green-50 p-3">
-          <Check className="size-5 text-green-600" />
+        <div className="flex items-center gap-2 rounded-md border border-green-200 bg-green-50 p-3 dark:border-green-900/50 dark:bg-green-950/40">
+          <Check className="size-5 text-green-700 dark:text-green-400" />
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <span className="font-mono font-semibold">{applied.code}</span>
-              <Badge variant="secondary" className="bg-green-100 text-green-800">
+              <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200">
                 {applied.discountPercent}% off
               </Badge>
             </div>
-            <p className="text-sm text-green-700">{applied.message}</p>
+            <p className="text-sm text-green-700 dark:text-green-300">{applied.message}</p>
           </div>
           <Button
             variant="ghost"
             size="sm"
             onClick={removeCode}
             disabled={disabled}
-            className="text-green-700 hover:bg-green-100 hover:text-green-900"
+            className="text-green-700 hover:bg-green-100 hover:text-green-900 dark:text-green-300"
           >
             <X className="size-4" />
           </Button>

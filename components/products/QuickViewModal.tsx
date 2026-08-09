@@ -75,7 +75,7 @@ function ImageGallery({
   return (
     <div className="relative flex flex-col gap-3">
       {/* Main Image */}
-      <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100">
+      <div className="relative aspect-square overflow-hidden rounded-lg bg-muted">
         <Image
           src={images[selectedIndex]}
           alt={productTitle}
@@ -90,7 +90,7 @@ function ImageGallery({
             <button
               type="button"
               onClick={handlePrevious}
-              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-2 shadow-md transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-ring"
+              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-card/80 p-2 shadow-md transition-colors hover:bg-card focus:outline-none focus:ring-2 focus:ring-ring"
               aria-label="Previous image"
             >
               <ChevronLeft className="size-4" />
@@ -98,7 +98,7 @@ function ImageGallery({
             <button
               type="button"
               onClick={handleNext}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-2 shadow-md transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-ring"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-card/80 p-2 shadow-md transition-colors hover:bg-card focus:outline-none focus:ring-2 focus:ring-ring"
               aria-label="Next image"
             >
               <ChevronRight className="size-4" />
@@ -119,7 +119,7 @@ function ImageGallery({
                 "relative size-16 shrink-0 overflow-hidden rounded-md border-2 transition-all",
                 selectedIndex === index
                   ? "border-green-600 ring-1 ring-green-600"
-                  : "border-transparent hover:border-gray-300"
+                  : "border-transparent hover:border-border"
               )}
               aria-label={`View image ${index + 1}`}
               aria-current={selectedIndex === index ? "true" : "false"}
@@ -217,7 +217,7 @@ function StarRatingDisplay({ rating, count }: { rating: number; count: number })
             key={star}
             className={cn(
               "size-4",
-              star < Math.round(rating) ? "text-yellow-400" : "text-gray-300"
+              star < Math.round(rating) ? "text-yellow-400" : "text-muted-foreground/40"
             )}
             fill="currentColor"
             viewBox="0 0 20 20"
@@ -433,15 +433,15 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
         >
           {/* Mobile drag handle indicator */}
           <div className="flex justify-center py-2 sm:hidden">
-            <div className="h-1 w-12 rounded-full bg-gray-300" />
+            <div className="h-1 w-12 rounded-full bg-muted" />
           </div>
 
           {/* Close button */}
           <DialogPrimitive.Close
             ref={closeButtonRef}
             className={cn(
-              "absolute right-4 top-4 z-10 rounded-full bg-white/90 p-2 shadow-md",
-              "transition-colors hover:bg-gray-100",
+              "absolute right-4 top-4 z-10 rounded-full bg-card/90 p-2 shadow-md",
+              "transition-colors hover:bg-muted",
               "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
             )}
             aria-label="Close quick view"
@@ -474,7 +474,7 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
                   <p className="text-sm uppercase tracking-wide text-muted-foreground">
                     {product.category}
                   </p>
-                  <DialogPrimitive.Title className="mt-1 text-2xl font-bold text-gray-900">
+                  <DialogPrimitive.Title className="mt-1 text-2xl font-bold text-foreground">
                     {product.title}
                   </DialogPrimitive.Title>
                 </div>
@@ -488,11 +488,11 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
 
                 {/* Price */}
                 <div className="mt-4 flex items-baseline gap-2">
-                  <span className="text-2xl font-bold text-gray-900">
+                  <span className="text-2xl font-bold text-foreground">
                     {formatPrice(displayPrice)}
                   </span>
                   {isOnSale && (
-                    <span className="text-lg text-gray-500 line-through">
+                    <span className="text-lg text-muted-foreground line-through">
                       {formatPrice(originalPrice)}
                     </span>
                   )}
@@ -513,7 +513,7 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
                 {/* Description */}
                 <DialogPrimitive.Description
                   id="quick-view-description"
-                  className="mt-4 line-clamp-3 text-sm text-gray-600"
+                  className="mt-4 line-clamp-3 text-sm text-muted-foreground"
                 >
                   {product.description || "No description available."}
                 </DialogPrimitive.Description>
@@ -535,7 +535,7 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
                 <div className="mt-6 space-y-4">
                   {/* Quantity Selector */}
                   <div className="flex items-center gap-4">
-                    <span className="text-sm font-medium text-gray-700">Quantity:</span>
+                    <span className="text-sm font-medium text-foreground">Quantity:</span>
                     <QuantitySelector
                       quantity={quantity}
                       onQuantityChange={setQuantity}
@@ -550,7 +550,7 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
                     <Button
                       onClick={handleAddToCart}
                       disabled={isOutOfStock || needsVariant || isAddingToCart || cartLoading}
-                      className="h-12 flex-1 bg-green-600 text-base hover:bg-green-700"
+                      className="h-12 flex-1 bg-green-700 text-base hover:bg-green-700"
                       size="lg"
                     >
                       {isAddingToCart ? (
@@ -594,7 +594,7 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
                   <Link
                     href={`/products/${product.id}`}
                     onClick={() => onOpenChange(false)}
-                    className="inline-flex items-center rounded text-sm font-medium text-green-600 hover:text-green-700 hover:underline focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                    className="inline-flex items-center rounded text-sm font-medium text-green-700 hover:text-green-700 hover:underline focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 dark:text-green-400"
                   >
                     <Eye className="mr-2 size-4" />
                     View Full Details

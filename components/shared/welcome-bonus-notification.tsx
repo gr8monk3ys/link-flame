@@ -56,39 +56,39 @@ export function WelcomeBonusNotification() {
         isClosing ? "translate-y-full opacity-0" : "translate-y-0 opacity-100"
       }`}
     >
-      <div className="relative overflow-hidden rounded-lg border border-green-200 bg-white p-4 shadow-lg">
+      <div className="relative overflow-hidden rounded-lg border border-green-200 bg-card p-4 shadow-lg dark:border-green-900/50">
         {/* Confetti-like decoration */}
-        <div className="absolute -right-2 -top-2 size-20 rotate-12 rounded-full bg-gradient-to-br from-green-100 to-green-50 opacity-50" />
-        <div className="absolute -bottom-4 -left-4 size-16 -rotate-12 rounded-full bg-gradient-to-tr from-yellow-100 to-yellow-50 opacity-50" />
+        <div className="absolute -right-2 -top-2 size-20 rotate-12 rounded-full bg-gradient-to-br from-green-100 to-green-50 opacity-50 dark:from-green-900/30 dark:to-green-950/40" />
+        <div className="absolute -bottom-4 -left-4 size-16 -rotate-12 rounded-full bg-gradient-to-tr from-yellow-100 to-yellow-50 opacity-50 dark:from-yellow-900/30 dark:to-yellow-950/40" />
 
         <button
           onClick={handleDismiss}
-          className="absolute right-2 top-2 rounded-full p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+          className="absolute right-2 top-2 rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-muted-foreground"
           aria-label="Dismiss notification"
         >
           <X className="size-4" />
         </button>
 
         <div className="relative flex gap-4">
-          <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-green-100">
-            <Gift className="size-6 text-green-600" />
+          <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
+            <Gift className="size-6 text-green-700 dark:text-green-400" />
           </div>
 
           <div className="flex-1 pr-6">
             <div className="flex items-center gap-2">
-              <h3 className="font-semibold text-gray-900">Welcome to Link Flame!</h3>
+              <h3 className="font-semibold text-foreground">Welcome to Link Flame!</h3>
               <Sparkles className="size-4 text-yellow-500" />
             </div>
-            <p className="mt-1 text-sm text-gray-600">
-              You have earned <span className="font-bold text-green-600">{bonusPoints} bonus points</span> for joining our community!
+            <p className="mt-1 text-sm text-muted-foreground">
+              You have earned <span className="font-bold text-green-700 dark:text-green-400">{bonusPoints} bonus points</span> for joining our community!
             </p>
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-muted-foreground">
               Use your points for discounts on eco-friendly products.
             </p>
 
             <div className="mt-3 flex gap-2">
               <Link href="/account/loyalty">
-                <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                <Button size="sm" className="bg-green-700 hover:bg-green-700">
                   View My Points
                 </Button>
               </Link>

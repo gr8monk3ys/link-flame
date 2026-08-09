@@ -11,33 +11,33 @@ import { Badge } from '@/components/ui/badge'
 const TIER_CONFIG = {
   SEEDLING: {
     color: 'bg-emerald-500',
-    bgColor: 'bg-emerald-50',
-    borderColor: 'border-emerald-200',
-    textColor: 'text-emerald-700',
+    bgColor: 'bg-emerald-50 dark:bg-emerald-950/40',
+    borderColor: 'border-emerald-200 dark:border-emerald-900/50',
+    textColor: 'text-emerald-700 dark:text-emerald-300',
     label: 'Seedling',
     description: 'Just getting started on your eco-journey',
   },
   SPROUT: {
     color: 'bg-green-500',
-    bgColor: 'bg-green-50',
-    borderColor: 'border-green-200',
-    textColor: 'text-green-700',
+    bgColor: 'bg-green-50 dark:bg-green-950/40',
+    borderColor: 'border-green-200 dark:border-green-900/50',
+    textColor: 'text-green-700 dark:text-green-300',
     label: 'Sprout',
     description: 'Growing your commitment to sustainability',
   },
   BLOOM: {
     color: 'bg-pink-500',
-    bgColor: 'bg-pink-50',
-    borderColor: 'border-pink-200',
-    textColor: 'text-pink-700',
+    bgColor: 'bg-pink-50 dark:bg-pink-950/40',
+    borderColor: 'border-pink-200 dark:border-pink-900/50',
+    textColor: 'text-pink-700 dark:text-pink-300',
     label: 'Bloom',
     description: 'Flourishing as an eco-conscious shopper',
   },
   FLOURISH: {
     color: 'bg-amber-500',
-    bgColor: 'bg-amber-50',
-    borderColor: 'border-amber-200',
-    textColor: 'text-amber-700',
+    bgColor: 'bg-amber-50 dark:bg-amber-950/40',
+    borderColor: 'border-amber-200 dark:border-amber-900/50',
+    textColor: 'text-amber-700 dark:text-amber-300',
     label: 'Flourish',
     description: 'A true sustainability champion',
   },
@@ -200,7 +200,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
                   {TIER_CONFIG[summary.nextTier]?.label || 'Max Tier'}
                 </span>
               </div>
-              <div className="h-2 overflow-hidden rounded-full bg-gray-200">
+              <div className="h-2 overflow-hidden rounded-full bg-muted">
                 <div
                   className={cn('h-full transition-all', tierConfig.color)}
                   style={{
@@ -254,7 +254,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
         <CardContent>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="flex items-start gap-3 rounded-lg border p-4">
-              <div className="flex size-10 items-center justify-center rounded-full bg-green-100 text-green-600">
+              <div className="flex size-10 items-center justify-center rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -275,7 +275,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
             </div>
 
             <div className="flex items-start gap-3 rounded-lg border p-4">
-              <div className="flex size-10 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+              <div className="flex size-10 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -298,7 +298,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
             </div>
 
             <div className="flex items-start gap-3 rounded-lg border p-4">
-              <div className="flex size-10 items-center justify-center rounded-full bg-purple-100 text-purple-600">
+              <div className="flex size-10 items-center justify-center rounded-full bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -317,7 +317,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
             </div>
 
             <div className="flex items-start gap-3 rounded-lg border p-4">
-              <div className="flex size-10 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+              <div className="flex size-10 items-center justify-center rounded-full bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -396,8 +396,8 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
                       className={cn(
                         'flex size-8 items-center justify-center rounded-full',
                         transaction.type === 'earned'
-                          ? 'bg-green-100 text-green-600'
-                          : 'bg-orange-100 text-orange-600'
+                          ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                          : 'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400'
                       )}
                     >
                       {transaction.type === 'earned' ? (
@@ -445,8 +445,8 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
                     className={cn(
                       'font-semibold',
                       transaction.type === 'earned'
-                        ? 'text-green-600'
-                        : 'text-orange-600'
+                        ? 'text-green-700 dark:text-green-400'
+                        : 'text-orange-600 dark:text-orange-400'
                     )}
                   >
                     {transaction.type === 'earned' ? '+' : ''}

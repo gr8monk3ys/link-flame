@@ -175,9 +175,9 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
     return (
       <div className={cn('rounded-lg border bg-card p-6', className)}>
         <div className="space-y-4 text-center">
-          <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-green-100">
+          <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
             <svg
-              className="size-8 text-green-600"
+              className="size-8 text-green-700 dark:text-green-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -190,28 +190,28 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
               />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-gray-900">Gift Card Purchased!</h3>
-          <p className="text-sm text-gray-600">
+          <h3 className="text-lg font-semibold text-foreground">Gift Card Purchased!</h3>
+          <p className="text-sm text-muted-foreground">
             Your gift card is ready to use or share.
           </p>
 
-          <div className="mt-6 space-y-3 rounded-lg bg-gray-50 p-4">
+          <div className="mt-6 space-y-3 rounded-lg bg-muted p-4">
             <div>
-              <p className="text-xs uppercase tracking-wide text-gray-500">Gift Card Code</p>
-              <p className="mt-1 font-mono text-xl font-bold tracking-wider text-gray-900">
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">Gift Card Code</p>
+              <p className="mt-1 font-mono text-xl font-bold tracking-wider text-foreground">
                 {purchasedCard.code}
               </p>
             </div>
             <div>
-              <p className="text-xs uppercase tracking-wide text-gray-500">Amount</p>
-              <p className="mt-1 text-2xl font-bold text-green-600">
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">Amount</p>
+              <p className="mt-1 text-2xl font-bold text-green-700 dark:text-green-400">
                 ${purchasedCard.amount.toFixed(2)}
               </p>
             </div>
             {purchasedCard.expiresAt && (
               <div>
-                <p className="text-xs uppercase tracking-wide text-gray-500">Expires</p>
-                <p className="mt-1 text-sm text-gray-700">
+                <p className="text-xs uppercase tracking-wide text-muted-foreground">Expires</p>
+                <p className="mt-1 text-sm text-foreground">
                   {new Date(purchasedCard.expiresAt).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
@@ -243,7 +243,7 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
 
   return (
     <div className={cn('rounded-lg border bg-card p-6', className)}>
-      <h3 className="mb-4 text-lg font-semibold text-gray-900">Purchase a Gift Card</h3>
+      <h3 className="mb-4 text-lg font-semibold text-foreground">Purchase a Gift Card</h3>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Amount Selection */}
@@ -268,7 +268,7 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
               Custom Amount
             </Label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
               <Input
                 id="customAmount"
                 type="text"
@@ -283,7 +283,7 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
                 )}
               />
             </div>
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-muted-foreground">
               Min ${MIN_CUSTOM_AMOUNT} - Max ${MAX_CUSTOM_AMOUNT}
             </p>
           </div>
@@ -291,8 +291,8 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
 
         {/* Recipient Details (Optional) */}
         <div className="space-y-4 border-t pt-4">
-          <h4 className="text-sm font-medium text-gray-700">
-            Recipient Details <span className="text-gray-400">(Optional)</span>
+          <h4 className="text-sm font-medium text-foreground">
+            Recipient Details <span className="text-muted-foreground">(Optional)</span>
           </h4>
 
           <div className="space-y-2">
@@ -319,7 +319,7 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
               maxLength={254}
               disabled={isLoading}
             />
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-muted-foreground">
               We will send the gift card code to this email
             </p>
           </div>
@@ -336,7 +336,7 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
               rows={3}
               className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             />
-            <p className="text-right text-xs text-gray-500">
+            <p className="text-right text-xs text-muted-foreground">
               {message.length}/500 characters
             </p>
           </div>

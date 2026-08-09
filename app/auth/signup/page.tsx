@@ -106,7 +106,7 @@ export default function SignUpPage() {
             Enter your information to create an account
           </CardDescription>
           {/* Signup bonus banner */}
-          <div className="mt-3 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700">
+          <div className="mt-3 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700 dark:border-green-900/50 dark:bg-green-950/40 dark:text-green-300">
             <Gift className="size-5 shrink-0" />
             <span>
               <strong>Earn 200 points</strong> when you sign up! Start saving on your eco-friendly purchases.
@@ -166,7 +166,7 @@ export default function SignUpPage() {
               />
             </div>
             {error && (
-              <div className="rounded bg-red-50 p-3 text-sm text-red-600">
+              <div className="rounded bg-red-50 p-3 text-sm text-red-600 dark:bg-red-950/40 dark:text-red-400">
                 {error}
               </div>
             )}

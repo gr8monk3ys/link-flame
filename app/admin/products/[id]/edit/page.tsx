@@ -195,7 +195,7 @@ export default function AdminProductEditPage() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="flex items-center gap-2 text-gray-600">
+        <div className="flex items-center gap-2 text-muted-foreground">
           <Loader2 className="size-5 animate-spin" />
           Loading product...
         </div>
@@ -208,12 +208,12 @@ export default function AdminProductEditPage() {
       <div className="space-y-6">
         <Link
           href="/admin/products"
-          className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900"
+          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="size-4" />
           Back to Products
         </Link>
-        <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center text-red-700">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300">
           {fetchError}
         </div>
       </div>
@@ -226,7 +226,7 @@ export default function AdminProductEditPage() {
       <div className="flex items-center gap-4">
         <Link
           href="/admin/products"
-          className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900"
+          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="size-4" />
           Back to Products
@@ -234,25 +234,25 @@ export default function AdminProductEditPage() {
       </div>
 
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Edit Product</h1>
-        <p className="mt-2 text-gray-600">
+        <h1 className="text-3xl font-bold text-foreground">Edit Product</h1>
+        <p className="mt-2 text-muted-foreground">
           Update product details
         </p>
       </div>
 
       {/* Error Message */}
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300">
           {error}
         </div>
       )}
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="rounded-lg bg-white p-6 shadow">
+      <form onSubmit={handleSubmit} className="rounded-lg bg-card p-6 shadow">
         <div className="space-y-6">
           {/* Title */}
           <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="title" className="block text-sm font-medium text-foreground">
               Title <span className="text-red-500">*</span>
             </label>
             <input
@@ -262,14 +262,14 @@ export default function AdminProductEditPage() {
               onChange={(e) => setTitle(e.target.value)}
               required
               maxLength={200}
-              className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+              className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
               placeholder="e.g., Bamboo Toothbrush Set"
             />
           </div>
 
           {/* Subtitle */}
           <div>
-            <label htmlFor="subtitle" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="subtitle" className="block text-sm font-medium text-foreground">
               Subtitle
             </label>
             <input
@@ -278,14 +278,14 @@ export default function AdminProductEditPage() {
               value={subtitle}
               onChange={(e) => setSubtitle(e.target.value)}
               maxLength={200}
-              className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+              className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
               placeholder="e.g., Pack of 4 - Soft Bristles"
             />
           </div>
 
           {/* Description */}
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="description" className="block text-sm font-medium text-foreground">
               Description
             </label>
             <textarea
@@ -294,7 +294,7 @@ export default function AdminProductEditPage() {
               onChange={(e) => setDescription(e.target.value)}
               rows={4}
               maxLength={2000}
-              className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+              className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
               placeholder="Describe the product..."
             />
           </div>
@@ -302,7 +302,7 @@ export default function AdminProductEditPage() {
           {/* Price and Sale Price */}
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div>
-              <label htmlFor="price" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="price" className="block text-sm font-medium text-foreground">
                 Price ($) <span className="text-red-500">*</span>
               </label>
               <input
@@ -313,13 +313,13 @@ export default function AdminProductEditPage() {
                 required
                 min="0.01"
                 step="0.01"
-                className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+                className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
                 placeholder="0.00"
               />
             </div>
 
             <div>
-              <label htmlFor="salePrice" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="salePrice" className="block text-sm font-medium text-foreground">
                 Sale Price ($)
               </label>
               <input
@@ -329,7 +329,7 @@ export default function AdminProductEditPage() {
                 onChange={(e) => setSalePrice(e.target.value)}
                 min="0.01"
                 step="0.01"
-                className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+                className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
                 placeholder="0.00"
               />
             </div>
@@ -337,7 +337,7 @@ export default function AdminProductEditPage() {
 
           {/* Image URL */}
           <div>
-            <label htmlFor="image" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="image" className="block text-sm font-medium text-foreground">
               Image URL <span className="text-red-500">*</span>
             </label>
             <input
@@ -346,7 +346,7 @@ export default function AdminProductEditPage() {
               value={image}
               onChange={(e) => setImage(e.target.value)}
               required
-              className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+              className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
               placeholder="https://example.com/image.jpg"
             />
           </div>
@@ -354,14 +354,14 @@ export default function AdminProductEditPage() {
           {/* Category and Inventory */}
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div>
-              <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="category" className="block text-sm font-medium text-foreground">
                 Category
               </label>
               <select
                 id="category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+                className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
               >
                 {CATEGORIES.map((cat) => (
                   <option key={cat} value={cat}>
@@ -372,7 +372,7 @@ export default function AdminProductEditPage() {
             </div>
 
             <div>
-              <label htmlFor="inventory" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="inventory" className="block text-sm font-medium text-foreground">
                 Inventory
               </label>
               <input
@@ -382,7 +382,7 @@ export default function AdminProductEditPage() {
                 onChange={(e) => setInventory(e.target.value)}
                 min="0"
                 step="1"
-                className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+                className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
                 placeholder="0"
               />
             </div>
@@ -397,9 +397,9 @@ export default function AdminProductEditPage() {
                   type="checkbox"
                   checked={isImperfect}
                   onChange={(e) => setIsImperfect(e.target.checked)}
-                  className="size-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                  className="size-4 rounded border-border text-green-700 focus:ring-green-500 dark:text-green-400"
                 />
-                <label htmlFor="isImperfect" className="text-sm font-medium text-gray-700">
+                <label htmlFor="isImperfect" className="text-sm font-medium text-foreground">
                   Imperfect / Seconds Item
                 </label>
               </div>
@@ -408,7 +408,7 @@ export default function AdminProductEditPage() {
                 <div>
                   <label
                     htmlFor="imperfectDiscount"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-foreground"
                   >
                     Imperfect Discount (%)
                   </label>
@@ -420,7 +420,7 @@ export default function AdminProductEditPage() {
                     min="1"
                     max="90"
                     step="1"
-                    className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+                    className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
                     placeholder="e.g., 20"
                   />
                 </div>
@@ -433,26 +433,26 @@ export default function AdminProductEditPage() {
                 type="checkbox"
                 checked={isSubscribable}
                 onChange={(e) => setIsSubscribable(e.target.checked)}
-                className="size-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                className="size-4 rounded border-border text-green-700 focus:ring-green-500 dark:text-green-400"
               />
-              <label htmlFor="isSubscribable" className="text-sm font-medium text-gray-700">
+              <label htmlFor="isSubscribable" className="text-sm font-medium text-foreground">
                 Subscribe & Save Eligible
               </label>
             </div>
           </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-end gap-4 border-t border-gray-200 pt-6">
+          <div className="flex items-center justify-end gap-4 border-t border-border pt-6">
             <Link
               href="/admin/products"
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted"
             >
               Cancel
             </Link>
             <button
               type="submit"
               disabled={saving}
-              className="flex items-center gap-2 rounded-lg bg-green-600 px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex items-center gap-2 rounded-lg bg-green-700 px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {saving && <Loader2 className="size-4 animate-spin" />}
               {saving ? 'Saving...' : 'Save Changes'}

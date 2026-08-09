@@ -90,7 +90,7 @@ export function ImpactDashboard({ className }: ImpactDashboardProps) {
       <Card className={cn("", className)}>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="size-5 text-green-600" />
+            <TrendingUp className="size-5 text-green-700 dark:text-green-400" />
             Your Environmental Impact
           </CardTitle>
           <CardDescription>
@@ -100,7 +100,7 @@ export function ImpactDashboard({ className }: ImpactDashboardProps) {
         <CardContent className="py-8 text-center">
           <div className="mb-4">
             <div className="mx-auto flex size-24 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
-              <TrendingUp className="size-12 text-green-600 dark:text-green-400" />
+              <TrendingUp className="size-12 text-green-700 dark:text-green-400" />
             </div>
           </div>
           <h3 className="mb-2 text-lg font-semibold">No Impact Yet</h3>
@@ -122,7 +122,7 @@ export function ImpactDashboard({ className }: ImpactDashboardProps) {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="size-5 text-green-600" />
+                <TrendingUp className="size-5 text-green-700 dark:text-green-400" />
                 Your Environmental Impact
               </CardTitle>
               <CardDescription>

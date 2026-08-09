@@ -120,7 +120,7 @@ function calculateEcoScore(
 
 // Get score color
 function getScoreColor(score: number): string {
-  if (score >= 80) return "text-green-600 dark:text-green-400";
+  if (score >= 80) return "text-green-700 dark:text-green-400";
   if (score >= 60) return "text-lime-600 dark:text-lime-400";
   if (score >= 40) return "text-yellow-600 dark:text-yellow-400";
   return "text-orange-600 dark:text-orange-400";
@@ -148,25 +148,25 @@ export function EcoImpactCard({
     return (
       <div className={cn("flex flex-wrap items-center gap-2", className)}>
         {isPlasticFree && (
-          <Badge variant="outline" className="border-green-200 bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300">
+          <Badge variant="outline" className="border-green-200 bg-green-50 text-green-700 dark:border-green-900/50 dark:bg-green-900/30 dark:text-green-300">
             <RecycleIcon className="mr-1 size-3" />
             Plastic-Free
           </Badge>
         )}
         {isVegan && (
-          <Badge variant="outline" className="border-lime-200 bg-lime-50 text-lime-700 dark:bg-lime-900/30 dark:text-lime-300">
+          <Badge variant="outline" className="border-lime-200 bg-lime-50 text-lime-700 dark:border-lime-900/50 dark:bg-lime-900/30 dark:text-lime-300">
             <LeafIcon className="mr-1 size-3" />
             Vegan
           </Badge>
         )}
         {isCrueltyFree && (
-          <Badge variant="outline" className="border-pink-200 bg-pink-50 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300">
+          <Badge variant="outline" className="border-pink-200 bg-pink-50 text-pink-700 dark:border-pink-900/50 dark:bg-pink-900/30 dark:text-pink-300">
             <HeartIcon className="mr-1 size-3" />
             Cruelty-Free
           </Badge>
         )}
         {isOrganicCertified && (
-          <Badge variant="outline" className="border-amber-200 bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
+          <Badge variant="outline" className="border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-900/50 dark:bg-amber-900/30 dark:text-amber-300">
             <SeedlingIcon className="mr-1 size-3" />
             Organic
           </Badge>
@@ -182,7 +182,7 @@ export function EcoImpactCard({
         className
       )}>
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Environmental Impact</h3>
+          <h3 className="text-lg font-semibold text-foreground">Environmental Impact</h3>
           <div className="flex items-center gap-2">
             <span className={cn("text-2xl font-bold", getScoreColor(ecoScore))}>{ecoScore}</span>
             <span className="text-sm text-muted-foreground">/100</span>
@@ -191,13 +191,13 @@ export function EcoImpactCard({
 
         <div className="space-y-4">
           {carbonData && (
-            <div className="flex items-start gap-3 rounded-lg bg-white/50 p-3 dark:bg-gray-800/50">
+            <div className="flex items-start gap-3 rounded-lg bg-card/50 p-3">
               <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-teal-100 dark:bg-teal-900/50">
-                <CO2Icon className="size-5 text-teal-600 dark:text-teal-400" />
+                <CO2Icon className="size-5 text-teal-700 dark:text-teal-400" />
               </div>
               <div>
-                <p className="font-medium text-gray-900 dark:text-white">
-                  Carbon Footprint: <span className="text-teal-600 dark:text-teal-400">{carbonData.value} {carbonData.unit}</span>
+                <p className="font-medium text-foreground">
+                  Carbon Footprint: <span className="text-teal-700 dark:text-teal-400">{carbonData.value} {carbonData.unit}</span>
                 </p>
                 <p className="text-sm text-muted-foreground">{carbonData.comparison}</p>
               </div>
@@ -206,37 +206,37 @@ export function EcoImpactCard({
 
           <div className="grid grid-cols-2 gap-3">
             {isPlasticFree && (
-              <div className="flex items-center gap-2 rounded-lg bg-white/50 p-3 dark:bg-gray-800/50">
-                <RecycleIcon className="size-5 text-green-600 dark:text-green-400" />
+              <div className="flex items-center gap-2 rounded-lg bg-card/50 p-3">
+                <RecycleIcon className="size-5 text-green-700 dark:text-green-400" />
                 <div>
-                  <p className="font-medium text-gray-900 dark:text-white">Plastic-Free</p>
+                  <p className="font-medium text-foreground">Plastic-Free</p>
                   <p className="text-xs text-muted-foreground">Zero plastic packaging</p>
                 </div>
               </div>
             )}
             {isVegan && (
-              <div className="flex items-center gap-2 rounded-lg bg-white/50 p-3 dark:bg-gray-800/50">
+              <div className="flex items-center gap-2 rounded-lg bg-card/50 p-3">
                 <LeafIcon className="size-5 text-lime-600 dark:text-lime-400" />
                 <div>
-                  <p className="font-medium text-gray-900 dark:text-white">Vegan</p>
+                  <p className="font-medium text-foreground">Vegan</p>
                   <p className="text-xs text-muted-foreground">No animal products</p>
                 </div>
               </div>
             )}
             {isCrueltyFree && (
-              <div className="flex items-center gap-2 rounded-lg bg-white/50 p-3 dark:bg-gray-800/50">
+              <div className="flex items-center gap-2 rounded-lg bg-card/50 p-3">
                 <HeartIcon className="size-5 text-pink-600 dark:text-pink-400" />
                 <div>
-                  <p className="font-medium text-gray-900 dark:text-white">Cruelty-Free</p>
+                  <p className="font-medium text-foreground">Cruelty-Free</p>
                   <p className="text-xs text-muted-foreground">Never tested on animals</p>
                 </div>
               </div>
             )}
             {isOrganicCertified && (
-              <div className="flex items-center gap-2 rounded-lg bg-white/50 p-3 dark:bg-gray-800/50">
+              <div className="flex items-center gap-2 rounded-lg bg-card/50 p-3">
                 <SeedlingIcon className="size-5 text-amber-600 dark:text-amber-400" />
                 <div>
-                  <p className="font-medium text-gray-900 dark:text-white">Certified Organic</p>
+                  <p className="font-medium text-foreground">Certified Organic</p>
                   <p className="text-xs text-muted-foreground">USDA organic certified</p>
                 </div>
               </div>
@@ -254,8 +254,8 @@ export function EcoImpactCard({
       className
     )}>
       <div className="mb-3 flex items-center gap-2">
-        <LeafIcon className="size-5 text-green-600 dark:text-green-400" />
-        <h4 className="font-medium text-gray-900 dark:text-white">Eco Impact</h4>
+        <LeafIcon className="size-5 text-green-700 dark:text-green-400" />
+        <h4 className="font-medium text-foreground">Eco Impact</h4>
         <div className="ml-auto flex items-center gap-1">
           <span className={cn("text-lg font-bold", getScoreColor(ecoScore))}>{ecoScore}</span>
           <span className="text-xs text-muted-foreground">/100</span>

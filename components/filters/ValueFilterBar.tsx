@@ -185,14 +185,24 @@ export function ValueFilterBar({ className }: ValueFilterBarProps) {
         {[1, 2, 3, 4, 5].map((i) => (
           <div
             key={i}
-            className="h-9 w-28 shrink-0 animate-pulse rounded-full bg-gray-100"
+            className="h-9 w-28 shrink-0 animate-pulse rounded-full bg-muted"
           />
         ))}
       </div>
     );
   }
 
-  if (values.length === 0) {
+  // A chip whose count is zero is a dead end: tapping it swaps the grid for an
+  // empty state. Worse, in a horizontally scrolled rail those chips push the
+  // filters that do return products off the right edge. The sidebar still lists
+  // every value (disabled, with its zero), so nothing is hidden - it just stops
+  // occupying the shortcut rail. A value already selected stays visible so the
+  // chip that produced the current URL can always be switched back off.
+  const shownValues = values.filter(
+    (value) => value.productCount > 0 || selectedValues.includes(value.slug)
+  );
+
+  if (shownValues.length === 0) {
     return null;
   }
 
@@ -200,7 +210,7 @@ export function ValueFilterBar({ className }: ValueFilterBarProps) {
     <div className={cn('relative', className)}>
       {/* Left scroll indicator */}
       {showLeftScroll && (
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-white to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-background to-transparent" />
       )}
 
       {/* Scrollable container */}
@@ -209,7 +219,7 @@ export function ValueFilterBar({ className }: ValueFilterBarProps) {
         className="scrollbar-hide flex gap-2 overflow-x-auto px-0.5 py-1"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
-        {values.map((value) => {
+        {shownValues.map((value) => {
           const isSelected = selectedValues.includes(value.slug);
           const icon = valueIcons[value.slug] || defaultIcon;
 
@@ -222,8 +232,8 @@ export function ValueFilterBar({ className }: ValueFilterBarProps) {
                 'shrink-0 whitespace-nowrap border',
                 'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
                 isSelected
-                  ? 'border-green-600 bg-green-600 text-white hover:bg-green-700'
-                  : 'border-gray-200 bg-white text-gray-700 hover:border-green-300 hover:bg-green-50'
+                  ? 'border-primary bg-primary text-white hover:bg-primary/90'
+                  : 'border-border bg-card text-foreground hover:border-primary/40 hover:bg-primary/10'
               )}
               aria-pressed={isSelected}
               title={value.description || value.name}
@@ -232,7 +242,7 @@ export function ValueFilterBar({ className }: ValueFilterBarProps) {
               <span>{value.name}</span>
               <span className={cn(
                 'rounded-full px-1.5 py-0.5 text-xs',
-                isSelected ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-600'
+                isSelected ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'
               )}>
                 {value.productCount}
               </span>
@@ -243,7 +253,7 @@ export function ValueFilterBar({ className }: ValueFilterBarProps) {
 
       {/* Right scroll indicator */}
       {showRightScroll && (
-        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-white to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-background to-transparent" />
       )}
     </div>
   );

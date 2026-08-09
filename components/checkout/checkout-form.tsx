@@ -210,7 +210,7 @@ export default function CheckoutForm({ onDiscountChange }: CheckoutFormProps) {
       {/* Standard Checkout Form */}
       <form onSubmit={handleSubmit} className="space-y-4" aria-label="Checkout form">
         {error && (
-          <div className="rounded-md bg-red-50 p-4 text-sm text-red-500" role="alert" aria-live="assertive">
+          <div className="rounded-md bg-red-50 p-4 text-sm text-red-500 dark:bg-red-950/40" role="alert" aria-live="assertive">
             {error}
           </div>
         )}

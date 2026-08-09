@@ -15,7 +15,10 @@
     --secondary: 35 30% 93%;
     --secondary-foreground: 25 15% 15%;
     --muted: 35 20% 94%;
-    --muted-foreground: 25 10% 45%;
+    /* 45% cleared 4.5:1 on --card but only reached 4.16:1 on --muted, and
+       muted-on-muted is a common pairing (facet counts, section subheads).
+       42% clears 4.5:1 against both. */
+    --muted-foreground: 25 10% 42%;
     --accent: 38 80% 55%;
     --accent-foreground: 25 15% 15%;
     --destructive: 0 84.2% 60.2%;
@@ -40,7 +43,10 @@
     --muted: 25 8% 16%;
     --muted-foreground: 35 10% 60%;
     --accent: 38 65% 45%;
-    --accent-foreground: 35 20% 92%;
+    /* Honey amber is a mid-tone in both themes, so it needs dark text in both.
+       Pairing it with the near-white --foreground gave the accent button 2.66:1
+       ("Get Started" on the homepage), below the 4.5:1 floor. */
+    --accent-foreground: 25 15% 10%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 85.7% 97.3%;
     --border: 25 10% 18%;

@@ -19,18 +19,18 @@ interface ValueBadgeProps {
 
 // Map of value slugs to their corresponding icon and color
 const valueStyles: Record<string, { color: string; bgColor: string }> = {
-  'zero-waste': { color: 'text-emerald-700', bgColor: 'bg-emerald-50 border-emerald-200' },
-  'plastic-free': { color: 'text-blue-700', bgColor: 'bg-blue-50 border-blue-200' },
-  'vegan': { color: 'text-green-700', bgColor: 'bg-green-50 border-green-200' },
-  'cruelty-free': { color: 'text-pink-700', bgColor: 'bg-pink-50 border-pink-200' },
-  'women-owned': { color: 'text-purple-700', bgColor: 'bg-purple-50 border-purple-200' },
-  'black-owned': { color: 'text-amber-700', bgColor: 'bg-amber-50 border-amber-200' },
-  'small-business': { color: 'text-indigo-700', bgColor: 'bg-indigo-50 border-indigo-200' },
-  'made-in-usa': { color: 'text-red-700', bgColor: 'bg-red-50 border-red-200' },
-  'organic': { color: 'text-lime-700', bgColor: 'bg-lime-50 border-lime-200' },
-  'fair-trade': { color: 'text-orange-700', bgColor: 'bg-orange-50 border-orange-200' },
-  'biodegradable': { color: 'text-teal-700', bgColor: 'bg-teal-50 border-teal-200' },
-  'recyclable': { color: 'text-cyan-700', bgColor: 'bg-cyan-50 border-cyan-200' },
+  'zero-waste': { color: 'text-emerald-700 dark:text-emerald-300', bgColor: 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-900/50' },
+  'plastic-free': { color: 'text-blue-700 dark:text-blue-300', bgColor: 'bg-blue-50 dark:bg-blue-950/40 border-blue-200 dark:border-blue-900/50' },
+  'vegan': { color: 'text-green-700 dark:text-green-300', bgColor: 'bg-green-50 dark:bg-green-950/40 border-green-200 dark:border-green-900/50' },
+  'cruelty-free': { color: 'text-pink-700 dark:text-pink-300', bgColor: 'bg-pink-50 dark:bg-pink-950/40 border-pink-200 dark:border-pink-900/50' },
+  'women-owned': { color: 'text-purple-700 dark:text-purple-300', bgColor: 'bg-purple-50 dark:bg-purple-950/40 border-purple-200 dark:border-purple-900/50' },
+  'black-owned': { color: 'text-amber-700 dark:text-amber-300', bgColor: 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-900/50' },
+  'small-business': { color: 'text-indigo-700 dark:text-indigo-300', bgColor: 'bg-indigo-50 dark:bg-indigo-950/40 border-indigo-200 dark:border-indigo-900/50' },
+  'made-in-usa': { color: 'text-red-700 dark:text-red-300', bgColor: 'bg-red-50 dark:bg-red-950/40 border-red-200 dark:border-red-900/50' },
+  'organic': { color: 'text-lime-700 dark:text-lime-300', bgColor: 'bg-lime-50 dark:bg-lime-950/40 border-lime-200 dark:border-lime-900/50' },
+  'fair-trade': { color: 'text-orange-700 dark:text-orange-300', bgColor: 'bg-orange-50 dark:bg-orange-950/40 border-orange-200 dark:border-orange-900/50' },
+  'biodegradable': { color: 'text-teal-700 dark:text-teal-300', bgColor: 'bg-teal-50 dark:bg-teal-950/40 border-teal-200 dark:border-teal-900/50' },
+  'recyclable': { color: 'text-cyan-700 dark:text-cyan-300', bgColor: 'bg-cyan-50 dark:bg-cyan-950/40 border-cyan-200 dark:border-cyan-900/50' },
 };
 
 // Value icons using SVG paths
@@ -117,7 +117,7 @@ export function ValueBadge({
   showIcon = true,
   className,
 }: ValueBadgeProps) {
-  const style = valueStyles[value.slug] || { color: 'text-gray-700', bgColor: 'bg-gray-50 border-gray-200' };
+  const style = valueStyles[value.slug] || { color: 'text-foreground', bgColor: 'bg-muted border-border' };
   const icon = valueIcons[value.slug] || defaultIcon;
 
   const sizeClasses = {
@@ -169,7 +169,7 @@ export function ValueBadgeList({
       ))}
       {remainingCount > 0 && (
         <span className={cn(
-          'inline-flex items-center rounded-full border border-gray-200 bg-gray-50 font-medium text-gray-600',
+          'inline-flex items-center rounded-full border border-border bg-muted font-medium text-muted-foreground',
           size === 'sm' && 'px-2 py-0.5 text-xs',
           size === 'md' && 'px-2.5 py-1 text-sm',
           size === 'lg' && 'px-3 py-1.5 text-sm',

@@ -202,7 +202,7 @@ export function BillingDashboardClient(props: {
                           ? 'bg-red-600'
                           : value.isApproaching
                             ? 'bg-yellow-500'
-                            : 'bg-green-600'
+                            : 'bg-green-700'
                       }`}
                       style={{ width: `${Math.min(100, Math.max(0, value.percentUsed))}%` }}
                     />
@@ -211,7 +211,7 @@ export function BillingDashboardClient(props: {
               ))}
 
               {usage.warnings.exceededLimits.length > 0 ? (
-                <div className="mt-4 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+                <div className="mt-4 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200">
                   <AlertTriangle className="mt-0.5 size-4" />
                   <div>
                     <div className="font-semibold">Limits exceeded</div>

@@ -142,7 +142,7 @@ export default function OrderDetailPage() {
         <Card>
           <CardHeader>
             <CardTitle>Error</CardTitle>
-            <CardDescription className="text-red-600">{error}</CardDescription>
+            <CardDescription className="text-red-600 dark:text-red-400">{error}</CardDescription>
           </CardHeader>
         </Card>
       </div>
@@ -202,7 +202,7 @@ export default function OrderDetailPage() {
               </CardDescription>
             )}
             {order.deliveredAt && (
-              <CardDescription className="text-green-600">
+              <CardDescription className="text-green-700 dark:text-green-400">
                 Delivered on {format(new Date(order.deliveredAt), "MMMM d, yyyy 'at' h:mm a")}
               </CardDescription>
             )}
@@ -300,26 +300,26 @@ export default function OrderDetailPage() {
 
       {/* Gift Information */}
       {order.isGift && (
-        <Card className="mb-6 border-pink-200 bg-pink-50/50">
+        <Card className="mb-6 border-pink-200 bg-pink-50/50 dark:border-pink-900/50">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
-              <Gift className="size-5 text-pink-600" />
-              <CardTitle className="text-lg text-pink-800">Gift Order</CardTitle>
+              <Gift className="size-5 text-pink-600 dark:text-pink-400" />
+              <CardTitle className="text-lg text-pink-800 dark:text-pink-200">Gift Order</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="pt-0">
             <div className="space-y-3">
               {order.giftRecipientName && (
                 <div>
-                  <div className="text-sm font-medium text-pink-800">Recipient</div>
-                  <div className="text-sm text-pink-700">{order.giftRecipientName}</div>
+                  <div className="text-sm font-medium text-pink-800 dark:text-pink-200">Recipient</div>
+                  <div className="text-sm text-pink-700 dark:text-pink-300">{order.giftRecipientName}</div>
                 </div>
               )}
 
               {order.giftMessage && (
                 <div>
-                  <div className="mb-1 text-sm font-medium text-pink-800">Gift Message</div>
-                  <div className="rounded-lg border border-pink-200 bg-white/70 p-3 text-sm italic text-pink-700">
+                  <div className="mb-1 text-sm font-medium text-pink-800 dark:text-pink-200">Gift Message</div>
+                  <div className="rounded-lg border border-pink-200 bg-card/70 p-3 text-sm italic text-pink-700 dark:border-pink-900/50 dark:text-pink-300">
                     &ldquo;{order.giftMessage}&rdquo;
                   </div>
                 </div>
@@ -327,13 +327,13 @@ export default function OrderDetailPage() {
 
               <div className="flex flex-wrap gap-3 pt-2">
                 {order.hidePrice && (
-                  <div className="flex items-center gap-1 rounded-full bg-pink-100 px-2 py-1 text-xs text-pink-700">
+                  <div className="flex items-center gap-1 rounded-full bg-pink-100 px-2 py-1 text-xs text-pink-700 dark:bg-pink-900/30 dark:text-pink-300">
                     <Check className="size-3" />
                     <span>Prices hidden on packing slip</span>
                   </div>
                 )}
                 {order.giftRecipientEmail && (
-                  <div className="flex items-center gap-1 rounded-full bg-pink-100 px-2 py-1 text-xs text-pink-700">
+                  <div className="flex items-center gap-1 rounded-full bg-pink-100 px-2 py-1 text-xs text-pink-700 dark:bg-pink-900/30 dark:text-pink-300">
                     <Check className="size-3" />
                     <span>Recipient will be notified</span>
                   </div>

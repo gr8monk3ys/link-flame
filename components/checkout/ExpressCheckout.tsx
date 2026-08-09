@@ -115,7 +115,7 @@ export function ExpressCheckout({ disabled = false, className = '' }: ExpressChe
     <div className={`space-y-4 ${className}`}>
       {/* Express Checkout Section */}
       <div className="space-y-3">
-        <h3 className="text-sm font-medium text-gray-700">Express Checkout</h3>
+        <h3 className="text-sm font-medium text-foreground">Express Checkout</h3>
 
         <PaymentRequestButton
           onPaymentSuccess={handlePaymentSuccess}
@@ -126,17 +126,17 @@ export function ExpressCheckout({ disabled = false, className = '' }: ExpressChe
 
         {/* Processing indicator */}
         {isProcessing && (
-          <p className="text-center text-sm text-gray-500">Processing your payment...</p>
+          <p className="text-center text-sm text-muted-foreground">Processing your payment...</p>
         )}
       </div>
 
       {/* Divider */}
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-300" />
+          <div className="w-full border-t border-border" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="bg-white px-4 text-gray-500">Or pay with card</span>
+          <span className="bg-card px-4 text-muted-foreground">Or pay with card</span>
         </div>
       </div>
     </div>

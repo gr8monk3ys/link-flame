@@ -65,14 +65,14 @@ const commitments = [
     icon: TruckIcon,
     title: "Carbon-Neutral Shipping",
     description: "All orders ship with fully offset carbon emissions",
-    color: "text-green-600 dark:text-green-400",
+    color: "text-green-700 dark:text-green-400",
     bgColor: "bg-green-100 dark:bg-green-900/50",
   },
   {
     icon: RecycleIcon,
     title: "Plastic-Free Packaging",
     description: "We ship using only recyclable and compostable materials",
-    color: "text-teal-600 dark:text-teal-400",
+    color: "text-teal-700 dark:text-teal-400",
     bgColor: "bg-teal-100 dark:bg-teal-900/50",
   },
   {
@@ -92,8 +92,8 @@ export function SustainabilityCommitment({
     return (
       <div className={cn("space-y-4", className)}>
         <div className="flex items-center gap-2">
-          <LeafIcon className="size-5 text-green-600 dark:text-green-400" />
-          <h3 className="font-semibold text-gray-900 dark:text-white">Our Commitment</h3>
+          <LeafIcon className="size-5 text-green-700 dark:text-green-400" />
+          <h3 className="font-semibold text-foreground">Our Commitment</h3>
         </div>
         <ul className="space-y-2 text-sm text-muted-foreground">
           <li className="flex items-center gap-2">
@@ -116,7 +116,7 @@ export function SustainabilityCommitment({
             <span className="size-1.5 rounded-full bg-green-500" />
             <Link
               href="/terracycle"
-              className="hover:text-green-600 dark:hover:text-green-400"
+              className="hover:text-green-700 dark:hover:text-green-400"
             >
               TerraCycle recycling partner
             </Link>
@@ -124,7 +124,7 @@ export function SustainabilityCommitment({
         </ul>
         <Link
           href="/sustainability"
-          className="inline-flex items-center gap-1 text-sm font-medium text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
+          className="inline-flex items-center gap-1 text-sm font-medium text-green-700 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
         >
           Learn more
           <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -144,14 +144,14 @@ export function SustainabilityCommitment({
         {commitments.slice(0, 3).map((commitment) => (
           <div key={commitment.title} className="flex items-center gap-2">
             <commitment.icon className={cn("size-5", commitment.color)} />
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            <span className="text-sm font-medium text-foreground">
               {commitment.title}
             </span>
           </div>
         ))}
         <Link
           href="/sustainability"
-          className="text-sm font-medium text-green-600 hover:underline dark:text-green-400"
+          className="text-sm font-medium text-green-700 hover:underline dark:text-green-400"
         >
           Learn more
         </Link>
@@ -168,7 +168,7 @@ export function SustainabilityCommitment({
             <LeafIcon className="size-4" />
             Our Commitment to the Planet
           </div>
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
+          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             Sustainability at Our Core
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
@@ -181,7 +181,7 @@ export function SustainabilityCommitment({
           {commitments.map((commitment) => (
             <div
               key={commitment.title}
-              className="group rounded-xl border bg-white p-6 shadow-sm transition-all hover:shadow-md dark:border-gray-800 dark:bg-gray-900"
+              className="group rounded-xl border bg-card p-6 shadow-sm transition-all hover:shadow-md"
             >
               <div className={cn(
                 "mb-4 inline-flex size-12 items-center justify-center rounded-lg",
@@ -189,7 +189,7 @@ export function SustainabilityCommitment({
               )}>
                 <commitment.icon className={cn("size-6", commitment.color)} />
               </div>
-              <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
+              <h3 className="mb-2 text-lg font-semibold text-foreground">
                 {commitment.title}
               </h3>
               <p className="text-sm text-muted-foreground">
@@ -202,7 +202,7 @@ export function SustainabilityCommitment({
         <div className="mt-10 text-center">
           <Link
             href="/sustainability"
-            className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-6 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600"
+            className="inline-flex items-center gap-2 rounded-lg bg-green-700 px-6 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-700"
           >
             Learn About Our Impact
             <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

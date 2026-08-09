@@ -119,9 +119,16 @@ test.describe('Checkout Form Validation', () => {
     await page.goto('/checkout')
     await page.waitForLoadState('domcontentloaded')
 
-    // Fill email with invalid format
-    const emailInput = page.locator('input[name="email"], input[type="email"], #email')
-    if (await emailInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+    // Scoped to the page body and taken .first(): the site footer renders a
+    // newsletter input[type="email"] on every page, so an unscoped locator
+    // matches two elements and every strict action (fill/blur) throws. That
+    // used to be masked because isVisible() returned false while /checkout was
+    // still compiling, which skipped this whole block and passed the test
+    // without asserting anything.
+    const emailInput = page
+      .locator('main input[name="email"], main input[type="email"], main #email')
+      .first()
+    if (await emailInput.isVisible({ timeout: 15000 }).catch(() => false)) {
       await emailInput.fill('invalid-email')
 
       // Trigger validation
@@ -368,17 +375,24 @@ test.describe('Checkout Flow - End to End', () => {
     await page.goto('/checkout')
     await page.waitForLoadState('domcontentloaded')
 
-    // Should show cart items or order summary
+    // Should show cart items or order summary.
+    // Note the price check is a separate getByText: `text=` is a Playwright
+    // selector engine, not CSS, so mixing it into a comma-separated CSS list
+    // ("[data-testid=\"total\"], .total, text=/\\$[0-9]+/") throws a parse
+    // error rather than matching anything.
     const cartSummary = page.locator('[data-testid="cart-summary"], [data-testid="order-summary"], .cart-summary, .order-summary')
     const productName = page.locator('[data-testid="cart-item"], [data-testid="checkout-item"], .cart-item h3, .cart-item h4')
-    const totalAmount = page.locator('[data-testid="total"], .total, text=/\\$[0-9]+/')
+    const totalAmount = page.locator('[data-testid="total"], .total')
+    const priceText = page.getByText(/\$[0-9]+/)
 
-    // At least one of these should be visible to confirm cart info is shown
-    const hasSummary = await cartSummary.isVisible({ timeout: 3000 }).catch(() => false)
-    const hasProductName = await productName.first().isVisible({ timeout: 3000 }).catch(() => false)
-    const hasTotal = await totalAmount.first().isVisible({ timeout: 3000 }).catch(() => false)
-
-    expect(hasSummary || hasProductName || hasTotal).toBeTruthy()
+    // Any one of these confirms cart info rendered. Use a single web-first
+    // assertion over the union rather than independent isVisible races: the
+    // cart is seeded over the API, so the summary only appears once the client
+    // CartProvider has fetched it, and on a cold dev server the first compile
+    // of /checkout can alone exceed a short fixed timeout.
+    await expect(
+      cartSummary.or(productName).or(totalAmount).or(priceText).first()
+    ).toBeVisible({ timeout: 30000 })
   })
 })
 

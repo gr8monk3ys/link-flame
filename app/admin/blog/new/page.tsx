@@ -79,8 +79,8 @@ export default function NewBlogPostPage() {
   return (
     <div className="max-w-4xl">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">New Blog Post</h1>
-        <p className="mt-2 text-gray-600">
+        <h1 className="text-3xl font-bold text-foreground">New Blog Post</h1>
+        <p className="mt-2 text-muted-foreground">
           Create a new blog post with MDX support
         </p>
       </div>
@@ -90,7 +90,7 @@ export default function NewBlogPostPage() {
         <div>
           <label
             htmlFor="title"
-            className="mb-2 block text-sm font-medium text-gray-700"
+            className="mb-2 block text-sm font-medium text-foreground"
           >
             Title *
           </label>
@@ -100,7 +100,7 @@ export default function NewBlogPostPage() {
             required
             value={formData.title}
             onChange={(e) => handleTitleChange(e.target.value)}
-            className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
+            className="w-full rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
             placeholder="Enter post title..."
           />
         </div>
@@ -109,9 +109,9 @@ export default function NewBlogPostPage() {
         <div>
           <label
             htmlFor="slug"
-            className="mb-2 block text-sm font-medium text-gray-700"
+            className="mb-2 block text-sm font-medium text-foreground"
           >
-            Slug * <span className="text-gray-500">(auto-generated)</span>
+            Slug * <span className="text-muted-foreground">(auto-generated)</span>
           </label>
           <input
             type="text"
@@ -119,10 +119,10 @@ export default function NewBlogPostPage() {
             required
             value={formData.slug}
             onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-            className="w-full rounded-lg border border-gray-300 px-4 py-2 font-mono text-sm focus:border-transparent focus:ring-2 focus:ring-ring"
+            className="w-full rounded-lg border border-border px-4 py-2 font-mono text-sm focus:border-transparent focus:ring-2 focus:ring-ring"
             placeholder="post-url-slug"
           />
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-muted-foreground">
             URL: /blogs/{formData.slug || 'post-url-slug'}
           </p>
         </div>
@@ -131,7 +131,7 @@ export default function NewBlogPostPage() {
         <div>
           <label
             htmlFor="description"
-            className="mb-2 block text-sm font-medium text-gray-700"
+            className="mb-2 block text-sm font-medium text-foreground"
           >
             Description * (SEO meta description)
           </label>
@@ -143,7 +143,7 @@ export default function NewBlogPostPage() {
             onChange={(e) =>
               setFormData({ ...formData, description: e.target.value })
             }
-            className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
+            className="w-full rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
             placeholder="Brief description for search engines..."
           />
         </div>
@@ -153,7 +153,7 @@ export default function NewBlogPostPage() {
           <div>
             <label
               htmlFor="category"
-              className="mb-2 block text-sm font-medium text-gray-700"
+              className="mb-2 block text-sm font-medium text-foreground"
             >
               Category *
             </label>
@@ -165,14 +165,14 @@ export default function NewBlogPostPage() {
               onChange={(e) =>
                 setFormData({ ...formData, category: e.target.value })
               }
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
+              className="w-full rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
               placeholder="e.g., Sustainability"
             />
           </div>
           <div>
             <label
               htmlFor="tags"
-              className="mb-2 block text-sm font-medium text-gray-700"
+              className="mb-2 block text-sm font-medium text-foreground"
             >
               Tags (comma-separated)
             </label>
@@ -183,7 +183,7 @@ export default function NewBlogPostPage() {
               onChange={(e) =>
                 setFormData({ ...formData, tags: e.target.value })
               }
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
+              className="w-full rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
               placeholder="eco-friendly, green-living"
             />
           </div>
@@ -193,7 +193,7 @@ export default function NewBlogPostPage() {
         <div>
           <label
             htmlFor="coverImage"
-            className="mb-2 block text-sm font-medium text-gray-700"
+            className="mb-2 block text-sm font-medium text-foreground"
           >
             Cover Image URL *
           </label>
@@ -205,7 +205,7 @@ export default function NewBlogPostPage() {
             onChange={(e) =>
               setFormData({ ...formData, coverImage: e.target.value })
             }
-            className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
+            className="w-full rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
             placeholder="https://images.unsplash.com/..."
           />
           {formData.coverImage && (
@@ -227,14 +227,14 @@ export default function NewBlogPostPage() {
           <div className="mb-2 flex items-center justify-between">
             <label
               htmlFor="content"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-foreground"
             >
               Content * (MDX/Markdown supported)
             </label>
             <button
               type="button"
               onClick={() => setPreview(!preview)}
-              className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700"
+              className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400"
             >
               <Eye className="size-4" />
               {preview ? 'Edit' : 'Preview'}
@@ -242,7 +242,7 @@ export default function NewBlogPostPage() {
           </div>
 
           {preview ? (
-            <div className="prose prose-green min-h-[400px] w-full max-w-none rounded-lg border border-gray-300 bg-gray-50 px-4 py-3">
+            <div className="prose prose-green min-h-[400px] w-full max-w-none rounded-lg border border-border bg-muted px-4 py-3">
               <div
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(
@@ -264,7 +264,7 @@ export default function NewBlogPostPage() {
               onChange={(e) =>
                 setFormData({ ...formData, content: e.target.value })
               }
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 font-mono text-sm focus:border-transparent focus:ring-2 focus:ring-ring"
+              className="w-full rounded-lg border border-border px-4 py-3 font-mono text-sm focus:border-transparent focus:ring-2 focus:ring-ring"
               placeholder="# Your Blog Post Content
 
 Write your content in Markdown/MDX format...
@@ -279,7 +279,7 @@ const example = 'value';
 ```"
             />
           )}
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-sm text-muted-foreground">
             Supports Markdown formatting: **bold**, *italic*, # headings, code blocks, etc.
           </p>
         </div>
@@ -293,9 +293,9 @@ const example = 'value';
               onChange={(e) =>
                 setFormData({ ...formData, featured: e.target.checked })
               }
-              className="size-4 rounded border-gray-300 text-green-600 focus:ring-ring"
+              className="size-4 rounded border-border text-green-700 focus:ring-ring dark:text-green-400"
             />
-            <span className="text-sm font-medium text-gray-700">
+            <span className="text-sm font-medium text-foreground">
               Featured Post
             </span>
           </label>
@@ -307,7 +307,7 @@ const example = 'value';
             type="button"
             onClick={(e) => handleSubmit(e, false)}
             disabled={loading}
-            className="flex-1 rounded-lg border border-gray-300 px-6 py-3 text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50"
+            className="flex-1 rounded-lg border border-border px-6 py-3 text-foreground transition-colors hover:bg-muted disabled:opacity-50"
           >
             {loading ? 'Saving...' : 'Save as Draft'}
           </button>
@@ -315,7 +315,7 @@ const example = 'value';
             type="button"
             onClick={(e) => handleSubmit(e, true)}
             disabled={loading}
-            className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-600 px-6 py-3 text-white transition-colors hover:bg-green-700 disabled:opacity-50"
+            className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-700 px-6 py-3 text-white transition-colors hover:bg-green-700 disabled:opacity-50"
           >
             <Save className="size-5" />
             {loading ? 'Publishing...' : 'Publish'}

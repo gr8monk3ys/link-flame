@@ -103,7 +103,7 @@ export function OrderImpactSummary({
           <Sparkles className="size-5" />
           Your Order&apos;s Impact
         </CardTitle>
-        <CardDescription className="text-green-600 dark:text-green-400">
+        <CardDescription className="text-green-700 dark:text-green-400">
           Thank you for making an eco-friendly choice!
         </CardDescription>
       </CardHeader>
@@ -115,14 +115,14 @@ export function OrderImpactSummary({
             return (
               <div
                 key={metric.metricId}
-                className="rounded-xl bg-white/60 p-4 text-center dark:bg-black/20"
+                className="rounded-xl bg-card/60 p-4 text-center dark:bg-black/20"
               >
                 <div className="mb-2 flex justify-center">
                   <div className="flex size-10 items-center justify-center rounded-full bg-green-500/20">
-                    <Icon className="size-5 text-green-600 dark:text-green-400" />
+                    <Icon className="size-5 text-green-700 dark:text-green-400" />
                   </div>
                 </div>
-                <div className="text-xl font-bold text-green-600 dark:text-green-400">
+                <div className="text-xl font-bold text-green-700 dark:text-green-400">
                   {formatValue(metric.value)}
                 </div>
                 <div className="text-xs text-muted-foreground">{metric.unit}</div>

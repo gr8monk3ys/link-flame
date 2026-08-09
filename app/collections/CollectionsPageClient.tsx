@@ -382,8 +382,8 @@ export default function CollectionsPageClient() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div className="border-b border-gray-200 py-6">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">Shop by Values</h2>
+      <div className="border-b border-border py-6">
+        <h2 className="mb-4 text-lg font-semibold text-foreground">Shop by Values</h2>
         <ValueFilterBar />
       </div>
 

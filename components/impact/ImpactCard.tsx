@@ -96,12 +96,12 @@ export function ImpactCard({
             classes.iconContainer
           )}
         >
-          <Icon className={cn("text-green-600 dark:text-green-400", classes.icon)} />
+          <Icon className={cn("text-green-700 dark:text-green-400", classes.icon)} />
         </div>
 
         {/* Value */}
         <div className="mb-2">
-          <span className={cn("font-bold text-green-600 dark:text-green-400", classes.value)}>
+          <span className={cn("font-bold text-green-700 dark:text-green-400", classes.value)}>
             {formatValue(value)}
           </span>
           <span className={cn("ml-1 text-muted-foreground", classes.unit)}>{unit}</span>

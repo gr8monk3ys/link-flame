@@ -54,11 +54,11 @@ interface SubscriptionCardProps {
 }
 
 const statusColors: Record<SubscriptionStatus, string> = {
-  PENDING: 'bg-blue-100 text-blue-800',
-  ACTIVE: 'bg-green-100 text-green-800',
-  PAUSED: 'bg-yellow-100 text-yellow-800',
-  PAYMENT_FAILED: 'bg-orange-100 text-orange-800',
-  CANCELLED: 'bg-red-100 text-red-800',
+  PENDING: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200',
+  ACTIVE: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200',
+  PAUSED: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200',
+  PAYMENT_FAILED: 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-200',
+  CANCELLED: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200',
 };
 
 const statusLabels: Record<SubscriptionStatus, string> = {
@@ -206,12 +206,12 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
   };
 
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+    <div className="overflow-hidden rounded-lg border border-border bg-card shadow-sm">
       {/* Header */}
-      <div className="border-b border-gray-200 bg-gray-50 px-4 py-3">
+      <div className="border-b border-border bg-muted px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-sm font-medium text-gray-500">
+            <span className="text-sm font-medium text-muted-foreground">
               {subscription.visibleId}
             </span>
             <span
@@ -226,7 +226,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
           <button
             type="button"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="text-gray-400 hover:text-gray-500"
+            className="text-muted-foreground hover:text-muted-foreground"
           >
             <ChevronRight
               className={cn(
@@ -246,7 +246,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
             {subscription.items.slice(0, 3).map((item) => (
               <div
                 key={item.id}
-                className="relative size-12 overflow-hidden rounded-full border-2 border-white bg-gray-100"
+                className="relative size-12 overflow-hidden rounded-full border-2 border-white bg-muted"
               >
                 <Image
                   src={item.variant?.image || item.product.image}
@@ -258,24 +258,24 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
               </div>
             ))}
             {subscription.items.length > 3 && (
-              <div className="flex size-12 items-center justify-center rounded-full border-2 border-white bg-gray-100 text-xs font-medium text-gray-600">
+              <div className="flex size-12 items-center justify-center rounded-full border-2 border-white bg-muted text-xs font-medium text-muted-foreground">
                 +{subscription.items.length - 3}
               </div>
             )}
           </div>
           <div className="flex-1">
-            <p className="text-sm font-medium text-gray-900">
+            <p className="text-sm font-medium text-foreground">
               {subscription.items.length} item{subscription.items.length > 1 ? 's' : ''}
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-muted-foreground">
               {FREQUENCY_LABELS[subscription.frequency]}
             </p>
           </div>
           <div className="text-right">
-            <p className="text-sm font-semibold text-gray-900">
+            <p className="text-sm font-semibold text-foreground">
               ${totals.total.toFixed(2)}
             </p>
-            <p className="text-xs text-green-600">
+            <p className="text-xs text-green-700 dark:text-green-400">
               Save ${totals.totalDiscount.toFixed(2)}
             </p>
           </div>
@@ -283,9 +283,9 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
 
         {/* Next delivery info */}
         {isActive && (
-          <div className="mt-4 flex items-center rounded-lg bg-green-50 px-3 py-2">
-            <Truck className="mr-2 size-5 text-green-600" />
-            <span className="text-sm text-green-800">
+          <div className="mt-4 flex items-center rounded-lg bg-green-50 px-3 py-2 dark:bg-green-950/40">
+            <Truck className="mr-2 size-5 text-green-700 dark:text-green-400" />
+            <span className="text-sm text-green-800 dark:text-green-200">
               Next delivery: {nextDeliveryDate.toLocaleDateString('en-US', {
                 weekday: 'short',
                 month: 'short',
@@ -296,27 +296,27 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
         )}
 
         {isPaused && (
-          <div className="mt-4 flex items-center rounded-lg bg-yellow-50 px-3 py-2">
-            <Pause className="mr-2 size-5 text-yellow-600" />
-            <span className="text-sm text-yellow-800">
+          <div className="mt-4 flex items-center rounded-lg bg-yellow-50 px-3 py-2 dark:bg-yellow-950/40">
+            <Pause className="mr-2 size-5 text-yellow-600 dark:text-yellow-400" />
+            <span className="text-sm text-yellow-800 dark:text-yellow-200">
               Subscription is paused. Resume to continue deliveries.
             </span>
           </div>
         )}
 
         {isPending && (
-          <div className="mt-4 flex items-center rounded-lg bg-blue-50 px-3 py-2">
-            <CalendarDays className="mr-2 size-5 text-blue-600" />
-            <span className="text-sm text-blue-800">
+          <div className="mt-4 flex items-center rounded-lg bg-blue-50 px-3 py-2 dark:bg-blue-950/40">
+            <CalendarDays className="mr-2 size-5 text-blue-600 dark:text-blue-400" />
+            <span className="text-sm text-blue-800 dark:text-blue-200">
               Complete checkout to activate this subscription.
             </span>
           </div>
         )}
 
         {isPaymentFailed && (
-          <div className="mt-4 flex items-center rounded-lg bg-orange-50 px-3 py-2">
-            <RefreshCw className="mr-2 size-5 text-orange-600" />
-            <span className="text-sm text-orange-800">
+          <div className="mt-4 flex items-center rounded-lg bg-orange-50 px-3 py-2 dark:bg-orange-950/40">
+            <RefreshCw className="mr-2 size-5 text-orange-600 dark:text-orange-400" />
+            <span className="text-sm text-orange-800 dark:text-orange-200">
               Payment failed. Update billing details to resume deliveries.
             </span>
           </div>
@@ -324,15 +324,15 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
 
         {/* Expanded content */}
         {isExpanded && (
-          <div className="mt-4 border-t border-gray-200 pt-4">
+          <div className="mt-4 border-t border-border pt-4">
             {/* Items list */}
-            <h4 className="mb-2 text-sm font-medium text-gray-900">Items</h4>
-            <ul className="divide-y divide-gray-100">
+            <h4 className="mb-2 text-sm font-medium text-foreground">Items</h4>
+            <ul className="divide-y divide-border">
               {subscription.items.map((item) => {
                 const discountedPrice = item.priceAtSubscription * (1 - item.discountPercent / 100);
                 return (
                   <li key={item.id} className="flex items-center gap-3 py-2">
-                    <div className="relative size-10 shrink-0 overflow-hidden rounded bg-gray-100">
+                    <div className="relative size-10 shrink-0 overflow-hidden rounded bg-muted">
                       <Image
                         src={item.variant?.image || item.product.image}
                         alt={item.product.title}
@@ -344,12 +344,12 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
                     <div className="min-w-0 flex-1">
                       <Link
                         href={`/products/${item.product.id}`}
-                        className="text-sm font-medium text-gray-900 hover:text-green-600"
+                        className="text-sm font-medium text-foreground hover:text-green-700"
                       >
                         {item.product.title}
                       </Link>
                       {item.variant && (
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-muted-foreground">
                           {[item.variant.size, item.variant.color, item.variant.material]
                             .filter(Boolean)
                             .join(' / ')}
@@ -357,10 +357,10 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
                       )}
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-gray-900">
+                      <p className="text-sm text-foreground">
                         {item.quantity} x ${discountedPrice.toFixed(2)}
                       </p>
-                      <p className="text-xs text-gray-500 line-through">
+                      <p className="text-xs text-muted-foreground line-through">
                         ${item.priceAtSubscription.toFixed(2)}
                       </p>
                     </div>
@@ -370,18 +370,18 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
             </ul>
 
             {/* Summary */}
-            <div className="mt-4 border-t border-gray-200 pt-4">
+            <div className="mt-4 border-t border-border pt-4">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Subtotal</span>
-                <span className="text-gray-900">${totals.subtotal.toFixed(2)}</span>
+                <span className="text-muted-foreground">Subtotal</span>
+                <span className="text-foreground">${totals.subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-green-600">Subscribe & Save discount</span>
-                <span className="text-green-600">-${totals.totalDiscount.toFixed(2)}</span>
+                <span className="text-green-700 dark:text-green-400">Subscribe & Save discount</span>
+                <span className="text-green-700 dark:text-green-400">-${totals.totalDiscount.toFixed(2)}</span>
               </div>
-              <div className="mt-2 flex justify-between border-t border-gray-200 pt-2 text-sm font-semibold">
-                <span className="text-gray-900">Total per delivery</span>
-                <span className="text-gray-900">${totals.total.toFixed(2)}</span>
+              <div className="mt-2 flex justify-between border-t border-border pt-2 text-sm font-semibold">
+                <span className="text-foreground">Total per delivery</span>
+                <span className="text-foreground">${totals.total.toFixed(2)}</span>
               </div>
             </div>
           </div>
@@ -390,7 +390,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
 
       {/* Actions */}
       {!isCancelled && (
-        <div className="border-t border-gray-200 bg-gray-50 px-4 py-3">
+        <div className="border-t border-border bg-muted px-4 py-3">
           <div className="flex flex-wrap gap-2">
             {isActive && (
               <>
@@ -398,7 +398,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
                   type="button"
                   onClick={handleSkipDelivery}
                   disabled={isLoading}
-                  className="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex items-center rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <RefreshCw className="mr-1.5 size-4" />
                   Skip next delivery
@@ -407,7 +407,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
                   type="button"
                   onClick={handlePauseResume}
                   disabled={isLoading}
-                  className="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex items-center rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <Pause className="mr-1.5 size-4" />
                   Pause
@@ -419,7 +419,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
                 type="button"
                 onClick={handlePauseResume}
                 disabled={isLoading}
-                className="inline-flex items-center rounded-md border border-green-600 bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex items-center rounded-md border border-green-600 bg-green-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Play className="mr-1.5 size-4" />
                 Resume
@@ -430,7 +430,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
                 type="button"
                 onClick={handleManageBilling}
                 disabled={isLoading}
-                className="inline-flex items-center rounded-md border border-blue-300 bg-white px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex items-center rounded-md border border-blue-300 bg-card px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-blue-800 dark:text-blue-300"
               >
                 <CalendarDays className="mr-1.5 size-4" />
                 Update billing
@@ -440,7 +440,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
               type="button"
               onClick={handleCancel}
               disabled={isLoading}
-              className="inline-flex items-center rounded-md border border-red-300 bg-white px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex items-center rounded-md border border-red-300 bg-card px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-red-800 dark:text-red-300"
             >
               <X className="mr-1.5 size-4" />
               Cancel

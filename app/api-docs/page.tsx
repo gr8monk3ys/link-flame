@@ -37,7 +37,7 @@ export default function ApiDocsPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-card">
       {/* Swagger UI CSS */}
       <link
         rel="stylesheet"
@@ -72,12 +72,12 @@ export default function ApiDocsPage() {
       />
 
       {/* Header */}
-      <header className="bg-green-600 px-6 py-4 text-white">
+      <header className="bg-green-700 px-6 py-4 text-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between">
           <h1 className="text-2xl font-bold">Link Flame API Documentation</h1>
           <a
             href="/"
-            className="text-white transition-colors hover:text-green-100"
+            className="text-white transition-colors hover:text-green-50"
           >
             Back to Site
           </a>

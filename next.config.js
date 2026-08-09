@@ -87,15 +87,26 @@ const nextConfig = {
           },
         ],
       },
-      {
-        source: '/_next/static/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
+      // Next.js already serves /_next/static with exactly this header in
+      // production, so this entry only ever mattered in development - where it
+      // is actively harmful. Turbopack reuses a chunk URL while its contents
+      // change, and `immutable` tells the browser never to revalidate, so edits
+      // to CSS silently do not reach the page. That is what "Custom
+      // Cache-Control headers detected ... can break Next.js development
+      // behavior" in the dev server banner is warning about.
+      ...(process.env.NODE_ENV === 'production'
+        ? [
+            {
+              source: '/_next/static/:path*',
+              headers: [
+                {
+                  key: 'Cache-Control',
+                  value: 'public, max-age=31536000, immutable',
+                },
+              ],
+            },
+          ]
+        : []),
       // Cache public API responses at CDN level
       {
         source: '/api/products',

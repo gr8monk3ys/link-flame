@@ -137,7 +137,7 @@ export default function ImperfectPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted">
       {/* Hero Banner */}
       <ImperfectBanner variant="hero" showCTA={false} />
 
@@ -145,9 +145,9 @@ export default function ImperfectPage() {
         {/* Filters Section */}
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2">
-            <LeafIcon className="size-5 text-amber-600" />
-            <p className="text-gray-700">
-              <span className="font-semibold text-amber-600">{totalItems}</span> imperfect items available
+            <LeafIcon className="size-5 text-amber-600 dark:text-amber-400" />
+            <p className="text-foreground">
+              <span className="font-semibold text-amber-600 dark:text-amber-400">{totalItems}</span> imperfect items available
             </p>
           </div>
 
@@ -157,7 +157,7 @@ export default function ImperfectPage() {
               <select
                 value={filters.category}
                 onChange={(e) => handleFilterChange({ category: e.target.value })}
-                className="rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-amber-500 focus:ring-amber-500"
+                className="rounded-lg border border-border px-4 py-2 text-sm focus:border-amber-500 focus:ring-amber-500"
                 aria-label="Filter by category"
               >
                 <option value="">All Categories</option>
@@ -177,7 +177,7 @@ export default function ImperfectPage() {
                   minDiscount: e.target.value ? Number(e.target.value) : null,
                 })
               }
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-amber-500 focus:ring-amber-500"
+              className="rounded-lg border border-border px-4 py-2 text-sm focus:border-amber-500 focus:ring-amber-500"
               aria-label="Filter by discount"
             >
               {DISCOUNT_OPTIONS.map((opt) => (
@@ -191,7 +191,7 @@ export default function ImperfectPage() {
             <select
               value={filters.sortBy}
               onChange={(e) => handleFilterChange({ sortBy: e.target.value })}
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-amber-500 focus:ring-amber-500"
+              className="rounded-lg border border-border px-4 py-2 text-sm focus:border-amber-500 focus:ring-amber-500"
               aria-label="Sort products"
             >
               {SORT_OPTIONS.map((opt) => (
@@ -205,11 +205,11 @@ export default function ImperfectPage() {
 
         {/* Error State */}
         {error && (
-          <div className="mb-8 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800">
+          <div className="mb-8 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200">
             <p>{error}</p>
             <button
               onClick={() => window.location.reload()}
-              className="mt-2 text-sm font-medium text-red-600 hover:text-red-500"
+              className="mt-2 text-sm font-medium text-red-600 hover:text-red-500 dark:text-red-400"
             >
               Try again
             </button>
@@ -225,7 +225,7 @@ export default function ImperfectPage() {
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
             >
               Previous
             </button>
@@ -241,7 +241,7 @@ export default function ImperfectPage() {
                     className={`rounded-lg px-4 py-2 text-sm font-medium ${
                       page === currentPage
                         ? 'bg-amber-600 text-white'
-                        : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+                        : 'border border-border text-foreground hover:bg-muted'
                     }`}
                   >
                     {page}
@@ -253,7 +253,7 @@ export default function ImperfectPage() {
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
             >
               Next
             </button>

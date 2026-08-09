@@ -120,7 +120,7 @@ export default function AdminBlogPage() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="text-gray-600">Loading blog posts...</div>
+        <div className="text-muted-foreground">Loading blog posts...</div>
       </div>
     );
   }
@@ -130,12 +130,12 @@ export default function AdminBlogPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Blog Posts</h1>
-          <p className="mt-2 text-gray-600">Manage your blog content</p>
+          <h1 className="text-3xl font-bold text-foreground">Blog Posts</h1>
+          <p className="mt-2 text-muted-foreground">Manage your blog content</p>
         </div>
         <Link
           href="/admin/blog/new"
-          className="flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-white transition-colors hover:bg-green-700"
+          className="flex items-center gap-2 rounded-lg bg-green-700 px-4 py-2 text-white transition-colors hover:bg-green-700"
         >
           <Plus className="size-5" />
           New Post
@@ -143,22 +143,22 @@ export default function AdminBlogPage() {
       </div>
 
       {/* Filters */}
-      <div className="rounded-lg bg-white p-4 shadow">
+      <div className="rounded-lg bg-card p-4 shadow">
         <div className="flex flex-col gap-4 sm:flex-row">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 size-5 -translate-y-1/2 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
             <input
               type="text"
               placeholder="Search posts..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-4 focus:border-transparent focus:ring-2 focus:ring-ring"
+              className="w-full rounded-lg border border-border py-2 pl-10 pr-4 focus:border-transparent focus:ring-2 focus:ring-ring"
             />
           </div>
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
+            className="rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
           >
             <option value="all">All Posts</option>
             <option value="published">Published</option>
@@ -169,57 +169,57 @@ export default function AdminBlogPage() {
       </div>
 
       {/* Posts Table */}
-      <div className="overflow-hidden rounded-lg bg-white shadow">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <div className="overflow-hidden rounded-lg bg-card shadow">
+        <table className="min-w-full divide-y divide-border">
+          <thead className="bg-muted">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                 Title
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                 Category
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                 Author
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                 Status
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                 Published
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 bg-white">
+          <tbody className="divide-y divide-border bg-card">
             {filteredPosts.length === 0 ? (
               <tr>
                 <td
                   colSpan={6}
-                  className="px-6 py-8 text-center text-gray-500"
+                  className="px-6 py-8 text-center text-muted-foreground"
                 >
                   No blog posts found
                 </td>
               </tr>
             ) : (
               filteredPosts.map((post) => (
-                <tr key={post.id} className="hover:bg-gray-50">
+                <tr key={post.id} className="hover:bg-muted">
                   <td className="px-6 py-4">
                     <div className="flex items-center">
                       <div>
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-sm font-medium text-foreground">
                           {post.title}
                         </div>
-                        <div className="text-sm text-gray-500">{post.slug}</div>
+                        <div className="text-sm text-muted-foreground">{post.slug}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                  <td className="whitespace-nowrap px-6 py-4 text-sm text-foreground">
                     {post.category}
                   </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                  <td className="whitespace-nowrap px-6 py-4 text-sm text-foreground">
                     {post.author?.name || 'Unknown'}
                   </td>
                   <td className="whitespace-nowrap px-6 py-4">
@@ -227,20 +227,20 @@ export default function AdminBlogPage() {
                       <span
                         className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold leading-5 ${
                           post.published
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-gray-100 text-gray-800'
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200'
+                            : 'bg-muted text-foreground'
                         }`}
                       >
                         {post.published ? 'Published' : 'Draft'}
                       </span>
                       {post.featured && (
-                        <span className="inline-flex rounded-full bg-yellow-100 px-2 py-1 text-xs font-semibold leading-5 text-yellow-800">
+                        <span className="inline-flex rounded-full bg-yellow-100 px-2 py-1 text-xs font-semibold leading-5 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200">
                           Featured
                         </span>
                       )}
                     </div>
                   </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                  <td className="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground">
                     {post.publishedAt
                       ? new Date(post.publishedAt).toLocaleDateString()
                       : '-'}
@@ -250,13 +250,13 @@ export default function AdminBlogPage() {
                       <Link
                         href={`/blogs/${post.slug}`}
                         target="_blank"
-                        className="p-1 text-gray-600 hover:text-gray-900"
+                        className="p-1 text-muted-foreground hover:text-foreground"
                       >
                         <Eye className="size-5" />
                       </Link>
                       <Link
                         href={`/admin/blog/${post.id}/edit`}
-                        className="p-1 text-blue-600 hover:text-blue-900"
+                        className="p-1 text-blue-600 hover:text-blue-900 dark:text-blue-400"
                       >
                         <Edit className="size-5" />
                       </Link>
@@ -264,15 +264,15 @@ export default function AdminBlogPage() {
                         onClick={() => togglePublished(post.id, post.published)}
                         className={`rounded px-2 py-1 text-xs font-medium ${
                           post.published
-                            ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                            : 'bg-green-100 text-green-700 hover:bg-green-200'
+                            ? 'bg-muted text-foreground hover:bg-muted'
+                            : 'bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-300'
                         }`}
                       >
                         {post.published ? 'Unpublish' : 'Publish'}
                       </button>
                       <button
                         onClick={() => handleDelete(post.id)}
-                        className="p-1 text-red-600 hover:text-red-900"
+                        className="p-1 text-red-600 hover:text-red-900 dark:text-red-400"
                       >
                         <Trash2 className="size-5" />
                       </button>
@@ -287,25 +287,25 @@ export default function AdminBlogPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-        <div className="rounded-lg bg-white p-4 shadow">
-          <p className="text-sm text-gray-600">Total Posts</p>
-          <p className="mt-1 text-2xl font-bold text-gray-900">{posts.length}</p>
+        <div className="rounded-lg bg-card p-4 shadow">
+          <p className="text-sm text-muted-foreground">Total Posts</p>
+          <p className="mt-1 text-2xl font-bold text-foreground">{posts.length}</p>
         </div>
-        <div className="rounded-lg bg-white p-4 shadow">
-          <p className="text-sm text-gray-600">Published</p>
-          <p className="mt-1 text-2xl font-bold text-green-600">
+        <div className="rounded-lg bg-card p-4 shadow">
+          <p className="text-sm text-muted-foreground">Published</p>
+          <p className="mt-1 text-2xl font-bold text-green-700 dark:text-green-400">
             {posts.filter((p) => p.published).length}
           </p>
         </div>
-        <div className="rounded-lg bg-white p-4 shadow">
-          <p className="text-sm text-gray-600">Drafts</p>
-          <p className="mt-1 text-2xl font-bold text-gray-600">
+        <div className="rounded-lg bg-card p-4 shadow">
+          <p className="text-sm text-muted-foreground">Drafts</p>
+          <p className="mt-1 text-2xl font-bold text-muted-foreground">
             {posts.filter((p) => !p.published).length}
           </p>
         </div>
-        <div className="rounded-lg bg-white p-4 shadow">
-          <p className="text-sm text-gray-600">Featured</p>
-          <p className="mt-1 text-2xl font-bold text-yellow-600">
+        <div className="rounded-lg bg-card p-4 shadow">
+          <p className="text-sm text-muted-foreground">Featured</p>
+          <p className="mt-1 text-2xl font-bold text-yellow-600 dark:text-yellow-400">
             {posts.filter((p) => p.featured).length}
           </p>
         </div>

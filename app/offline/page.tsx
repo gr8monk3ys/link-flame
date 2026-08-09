@@ -4,11 +4,11 @@ import Link from "next/link";
 
 export default function OfflinePage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-muted px-4">
       <div className="text-center">
         <div className="mb-8">
           <svg
-            className="mx-auto size-24 text-gray-400"
+            className="mx-auto size-24 text-muted-foreground"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -21,23 +21,23 @@ export default function OfflinePage() {
             />
           </svg>
         </div>
-        <h1 className="mb-4 text-3xl font-bold text-gray-900">
+        <h1 className="mb-4 text-3xl font-bold text-foreground">
           You&apos;re Offline
         </h1>
-        <p className="mx-auto mb-8 max-w-md text-gray-600">
+        <p className="mx-auto mb-8 max-w-md text-muted-foreground">
           It looks like you&apos;ve lost your internet connection. Please check your
           network settings and try again.
         </p>
         <div className="space-y-4">
           <button
             onClick={() => window.location.reload()}
-            className="inline-flex items-center rounded-md border border-transparent bg-green-600 px-6 py-3 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            className="inline-flex items-center rounded-md border border-transparent bg-green-700 px-6 py-3 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
           >
             Try Again
           </button>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-muted-foreground">
             Or browse our{" "}
-            <Link href="/" className="text-green-600 hover:text-green-700">
+            <Link href="/" className="text-green-700 hover:text-green-700 dark:text-green-400">
               cached pages
             </Link>
           </p>

@@ -119,7 +119,12 @@ export async function getPostsByCategory(category: string): Promise<BlogPost[]> 
     try {
       const posts = await prisma.blogPost.findMany({
         where: {
-          category: { name: { equals: category } },
+          // Case-insensitive because the links that reach this page lowercase
+          // the name (`/blogs/categories/${post.category.toLowerCase()}`) while
+          // the stored name keeps its capitalisation. A case-sensitive `equals`
+          // meant every category that was not already lowercase - "Green Home",
+          // "Guides" - rendered "(0 articles)".
+          category: { name: { equals: category, mode: 'insensitive' } },
         },
         include: { author: true, category: true },
         orderBy: { publishedAt: 'desc' },
@@ -141,7 +146,11 @@ export async function getPostsByTag(tag: string): Promise<BlogPost[]> {
   if (typeof window === 'undefined') {
     try {
       const candidates = await prisma.blogPost.findMany({
-        where: { tags: { contains: tag } },
+        // Case-insensitive for the same reason as getPostsByCategory: tag links
+        // lowercase the tag. The JS filter below already compares lowercased,
+        // but a case-sensitive prefilter here returned no candidates for it to
+        // examine, so the lowercasing was silently defeated at the database.
+        where: { tags: { contains: tag, mode: 'insensitive' } },
         include: { author: true, category: true },
         orderBy: { publishedAt: 'desc' },
       })

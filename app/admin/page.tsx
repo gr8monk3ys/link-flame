@@ -22,15 +22,15 @@ interface StatCardProps {
 
 function StatCard({ title, value, change, icon, trend }: StatCardProps) {
   return (
-    <div className="rounded-lg bg-white p-6 shadow">
+    <div className="rounded-lg bg-card p-6 shadow">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className="mt-2 text-2xl font-bold text-gray-900">{value}</p>
+          <p className="text-sm font-medium text-muted-foreground">{title}</p>
+          <p className="mt-2 text-2xl font-bold text-foreground">{value}</p>
           {change && (
             <p
               className={`mt-2 flex items-center gap-1 text-sm ${
-                trend === 'up' ? 'text-green-600' : 'text-red-600'
+                trend === 'up' ? 'text-green-700 dark:text-green-400' : 'text-red-600 dark:text-red-400'
               }`}
             >
               <TrendingUp className="size-4" />
@@ -38,7 +38,7 @@ function StatCard({ title, value, change, icon, trend }: StatCardProps) {
             </p>
           )}
         </div>
-        <div className="rounded-full bg-green-100 p-3 text-green-600">
+        <div className="rounded-full bg-green-100 p-3 text-green-700 dark:bg-green-900/30 dark:text-green-400">
           {icon}
         </div>
       </div>
@@ -91,8 +91,8 @@ export default async function AdminDashboard() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="mt-2 text-gray-600">
+        <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+        <p className="mt-2 text-muted-foreground">
           Welcome back! Here&apos;s what&apos;s happening with your store.
         </p>
       </div>
@@ -123,79 +123,79 @@ export default async function AdminDashboard() {
 
       {/* Additional Stats */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <div className="rounded-lg bg-white p-6 shadow">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">
+        <div className="rounded-lg bg-card p-6 shadow">
+          <h2 className="mb-4 text-lg font-semibold text-foreground">
             Average Order Value
           </h2>
-          <p className="text-3xl font-bold text-green-600">
+          <p className="text-3xl font-bold text-green-700 dark:text-green-400">
             ${avgOrderValue.toFixed(2)}
           </p>
         </div>
-        <div className="rounded-lg bg-white p-6 shadow">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">
+        <div className="rounded-lg bg-card p-6 shadow">
+          <h2 className="mb-4 text-lg font-semibold text-foreground">
             Blog Posts
           </h2>
-          <p className="text-3xl font-bold text-green-600">{totalBlogPosts}</p>
+          <p className="text-3xl font-bold text-green-700 dark:text-green-400">{totalBlogPosts}</p>
         </div>
       </div>
 
       {/* Recent Orders */}
-      <div className="rounded-lg bg-white shadow">
-        <div className="border-b border-gray-200 px-6 py-4">
-          <h2 className="text-lg font-semibold text-gray-900">Recent Orders</h2>
+      <div className="rounded-lg bg-card shadow">
+        <div className="border-b border-border px-6 py-4">
+          <h2 className="text-lg font-semibold text-foreground">Recent Orders</h2>
         </div>
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-border">
+            <thead className="bg-muted">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   Order ID
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   Customer
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   Total
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   Date
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
+            <tbody className="divide-y divide-border bg-card">
               {recentOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
+                  <td colSpan={5} className="px-6 py-4 text-center text-muted-foreground">
                     No orders yet
                   </td>
                 </tr>
               ) : (
                 recentOrders.map((order) => (
                   <tr key={order.id}>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-foreground">
                       #{order.id}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-foreground">
                       {order.customerName || 'Unknown'}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-foreground">
                       ${order.amount.toFixed(2)}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4">
                       <span
                         className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold leading-5 ${
                           order.status === 'paid'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-yellow-100 text-yellow-800'
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200'
+                            : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200'
                         }`}
                       >
                         {order.status}
                       </span>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground">
                       {new Date(order.createdAt).toLocaleDateString()}
                     </td>
                   </tr>
@@ -208,16 +208,16 @@ export default async function AdminDashboard() {
 
       {/* Low Stock Alert */}
       {lowStockProducts.length > 0 && (
-        <div className="rounded-lg border-l-4 border-yellow-400 bg-yellow-50 p-6">
+        <div className="rounded-lg border-l-4 border-yellow-400 bg-yellow-50 p-6 dark:bg-yellow-950/40">
           <div className="flex items-start">
             <div className="shrink-0">
               <Package className="size-6 text-yellow-400" />
             </div>
             <div className="ml-3 flex-1">
-              <h3 className="text-sm font-medium text-yellow-800">
+              <h3 className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
                 Low Stock Alert
               </h3>
-              <div className="mt-2 text-sm text-yellow-700">
+              <div className="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
                 <p>The following products are running low on inventory:</p>
                 <ul className="mt-2 list-inside list-disc space-y-1">
                   {lowStockProducts.map((product) => (

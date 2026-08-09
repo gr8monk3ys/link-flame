@@ -102,25 +102,25 @@ export function CarbonNeutralBanner({
     >
       <div className="flex items-start gap-4">
         <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-green-100 dark:bg-green-800/50">
-          <LeafIcon className="size-5 text-green-600 dark:text-green-400" />
+          <LeafIcon className="size-5 text-green-700 dark:text-green-400" />
         </div>
         <div className="flex-1 space-y-1">
           <div className="flex items-center gap-2">
-            <h3 className="font-semibold text-green-900 dark:text-green-100">
+            <h3 className="font-semibold text-green-900 dark:text-green-50">
               Carbon-Neutral Shipping
             </h3>
-            <CheckCircleIcon className="size-4 text-green-600 dark:text-green-400" />
+            <CheckCircleIcon className="size-4 text-green-700 dark:text-green-400" />
           </div>
           <p className="text-sm text-green-700 dark:text-green-300">
             Every order ships with fully offset carbon emissions. We partner with verified
             environmental projects to neutralize our shipping footprint.
           </p>
           <div className="flex flex-wrap items-center gap-4 pt-2">
-            <div className="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400">
+            <div className="flex items-center gap-1.5 text-xs text-green-700 dark:text-green-400">
               <TruckIcon className="size-4" />
               <span>Offset on every shipment</span>
             </div>
-            <div className="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400">
+            <div className="flex items-center gap-1.5 text-xs text-green-700 dark:text-green-400">
               <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
                 <path d="M2 12h20" />

@@ -101,7 +101,7 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
   const getStatusBadge = (status: string, isValid: boolean) => {
     if (!isValid) {
       return (
-        <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+        <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900/30 dark:text-red-200">
           Unavailable
         </span>
       )
@@ -110,25 +110,25 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
     switch (status) {
       case 'ACTIVE':
         return (
-          <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+          <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-200">
             Active
           </span>
         )
       case 'REDEEMED':
         return (
-          <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
+          <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-foreground">
             Fully Redeemed
           </span>
         )
       case 'EXPIRED':
         return (
-          <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
+          <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200">
             Expired
           </span>
         )
       case 'CANCELLED':
         return (
-          <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+          <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900/30 dark:text-red-200">
             Cancelled
           </span>
         )
@@ -141,7 +141,7 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
     switch (type) {
       case 'PURCHASE':
         return (
-          <span className="inline-flex size-6 items-center justify-center rounded-full bg-green-100 text-green-600">
+          <span className="inline-flex size-6 items-center justify-center rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
             <svg className="size-3" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fillRule="evenodd"
@@ -153,7 +153,7 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
         )
       case 'REDEMPTION':
         return (
-          <span className="inline-flex size-6 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+          <span className="inline-flex size-6 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
             <svg className="size-3" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fillRule="evenodd"
@@ -165,7 +165,7 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
         )
       case 'REFUND':
         return (
-          <span className="inline-flex size-6 items-center justify-center rounded-full bg-yellow-100 text-yellow-600">
+          <span className="inline-flex size-6 items-center justify-center rounded-full bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400">
             <svg className="size-3" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fillRule="evenodd"
@@ -182,7 +182,7 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
 
   return (
     <div className={cn('rounded-lg border bg-card p-6', className)}>
-      <h3 className="mb-4 text-lg font-semibold text-gray-900">Check Gift Card Balance</h3>
+      <h3 className="mb-4 text-lg font-semibold text-foreground">Check Gift Card Balance</h3>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
@@ -201,7 +201,7 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
             maxLength={19}
           />
           {error && (
-            <p className="text-sm text-red-600" role="alert">
+            <p className="text-sm text-red-600 dark:text-red-400" role="alert">
               {error}
             </p>
           )}
@@ -246,40 +246,40 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
       {giftCardInfo && (
         <div className="mt-6 space-y-4 border-t pt-6">
           <div className="flex items-center justify-between">
-            <span className="font-mono text-sm text-gray-500">{giftCardInfo.code}</span>
+            <span className="font-mono text-sm text-muted-foreground">{giftCardInfo.code}</span>
             {getStatusBadge(giftCardInfo.status, giftCardInfo.isValid)}
           </div>
 
           {giftCardInfo.validationMessage && (
-            <div className="rounded-md bg-yellow-50 p-3">
-              <p className="text-sm text-yellow-800">{giftCardInfo.validationMessage}</p>
+            <div className="rounded-md bg-yellow-50 p-3 dark:bg-yellow-950/40">
+              <p className="text-sm text-yellow-800 dark:text-yellow-200">{giftCardInfo.validationMessage}</p>
             </div>
           )}
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="rounded-lg bg-gray-50 p-4">
-              <p className="text-xs uppercase tracking-wide text-gray-500">
+            <div className="rounded-lg bg-muted p-4">
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">
                 Current Balance
               </p>
               <p className={cn(
                 'mt-1 text-2xl font-bold',
-                giftCardInfo.balance > 0 ? 'text-green-600' : 'text-gray-400'
+                giftCardInfo.balance > 0 ? 'text-green-700 dark:text-green-400' : 'text-muted-foreground'
               )}>
                 ${giftCardInfo.balance.toFixed(2)}
               </p>
             </div>
-            <div className="rounded-lg bg-gray-50 p-4">
-              <p className="text-xs uppercase tracking-wide text-gray-500">
+            <div className="rounded-lg bg-muted p-4">
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">
                 Original Amount
               </p>
-              <p className="mt-1 text-2xl font-bold text-gray-700">
+              <p className="mt-1 text-2xl font-bold text-foreground">
                 ${giftCardInfo.initialBalance.toFixed(2)}
               </p>
             </div>
           </div>
 
           {giftCardInfo.expiresAt && (
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-muted-foreground">
               <span className="font-medium">Expires:</span>{' '}
               {new Date(giftCardInfo.expiresAt).toLocaleDateString('en-US', {
                 year: 'numeric',
@@ -290,7 +290,7 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
           )}
 
           {giftCardInfo.recipientName && (
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-muted-foreground">
               <span className="font-medium">Recipient:</span> {giftCardInfo.recipientName}
             </div>
           )}
@@ -298,7 +298,7 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
           {/* Recent Transactions */}
           {giftCardInfo.recentTransactions.length > 0 && (
             <div className="border-t pt-4">
-              <h4 className="mb-3 text-sm font-medium text-gray-700">Recent Activity</h4>
+              <h4 className="mb-3 text-sm font-medium text-foreground">Recent Activity</h4>
               <ul className="space-y-2">
                 {giftCardInfo.recentTransactions.map((tx, index) => (
                   <li
@@ -307,7 +307,7 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
                   >
                     <div className="flex items-center gap-2">
                       {getTransactionIcon(tx.type)}
-                      <span className="text-gray-600">
+                      <span className="text-muted-foreground">
                         {tx.type === 'PURCHASE' && 'Card Loaded'}
                         {tx.type === 'REDEMPTION' && 'Redeemed'}
                         {tx.type === 'REFUND' && 'Refund'}
@@ -317,12 +317,12 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
                       <span
                         className={cn(
                           'font-medium',
-                          tx.amount > 0 ? 'text-green-600' : 'text-gray-700'
+                          tx.amount > 0 ? 'text-green-700 dark:text-green-400' : 'text-foreground'
                         )}
                       >
                         {tx.amount > 0 ? '+' : ''}${Math.abs(tx.amount).toFixed(2)}
                       </span>
-                      <p className="text-xs text-gray-400">
+                      <p className="text-xs text-muted-foreground">
                         {new Date(tx.date).toLocaleDateString()}
                       </p>
                     </div>

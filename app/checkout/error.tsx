@@ -15,8 +15,8 @@ export default function CheckoutError({ error, reset }: { error: Error & { diges
       <h2 className="mb-2 text-xl font-semibold">Checkout could not be loaded</h2>
       <p className="mb-6 text-muted-foreground">We had trouble loading checkout. Your cart items are safe.</p>
       <div className="flex gap-3">
-        <button onClick={() => reset()} className="rounded-md bg-green-600 px-4 py-2 text-sm text-white hover:bg-green-700">Try again</button>
-        <Link href="/cart" className="rounded-md bg-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-300">Back to cart</Link>
+        <button onClick={() => reset()} className="rounded-md bg-green-700 px-4 py-2 text-sm text-white hover:bg-green-700">Try again</button>
+        <Link href="/cart" className="rounded-md bg-muted px-4 py-2 text-sm text-foreground hover:bg-muted">Back to cart</Link>
       </div>
     </div>
   )

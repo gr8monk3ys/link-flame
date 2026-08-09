@@ -103,7 +103,7 @@ export function ImperfectReasonTooltip({
       {/* Trigger */}
       <button
         type="button"
-        className="inline-flex cursor-help items-center gap-1.5 text-sm text-amber-700 transition-colors hover:text-amber-800"
+        className="inline-flex cursor-help items-center gap-1.5 text-sm text-amber-700 transition-colors hover:text-amber-800 dark:text-amber-300"
         aria-describedby="imperfect-reason-tooltip"
       >
         <InfoIcon className="size-4" />
@@ -133,7 +133,7 @@ export function ImperfectReasonTooltip({
 
           {/* Quality guarantee */}
           <div className="mt-3 border-t border-gray-700 pt-3">
-            <p className="flex items-center gap-1.5 text-xs text-gray-400">
+            <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <CheckIcon className="size-3 text-green-400" />
               Same quality guarantee as regular products
             </p>
@@ -175,7 +175,7 @@ export function ImperfectReasonBadge({
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700',
+        'inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700 dark:bg-amber-950/40 dark:text-amber-300',
         className
       )}
     >

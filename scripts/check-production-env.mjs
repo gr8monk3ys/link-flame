@@ -111,12 +111,42 @@ if (isValidUrl(env.NEXTAUTH_URL) && isValidUrl(env.NEXT_PUBLIC_APP_URL)) {
   }
 }
 
+// Sentry is optional, so these warn rather than fail — a hard error would
+// break deploys for anyone not using it. They are surfaced loudly because the
+// integration is fully wired but gated on `enabled: !!process.env.SENTRY_DSN`,
+// which means a missing DSN looks identical to a working install that simply
+// has not seen an error yet.
+const warnings = []
+
+if (!env.SENTRY_DSN) {
+  addIssue(warnings, 'SENTRY_DSN', 'is not set - server errors will not be reported anywhere')
+}
+
+if (!env.NEXT_PUBLIC_SENTRY_DSN) {
+  addIssue(warnings, 'NEXT_PUBLIC_SENTRY_DSN', 'is not set - browser errors will not be reported')
+}
+
+if (env.SENTRY_DSN && !env.SENTRY_AUTH_TOKEN) {
+  addIssue(
+    warnings,
+    'SENTRY_AUTH_TOKEN',
+    'is not set - source maps will not upload, so stack traces stay minified'
+  )
+}
+
 if (errors.length > 0) {
   console.error('Production environment check failed:')
   for (const issue of errors) {
     console.error(issue)
   }
   process.exit(1)
+}
+
+if (warnings.length > 0) {
+  console.warn('Production environment check passed with warnings:')
+  for (const issue of warnings) {
+    console.warn(issue)
+  }
 }
 
 console.log('Production environment check passed.')

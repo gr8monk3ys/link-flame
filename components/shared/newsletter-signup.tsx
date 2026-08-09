@@ -75,10 +75,10 @@ export function NewsletterSignup({
             </button>
           </div>
           {status === "success" && (
-            <p className="text-sm text-green-600">{message}</p>
+            <p className="text-sm text-green-700 dark:text-green-400">{message}</p>
           )}
           {status === "error" && (
-            <p className="text-sm text-red-600">{message}</p>
+            <p className="text-sm text-red-600 dark:text-red-400">{message}</p>
           )}
         </form>
       </CardContent>
