@@ -143,19 +143,19 @@ export default function ImpactPage() {
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="grid gap-6 md:grid-cols-4">
-            <div className="rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 p-6 text-white">
+            <div className="rounded-xl bg-gradient-to-br from-green-700 to-emerald-700 p-6 text-white">
               <div className="text-3xl font-bold">{carbonData.totalOffset.toLocaleString()} kg</div>
               <div className="text-green-50">Total CO2 Offset</div>
             </div>
-            <div className="rounded-xl bg-gradient-to-br from-blue-500 to-cyan-600 p-6 text-white">
+            <div className="rounded-xl bg-gradient-to-br from-blue-700 to-cyan-700 p-6 text-white">
               <div className="text-3xl font-bold">{carbonData.ordersShipped.toLocaleString()}</div>
-              <div className="text-blue-100">Orders Shipped Carbon-Neutral</div>
+              <div className="text-white">Orders Shipped Carbon-Neutral</div>
             </div>
-            <div className="rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 p-6 text-white">
+            <div className="rounded-xl bg-gradient-to-br from-purple-700 to-pink-700 p-6 text-white">
               <div className="text-3xl font-bold">$15,280</div>
               <div className="text-purple-100">Donated to Environmental Causes</div>
             </div>
-            <div className="rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 p-6 text-white">
+            <div className="rounded-xl bg-gradient-to-br from-amber-700 to-orange-700 p-6 text-white">
               <div className="text-3xl font-bold">100%</div>
               <div className="text-amber-100">Plastic-Free Packaging</div>
             </div>

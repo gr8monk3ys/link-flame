@@ -64,17 +64,40 @@ function auditContrast(): Failure[] {
     return 0.2126 * channel(rgb[0]) + 0.7152 * channel(rgb[1]) + 0.0722 * channel(rgb[2])
   }
 
-  const backdropOf = (el: Element): number[] | null => {
-    let node: Element | null = el
+  /**
+   * Candidate backdrop colours behind an element, worst case included.
+   *
+   * A single colour is not enough. A section painted with a gradient has a
+   * different backdrop at each end, and text spanning it has to stay legible
+   * across all of them. Returns null only when the backdrop genuinely cannot
+   * be known from the CSSOM - a raster `url()` background.
+   */
+  const backdropsOf = (el: Element, skipSelf = false): number[][] | null => {
+    let node: Element | null = skipSelf ? el.parentElement : el
     while (node && node !== document.documentElement) {
       const style = getComputedStyle(node)
       const parts = style.backgroundColor.match(/[\d.]+/g)
       const opaque = parts && (parts.length < 4 || Number(parts[3]) > 0.5)
-      if (opaque) return parse(style.backgroundColor)
-      if (style.backgroundImage && style.backgroundImage !== 'none') return null
+      if (opaque) {
+        const solid = parse(style.backgroundColor)
+        return solid ? [solid] : null
+      }
+
+      const image = style.backgroundImage
+      if (image && image !== 'none') {
+        // A photo cannot be sampled here; a gradient can, by resolving what is
+        // behind it and compositing each stop onto that.
+        if (image.includes('url(')) return null
+        const behind = node.parentElement ? backdropsOf(node.parentElement) : [[255, 255, 255]]
+        if (!behind) return null
+        const base = behind[0]
+        const stops = gradientStopsOver(image, base)
+        return stops.length ? stops : behind
+      }
+
       node = node.parentElement
     }
-    return [0, 0, 0]
+    return [[255, 255, 255]]
   }
 
   const ratio = (a: number[], b: number[]): number => {
@@ -118,13 +141,6 @@ function auditContrast(): Failure[] {
     const style = getComputedStyle(el)
     if (style.visibility === 'hidden' || style.opacity === '0') return
 
-    const bg = backdropOf(el)
-    if (!bg) return
-
-    const size = parseFloat(style.fontSize)
-    const large = size >= 24 || (size >= 18.66 && parseInt(style.fontWeight, 10) >= 700)
-    const need = large ? 3 : 4.5
-
     // Gradient-clipped text paints from its background, not its color, so
     // `color` computes to rgba(0,0,0,0) and a naive read scores it as a perfect
     // ratio against anything. A homepage headline hid a 1.55:1 stop this way.
@@ -133,34 +149,41 @@ function auditContrast(): Failure[] {
       style.webkitBackgroundClip === 'text' || style.backgroundClip === 'text'
     const transparentText = (parse4(style.color)?.[3] ?? 1) === 0
 
-    if (clipsToText && transparentText) {
-      for (const stop of gradientStopsOver(style.backgroundImage, bg)) {
-        const measured = ratio(stop, bg)
-        if (measured < need) {
-          failures.push({
-            text: text.slice(0, 40),
-            fg: `gradient stop rgb(${stop.join(', ')})`,
-            bg: `rgb(${bg.join(', ')})`,
-            ratio: Number(measured.toFixed(2)),
-            need,
-            cls: String(el.className).slice(0, 80),
-          })
-          break // one failing stop is enough to condemn the headline
-        }
+    // When the element's own background IS the text, it is not also the
+    // backdrop - resolve that from its ancestors instead.
+    const backdrops = backdropsOf(el, clipsToText && transparentText)
+    if (!backdrops || !backdrops.length) return
+
+    const size = parseFloat(style.fontSize)
+    const large = size >= 24 || (size >= 18.66 && parseInt(style.fontWeight, 10) >= 700)
+    const need = large ? 3 : 4.5
+
+    // Worst pairing of any text colour against any backdrop colour.
+    let worst: { fg: string; bg: number[]; ratio: number } | null = null
+
+    for (const bg of backdrops) {
+      const foregrounds: Array<[string, number[]]> =
+        clipsToText && transparentText
+          ? gradientStopsOver(style.backgroundImage, bg).map(
+              (stop) => [`gradient stop rgb(${stop.join(', ')})`, stop] as [string, number[]],
+            )
+          : (() => {
+              const solid = parse(style.color)
+              return solid ? [[style.color, solid] as [string, number[]]] : []
+            })()
+
+      for (const [label, fg] of foregrounds) {
+        const measured = ratio(fg, bg)
+        if (!worst || measured < worst.ratio) worst = { fg: label, bg, ratio: measured }
       }
-      return
     }
 
-    const fg = parse(style.color)
-    if (!fg) return
-    const measured = ratio(fg, bg)
-
-    if (measured < need) {
+    if (worst && worst.ratio < need) {
       failures.push({
         text: text.slice(0, 40),
-        fg: style.color,
-        bg: `rgb(${bg.join(', ')})`,
-        ratio: Number(measured.toFixed(2)),
+        fg: worst.fg,
+        bg: `rgb(${worst.bg.join(', ')})`,
+        ratio: Number(worst.ratio.toFixed(2)),
         need,
         cls: String(el.className).slice(0, 80),
       })

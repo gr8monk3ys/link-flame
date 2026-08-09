@@ -64,7 +64,7 @@ export function PointsEarnedToast({
       aria-live="polite"
     >
       {/* Celebration header */}
-      <div className="bg-gradient-to-r from-green-500 to-emerald-500 px-4 py-2 text-white">
+      <div className="bg-gradient-to-r from-green-700 to-emerald-700 px-4 py-2 text-white">
         <div className="flex items-center gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -249,7 +249,7 @@ export function PointsEarnedToastWithStyle({
       role="alert"
       aria-live="polite"
     >
-      <div className="bg-gradient-to-r from-green-500 to-emerald-500 px-4 py-2 text-white">
+      <div className="bg-gradient-to-r from-green-700 to-emerald-700 px-4 py-2 text-white">
         <div className="flex items-center gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"

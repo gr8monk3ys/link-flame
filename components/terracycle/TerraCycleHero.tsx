@@ -123,7 +123,7 @@ export function TerraCycleHero({ className }: TerraCycleHeroProps) {
 
           {/* Visual Element / Partnership Badge */}
           <div className="relative mx-auto lg:mx-0">
-            <div className="relative rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 p-8 shadow-xl">
+            <div className="relative rounded-2xl bg-gradient-to-br from-emerald-700 to-teal-700 p-8 shadow-xl">
               <div className="absolute -right-4 -top-4 flex size-20 items-center justify-center rounded-full bg-card shadow-lg">
                 <LeafIcon className="size-10 text-emerald-700 dark:text-emerald-400" />
               </div>

@@ -219,7 +219,7 @@ export function SustainabilityCommitment({
 export function SustainabilityBanner({ className }: { className?: string }) {
   return (
     <div className={cn(
-      "bg-gradient-to-r from-green-600 to-emerald-600 text-white",
+      "bg-gradient-to-r from-green-700 to-emerald-700 text-white",
       className
     )}>
       <div className="container mx-auto px-4 py-3">

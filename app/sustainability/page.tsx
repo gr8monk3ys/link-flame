@@ -276,7 +276,7 @@ export default function SustainabilityPage() {
               </div>
             </div>
             <div className="relative">
-              <div className="rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 p-8 text-white shadow-xl">
+              <div className="rounded-2xl bg-gradient-to-br from-emerald-700 to-teal-700 p-8 text-white shadow-xl">
                 <h3 className="mb-6 text-2xl font-bold">Program Impact</h3>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between border-b border-emerald-400/30 py-3">
