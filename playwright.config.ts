@@ -52,17 +52,31 @@ export default defineConfig({
     },
   ],
 
-  // Run your local dev server before starting the tests
+  // Serve a production build, not `next dev`.
+  //
+  // The dev server takes the 'unsafe-inline' branch of the CSP, so a
+  // nonce-based production CSP was never exercised by any test. That is
+  // precisely how a blocked ThemeProvider script shipped past a green suite:
+  // the bug only exists under the production CSP. Building also removes the
+  // on-demand compilation that made first-visit assertions race their own
+  // timeouts.
+  //
+  // Set PLAYWRIGHT_DEV_SERVER=true for the fast local loop, accepting that it
+  // no longer matches what CI runs.
   webServer: {
-    command: 'node scripts/e2e-setup-db.mjs && npm run dev',
+    command: process.env.PLAYWRIGHT_DEV_SERVER === 'true'
+      ? 'node scripts/e2e-setup-db.mjs && npm run dev'
+      : 'node scripts/e2e-setup-db.mjs && npx next build && npx next start -p 4010',
     url: 'http://localhost:4010',
     // Default to isolated, deterministic runs.
     // Opt-in to reuse an existing server with PLAYWRIGHT_REUSE_SERVER=true.
     reuseExistingServer: process.env.PLAYWRIGHT_REUSE_SERVER === 'true',
-    timeout: 180 * 1000,
+    // A production build has to finish before the server answers.
+    timeout: (process.env.PLAYWRIGHT_DEV_SERVER === 'true' ? 180 : 600) * 1000,
     env: {
       ...process.env,
       PORT: '4010',
+      NODE_ENV: process.env.PLAYWRIGHT_DEV_SERVER === 'true' ? 'development' : 'production',
       NEXTAUTH_URL: 'http://localhost:4010',
       NEXT_PUBLIC_APP_URL: 'http://localhost:4010',
       NEXTAUTH_SECRET:
