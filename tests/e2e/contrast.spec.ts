@@ -113,10 +113,19 @@ function auditContrast(): Failure[] {
 }
 
 async function collectFailures(page: Page, path: string): Promise<Failure[]> {
-  const response = await page.goto(path, { waitUntil: 'load' })
+  // `load` waits for every image, which this audit does not need - it reads
+  // computed styles, and text sitting over an image is skipped anyway. Against
+  // a production server that wait is expensive: the homepage pulls ten remote
+  // brand logos through /_next/image, and the first request downloads and
+  // transcodes each one. On a cold CI runner that blew past the 45s test
+  // timeout while the page itself had been interactive for seconds.
+  const response = await page.goto(path, { waitUntil: 'domcontentloaded' })
   // A route that does not exist has nothing to say about contrast; a route that
   // 500s is a different test's problem.
   if (!response || response.status() >= 400) return []
+  // Fonts change nothing about colour, but they change which nodes have a box,
+  // so settle them before measuring.
+  await page.evaluate(() => document.fonts.ready.then(() => undefined))
   await page.waitForTimeout(1500)
   return page.evaluate(auditContrast)
 }
