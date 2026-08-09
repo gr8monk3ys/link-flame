@@ -68,7 +68,9 @@ test.describe('Blog', () => {
 
       // Should have author or date
       const hasMetadata = await firstPost
-        .locator('time, text=/by /i, text=/\\d{4}/i')
+        .locator('time')
+        .or(firstPost.getByText(/by /i))
+        .or(firstPost.getByText(/\d{4}/))
         .first()
         .isVisible({ timeout: 3000 })
         .catch(() => false)
@@ -98,9 +100,9 @@ test.describe('Blog', () => {
       await page.waitForLoadState('domcontentloaded')
 
       // Look for featured section
-      const featuredSection = page.locator(
-        'text=/featured/i, [data-testid="featured-posts"]'
-      )
+      const featuredSection = page
+        .getByText(/featured/i)
+        .or(page.locator('[data-testid="featured-posts"]'))
       const hasFeatured = await featuredSection
         .isVisible({ timeout: 5000 })
         .catch(() => false)
@@ -175,9 +177,9 @@ test.describe('Blog', () => {
       ])
 
       // Should show author info
-      const authorInfo = page.locator(
-        'text=/by /i, [data-testid="author"], .author, img[alt*="author"]'
-      )
+      const authorInfo = page
+        .getByText(/by /i)
+        .or(page.locator('[data-testid="author"], .author, img[alt*="author"]'))
       const hasAuthor = await authorInfo
         .first()
         .isVisible({ timeout: 3000 })
@@ -201,7 +203,7 @@ test.describe('Blog', () => {
       ])
 
       // Should show date
-      const dateElement = page.locator('time, text=/\\d{4}/i')
+      const dateElement = page.locator('time').or(page.getByText(/\d{4}/))
       const hasDate = await dateElement
         .first()
         .isVisible({ timeout: 3000 })
@@ -226,7 +228,7 @@ test.describe('Blog', () => {
       await page.waitForSelector('article', { timeout: 10000 })
 
       // Should show reading time
-      const readingTime = page.locator('text=/min read/i, text=/minute/i')
+      const readingTime = page.getByText(/min read|minute/i)
       const hasReadingTime = await readingTime
         .first()
         .isVisible({ timeout: 3000 })
@@ -271,9 +273,9 @@ test.describe('Blog', () => {
       await page.waitForSelector('article', { timeout: 10000 })
 
       // Should show category or tags
-      const categoryTags = page.locator(
-        'a[href*="/categories/"], a[href*="/tags/"], text=/#/i'
-      )
+      const categoryTags = page
+        .locator('a[href*="/categories/"], a[href*="/tags/"]')
+        .or(page.getByText(/#/))
       const hasCategoryTags = await categoryTags
         .first()
         .isVisible({ timeout: 3000 })

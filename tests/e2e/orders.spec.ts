@@ -197,9 +197,8 @@ test.describe('Order Management', () => {
 
       // Click on first order if available
       const orderLink = page
-        .locator(
-          'a[href*="/account/orders/"], [data-testid="order-link"], text=/view order details/i'
-        )
+        .locator('a[href*="/account/orders/"], [data-testid="order-link"]')
+        .or(page.getByText(/view order details/i))
         .first()
 
       if (await orderLink.isVisible({ timeout: 3000 }).catch(() => false)) {
@@ -211,7 +210,9 @@ test.describe('Order Management', () => {
 
         // Check for expected elements
         const hasBackLink = await page
-          .locator('a[href="/account/orders"], text=/back to orders/i')
+          .locator('a[href="/account/orders"]')
+          .or(page.getByText(/back to orders/i))
+          .first()
           .isVisible({ timeout: 3000 })
           .catch(() => false)
 
@@ -241,9 +242,9 @@ test.describe('Order Management', () => {
       await page.waitForLoadState('domcontentloaded')
 
       // Look for tracking information
-      const trackingInfo = page.locator(
-        '[data-testid="tracking-number"], text=/tracking/i, text=/track package/i'
-      )
+      const trackingInfo = page
+        .locator('[data-testid="tracking-number"]')
+        .or(page.getByText(/tracking|track package/i))
       const hasTracking = await trackingInfo
         .first()
         .isVisible({ timeout: 3000 })
@@ -265,9 +266,9 @@ test.describe('Order Management', () => {
       await page.waitForLoadState('domcontentloaded')
 
       // Look for status badges
-      const statusBadge = page.locator(
-        '[data-testid="status-badge"], .badge, text=/processing|shipped|delivered|in transit/i'
-      )
+      const statusBadge = page
+        .locator('[data-testid="status-badge"], .badge')
+        .or(page.getByText(/processing|shipped|delivered|in transit/i))
       const hasStatus = await statusBadge
         .first()
         .isVisible({ timeout: 3000 })
@@ -300,9 +301,10 @@ test.describe('Order Management', () => {
         await page.waitForLoadState('domcontentloaded')
 
         // Look for shipping progress
-        const progressTracker = page.locator(
-          '[data-testid="shipping-progress"], text=/shipping progress/i'
-        )
+        const progressTracker = page
+          .locator('[data-testid="shipping-progress"]')
+          .or(page.getByText(/shipping progress/i))
+          .first()
         const hasProgress = await progressTracker
           .isVisible({ timeout: 3000 })
           .catch(() => false)
@@ -337,9 +339,9 @@ test.describe('Order Management', () => {
         await page.waitForLoadState('domcontentloaded')
 
         // Check for order items section
-        const orderItems = page.locator(
-          '[data-testid="order-item"], .order-item, text=/order items/i'
-        )
+        const orderItems = page
+          .locator('[data-testid="order-item"], .order-item')
+          .or(page.getByText(/order items/i))
         const hasItems = await orderItems
           .first()
           .isVisible({ timeout: 3000 })
@@ -362,9 +364,9 @@ test.describe('Order Management', () => {
       await page.waitForLoadState('domcontentloaded')
 
       // Check for order totals
-      const orderTotal = page.locator(
-        '[data-testid="order-total"], text=/total/i, text=/\\$[0-9]+/'
-      )
+      const orderTotal = page
+        .locator('[data-testid="order-total"]')
+        .or(page.getByText(/total|\$[0-9]+/i))
       const hasTotal = await orderTotal
         .first()
         .isVisible({ timeout: 3000 })
