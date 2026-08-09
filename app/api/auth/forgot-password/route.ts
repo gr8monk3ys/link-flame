@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma'
 import { sendPasswordResetEmail } from '@/lib/email'
 import { checkStrictRateLimit, getIdentifier, getRateLimitKey } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
+import { validateCsrfToken } from '@/lib/csrf'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,6 +25,17 @@ export async function POST(request: Request): Promise<NextResponse> {
       return NextResponse.json(
         { error: 'Too many requests. Please try again later.' },
         { status: 429 }
+      )
+    }
+
+    // Without this, any origin could make a visitor's browser fire password
+    // reset mail at an address of the attacker's choosing. The rate limit caps
+    // the volume but does not make the request the visitor's own.
+    const csrfValid = await validateCsrfToken(request)
+    if (!csrfValid) {
+      return NextResponse.json(
+        { error: 'Invalid or missing CSRF token' },
+        { status: 403 }
       )
     }
 

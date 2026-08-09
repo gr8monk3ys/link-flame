@@ -17,24 +17,12 @@ import {
 } from '@/lib/billing/plans'
 import { mapStripeStatus, syncSubscriptionStatus } from '@/lib/billing/subscription'
 import { getStripe } from '@/lib/stripe-server'
+import { resolveWebhookSecret } from '@/lib/stripe-webhook-secret'
 
 export const dynamic = 'force-dynamic'
 
 function getWebhookSecret(): string {
-  const billingSecret = process.env.STRIPE_BILLING_WEBHOOK_SECRET
-  if (billingSecret) {
-    return billingSecret
-  }
-
-  const sharedSecret = process.env.STRIPE_WEBHOOK_SECRET
-  if (!sharedSecret) {
-    throw new Error('Missing STRIPE_BILLING_WEBHOOK_SECRET or STRIPE_WEBHOOK_SECRET')
-  }
-
-  logger.warn('STRIPE_BILLING_WEBHOOK_SECRET not configured — falling back to shared STRIPE_WEBHOOK_SECRET. Configure a separate secret for production.', {
-    recommendation: 'Create a separate webhook endpoint in Stripe Dashboard for billing events',
-  })
-  return sharedSecret
+  return resolveWebhookSecret('STRIPE_BILLING_WEBHOOK_SECRET')
 }
 
 /**
