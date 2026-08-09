@@ -40,8 +40,15 @@ interface Failure {
  * nearest painted ancestor background falls below the WCAG AA threshold for its
  * size (3:1 for large text, 4.5:1 otherwise).
  *
- * Elements over a background *image* or gradient are skipped: the effective
- * backdrop there is whatever the image paints, which this cannot sample.
+ * Two things this deliberately does NOT measure, both of which hid real bugs:
+ *
+ *  - Text over a background *image*. The effective backdrop is whatever the
+ *    photo paints, which cannot be sampled from the CSSOM. Those nodes are
+ *    skipped, so a green run is not a statement about them.
+ *  - Anything outside main/header/footer.
+ *
+ * Gradient-clipped text used to fall in the first hole and no longer does: it
+ * is measured stop by stop, composited over the backdrop.
  */
 function auditContrast(): Failure[] {
   const parse = (value: string): number[] | null => {
@@ -75,6 +82,29 @@ function auditContrast(): Failure[] {
     return (hi + 0.05) / (lo + 0.05)
   }
 
+  /** rgb/rgba -> [r, g, b, a]; alpha defaults to 1. */
+  const parse4 = (value: string): number[] | null => {
+    const parts = value.match(/[\d.]+/g)
+    if (!parts) return null
+    const [r, g, b, a] = parts.map(Number)
+    return [r, g, b, a === undefined ? 1 : a]
+  }
+
+  /**
+   * Colour stops of a CSS gradient, each composited over `backdrop` so a
+   * translucent stop is judged as it actually renders. `to-accent/70` measured
+   * as opaque amber looks acceptable; blended onto cream it is 1.55:1.
+   */
+  const gradientStopsOver = (backgroundImage: string, backdrop: number[]): number[][] => {
+    const matches = backgroundImage.match(/rgba?\([^)]+\)/g) ?? []
+    return matches.map((raw) => {
+      const c = parse4(raw)
+      if (!c) return backdrop
+      const alpha = c[3]
+      return [0, 1, 2].map((i) => Math.round(c[i] * alpha + backdrop[i] * (1 - alpha)))
+    })
+  }
+
   const failures: Failure[] = []
 
   document.querySelectorAll('main *, footer *, header *').forEach((el) => {
@@ -88,13 +118,41 @@ function auditContrast(): Failure[] {
     const style = getComputedStyle(el)
     if (style.visibility === 'hidden' || style.opacity === '0') return
 
-    const fg = parse(style.color)
     const bg = backdropOf(el)
-    if (!fg || !bg) return
+    if (!bg) return
 
     const size = parseFloat(style.fontSize)
     const large = size >= 24 || (size >= 18.66 && parseInt(style.fontWeight, 10) >= 700)
     const need = large ? 3 : 4.5
+
+    // Gradient-clipped text paints from its background, not its color, so
+    // `color` computes to rgba(0,0,0,0) and a naive read scores it as a perfect
+    // ratio against anything. A homepage headline hid a 1.55:1 stop this way.
+    // Every stop has to clear the bar, because the text crosses all of them.
+    const clipsToText =
+      style.webkitBackgroundClip === 'text' || style.backgroundClip === 'text'
+    const transparentText = (parse4(style.color)?.[3] ?? 1) === 0
+
+    if (clipsToText && transparentText) {
+      for (const stop of gradientStopsOver(style.backgroundImage, bg)) {
+        const measured = ratio(stop, bg)
+        if (measured < need) {
+          failures.push({
+            text: text.slice(0, 40),
+            fg: `gradient stop rgb(${stop.join(', ')})`,
+            bg: `rgb(${bg.join(', ')})`,
+            ratio: Number(measured.toFixed(2)),
+            need,
+            cls: String(el.className).slice(0, 80),
+          })
+          break // one failing stop is enough to condemn the headline
+        }
+      }
+      return
+    }
+
+    const fg = parse(style.color)
+    if (!fg) return
     const measured = ratio(fg, bg)
 
     if (measured < need) {
