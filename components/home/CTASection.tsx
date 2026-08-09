@@ -8,27 +8,27 @@ export default function CTASection() {
       <div className="absolute inset-0 -z-10">
         <Image
           src="/images/wall-hanger-plant.jpg"
-          alt="Sustainable living"
+          alt=""
           fill
           sizes="100vw"
           className="object-cover opacity-10"
-          priority
         />
       </div>
       <div className="relative z-10 mx-auto max-w-3xl text-center">
-        <h2 className="text-gradient mb-6 font-serif">Ready to Make a Difference?</h2>
+        <h2 className="mb-6 font-serif text-foreground">
+          Not sure where to start?
+        </h2>
         <p className="mb-8 text-lg text-muted-foreground">
-          Join our community of eco-conscious individuals and start your journey
-          towards sustainable living today.
+          Most people begin with one swap, not twenty. Answer four questions and
+          we&rsquo;ll point you at the three products worth changing first.
         </p>
-        <Link href="/collections">
-          <Button
-            className="modern-button bg-accent text-accent-foreground hover:bg-accent/90"
-            size="lg"
-          >
-            Get Started
-          </Button>
-        </Link>
+        <Button
+          asChild
+          className="modern-button bg-accent text-accent-foreground hover:bg-accent/90"
+          size="lg"
+        >
+          <Link href="/quiz">Take the 2-minute quiz</Link>
+        </Button>
       </div>
     </section>
   );

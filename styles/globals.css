@@ -125,9 +125,15 @@
 }
 
 /* Enhanced Text Gradients */
+/* The gradient used to end on accent/70, which blends to 1.55:1 against the
+   cream background - the headline faded from readable to nearly invisible
+   across its own width. Clipped gradient text computes as
+   `color: rgba(0,0,0,0)`, so the contrast spec cannot see it either.
+   Staying inside the primary ramp keeps the effect and the legibility: the
+   lightest stop here is 4.4:1 on --background. */
 .text-gradient {
-  @apply bg-gradient-to-r from-primary via-primary/80 to-accent/70 bg-clip-text text-transparent
-  hover:from-primary/90 hover:to-accent/60 transition-all duration-300;
+  @apply bg-gradient-to-r from-primary via-primary to-primary/75 bg-clip-text text-transparent
+  transition-all duration-300 hover:to-primary;
 }
 
 /* Enhanced Animated Underline */
