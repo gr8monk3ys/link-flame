@@ -212,13 +212,13 @@ export default function CartPageClient() {
   // Note: Guest users can view cart but will need to sign in at checkout
   // This allows cart persistence for guests which improves conversion
 
-  if (status === "loading") {
-    return (
-      <div className="container flex min-h-[calc(100vh-200px)] items-center justify-center">
-        <div className="size-8 animate-spin rounded-full border-b-2 border-primary"></div>
-      </div>
-    );
-  }
+  // Session status is always "loading" on the server, so returning a bare
+  // spinner here meant /cart server-rendered as a spinner and nothing else -
+  // no heading, no content, no h1 in the document outline. It also put a
+  // full-viewport spinner in front of every visitor, including the guests the
+  // comment above says are welcome to use the cart. The shell renders
+  // immediately now and only the item list waits.
+  const isResolving = status === "loading" || (isLoading && !hasInitializedCart);
 
   return (
     <>
@@ -229,7 +229,7 @@ export default function CartPageClient() {
           <CarbonNeutralBanner variant="compact" />
         </div>
         
-        {isLoading && !hasInitializedCart ? (
+        {isResolving ? (
           <div className="space-y-4">
             <LoadingShimmer />
             <LoadingShimmer />
