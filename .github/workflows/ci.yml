@@ -104,7 +104,7 @@ jobs:
           DIRECT_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
 
       - name: Upload coverage reports
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
