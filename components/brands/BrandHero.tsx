@@ -6,7 +6,8 @@ import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { BRAND_CERTIFICATIONS, BRAND_VALUES, type BrandCertification, type BrandValue } from '@/lib/brands/constants'
-import { ExternalLink, MapPin, Calendar, Building2 } from 'lucide-react'
+import { ExternalLink, MapPin, Calendar } from 'lucide-react'
+import { BrandMark } from '@/components/brands/BrandMark'
 
 export interface BrandHeroProps {
   brand: {
@@ -66,9 +67,7 @@ export function BrandHero({ brand, className }: BrandHeroProps) {
                   priority
                 />
               ) : (
-                <div className="flex size-full items-center justify-center">
-                  <Building2 className="size-32 text-muted-foreground/40" />
-                </div>
+                <BrandMark name={brand.name} className="rounded-xl" />
               )}
 
               {brand.featured && (

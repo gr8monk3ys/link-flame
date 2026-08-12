@@ -6,7 +6,8 @@ import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { BRAND_CERTIFICATIONS, BRAND_VALUES, type BrandCertification, type BrandValue } from '@/lib/brands/constants'
-import { Building2, ExternalLink, MapPin, Calendar } from 'lucide-react'
+import { BrandMark } from '@/components/brands/BrandMark'
+import { ExternalLink, MapPin, Calendar } from 'lucide-react'
 
 export interface BrandCardProps {
   brand: {
@@ -66,9 +67,7 @@ export const BrandCard = memo(function BrandCard({ brand, variant = 'default', c
               sizes="64px"
             />
           ) : (
-            <div className="flex size-full items-center justify-center">
-              <Building2 className="size-8 text-muted-foreground" />
-            </div>
+            <BrandMark name={brand.name} />
           )}
         </div>
 
@@ -107,9 +106,7 @@ export const BrandCard = memo(function BrandCard({ brand, variant = 'default', c
               sizes="(max-width: 768px) 100vw, 33vw"
             />
           ) : (
-            <div className="flex size-full items-center justify-center">
-              <Building2 className="size-16 text-green-600/50" />
-            </div>
+            <BrandMark name={brand.name} className="bg-transparent dark:bg-transparent" />
           )}
         </div>
 
@@ -177,9 +174,7 @@ export const BrandCard = memo(function BrandCard({ brand, variant = 'default', c
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
           />
         ) : (
-          <div className="flex size-full items-center justify-center">
-            <Building2 className="size-16 text-muted-foreground/40" />
-          </div>
+          <BrandMark name={brand.name} className="rounded-lg" />
         )}
 
         {brand.featured && (

@@ -1,5 +1,6 @@
 import HeroSection from "@/components/home/HeroSection";
 import CTASection from "@/components/home/CTASection";
+import { ImpactBand } from "@/components/home/ImpactBand";
 import { FeaturedBrands } from "@/components/home/FeaturedBrands";
 import { FeaturedProducts } from "@/components/home/FeaturedProducts";
 import { QuizCTA } from "@/components/quiz";
@@ -30,6 +31,11 @@ export default function IndexPage() {
       {/* Featured Products from the store */}
       <Suspense fallback={<FeaturedProductsLoading />}>
         <FeaturedProducts />
+      </Suspense>
+
+      {/* Catalogue impact, summed from per-product measurements */}
+      <Suspense fallback={null}>
+        <ImpactBand />
       </Suspense>
 
       {/* Product Quiz CTA Banner */}
