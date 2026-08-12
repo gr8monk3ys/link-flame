@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
 export const metadata: Metadata = {
-  title: "Best Eco-Friendly Home Appliances 2026 | Link Flame",
+  title: "Best Eco-Friendly Home Appliances 2026",
   description:
     "Compare the most energy-efficient and sustainable home appliances. Expert reviews, environmental impact scores, and buying guide.",
 }

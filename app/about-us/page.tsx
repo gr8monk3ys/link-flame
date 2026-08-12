@@ -54,7 +54,7 @@ export default function AboutUsPage() {
       {/* Hero Section */}
       <div className="flex max-w-[980px] flex-col items-start gap-2">
         <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
-          About LinkFlame
+          About Link Flame
         </h1>
         <p className="max-w-[700px] text-lg text-muted-foreground">
           We&apos;re on a mission to make sustainable living accessible and appealing to everyone.
@@ -166,7 +166,7 @@ export default function AboutUsPage() {
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">
-            LinkFlame is reader-supported. When you buy through links on our site, we may earn
+            Link Flame is reader-supported. When you buy through links on our site, we may earn
             an affiliate commission. This helps us maintain our rigorous research and testing
             process, but it never influences our recommendations. We only promote products we
             truly believe in and have thoroughly vetted for their environmental impact.

@@ -3,10 +3,10 @@ import Link from "next/link";
 import { CarbonNeutralBanner, SustainabilityCommitment } from "@/components/sustainability";
 
 export const metadata: Metadata = {
-  title: "Our Sustainability Commitment | Link Flame",
+  title: "Our Sustainability Commitment",
   description: "Learn about Link Flame's commitment to environmental sustainability, carbon-neutral shipping, and ethical sourcing practices.",
   openGraph: {
-    title: "Our Sustainability Commitment | Link Flame",
+    title: "Our Sustainability Commitment",
     description: "Discover how we're working to protect our planet through sustainable practices and eco-friendly products.",
   },
 };

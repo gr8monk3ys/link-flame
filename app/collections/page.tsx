@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import CollectionsPageClient from './CollectionsPageClient';
 
 export const metadata: Metadata = {
-  title: 'Collections | Link Flame',
+  title: 'Collections',
   description:
     'Explore sustainable collections and filter products by category, rating, value, and price.',
 };

@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { buttonVariants } from "@/components/ui/button"
 
 export const metadata: Metadata = {
-  title: "Eco Living Guide | Link Flame",
+  title: "Eco Living Guide",
   description: "Discover sustainable living tips, eco-friendly products, and guides for a greener lifestyle.",
 }
 

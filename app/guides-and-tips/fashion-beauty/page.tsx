@@ -5,7 +5,7 @@ import Link from "next/link"
 import { NewsletterSignup } from "@/components/shared/newsletter-signup"
 
 export const metadata: Metadata = {
-  title: "Eco Fashion & Beauty Guide | Link Flame",
+  title: "Eco Fashion & Beauty Guide",
   description:
     "Explore sustainable fashion and clean beauty recommendations for everyday routines.",
 }

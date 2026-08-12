@@ -8,11 +8,11 @@ import {
 } from "@/components/terracycle";
 
 export const metadata: Metadata = {
-  title: "TerraCycle Recycling Program | Link Flame",
+  title: "TerraCycle Recycling Program",
   description:
     "Join our TerraCycle partnership to recycle your empty product packaging. Free shipping, earn rewards, and track your environmental impact.",
   openGraph: {
-    title: "TerraCycle Recycling Program | Link Flame",
+    title: "TerraCycle Recycling Program",
     description:
       "Give your empty product packaging a second life with our free TerraCycle recycling program.",
   },

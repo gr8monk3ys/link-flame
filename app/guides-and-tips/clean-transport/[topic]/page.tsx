@@ -20,7 +20,7 @@ export function generateMetadata({
   return params.then(({ topic: rawTopic }) => {
     const topic = humanize(rawTopic);
     return {
-      title: `${topic} | Clean Transportation | LinkFlame`,
+      title: `${topic} | Clean Transportation`,
       description: `Sustainable transportation guidance on ${topic.toLowerCase()}.`,
     };
   });

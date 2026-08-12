@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card"
 import Link from "next/link"
 
 export const metadata: Metadata = {
-  title: "Zero Waste Living Guide | Link Flame",
+  title: "Zero Waste Living Guide",
   description: "Actionable zero-waste tips and guides for reducing household waste.",
 }
 

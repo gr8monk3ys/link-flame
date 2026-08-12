@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { CONTACT } from '@/config/constants'
 
 export const metadata: Metadata = {
-  title: 'Return & Refund Policy | Link Flame',
+  title: 'Return & Refund Policy',
   description:
     'Learn about Link Flame return windows, refund processing, exchanges, and how to initiate a return for eco-friendly products.',
 }

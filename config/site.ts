@@ -6,7 +6,7 @@ export type SiteConfig = typeof siteConfig
 const baseUrl = getBaseUrl()
 
 export const siteConfig = {
-  name: "LinkFlame",
+  name: "Link Flame",
   description: "Your trusted source for eco-friendly living and sustainable product recommendations.",
   url: baseUrl,
   mainNav: [

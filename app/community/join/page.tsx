@@ -5,16 +5,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { NewsletterSignup } from "@/components/shared/newsletter-signup";
 
 export const metadata: Metadata = {
-  title: "Join the Community | LinkFlame",
+  title: "Join the Community",
   description:
-    "Join LinkFlame's community to get sustainable living tips, early drops, and exclusive rewards.",
+    "Join Link Flame's community to get sustainable living tips, early drops, and exclusive rewards.",
 };
 
 export default function JoinCommunityPage() {
   return (
     <div className="container max-w-4xl py-10">
       <div className="mb-10">
-        <h1 className="font-serif text-3xl font-semibold md:text-4xl">Join the LinkFlame Community</h1>
+        <h1 className="font-serif text-3xl font-semibold md:text-4xl">Join the Link Flame Community</h1>
         <p className="mt-3 max-w-2xl text-muted-foreground">
           Get eco-friendly tips, curated product drops, and a little extra motivation to keep your
           sustainable habits going.

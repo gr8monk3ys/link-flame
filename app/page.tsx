@@ -12,7 +12,9 @@ import type { Metadata } from "next";
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Link Flame | Sustainable Shopping',
+  // absolute: the root template appends "- Link Flame" to child titles,
+  // which would brand the homepage twice
+  title: { absolute: 'Link Flame | Sustainable Shopping' },
   description:
     'Discover eco-friendly products, sustainable brands, and practical guides for greener living.',
 };

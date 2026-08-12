@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma"
 import { BundleCard } from "@/components/bundles/BundleCard"
 
 export const metadata: Metadata = {
-  title: "Product Bundles | Link Flame",
+  title: "Product Bundles",
   description:
     "Save more with our curated product bundles. Build your own bundle or choose from our pre-made kits featuring eco-friendly essentials.",
 }

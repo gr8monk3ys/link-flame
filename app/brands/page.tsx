@@ -8,10 +8,10 @@ import { Building2 } from 'lucide-react'
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Brand Directory | Link Flame',
+  title: 'Brand Directory',
   description: 'Discover our curated collection of eco-friendly and sustainable partner brands. Shop with purpose and support businesses that share your values.',
   openGraph: {
-    title: 'Brand Directory | Link Flame',
+    title: 'Brand Directory',
     description: 'Discover our curated collection of eco-friendly and sustainable partner brands.',
     type: 'website',
   },

@@ -50,13 +50,13 @@ export async function generateMetadata({
 
   if (!product) {
     return {
-      title: 'Product Not Found | Link Flame',
+      title: 'Product Not Found',
       description: 'The product you are looking for could not be found.',
     };
   }
 
   return {
-    title: `${product.title} | Link Flame`,
+    title: `${product.title}`,
     description: product.description || `Shop ${product.title} - eco-friendly products for sustainable living.`,
     openGraph: {
       title: product.title,

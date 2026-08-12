@@ -6,7 +6,7 @@ import { ProductGrid } from "@/components/shared/product-grid"
 import Link from "next/link"
 
 export const metadata: Metadata = {
-  title: "Clean Transportation | LinkFlame",
+  title: "Clean Transportation",
   description: "Discover eco-friendly transportation options, from electric vehicles to sustainable travel gear.",
 }
 
