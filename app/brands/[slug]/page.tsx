@@ -78,15 +78,15 @@ export async function generateMetadata({ params }: BrandPageProps): Promise<Meta
 
   if (!brand) {
     return {
-      title: 'Brand Not Found | Link Flame',
+      title: 'Brand Not Found',
     }
   }
 
   return {
-    title: `${brand.name} | Link Flame`,
+    title: `${brand.name}`,
     description: brand.description || `Discover eco-friendly products from ${brand.name} at Link Flame.`,
     openGraph: {
-      title: `${brand.name} | Link Flame`,
+      title: `${brand.name}`,
       description: brand.description || `Discover eco-friendly products from ${brand.name} at Link Flame.`,
       type: 'website',
       images: brand.logo ? [{ url: brand.logo, alt: brand.name }] : [],

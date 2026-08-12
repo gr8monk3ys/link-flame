@@ -25,12 +25,12 @@ export async function generateMetadata({
 
   if (!result) {
     return {
-      title: 'Quiz Results Not Found | Link Flame',
+      title: 'Quiz Results Not Found',
     };
   }
 
   return {
-    title: 'My Eco-Friendly Product Recommendations | Link Flame',
+    title: 'My Eco-Friendly Product Recommendations',
     description:
       'Check out my personalized sustainable product recommendations from the Link Flame product quiz.',
     openGraph: {

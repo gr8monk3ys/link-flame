@@ -3,11 +3,11 @@ import { GiftCardPurchase, GiftCardBalance } from '@/components/gift-cards'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Gift Cards | Link Flame',
+  title: 'Gift Cards',
   description:
     'Give the gift of sustainable living with Link Flame gift cards. Perfect for any occasion, our gift cards let your loved ones choose their own eco-friendly products.',
   openGraph: {
-    title: 'Gift Cards | Link Flame',
+    title: 'Gift Cards',
     description:
       'Give the gift of sustainable living with Link Flame gift cards. Perfect for any occasion.',
     type: 'website',

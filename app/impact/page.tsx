@@ -2,10 +2,10 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Our Environmental Impact | Link Flame",
+  title: "Our Environmental Impact",
   description: "Track our environmental impact: carbon offset, plastic reduction, and community contributions. Transparency in sustainability.",
   openGraph: {
-    title: "Our Environmental Impact | Link Flame",
+    title: "Our Environmental Impact",
     description: "See the real numbers behind our sustainability commitment.",
   },
 };

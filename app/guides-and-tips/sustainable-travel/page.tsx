@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { NewsletterSignup } from "@/components/shared/newsletter-signup";
 
 export const metadata: Metadata = {
-  title: "Sustainable Travel | LinkFlame",
+  title: "Sustainable Travel",
   description:
     "Simple, practical tips to travel lighter: reduce emissions, pack smarter, and support local communities.",
 };

@@ -8,7 +8,7 @@ import {
 import { CONTACT } from "@/config/constants"
 
 export const metadata: Metadata = {
-  title: "FAQ | Link Flame",
+  title: "FAQ",
   description: "Answers to common questions about shopping, orders, and sustainability at Link Flame.",
 }
 

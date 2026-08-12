@@ -3,11 +3,11 @@ import { GiftCardBalance } from '@/components/gift-cards'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Check Gift Card Balance | Link Flame',
+  title: 'Check Gift Card Balance',
   description:
     'Check your Link Flame gift card balance. Enter your gift card code to see your current balance, transaction history, and expiration date.',
   openGraph: {
-    title: 'Check Gift Card Balance | Link Flame',
+    title: 'Check Gift Card Balance',
     description: 'Check your Link Flame gift card balance and transaction history.',
     type: 'website',
   },

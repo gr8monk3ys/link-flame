@@ -110,12 +110,12 @@ export async function generateMetadata({
 
   if (!bundle) {
     return {
-      title: "Bundle Not Found | Link Flame",
+      title: "Bundle Not Found",
     }
   }
 
   return {
-    title: `${bundle.title} | Link Flame Bundles`,
+    title: `${bundle.title} | Bundles`,
     description:
       bundle.description ||
       `Save ${bundle.discountPercent}% with our ${bundle.title} bundle. ${

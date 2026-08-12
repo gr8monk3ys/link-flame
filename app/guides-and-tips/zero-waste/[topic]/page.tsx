@@ -20,7 +20,7 @@ export function generateMetadata({
   return params.then(({ topic: rawTopic }) => {
     const topic = humanize(rawTopic);
     return {
-      title: `${topic} | Zero Waste Living | LinkFlame`,
+      title: `${topic} | Zero Waste Living`,
       description: `Practical zero-waste guidance on ${topic.toLowerCase()}.`,
     };
   });

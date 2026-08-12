@@ -4,16 +4,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const metadata: Metadata = {
-  title: "Write for Us | LinkFlame",
+  title: "Write for Us",
   description:
-    "Pitch sustainable living guides, product explainers, and eco-friendly how-tos for the LinkFlame blog.",
+    "Pitch sustainable living guides, product explainers, and eco-friendly how-tos for the Link Flame blog.",
 };
 
 export default function WriteForUsPage() {
   return (
     <div className="container max-w-4xl py-10">
       <div className="mb-10">
-        <h1 className="font-serif text-3xl font-semibold md:text-4xl">Write for LinkFlame</h1>
+        <h1 className="font-serif text-3xl font-semibold md:text-4xl">Write for Link Flame</h1>
         <p className="mt-3 max-w-2xl text-muted-foreground">
           We publish practical, evidence-based content that helps people make greener choices without
           the guilt. If you can write clearly and cite your sources, we want to hear from you.

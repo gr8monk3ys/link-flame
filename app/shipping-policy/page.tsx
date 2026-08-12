@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { CONTACT } from '@/config/constants'
 
 export const metadata: Metadata = {
-  title: 'Shipping Policy | Link Flame',
+  title: 'Shipping Policy',
   description:
     'Learn about Link Flame shipping options, delivery times, and service areas for eco-friendly products across the United States and Canada.',
 }

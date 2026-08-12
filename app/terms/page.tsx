@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { CONTACT } from '@/config/constants'
 
 export const metadata: Metadata = {
-  title: 'Terms of Service | Link Flame',
+  title: 'Terms of Service',
   description:
     'Read the Link Flame terms of service covering purchases, payments, shipping, returns, intellectual property, and dispute resolution.',
 }

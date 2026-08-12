@@ -9,7 +9,7 @@ import { ProductGrid } from "@/components/shared/product-grid"
 import Link from "next/link"
 
 export const metadata: Metadata = {
-  title: "Green Home & Garden | LinkFlame",
+  title: "Green Home & Garden",
   description: "Transform your home into an eco-friendly sanctuary with our comprehensive guides, calculators, and sustainable product recommendations.",
 }
 
