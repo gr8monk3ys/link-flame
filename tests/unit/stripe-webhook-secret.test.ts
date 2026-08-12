@@ -5,7 +5,7 @@ vi.mock('@/lib/logger', () => ({
   logger: { warn: vi.fn(), error: vi.fn(), info: vi.fn() },
 }))
 
-const DEDICATED = 'STRIPE_BILLING_WEBHOOK_SECRET'
+const DEDICATED = 'STRIPE_SUBSCRIPTION_WEBHOOK_SECRET'
 
 describe('resolveWebhookSecret', () => {
   const original = { ...process.env }
@@ -33,7 +33,7 @@ describe('resolveWebhookSecret', () => {
     vi.stubEnv('NODE_ENV', 'production')
     process.env.STRIPE_WEBHOOK_SECRET = 'whsec_shared'
 
-    expect(() => resolveWebhookSecret(DEDICATED)).toThrow(/Missing STRIPE_BILLING_WEBHOOK_SECRET/)
+    expect(() => resolveWebhookSecret(DEDICATED)).toThrow(/Missing STRIPE_SUBSCRIPTION_WEBHOOK_SECRET/)
     expect(() => resolveWebhookSecret(DEDICATED)).toThrow(/refused in production/)
   })
 
