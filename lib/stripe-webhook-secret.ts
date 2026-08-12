@@ -3,12 +3,12 @@ import { logger } from '@/lib/logger'
 /**
  * Resolves the signing secret for one Stripe webhook route.
  *
- * Three routes verify Stripe signatures - /api/webhook, /api/billing/webhook
- * and /api/subscriptions/webhook - and the latter two used to fall back to the
- * shared STRIPE_WEBHOOK_SECRET whenever their dedicated secret was unset. That
- * fallback makes one leaked secret enough to forge events against all three,
- * and the subscription and billing routes mutate subscription state, so a
- * forged event there can grant paid access.
+ * Two routes verify Stripe signatures - /api/webhook and
+ * /api/subscriptions/webhook - and the latter used to fall back to the
+ * shared STRIPE_WEBHOOK_SECRET whenever its dedicated secret was unset. That
+ * fallback makes one leaked secret enough to forge events against both,
+ * and the subscription route mutates subscription state, so a forged event
+ * there can grant paid access.
  *
  * Stripe signs each endpoint's events with *that endpoint's* signing secret, so
  * in a correctly configured production account every route that actually

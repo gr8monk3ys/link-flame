@@ -72,11 +72,6 @@ export const siteConfig = {
           href: "/faq",
           description: "Frequently asked questions about eco-friendly products and services",
         },
-        {
-          title: "Plans",
-          href: "/billing/plans",
-          description: "Subscription plans for teams and organizations",
-        },
       ],
     },
     {

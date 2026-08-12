@@ -83,7 +83,7 @@ Cart supports both authenticated users and anonymous guests:
 
 ### API Routes
 
-All 78 API routes are in `app/api/`. Every route exports `const dynamic = 'force-dynamic'` to prevent static rendering during Vercel builds.
+All API routes (75 at last count) are in `app/api/`. Every route exports `const dynamic = 'force-dynamic'` to prevent static rendering during Vercel builds.
 
 Patterns to follow:
 - Use response helpers from `lib/api-response.ts`: `successResponse()`, `errorResponse()`, `validationErrorResponse()`, `unauthorizedResponse()`, `notFoundResponse()`, `handleApiError()`

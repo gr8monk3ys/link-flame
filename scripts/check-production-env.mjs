@@ -90,12 +90,11 @@ for (const [name, validator, errorMessage] of requiredVars) {
 // Each webhook route needs its OWN signing secret. Accepting the shared
 // STRIPE_WEBHOOK_SECRET in place of a dedicated one - which this gate used to
 // do - means a single leaked secret can forge events for every route, and the
-// billing and subscription routes mutate subscription state. The runtime
-// refuses the fallback in production; this makes the gate agree rather than
-// bless a configuration the app will then reject.
+// subscription route mutates subscription state. The runtime refuses the
+// fallback in production; this makes the gate agree rather than bless a
+// configuration the app will then reject.
 for (const name of [
   'STRIPE_WEBHOOK_SECRET',
-  'STRIPE_BILLING_WEBHOOK_SECRET',
   'STRIPE_SUBSCRIPTION_WEBHOOK_SECRET',
 ]) {
   if (!startsWith(env[name], 'whsec_')) {
