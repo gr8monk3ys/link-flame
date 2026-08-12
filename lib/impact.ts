@@ -337,6 +337,40 @@ export function formatImpactValue(value: number, unit: string): string {
 }
 
 /**
+ * Aggregate the catalogue's per-unit yearly impact, by metric.
+ *
+ * Community impact sums real user activity and is zero on a fresh store;
+ * this sums the measured per-product values instead, so it has honest
+ * numbers to show from day one. Metrics with no data are dropped rather
+ * than rendered as zero.
+ */
+export async function getCatalogImpact() {
+  const [metrics, sums] = await Promise.all([
+    prisma.impactMetric.findMany({
+      where: { isActive: true },
+      orderBy: { sortOrder: "asc" },
+    }),
+    prisma.productImpact.groupBy({
+      by: ["metricId"],
+      _sum: { valuePerUnit: true },
+    }),
+  ]);
+
+  const totalByMetric = new Map(
+    sums.map((s) => [s.metricId, s._sum.valuePerUnit ?? 0])
+  );
+
+  return metrics
+    .map((metric) => ({
+      slug: metric.slug,
+      name: metric.name,
+      unit: metric.unit,
+      total: totalByMetric.get(metric.id) ?? 0,
+    }))
+    .filter((metric) => metric.total > 0);
+}
+
+/**
  * Get all active impact metrics (for admin/configuration)
  */
 export async function getActiveMetrics() {
