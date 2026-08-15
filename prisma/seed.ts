@@ -662,11 +662,9 @@ async function main() {
       tags: 'welcome,news',
       featured: true,
       readingTime: '3 min read',
-      content: `# Welcome to Link Flame
+      content: `We're excited to launch our eco-friendly living platform! Here you'll find practical guides, product reviews, and tips for sustainable living.
 
-We're excited to launch our eco-friendly living platform! Here you'll find practical guides, product reviews, and tips for sustainable living.
-
-## What We Offer
+# What We Offer
 
 - In-depth sustainability guides
 - Honest product reviews
@@ -682,27 +680,25 @@ Stay tuned for more content coming soon!`,
       slug: 'getting-started',
       title: 'Getting Started with Sustainable Living',
       description: 'A beginner\'s guide to reducing your environmental impact',
-      coverImage: '/images/blogs/default-hero.jpg',
+      coverImage: 'https://images.unsplash.com/photo-1582138079863-ec3e671f59d7?w=1200&q=80',
       publishedAt: new Date(Date.now() - 86400000), // Yesterday
       authorId: author2.id,
       categoryId: catGuides.id,
       tags: 'guide,tutorial,beginners',
       featured: false,
       readingTime: '5 min read',
-      content: `# Getting Started with Sustainable Living
+      content: `Making the switch to sustainable living doesn't have to be overwhelming. Here are simple steps you can take today:
 
-Making the switch to sustainable living doesn't have to be overwhelming. Here are simple steps you can take today:
-
-## 1. Start Small
+# 1. Start Small
 Begin with one area of your life. Maybe it's reducing plastic in your kitchen or switching to reusable shopping bags.
 
-## 2. Educate Yourself
+# 2. Educate Yourself
 Learn about the environmental impact of your daily choices.
 
-## 3. Find Alternatives
+# 3. Find Alternatives
 Research eco-friendly alternatives to products you use daily.
 
-## 4. Join the Community
+# 4. Join the Community
 Connect with others on the same journey for support and ideas.
 
 Remember: Every small change makes a difference!`,
@@ -714,39 +710,38 @@ Remember: Every small change makes a difference!`,
       slug: 'ultimate-guide-to-composting',
       title: 'Ultimate Guide to Composting',
       description: 'Learn everything you need to know about starting and maintaining a successful compost system',
-      coverImage: '/images/blog/composting.jpg',
+      coverImage: 'https://images.unsplash.com/photo-1716903282677-3a1b5c936b41?w=1200&q=80',
       publishedAt: new Date(Date.now() - 172800000), // 2 days ago
       authorId: author2.id,
       categoryId: catGreenHome.id,
       tags: 'composting,gardening,zero-waste',
       featured: true,
       readingTime: '8 min read',
-      content: `# Ultimate Guide to Composting
+      content: `Composting is one of the most impactful ways to reduce waste and nourish your garden.
 
-Composting is one of the most impactful ways to reduce waste and nourish your garden.
-
-## Why Compost?
+# Why Compost?
 
 - Reduces landfill waste by up to 30%
 - Creates nutrient-rich soil for your garden
 - Reduces methane emissions
 - Saves money on fertilizer
 
-## Getting Started
+# Getting Started
 
-### What You Need
+## What You Need
 - A compost bin or designated area
 - Brown materials (carbon-rich)
 - Green materials (nitrogen-rich)
 - Water and air
 
-### The Perfect Mix
+## The Perfect Mix
 Aim for a 3:1 ratio of brown to green materials.
 
 **Brown materials:** Dry leaves, newspaper, cardboard, wood chips
+
 **Green materials:** Food scraps, grass clippings, coffee grounds
 
-## Maintenance Tips
+# Maintenance Tips
 
 1. Turn your compost weekly
 2. Keep it moist but not soggy
@@ -762,35 +757,33 @@ Ready to start? Your garden will thank you!`,
       slug: 'zero-waste-bathroom-swaps',
       title: '10 Easy Swaps for a Zero-Waste Bathroom',
       description: 'Simple switches to reduce waste in your daily bathroom routine',
-      coverImage: '/images/blog/bathroom.jpg',
+      coverImage: 'https://images.unsplash.com/photo-1777446523856-e7acffa844a7?w=1200&q=80',
       publishedAt: new Date(Date.now() - 259200000), // 3 days ago
       authorId: author2.id,
       categoryId: catZeroWaste.id,
       tags: 'zero-waste,bathroom,sustainable-living',
       featured: false,
       readingTime: '6 min read',
-      content: `# 10 Easy Swaps for a Zero-Waste Bathroom
+      content: `Your bathroom is one of the easiest places to start reducing waste.
 
-Your bathroom is one of the easiest places to start reducing waste.
+# The Swaps
 
-## The Swaps
-
-### 1. Bamboo Toothbrush
+## 1. Bamboo Toothbrush
 Replace plastic toothbrushes with biodegradable bamboo alternatives.
 
-### 2. Bar Soap & Shampoo
+## 2. Bar Soap & Shampoo
 Ditch the plastic bottles for package-free bars.
 
-### 3. Reusable Cotton Rounds
+## 3. Reusable Cotton Rounds
 Switch from disposable cotton pads to washable rounds.
 
-### 4. Safety Razor
+## 4. Safety Razor
 Replace disposable razors with a durable safety razor.
 
-### 5. Refillable Containers
+## 5. Refillable Containers
 Buy products in bulk and use refillable containers.
 
-## The Impact
+# The Impact
 
 By making these switches, the average person can eliminate hundreds of pieces of plastic waste per year!`,
     },
