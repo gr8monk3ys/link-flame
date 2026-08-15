@@ -1,5 +1,5 @@
 import { marked } from "marked"
-import DOMPurify from "isomorphic-dompurify"
+import sanitizeHtml from "sanitize-html"
 
 /**
  * Render a blog post body written in Markdown to sanitized HTML.
@@ -8,6 +8,10 @@ import DOMPurify from "isomorphic-dompurify"
  * already renders the post title as the document's only h1 — authors write
  * `# Heading` naturally, and without demotion every post shipped two h1s.
  * Sanitization runs on the final HTML, after conversion and demotion.
+ *
+ * sanitize-html is used instead of DOMPurify because it needs no DOM: this
+ * runs in server components on Vercel, where jsdom (DOMPurify's server DOM)
+ * fails to load.
  */
 export function renderPostBody(markdown: string): string {
   let html = marked.parse(markdown || "", { async: false })
@@ -16,13 +20,18 @@ export function renderPostBody(markdown: string): string {
       .replaceAll(`<h${level}`, `<h${level + 1}`)
       .replaceAll(`</h${level}>`, `</h${level + 1}>`)
   }
-  return DOMPurify.sanitize(html, {
-    ALLOWED_TAGS: [
+  return sanitizeHtml(html, {
+    allowedTags: [
       "p", "br", "strong", "em", "u",
       "h2", "h3", "h4", "h5", "h6",
       "ul", "ol", "li", "a", "img",
       "blockquote", "code", "pre",
     ],
-    ALLOWED_ATTR: ["href", "src", "alt", "title", "class"],
+    allowedAttributes: {
+      a: ["href", "title"],
+      img: ["src", "alt", "title"],
+      "*": ["class"],
+    },
+    allowedSchemes: ["http", "https", "mailto"],
   })
 }
