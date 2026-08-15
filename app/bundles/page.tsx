@@ -137,7 +137,7 @@ export default async function BundlesPage() {
             </p>
           </div>
           <div className="text-center">
-            <div className="mb-4 inline-flex size-12 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+            <div className="mb-4 inline-flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="size-6"
@@ -160,7 +160,7 @@ export default async function BundlesPage() {
             </p>
           </div>
           <div className="text-center">
-            <div className="mb-4 inline-flex size-12 items-center justify-center rounded-full bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400">
+            <div className="mb-4 inline-flex size-12 items-center justify-center rounded-full bg-accent/20 text-accent-foreground">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="size-6"

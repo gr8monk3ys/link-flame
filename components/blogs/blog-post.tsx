@@ -6,7 +6,7 @@ import { format } from "date-fns"
 import { Share2, Heart, MessageSquare, Bookmark } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { buttonVariants } from "@/components/ui/button"
-import DOMPurify from "isomorphic-dompurify"
+import { renderPostBody } from "@/lib/markdown"
 import { slugify } from "@/lib/utils"
 
 interface Author {
@@ -114,9 +114,11 @@ export function BlogPost({
         />
       </div>
 
-      {/* Content */}
-      <div className="prose prose-lg max-w-none">
-        <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }} />
+      {/* Content: posts are authored in Markdown (see the admin editor) —
+          this was injected raw for a long time, which rendered every post
+          as one paragraph of literal `#` marks. */}
+      <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:font-serif prose-a:text-primary">
+        <div dangerouslySetInnerHTML={{ __html: renderPostBody(content) }} />
       </div>
 
       {/* Tags */}

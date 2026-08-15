@@ -2,7 +2,6 @@ import { Metadata } from "next"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { TransportCalculator } from "@/components/guides-and-tips/transport-calculator"
-import { ProductGrid } from "@/components/shared/product-grid"
 import Link from "next/link"
 
 export const metadata: Metadata = {
@@ -52,15 +51,16 @@ export default function CleanTransportPage() {
         </Card>
       </div>
 
-      {/* Product Recommendations */}
-      <div className="my-8">
-        <h2 className="mb-6 text-2xl font-semibold">Recommended Products</h2>
-        <ProductGrid category="clean-transport" limit={4} />
-        <div className="mt-4 text-center">
-          <Button asChild variant="outline">
-            <Link href="/collections">View All Products</Link>
-          </Button>
-        </div>
+      {/* Shop CTA */}
+      <div className="my-8 rounded-lg bg-primary/5 p-8 text-center">
+        <h2 className="text-2xl font-semibold">Cutting waste beyond the commute?</h2>
+        <p className="mx-auto mt-2 max-w-[600px] text-muted-foreground">
+          The shop covers the everyday side of lower-impact living — kitchen,
+          bathroom, and laundry swaps, each with its measured yearly impact.
+        </p>
+        <Button asChild className="mt-6">
+          <Link href="/collections">Shop all products</Link>
+        </Button>
       </div>
     </div>
   )

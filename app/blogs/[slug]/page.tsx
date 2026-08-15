@@ -4,7 +4,7 @@ import { PageProps } from '@/types/next'
 import { getAllPosts, getPost } from '@/lib/blog'
 import { notFound } from 'next/navigation'
 import { format, parseISO } from 'date-fns'
-import DOMPurify from 'isomorphic-dompurify'
+import { renderPostBody } from '@/lib/markdown'
 import { getBaseUrl } from '@/lib/url'
 import { slugify } from "@/lib/utils"
 
@@ -106,11 +106,9 @@ export default async function BlogPost({ params }: PageProps<{ slug: string }>) 
       : post.updatedAt.toISOString()
     : publishedAt
 
-  // Sanitize HTML content to prevent XSS attacks
-  const sanitizedContent = DOMPurify.sanitize(post.content || '', {
-    ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'code', 'pre'],
-    ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class']
-  })
+  // Posts are authored in Markdown (see the admin editor); renderPostBody
+  // converts, demotes headings below the page h1, and sanitizes
+  const sanitizedContent = renderPostBody(post.content || '')
 
   // Build JSON-LD structured data
   const siteUrl = getBaseUrl()
@@ -195,7 +193,7 @@ export default async function BlogPost({ params }: PageProps<{ slug: string }>) 
       />
 
       {/* Article Content */}
-      <article className="prose lg:prose-xl mx-auto px-4 py-8">
+      <article className="prose mx-auto px-4 py-8 lg:prose-xl">
         <header className="mb-8">
           <h1>{post.title}</h1>
           <div className="not-prose flex items-center gap-4 text-muted-foreground">
@@ -263,7 +261,10 @@ export default async function BlogPost({ params }: PageProps<{ slug: string }>) 
         </header>
 
         {/* Article Content */}
-        <div dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
+        <div
+          className="prose prose-lg max-w-none dark:prose-invert prose-headings:font-serif prose-a:text-primary"
+          dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+        />
 
         {/* Article Footer */}
         <footer className="not-prose mt-12 border-t pt-8">

@@ -69,7 +69,7 @@ export default function AccountImpactPage() {
         <CardHeader>
           <CardTitle>How We Calculate Your Impact</CardTitle>
         </CardHeader>
-        <CardContent className="prose dark:prose-invert max-w-none">
+        <CardContent className="prose max-w-none dark:prose-invert">
           <p>
             Every eco-friendly product you purchase has a measurable positive
             impact on the environment. We track several key metrics:

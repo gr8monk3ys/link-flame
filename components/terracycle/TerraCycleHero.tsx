@@ -61,32 +61,25 @@ const CheckIcon = ({ className }: { className?: string }) => (
 export function TerraCycleHero({ className }: TerraCycleHeroProps) {
   return (
     <section
-      className={cn(
-        "relative bg-gradient-to-b from-emerald-50 to-white py-20 dark:from-emerald-900/20 dark:to-background lg:py-28",
-        className
-      )}
+      className={cn("border-b bg-secondary/40 py-16 lg:py-20", className)}
     >
-      <div className="container mx-auto px-4">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           {/* Content */}
-          <div className="mx-auto max-w-xl lg:mx-0">
-            {/* Partnership Badge */}
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-2 text-sm font-medium text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300">
-              <RecycleIcon className="size-4" />
-              Official Partner
-            </div>
+          <div className="max-w-xl">
+            <p className="text-sm font-medium uppercase tracking-widest text-primary">
+              Recycling program
+            </p>
 
-            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              TerraCycle{" "}
-              <span className="text-emerald-700 dark:text-emerald-400">
-                Recycling Program
-              </span>
+            <h1 className="mt-3 font-serif text-4xl tracking-tight text-foreground sm:text-5xl">
+              Send your empties back
             </h1>
 
-            <p className="mt-6 text-lg leading-8 text-muted-foreground">
-              We have partnered with TerraCycle to give your empty product packaging a
-              second life. Instead of ending up in landfills, your empties are recycled
-              and upcycled into new products.
+            <p className="mt-4 text-lg leading-8 text-muted-foreground">
+              Some packaging can&apos;t go in your curbside bin — pumps, caps,
+              flexible pouches. Through TerraCycle, you can send those empties
+              back to us instead, and they&apos;re recycled or upcycled into new
+              products.
             </p>
 
             {/* Key Benefits */}
@@ -94,11 +87,10 @@ export function TerraCycleHero({ className }: TerraCycleHeroProps) {
               {[
                 "Free shipping labels for your returns",
                 "Earn rewards for recycling",
-                "Track your environmental impact",
-                "100% of items recycled or upcycled",
+                "Track what you've kept out of landfill",
               ].map((benefit) => (
                 <li key={benefit} className="flex items-start gap-3">
-                  <CheckIcon className="mt-0.5 size-5 shrink-0 text-emerald-700 dark:text-emerald-400" />
+                  <CheckIcon className="mt-0.5 size-5 shrink-0 text-primary" />
                   <span className="text-foreground">{benefit}</span>
                 </li>
               ))}
@@ -108,7 +100,7 @@ export function TerraCycleHero({ className }: TerraCycleHeroProps) {
             <div className="mt-10 flex flex-wrap gap-4">
               <Link
                 href="#get-started"
-                className="inline-flex items-center rounded-lg bg-emerald-700 px-6 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-emerald-700"
+                className="inline-flex items-center rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
               >
                 Get Started
               </Link>
@@ -121,42 +113,34 @@ export function TerraCycleHero({ className }: TerraCycleHeroProps) {
             </div>
           </div>
 
-          {/* Visual Element / Partnership Badge */}
-          <div className="relative mx-auto lg:mx-0">
-            <div className="relative rounded-2xl bg-gradient-to-br from-emerald-700 to-teal-700 p-8 shadow-xl">
-              <div className="absolute -right-4 -top-4 flex size-20 items-center justify-center rounded-full bg-card shadow-lg">
-                <LeafIcon className="size-10 text-emerald-700 dark:text-emerald-400" />
-              </div>
-
-              <div className="text-white">
-                <div className="mb-6 flex items-center gap-3">
-                  <RecycleIcon className="size-12" />
-                  <div>
-                    <div className="text-2xl font-bold">TerraCycle</div>
-                    <div className="text-emerald-50">Certified Partner</div>
+          {/* What you can send back */}
+          <div className="relative">
+            <div className="rounded-2xl border bg-card p-8 shadow-warm">
+              <div className="flex items-center gap-3">
+                <RecycleIcon className="size-10 text-primary" />
+                <div>
+                  <div className="font-serif text-xl text-foreground">
+                    What you can send back
                   </div>
-                </div>
-
-                <div className="space-y-4 border-t border-emerald-400/30 pt-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-emerald-50">Items Recycled</span>
-                    <span className="text-2xl font-bold">15,000+</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-emerald-50">Waste Diverted</span>
-                    <span className="text-2xl font-bold">2,500 kg</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-emerald-50">Active Participants</span>
-                    <span className="text-2xl font-bold">3,200+</span>
+                  <div className="text-sm text-muted-foreground">
+                    A few examples — full list below
                   </div>
                 </div>
               </div>
+              <ul className="mt-6 space-y-3 border-t pt-6">
+                {[
+                  "Pump tops and trigger sprayers",
+                  "Flexible pouches and refill packs",
+                  "Toothbrush heads and floss containers",
+                  "Caps, lids, and dispensers",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-3">
+                    <LeafIcon className="mt-0.5 size-5 shrink-0 text-primary" />
+                    <span className="text-foreground">{item}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
-
-            {/* Decorative elements */}
-            <div className="absolute -bottom-6 -left-6 size-24 rounded-full bg-emerald-200/50 blur-xl dark:bg-emerald-800/30" />
-            <div className="absolute -right-6 -top-6 size-32 rounded-full bg-teal-200/50 blur-xl dark:bg-teal-800/30" />
           </div>
         </div>
       </div>

@@ -99,48 +99,28 @@ const sustainabilityPillars = [
   },
 ];
 
-const impactStats = [
-  { value: "50K+", label: "kg CO2 offset" },
-  { value: "10K+", label: "plastic-free orders" },
-  { value: "1%", label: "of sales donated" },
-  { value: "100%", label: "renewable energy" },
-];
-
 export default function SustainabilityPage() {
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-green-50 to-white py-20 dark:from-green-900/20 dark:to-background lg:py-28">
-        <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-sm font-medium text-green-800 dark:bg-green-900/50 dark:text-green-300">
-              <LeafIcon className="size-4" />
-              Our Commitment
-            </div>
-            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              Building a More{" "}
-              <span className="text-green-700 dark:text-green-400">Sustainable</span>{" "}
-              Future
-            </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
-              At Link Flame, sustainability isn&apos;t just a buzzword - it&apos;s the foundation of everything
-              we do. From the products we sell to how we ship them, we&apos;re committed to minimizing
-              our environmental impact.
+      <section className="border-b bg-secondary/40">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+          <div className="max-w-2xl">
+            <p className="text-sm font-medium uppercase tracking-widest text-primary">
+              Our commitment
             </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Impact Stats */}
-      <section className="bg-green-700 py-12 dark:bg-green-800">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
-            {impactStats.map((stat) => (
-              <div key={stat.label} className="text-center">
-                <div className="text-3xl font-bold text-white md:text-4xl">{stat.value}</div>
-                <div className="mt-1 text-sm text-green-50">{stat.label}</div>
-              </div>
-            ))}
+            <h1 className="mt-3 font-serif text-4xl tracking-tight text-foreground sm:text-5xl">
+              How this store stays sustainable
+            </h1>
+            <p className="mt-4 text-lg leading-8 text-muted-foreground">
+              Four pillars guide every decision, from which products we stock to
+              how an order reaches your door. The results are published as
+              measured numbers on our{" "}
+              <Link href="/impact" className="text-primary underline-offset-4 hover:underline">
+                impact page
+              </Link>
+              , not as claims here.
+            </p>
           </div>
         </div>
       </section>

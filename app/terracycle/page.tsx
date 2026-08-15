@@ -90,56 +90,11 @@ const TruckIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-// Environmental impact stats
-const impactStats = [
-  {
-    value: "15,000+",
-    label: "Items Recycled",
-    description: "Product containers given a second life",
-  },
-  {
-    value: "2,500 kg",
-    label: "Waste Diverted",
-    description: "Kept out of landfills and oceans",
-  },
-  {
-    value: "3,200+",
-    label: "Participants",
-    description: "Customers making a difference",
-  },
-  {
-    value: "98%",
-    label: "Recycling Rate",
-    description: "Of materials successfully processed",
-  },
-];
-
 export default function TerraCyclePage() {
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
       <TerraCycleHero />
-
-      {/* Impact Stats Banner */}
-      <section className="bg-emerald-700 py-12 dark:bg-emerald-800">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
-            {impactStats.map((stat) => (
-              <div key={stat.label} className="text-center">
-                <div className="text-3xl font-bold text-white md:text-4xl">
-                  {stat.value}
-                </div>
-                <div className="mt-1 text-sm font-medium text-emerald-50">
-                  {stat.label}
-                </div>
-                <div className="mt-0.5 text-xs text-emerald-50/90">
-                  {stat.description}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* How It Works Section */}
       <RecyclingSteps />

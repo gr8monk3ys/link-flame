@@ -507,6 +507,9 @@ async function main() {
 
   // Clear existing data (respect foreign key constraints)
   await prisma.quizResponse.deleteMany();
+  await prisma.bundleSelection.deleteMany();
+  await prisma.bundleProduct.deleteMany();
+  await prisma.bundle.deleteMany();
   await prisma.cartItem.deleteMany();
   await prisma.orderItem.deleteMany();
   await prisma.savedItem.deleteMany();
@@ -1061,6 +1064,74 @@ By making these switches, the average person can eliminate hundreds of pieces of
     }
   }
   console.log('Linked products to environmental impacts');
+
+  // Bundles: the /bundles page is linked from the main nav, so it must not
+  // ship empty. Titles reference createdProducts keys - update both together.
+  const bundles = [
+    {
+      slug: 'zero-waste-kitchen-starter',
+      title: 'Zero-Waste Kitchen Starter',
+      description:
+        'The four swaps that clear the most plastic out of a kitchen: wraps instead of cling film, mesh bags instead of produce bags, bamboo cutlery for lunches out, and glass storage that outlives any takeaway tub.',
+      image: 'https://images.unsplash.com/photo-1686820740642-5a1fcd0300a9?w=1200&q=80',
+      category: 'Kitchen',
+      discountPercent: 15,
+      isCustomizable: false,
+      productTitles: [
+        'Beeswax Food Wraps',
+        'Reusable Produce Bags - Set of 5',
+        'Bamboo Cutlery Set',
+        'Glass Food Storage Set',
+      ],
+    },
+    {
+      slug: 'plastic-free-bathroom',
+      title: 'Plastic-Free Bathroom',
+      description:
+        'Everything on the sink, minus the plastic: bamboo toothbrushes for the family, a matching bathroom set, and loofah sponges that compost when they wear out.',
+      image: 'https://images.unsplash.com/photo-1589365252845-092198ba5334?w=1200&q=80',
+      category: 'Bathroom',
+      discountPercent: 12,
+      isCustomizable: false,
+      productTitles: [
+        'Bamboo Toothbrush Set',
+        'Bamboo Bathroom Set',
+        'Natural Loofah Sponge - 3 Pack',
+      ],
+    },
+    {
+      slug: 'build-your-own-starter-kit',
+      title: 'Build Your Own Starter Kit',
+      description:
+        'Pick any three to six swaps and save on the lot. Start with the disposables you throw away most often.',
+      image: 'https://images.unsplash.com/photo-1528740561666-dc2479dc08ab?w=1200&q=80',
+      category: 'Starter',
+      discountPercent: 10,
+      isCustomizable: true,
+      minItems: 3,
+      maxItems: 6,
+      productTitles: Object.keys(createdProducts),
+    },
+  ];
+
+  for (const bundle of bundles) {
+    const { productTitles, ...bundleData } = bundle;
+    const created = await prisma.bundle.create({ data: bundleData });
+    for (const [sortOrder, title] of productTitles.entries()) {
+      const productId = createdProducts[title];
+      if (!productId) continue;
+      await prisma.bundleProduct.create({
+        data: {
+          bundleId: created.id,
+          productId,
+          isRequired: !bundle.isCustomizable,
+          isDefault: !bundle.isCustomizable,
+          sortOrder,
+        },
+      });
+    }
+  }
+  console.log('Created product bundles');
 
   console.log('Database has been seeded successfully!');
 }
