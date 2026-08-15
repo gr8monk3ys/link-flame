@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Save, Eye } from 'lucide-react';
 import Image from 'next/image';
-import DOMPurify from 'isomorphic-dompurify';
+import { renderPostBody } from '@/lib/markdown';
 
 export default function NewBlogPostPage() {
   const router = useRouter();
@@ -245,13 +245,7 @@ export default function NewBlogPostPage() {
             <div className="prose prose-green min-h-[400px] w-full max-w-none rounded-lg border border-border bg-muted px-4 py-3">
               <div
                 dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(
-                    formData.content
-                      .replace(/\n/g, '<br />')
-                      .replace(/#{1,6} (.+)/g, '<h3>$1</h3>')
-                      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-                      .replace(/\*(.+?)\*/g, '<em>$1</em>')
-                  ),
+                  __html: renderPostBody(formData.content),
                 }}
               />
             </div>

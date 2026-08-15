@@ -1,7 +1,3 @@
-// @vitest-environment node
-// renderPostBody runs in server components, and DOMPurify misbehaves under
-// happy-dom (its NodeIterator removes the wrong nodes) — node + jsdom matches
-// the runtime that actually sanitizes this HTML.
 import { describe, it, expect } from 'vitest'
 import { renderPostBody } from '@/lib/markdown'
 
