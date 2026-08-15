@@ -1,360 +1,229 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import { getCatalogImpact, getCommunityImpact } from "@/lib/impact";
+import { CountUp } from "@/components/home/CountUp";
+
+// Reads live impact data; must not be statically rendered at build time
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Our Environmental Impact",
-  description: "Track our environmental impact: carbon offset, plastic reduction, and community contributions. Transparency in sustainability.",
+  description:
+    "Every product carries a measured yearly impact versus its single-use equivalent. See the numbers and how we calculate them.",
   openGraph: {
     title: "Our Environmental Impact",
-    description: "See the real numbers behind our sustainability commitment.",
+    description:
+      "Measured, not promised: per-product impact data and community totals.",
   },
 };
 
-// Leaf icon
-const LeafIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
-    <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
-  </svg>
-);
-
-// CO2 data
-const carbonData = {
-  totalOffset: 52450, // kg
-  monthlyAverage: 4370,
-  ordersShipped: 12500,
-  offsetProjects: [
-    {
-      name: "Amazon Rainforest Protection",
-      location: "Brazil",
-      type: "Forest Conservation",
-      contribution: 18000,
-    },
-    {
-      name: "Wind Farm Development",
-      location: "Texas, USA",
-      type: "Renewable Energy",
-      contribution: 15000,
-    },
-    {
-      name: "Cookstove Distribution",
-      location: "Kenya",
-      type: "Community Development",
-      contribution: 12000,
-    },
-    {
-      name: "Mangrove Restoration",
-      location: "Indonesia",
-      type: "Blue Carbon",
-      contribution: 7450,
-    },
-  ],
-};
-
-// Environmental stats
-const environmentalStats = [
+const COMMITMENTS = [
   {
-    category: "Carbon Offset",
-    stats: [
-      { label: "Total CO2 Offset", value: "52,450 kg", icon: "cloud" },
-      { label: "Trees Equivalent", value: "2,400", icon: "tree" },
-      { label: "Flights Offset", value: "42", icon: "plane" },
-    ],
+    title: "1% for the Planet",
+    description:
+      "One percent of every sale is pledged to environmental nonprofits, independently verified through onepercentfortheplanet.org.",
   },
   {
-    category: "Plastic Reduction",
-    stats: [
-      { label: "Plastic-Free Orders", value: "12,500", icon: "recycle" },
-      { label: "Plastic Bottles Saved", value: "37,500", icon: "bottle" },
-      { label: "Ocean Plastic Equiv.", value: "1,250 kg", icon: "water" },
-    ],
+    title: "Carbon-neutral shipping",
+    description:
+      "Shipping emissions on every order are offset at checkout. The offset line appears in your order summary, not in fine print.",
   },
   {
-    category: "Community Impact",
-    stats: [
-      { label: "Donated to Nonprofits", value: "$15,280", icon: "heart" },
-      { label: "Environmental Orgs Supported", value: "12", icon: "users" },
-      { label: "Local Jobs Created", value: "24", icon: "briefcase" },
-    ],
+    title: "Plastic-free packaging",
+    description:
+      "Orders ship in recyclable and compostable materials. No poly mailers, no bubble wrap, no plastic tape.",
+  },
+  {
+    title: "TerraCycle partnership",
+    description:
+      "Hard-to-recycle empties can be returned through our TerraCycle program instead of going to landfill.",
   },
 ];
 
-// Monthly progress data (simulated)
-const monthlyProgress = [
-  { month: "Jan", offset: 3200, orders: 890 },
-  { month: "Feb", offset: 3500, orders: 950 },
-  { month: "Mar", offset: 4100, orders: 1100 },
-  { month: "Apr", offset: 4200, orders: 1150 },
-  { month: "May", offset: 4500, orders: 1200 },
-  { month: "Jun", offset: 4800, orders: 1280 },
-  { month: "Jul", offset: 5100, orders: 1350 },
-  { month: "Aug", offset: 5200, orders: 1400 },
-  { month: "Sep", offset: 5400, orders: 1450 },
-  { month: "Oct", offset: 5600, orders: 1500 },
-  { month: "Nov", offset: 5850, orders: 1550 },
-  { month: "Dec", offset: 6000, orders: 1600 },
-];
+export default async function ImpactPage() {
+  const [catalog, community] = await Promise.all([
+    getCatalogImpact().catch(() => []),
+    getCommunityImpact().catch(() => []),
+  ]);
 
-// Simple bar chart component
-function SimpleBarChart({ data }: { data: { month: string; offset: number }[] }) {
-  const maxValue = Math.max(...data.map((d) => d.offset));
-  return (
-    <div className="flex h-48 items-end gap-1">
-      {data.map((item) => (
-        <div key={item.month} className="flex flex-1 flex-col items-center gap-1">
-          <div
-            className="w-full rounded-t bg-green-500 transition-all dark:bg-green-700"
-            style={{ height: `${(item.offset / maxValue) * 100}%` }}
-            title={`${item.offset} kg CO2`}
-          />
-          <span className="text-xs text-muted-foreground">{item.month.slice(0, 1)}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-export default function ImpactPage() {
-  const currentYear = new Date().getFullYear();
+  const communityWithData = community.filter((m) => m.totalValue > 0);
 
   return (
     <main className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-teal-50 to-white py-20 dark:from-teal-900/20 dark:to-background">
-        <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-teal-100 px-4 py-2 text-sm font-medium text-teal-800 dark:bg-teal-900/50 dark:text-teal-300">
-              <LeafIcon className="size-4" />
-              {currentYear} Impact Report
-            </div>
-            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-              Our Environmental{" "}
-              <span className="text-teal-700 dark:text-teal-400">Impact</span>
+      {/* Hero */}
+      <section className="border-b bg-secondary/40">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+          <div className="max-w-2xl">
+            <p className="text-sm font-medium uppercase tracking-widest text-primary">
+              Measured, not promised
+            </p>
+            <h1 className="mt-3 font-serif text-4xl tracking-tight text-foreground sm:text-5xl">
+              Our environmental impact
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
-              Transparency is key to accountability. Here&apos;s a detailed look at our environmental
-              footprint and the positive impact we&apos;re making together.
+            <p className="mt-4 text-lg leading-8 text-muted-foreground">
+              We don&apos;t publish numbers we can&apos;t stand behind. Every
+              figure on this page is either measured per product or summed from
+              real orders — and where the honest number is still zero, we say
+              so.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Key Metrics */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="grid gap-6 md:grid-cols-4">
-            <div className="rounded-xl bg-gradient-to-br from-green-700 to-emerald-700 p-6 text-white">
-              <div className="text-3xl font-bold">{carbonData.totalOffset.toLocaleString()} kg</div>
-              <div className="text-green-50">Total CO2 Offset</div>
-            </div>
-            <div className="rounded-xl bg-gradient-to-br from-blue-700 to-cyan-700 p-6 text-white">
-              <div className="text-3xl font-bold">{carbonData.ordersShipped.toLocaleString()}</div>
-              <div className="text-white">Orders Shipped Carbon-Neutral</div>
-            </div>
-            <div className="rounded-xl bg-gradient-to-br from-purple-700 to-pink-700 p-6 text-white">
-              <div className="text-3xl font-bold">$15,280</div>
-              <div className="text-purple-100">Donated to Environmental Causes</div>
-            </div>
-            <div className="rounded-xl bg-gradient-to-br from-amber-700 to-orange-700 p-6 text-white">
-              <div className="text-3xl font-bold">100%</div>
-              <div className="text-amber-100">Plastic-Free Packaging</div>
-            </div>
+      {/* Catalog impact */}
+      {catalog.length > 0 && (
+        <section className="py-16" aria-labelledby="catalog-impact-heading">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <h2
+              id="catalog-impact-heading"
+              className="font-serif text-2xl tracking-tight text-foreground sm:text-3xl"
+            >
+              What one year of the catalogue replaces
+            </h2>
+            <p className="mt-2 max-w-2xl text-muted-foreground">
+              Each product carries a measured yearly impact versus the
+              single-use equivalent it replaces. Using one of each product for
+              one year adds up to:
+            </p>
+            <dl className="mt-10 grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4">
+              {catalog.slice(0, 4).map((metric) => (
+                <div key={metric.slug} className="border-l-2 border-primary/20 pl-4">
+                  <dd className="font-serif text-4xl tabular-nums tracking-tight text-foreground">
+                    <CountUp value={metric.total} />
+                  </dd>
+                  <dt className="mt-2">
+                    <span className="block text-sm font-medium uppercase tracking-wide text-muted-foreground">
+                      {metric.unit}
+                    </span>
+                    <span className="mt-1 block text-sm text-foreground">
+                      {metric.name}
+                    </span>
+                  </dt>
+                </div>
+              ))}
+            </dl>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* Carbon Offset Details */}
-      <section className="bg-muted py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="mb-8 text-2xl font-bold text-foreground">
-            Carbon Offset Progress
+      {/* Community impact */}
+      <section className="bg-muted py-16" aria-labelledby="community-impact-heading">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <h2
+            id="community-impact-heading"
+            className="font-serif text-2xl tracking-tight text-foreground sm:text-3xl"
+          >
+            What customers have added up to so far
           </h2>
-          <div className="grid gap-8 lg:grid-cols-2">
-            {/* Chart */}
-            <div className="rounded-xl border bg-card p-6">
-              <h3 className="mb-4 text-lg font-semibold">Monthly Carbon Offset (kg CO2)</h3>
-              <SimpleBarChart data={monthlyProgress} />
-              <p className="mt-4 text-sm text-muted-foreground">
-                Showing monthly carbon offset for {currentYear}. We&apos;re on track to offset over
-                60,000 kg of CO2 this year.
+          {communityWithData.length > 0 ? (
+            <dl className="mt-10 grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4">
+              {communityWithData.slice(0, 4).map((metric) => (
+                <div key={metric.slug} className="border-l-2 border-primary/20 pl-4">
+                  <dd className="font-serif text-4xl tabular-nums tracking-tight text-foreground">
+                    <CountUp value={metric.totalValue} />
+                  </dd>
+                  <dt className="mt-2">
+                    <span className="block text-sm font-medium uppercase tracking-wide text-muted-foreground">
+                      {metric.unit}
+                    </span>
+                    <span className="mt-1 block text-sm text-foreground">
+                      {metric.name}
+                    </span>
+                  </dt>
+                </div>
+              ))}
+            </dl>
+          ) : (
+            <div className="mt-8 max-w-2xl rounded-lg border border-dashed p-6">
+              <p className="font-medium text-foreground">
+                The counter starts at zero — honestly.
+              </p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Community totals are summed from real orders, so this section
+                stays empty until the first swap ships. Most impact pages start
+                with an impressive number; we&apos;d rather start with a
+                truthful one.
               </p>
             </div>
+          )}
+        </div>
+      </section>
 
-            {/* Projects */}
-            <div className="rounded-xl border bg-card p-6">
-              <h3 className="mb-4 text-lg font-semibold">Offset Projects We Support</h3>
-              <div className="space-y-4">
-                {carbonData.offsetProjects.map((project) => (
-                  <div key={project.name} className="flex items-start gap-4">
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/50">
-                      <LeafIcon className="size-5 text-green-700 dark:text-green-400" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between">
-                        <h4 className="truncate font-medium text-foreground">
-                          {project.name}
-                        </h4>
-                        <span className="text-sm font-medium text-green-700 dark:text-green-400">
-                          {project.contribution.toLocaleString()} kg
-                        </span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        {project.location} - {project.type}
-                      </p>
-                    </div>
-                  </div>
+      {/* Methodology */}
+      <section className="py-16" aria-labelledby="methodology-heading">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-12 lg:grid-cols-2">
+            <div>
+              <h2
+                id="methodology-heading"
+                className="font-serif text-2xl tracking-tight text-foreground sm:text-3xl"
+              >
+                How we measure
+              </h2>
+              <div className="mt-4 space-y-4 text-muted-foreground">
+                <p>
+                  Every product in the catalogue is assigned a per-unit yearly
+                  impact for each metric it affects: how many plastic bottles a
+                  reusable bottle displaces in a year of typical use, how many
+                  disposable items a beeswax wrap replaces, how many kilograms
+                  of CO&#8322;e the swap avoids.
+                </p>
+                <p>
+                  When an order ships, the products&apos; per-unit values are
+                  added to your personal impact and to the community totals
+                  above. Nothing is projected, annualized from a pilot, or
+                  borrowed from an industry average.
+                </p>
+                <p>
+                  Signed in? Your running total lives in{" "}
+                  <Link href="/account" className="text-primary underline-offset-4 hover:underline">
+                    your account
+                  </Link>
+                  .
+                </p>
+              </div>
+            </div>
+            <div>
+              <h2 className="font-serif text-2xl tracking-tight text-foreground sm:text-3xl">
+                Standing commitments
+              </h2>
+              <ul className="mt-4 space-y-5">
+                {COMMITMENTS.map((item) => (
+                  <li key={item.title}>
+                    <p className="font-medium text-foreground">{item.title}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {item.description}
+                    </p>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Detailed Stats */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="mb-8 text-2xl font-bold text-foreground">
-            Detailed Impact Metrics
+      {/* CTA */}
+      <section className="bg-primary py-16 text-primary-foreground">
+        <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+          <h2 className="font-serif text-3xl tracking-tight">
+            The numbers only move when you swap something
           </h2>
-          <div className="grid gap-8 md:grid-cols-3">
-            {environmentalStats.map((category) => (
-              <div
-                key={category.category}
-                className="rounded-xl border bg-card p-6"
-              >
-                <h3 className="mb-4 text-lg font-semibold text-foreground">
-                  {category.category}
-                </h3>
-                <div className="space-y-4">
-                  {category.stats.map((stat) => (
-                    <div key={stat.label} className="flex items-center justify-between">
-                      <span className="text-muted-foreground">{stat.label}</span>
-                      <span className="font-semibold text-foreground">
-                        {stat.value}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Equivalencies */}
-      <section className="bg-green-50 py-16 dark:bg-green-900/20">
-        <div className="container mx-auto px-4">
-          <div className="mb-12 text-center">
-            <h2 className="text-2xl font-bold text-foreground">
-              What Does {carbonData.totalOffset.toLocaleString()} kg of CO2 Look Like?
-            </h2>
-            <p className="mt-2 text-muted-foreground">
-              Putting our carbon offset into perspective
-            </p>
-          </div>
-          <div className="grid gap-6 md:grid-cols-4">
-            {[
-              { icon: "car", value: "215,000", label: "miles not driven" },
-              { icon: "tree", value: "2,400", label: "trees planted for 10 years" },
-              { icon: "home", value: "5.2", label: "homes powered for a year" },
-              { icon: "plane", value: "42", label: "cross-country flights" },
-            ].map((item) => (
-              <div
-                key={item.label}
-                className="rounded-xl bg-card p-6 text-center shadow-sm"
-              >
-                <div className="text-3xl font-bold text-green-700 dark:text-green-400">
-                  {item.value}
-                </div>
-                <div className="mt-1 text-sm text-muted-foreground">{item.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Goals Section */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-3xl">
-            <h2 className="mb-8 text-center text-2xl font-bold text-foreground">
-              Our {currentYear + 1} Goals
-            </h2>
-            <div className="space-y-6">
-              {[
-                {
-                  goal: "Offset 100,000 kg of CO2",
-                  current: 52450,
-                  target: 100000,
-                  unit: "kg",
-                },
-                {
-                  goal: "Ship 25,000 plastic-free orders",
-                  current: 12500,
-                  target: 25000,
-                  unit: "orders",
-                },
-                {
-                  goal: "Donate $30,000 to environmental causes",
-                  current: 15280,
-                  target: 30000,
-                  unit: "$",
-                },
-                {
-                  goal: "Achieve B Corp certification",
-                  current: 75,
-                  target: 100,
-                  unit: "% complete",
-                },
-              ].map((item) => {
-                const percentage = Math.min((item.current / item.target) * 100, 100);
-                return (
-                  <div key={item.goal} className="rounded-lg border p-4">
-                    <div className="mb-2 flex items-center justify-between">
-                      <span className="font-medium text-foreground">{item.goal}</span>
-                      <span className="text-sm text-muted-foreground">
-                        {Math.round(percentage)}%
-                      </span>
-                    </div>
-                    <div className="h-2 rounded-full bg-muted">
-                      <div
-                        className="h-2 rounded-full bg-green-500 transition-all"
-                        style={{ width: `${percentage}%` }}
-                      />
-                    </div>
-                    <div className="mt-1 text-xs text-muted-foreground">
-                      {item.current.toLocaleString()} / {item.target.toLocaleString()} {item.unit}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="bg-teal-700 py-16 dark:bg-teal-800">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-white">
-            Be Part of the Solution
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-teal-50">
-            Every purchase you make contributes to our environmental impact.
-            Shop sustainably and help us reach our goals.
+          <p className="mx-auto mt-4 max-w-2xl text-primary-foreground/80">
+            Every product page shows what the swap saves per year. Pick one
+            thing you replace often, and start there.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link
-              href="/products"
-              className="inline-flex items-center rounded-lg bg-card px-6 py-3 text-sm font-medium text-teal-700 shadow-sm transition-colors hover:bg-muted dark:text-teal-400"
+              href="/collections"
+              className="inline-flex items-center rounded-lg bg-background px-6 py-3 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-background/90"
             >
-              Shop Now
+              Shop all products
             </Link>
             <Link
               href="/sustainability"
-              className="inline-flex items-center rounded-lg border border-white px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-white/10"
+              className="inline-flex items-center rounded-lg border border-primary-foreground/40 px-6 py-3 text-sm font-medium transition-colors hover:bg-primary-foreground/10"
             >
-              Learn About Our Commitment
+              Our commitments
             </Link>
           </div>
         </div>

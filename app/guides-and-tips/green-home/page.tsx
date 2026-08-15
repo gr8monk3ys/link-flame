@@ -5,7 +5,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CarbonFootprintCalculator } from "@/components/guides-and-tips/carbon-footprint-calculator"
 import { EnergySavingsCalculator } from "@/components/guides-and-tips/energy-savings-calculator"
 import { NewsletterSignup } from "@/components/shared/newsletter-signup"
-import { ProductGrid } from "@/components/shared/product-grid"
 import Link from "next/link"
 
 export const metadata: Metadata = {
@@ -165,15 +164,16 @@ export default function GreenHomePage() {
         </Tabs>
       </div>
 
-      {/* Featured Products */}
-      <div className="mb-10">
-        <h2 className="mb-6 text-2xl font-semibold">Recommended Products</h2>
-        <ProductGrid category="green-home" limit={4} />
-        <div className="mt-4 text-center">
-          <Button asChild variant="outline">
-            <Link href="/collections">View All Products</Link>
-          </Button>
-        </div>
+      {/* Shop CTA */}
+      <div className="mb-10 rounded-lg bg-primary/5 p-8 text-center">
+        <h2 className="text-2xl font-semibold">Ready to make a swap?</h2>
+        <p className="mx-auto mt-2 max-w-[600px] text-muted-foreground">
+          Every product in the shop is screened for materials, maker, and
+          measured impact — including the home and kitchen swaps covered here.
+        </p>
+        <Button asChild className="mt-6">
+          <Link href="/collections">Shop all products</Link>
+        </Button>
       </div>
 
       {/* Newsletter Signup */}

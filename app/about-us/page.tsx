@@ -1,50 +1,63 @@
+import type { Metadata } from "next"
+import Link from "next/link"
+import { Leaf, Scale, ShieldCheck, Recycle } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { NewsletterSignup } from "@/components/shared/newsletter-signup"
 import { buttonVariants } from "@/components/ui/button"
-import Link from "next/link"
-import Image from "next/image"
+
+export const metadata: Metadata = {
+  title: "About Us",
+  description:
+    "Link Flame is a small eco-commerce shop. Every product is screened for what it's made of, who made it, and what it replaces.",
+}
 
 const values = [
   {
-    title: "Environmental Impact",
-    description: "Every product recommendation and piece of content is evaluated for its environmental impact. We believe in promoting truly sustainable solutions.",
-    icon: "🌱",
+    title: "Measured impact",
+    description:
+      "Every product carries a measured yearly impact versus the single-use item it replaces. We publish those numbers instead of slogans.",
+    icon: Scale,
   },
   {
-    title: "Transparency",
-    description: "We're upfront about our affiliate partnerships and review process. You'll always know how we make our recommendations.",
-    icon: "🤝",
+    title: "Screened, not scraped",
+    description:
+      "Products earn a place on the shelf by passing screening on materials, certifications, and the practices of the company behind them.",
+    icon: ShieldCheck,
   },
   {
-    title: "Education First",
-    description: "Our primary goal is to educate and empower our community to make sustainable choices. Revenue is secondary to providing valuable information.",
-    icon: "📚",
+    title: "Waste is a design flaw",
+    description:
+      "Plastic-free packaging, carbon-neutral shipping, a seconds shelf for imperfect stock, and a take-back program for hard-to-recycle empties.",
+    icon: Recycle,
   },
   {
-    title: "Community Driven",
-    description: "We actively engage with our community and incorporate feedback to improve our content and recommendations.",
-    icon: "👥",
+    title: "One percent, always",
+    description:
+      "One percent of every sale goes to environmental nonprofits through 1% for the Planet — in good months and slow ones.",
+    icon: Leaf,
   },
 ]
 
-const teamMembers = [
+const screeningSteps = [
   {
-    name: "Sarah Green",
-    role: "Sustainability Expert",
-    bio: "With 10+ years in environmental science, Sarah ensures our recommendations truly make a difference.",
-    image: "/images/team/default-avatar.jpg",
+    title: "Materials",
+    description:
+      "What is it made of, and what happens to it at end of life? Compostable, recyclable, or durable-for-a-decade beats disposable every time.",
   },
   {
-    name: "Mike Rivers",
-    role: "Product Research Lead",
-    bio: "Mike thoroughly tests and evaluates eco-friendly products to ensure they meet our strict standards.",
-    image: "/images/team/default-avatar.jpg",
+    title: "Maker",
+    description:
+      "Who makes it, under what conditions, with which certifications? B Corp, Leaping Bunny, USDA Organic, and Fair Trade all carry weight here.",
   },
   {
-    name: "Lisa Chen",
-    role: "Content Director",
-    bio: "Lisa crafts engaging content that makes sustainable living accessible and appealing to everyone.",
-    image: "/images/team/default-avatar.jpg",
+    title: "Impact math",
+    description:
+      "We assign the product its per-unit yearly impact — bottles displaced, items replaced, CO₂e avoided — and stand behind those numbers on the impact page.",
+  },
+  {
+    title: "Re-screening",
+    description:
+      "Formulas change and companies get acquired. Everything on the shelf gets re-screened, and products that stop qualifying come off it.",
   },
 ]
 
@@ -53,154 +66,92 @@ export default function AboutUsPage() {
     <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
       {/* Hero Section */}
       <div className="flex max-w-[980px] flex-col items-start gap-2">
-        <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
+        <h1 className="font-serif text-3xl leading-tight tracking-tight md:text-4xl">
           About Link Flame
         </h1>
         <p className="max-w-[700px] text-lg text-muted-foreground">
-          We&apos;re on a mission to make sustainable living accessible and appealing to everyone.
-          Through carefully curated product recommendations and expert advice, we help you
-          make eco-conscious choices without compromising on quality or convenience.
+          Link Flame is a small shop for everyday swaps — the bottle, brush, and
+          wrap you use daily, minus the plastic. We stock few things on purpose:
+          every product here passed screening on what it&apos;s made of, who
+          made it, and what it measurably replaces.
         </p>
       </div>
 
       {/* Our Values */}
       <div className="my-12">
-        <h2 className="mb-6 text-2xl font-bold">Our Values</h2>
+        <h2 className="mb-6 font-serif text-2xl tracking-tight">What we stand on</h2>
         <div className="grid gap-6 md:grid-cols-2">
           {values.map((value) => (
             <Card key={value.title}>
               <CardHeader>
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl">{value.icon}</span>
+                <div className="flex items-center gap-3">
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                    <value.icon className="size-5 text-primary" aria-hidden="true" />
+                  </div>
                   <CardTitle>{value.title}</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
-                <p>{value.description}</p>
+                <p className="text-muted-foreground">{value.description}</p>
               </CardContent>
             </Card>
           ))}
         </div>
       </div>
 
-      {/* Our Process */}
+      {/* Screening Process */}
       <div className="my-12">
-        <h2 className="mb-6 text-2xl font-bold">Our Review Process</h2>
+        <h2 className="mb-6 font-serif text-2xl tracking-tight">
+          How a product earns its place
+        </h2>
         <Card>
           <CardContent className="pt-6">
             <div className="space-y-4">
-              <div className="flex items-start gap-4">
-                <div className="flex size-8 shrink-0 items-center justify-center rounded-lg border bg-muted">1</div>
-                <div>
-                  <h3 className="font-semibold">Research</h3>
-                  <p className="text-muted-foreground">
-                    We extensively research products, focusing on materials, manufacturing processes,
-                    and company sustainability practices.
-                  </p>
+              {screeningSteps.map((step, index) => (
+                <div key={step.title} className="flex items-start gap-4">
+                  <div className="flex size-8 shrink-0 items-center justify-center rounded-lg border bg-muted font-medium">
+                    {index + 1}
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">{step.title}</h3>
+                    <p className="text-muted-foreground">{step.description}</p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="flex size-8 shrink-0 items-center justify-center rounded-lg border bg-muted">2</div>
-                <div>
-                  <h3 className="font-semibold">Testing</h3>
-                  <p className="text-muted-foreground">
-                    Products are thoroughly tested by our team to evaluate performance, durability,
-                    and environmental impact.
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="flex size-8 shrink-0 items-center justify-center rounded-lg border bg-muted">3</div>
-                <div>
-                  <h3 className="font-semibold">Community Feedback</h3>
-                  <p className="text-muted-foreground">
-                    We gather and incorporate feedback from our community of eco-conscious consumers.
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="flex size-8 shrink-0 items-center justify-center rounded-lg border bg-muted">4</div>
-                <div>
-                  <h3 className="font-semibold">Regular Updates</h3>
-                  <p className="text-muted-foreground">
-                    Our recommendations are regularly reviewed and updated to ensure they remain
-                    the best eco-friendly options available.
-                  </p>
-                </div>
-              </div>
+              ))}
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Meet the Team */}
-      <div className="my-12">
-        <h2 className="mb-6 text-2xl font-bold">Meet the Team</h2>
-        <div className="grid gap-6 md:grid-cols-3">
-          {teamMembers.map((member) => (
-            <Card key={member.name}>
-              <div className="relative h-48 w-full">
-                <Image
-                  src={member.image}
-                  alt={member.name}
-                  fill
-                  className="rounded-t-lg object-cover"
-                />
-              </div>
-              <CardHeader>
-                <CardTitle>{member.name}</CardTitle>
-                <CardDescription>{member.role}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">{member.bio}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-
-      {/* Affiliate Disclosure */}
-      <Card className="my-12">
-        <CardHeader>
-          <CardTitle>Affiliate Disclosure</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            Link Flame is reader-supported. When you buy through links on our site, we may earn
-            an affiliate commission. This helps us maintain our rigorous research and testing
-            process, but it never influences our recommendations. We only promote products we
-            truly believe in and have thoroughly vetted for their environmental impact.
-          </p>
-        </CardContent>
-      </Card>
-
       {/* Contact Section */}
       <div className="my-12">
-        <h2 className="mb-6 text-2xl font-bold">Get in Touch</h2>
+        <h2 className="mb-6 font-serif text-2xl tracking-tight">Get in touch</h2>
         <div className="grid gap-6 md:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>Contact Us</CardTitle>
+              <CardTitle>Contact us</CardTitle>
               <CardDescription>
-                Have questions or suggestions? We&apos;d love to hear from you!
+                Questions about an order, a product, or our screening? We answer
+                within a couple of business days.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Link href="/contact" className={buttonVariants()}>
-                Contact Us
+                Contact us
               </Link>
             </CardContent>
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Write for Us</CardTitle>
+              <CardTitle>Write for us</CardTitle>
               <CardDescription>
-                Are you passionate about sustainable living? Join our team of contributors!
+                Our guides are written by people who actually live this way. If
+                that&apos;s you, pitch us.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Link href="/write-for-us" className={buttonVariants()}>
-                Learn More
+                Learn more
               </Link>
             </CardContent>
           </Card>

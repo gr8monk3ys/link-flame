@@ -1,11 +1,24 @@
+import Link from "next/link"
 import { NewsletterSignup } from "@/components/shared/newsletter-signup"
 import { TagCloud } from "@/components/blogs/tag-cloud"
+import { prisma } from "@/lib/prisma"
 
-export default function BlogLayout({
+export default async function BlogLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  // Real products from the shelf - this sidebar used to advertise three
+  // hardcoded products the store has never stocked, all linking to "#".
+  const featuredProducts = await prisma.product
+    .findMany({
+      where: { featured: true },
+      orderBy: { createdAt: "desc" },
+      take: 3,
+      select: { id: true, title: true, subtitle: true, category: true },
+    })
+    .catch(() => [])
+
   return (
     <div className="container">
       <div className="flex flex-col gap-10 lg:flex-row">
@@ -52,31 +65,25 @@ export default function BlogLayout({
           </div>
 
           {/* Featured Products */}
-          <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
-            <div className="p-6">
-              <h3 className="mb-4 font-semibold">Featured Products</h3>
-              <ul className="space-y-4">
-                <li>
-                  <a href="#" className="block hover:opacity-80">
-                    <div className="font-medium">Bamboo Cutlery Set</div>
-                    <div className="text-sm text-muted-foreground">Perfect for zero-waste living</div>
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="block hover:opacity-80">
-                    <div className="font-medium">Organic Cotton Tote</div>
-                    <div className="text-sm text-muted-foreground">Sustainable shopping companion</div>
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="block hover:opacity-80">
-                    <div className="font-medium">Solar Power Bank</div>
-                    <div className="text-sm text-muted-foreground">Eco-friendly charging solution</div>
-                  </a>
-                </li>
-              </ul>
+          {featuredProducts.length > 0 && (
+            <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+              <div className="p-6">
+                <h3 className="mb-4 font-semibold">From the Shop</h3>
+                <ul className="space-y-4">
+                  {featuredProducts.map((product) => (
+                    <li key={product.id}>
+                      <Link href={`/products/${product.id}`} className="block hover:opacity-80">
+                        <div className="font-medium">{product.title}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {product.subtitle ?? product.category}
+                        </div>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-          </div>
+          )}
         </aside>
       </div>
     </div>

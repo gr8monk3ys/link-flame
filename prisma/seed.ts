@@ -507,6 +507,9 @@ async function main() {
 
   // Clear existing data (respect foreign key constraints)
   await prisma.quizResponse.deleteMany();
+  await prisma.bundleSelection.deleteMany();
+  await prisma.bundleProduct.deleteMany();
+  await prisma.bundle.deleteMany();
   await prisma.cartItem.deleteMany();
   await prisma.orderItem.deleteMany();
   await prisma.savedItem.deleteMany();
@@ -659,11 +662,9 @@ async function main() {
       tags: 'welcome,news',
       featured: true,
       readingTime: '3 min read',
-      content: `# Welcome to Link Flame
+      content: `We're excited to launch our eco-friendly living platform! Here you'll find practical guides, product reviews, and tips for sustainable living.
 
-We're excited to launch our eco-friendly living platform! Here you'll find practical guides, product reviews, and tips for sustainable living.
-
-## What We Offer
+# What We Offer
 
 - In-depth sustainability guides
 - Honest product reviews
@@ -679,27 +680,25 @@ Stay tuned for more content coming soon!`,
       slug: 'getting-started',
       title: 'Getting Started with Sustainable Living',
       description: 'A beginner\'s guide to reducing your environmental impact',
-      coverImage: '/images/blogs/default-hero.jpg',
+      coverImage: 'https://images.unsplash.com/photo-1582138079863-ec3e671f59d7?w=1200&q=80',
       publishedAt: new Date(Date.now() - 86400000), // Yesterday
       authorId: author2.id,
       categoryId: catGuides.id,
       tags: 'guide,tutorial,beginners',
       featured: false,
       readingTime: '5 min read',
-      content: `# Getting Started with Sustainable Living
+      content: `Making the switch to sustainable living doesn't have to be overwhelming. Here are simple steps you can take today:
 
-Making the switch to sustainable living doesn't have to be overwhelming. Here are simple steps you can take today:
-
-## 1. Start Small
+# 1. Start Small
 Begin with one area of your life. Maybe it's reducing plastic in your kitchen or switching to reusable shopping bags.
 
-## 2. Educate Yourself
+# 2. Educate Yourself
 Learn about the environmental impact of your daily choices.
 
-## 3. Find Alternatives
+# 3. Find Alternatives
 Research eco-friendly alternatives to products you use daily.
 
-## 4. Join the Community
+# 4. Join the Community
 Connect with others on the same journey for support and ideas.
 
 Remember: Every small change makes a difference!`,
@@ -711,39 +710,38 @@ Remember: Every small change makes a difference!`,
       slug: 'ultimate-guide-to-composting',
       title: 'Ultimate Guide to Composting',
       description: 'Learn everything you need to know about starting and maintaining a successful compost system',
-      coverImage: '/images/blog/composting.jpg',
+      coverImage: 'https://images.unsplash.com/photo-1716903282677-3a1b5c936b41?w=1200&q=80',
       publishedAt: new Date(Date.now() - 172800000), // 2 days ago
       authorId: author2.id,
       categoryId: catGreenHome.id,
       tags: 'composting,gardening,zero-waste',
       featured: true,
       readingTime: '8 min read',
-      content: `# Ultimate Guide to Composting
+      content: `Composting is one of the most impactful ways to reduce waste and nourish your garden.
 
-Composting is one of the most impactful ways to reduce waste and nourish your garden.
-
-## Why Compost?
+# Why Compost?
 
 - Reduces landfill waste by up to 30%
 - Creates nutrient-rich soil for your garden
 - Reduces methane emissions
 - Saves money on fertilizer
 
-## Getting Started
+# Getting Started
 
-### What You Need
+## What You Need
 - A compost bin or designated area
 - Brown materials (carbon-rich)
 - Green materials (nitrogen-rich)
 - Water and air
 
-### The Perfect Mix
+## The Perfect Mix
 Aim for a 3:1 ratio of brown to green materials.
 
 **Brown materials:** Dry leaves, newspaper, cardboard, wood chips
+
 **Green materials:** Food scraps, grass clippings, coffee grounds
 
-## Maintenance Tips
+# Maintenance Tips
 
 1. Turn your compost weekly
 2. Keep it moist but not soggy
@@ -759,35 +757,33 @@ Ready to start? Your garden will thank you!`,
       slug: 'zero-waste-bathroom-swaps',
       title: '10 Easy Swaps for a Zero-Waste Bathroom',
       description: 'Simple switches to reduce waste in your daily bathroom routine',
-      coverImage: '/images/blog/bathroom.jpg',
+      coverImage: 'https://images.unsplash.com/photo-1777446523856-e7acffa844a7?w=1200&q=80',
       publishedAt: new Date(Date.now() - 259200000), // 3 days ago
       authorId: author2.id,
       categoryId: catZeroWaste.id,
       tags: 'zero-waste,bathroom,sustainable-living',
       featured: false,
       readingTime: '6 min read',
-      content: `# 10 Easy Swaps for a Zero-Waste Bathroom
+      content: `Your bathroom is one of the easiest places to start reducing waste.
 
-Your bathroom is one of the easiest places to start reducing waste.
+# The Swaps
 
-## The Swaps
-
-### 1. Bamboo Toothbrush
+## 1. Bamboo Toothbrush
 Replace plastic toothbrushes with biodegradable bamboo alternatives.
 
-### 2. Bar Soap & Shampoo
+## 2. Bar Soap & Shampoo
 Ditch the plastic bottles for package-free bars.
 
-### 3. Reusable Cotton Rounds
+## 3. Reusable Cotton Rounds
 Switch from disposable cotton pads to washable rounds.
 
-### 4. Safety Razor
+## 4. Safety Razor
 Replace disposable razors with a durable safety razor.
 
-### 5. Refillable Containers
+## 5. Refillable Containers
 Buy products in bulk and use refillable containers.
 
-## The Impact
+# The Impact
 
 By making these switches, the average person can eliminate hundreds of pieces of plastic waste per year!`,
     },
@@ -1061,6 +1057,74 @@ By making these switches, the average person can eliminate hundreds of pieces of
     }
   }
   console.log('Linked products to environmental impacts');
+
+  // Bundles: the /bundles page is linked from the main nav, so it must not
+  // ship empty. Titles reference createdProducts keys - update both together.
+  const bundles = [
+    {
+      slug: 'zero-waste-kitchen-starter',
+      title: 'Zero-Waste Kitchen Starter',
+      description:
+        'The four swaps that clear the most plastic out of a kitchen: wraps instead of cling film, mesh bags instead of produce bags, bamboo cutlery for lunches out, and glass storage that outlives any takeaway tub.',
+      image: 'https://images.unsplash.com/photo-1686820740642-5a1fcd0300a9?w=1200&q=80',
+      category: 'Kitchen',
+      discountPercent: 15,
+      isCustomizable: false,
+      productTitles: [
+        'Beeswax Food Wraps',
+        'Reusable Produce Bags - Set of 5',
+        'Bamboo Cutlery Set',
+        'Glass Food Storage Set',
+      ],
+    },
+    {
+      slug: 'plastic-free-bathroom',
+      title: 'Plastic-Free Bathroom',
+      description:
+        'Everything on the sink, minus the plastic: bamboo toothbrushes for the family, a matching bathroom set, and loofah sponges that compost when they wear out.',
+      image: 'https://images.unsplash.com/photo-1589365252845-092198ba5334?w=1200&q=80',
+      category: 'Bathroom',
+      discountPercent: 12,
+      isCustomizable: false,
+      productTitles: [
+        'Bamboo Toothbrush Set',
+        'Bamboo Bathroom Set',
+        'Natural Loofah Sponge - 3 Pack',
+      ],
+    },
+    {
+      slug: 'build-your-own-starter-kit',
+      title: 'Build Your Own Starter Kit',
+      description:
+        'Pick any three to six swaps and save on the lot. Start with the disposables you throw away most often.',
+      image: 'https://images.unsplash.com/photo-1528740561666-dc2479dc08ab?w=1200&q=80',
+      category: 'Starter',
+      discountPercent: 10,
+      isCustomizable: true,
+      minItems: 3,
+      maxItems: 6,
+      productTitles: Object.keys(createdProducts),
+    },
+  ];
+
+  for (const bundle of bundles) {
+    const { productTitles, ...bundleData } = bundle;
+    const created = await prisma.bundle.create({ data: bundleData });
+    for (const [sortOrder, title] of productTitles.entries()) {
+      const productId = createdProducts[title];
+      if (!productId) continue;
+      await prisma.bundleProduct.create({
+        data: {
+          bundleId: created.id,
+          productId,
+          isRequired: !bundle.isCustomizable,
+          isDefault: !bundle.isCustomizable,
+          sortOrder,
+        },
+      });
+    }
+  }
+  console.log('Created product bundles');
 
   console.log('Database has been seeded successfully!');
 }
