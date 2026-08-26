@@ -50,3 +50,6 @@ prisma/dev.db
 
 .vercel
 .env*
+
+# Claude Code session artifacts
+.claude/
