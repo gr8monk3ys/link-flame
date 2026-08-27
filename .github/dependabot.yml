@@ -1,7 +1,7 @@
 version: 2
 updates:
   # Enable version updates for npm
-  # npm version bumps handled by the dep-hygiene loop (Dependabot can't regen bun.lock)
+  # npm version bumps handled by the dep-hygiene loop
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
