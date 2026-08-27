@@ -118,10 +118,9 @@ key files).
 
 ## AI tooling
 
-The repo ships configuration for AI-assisted development: a Next.js MCP
-server plus supporting MCP servers (see [.mcp-setup-guide.md](./.mcp-setup-guide.md))
-and specialized agent definitions in [.claude/agents/](./.claude/agents/).
-None of it is required to build or run the app.
+`.mcp.json` configures MCP servers for AI-assisted development (see
+[.mcp-setup-guide.md](./.mcp-setup-guide.md)). It is not required to build or
+run the app.
 
 ## License
 

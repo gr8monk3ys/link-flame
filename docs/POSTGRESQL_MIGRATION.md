@@ -596,4 +596,3 @@ If you encounter issues during migration:
 
 ---
 
-**Migration completed successfully? Update TODO.md and deploy to production!** 🚀
