@@ -1,127 +1,80 @@
-# 🌱 Link Flame
+# Link Flame
 
-<p align="center">
-  <img src="docs/assets/hero.png" alt="Link Flame storefront" width="640">
-</p>
+An eco-friendly e-commerce storefront and blog: every product carries
+certifications, values, and a per-unit yearly impact figure versus its
+single-use equivalent, and the shop is built to surface that (filter by
+values, see what a year of swaps adds up to, buy imperfect stock at a
+discount). Live at https://link-flame-rouge.vercel.app.
 
-An eco-friendly e-commerce storefront and blog. Every product carries measured
-sustainability data — certifications, values, and per-unit yearly impact versus
-its single-use equivalent — and the storefront is built to surface it: filter
-by values, see what a year of swaps adds up to, shop imperfect stock at a
-discount.
+![Link Flame storefront home](docs/screenshot.png)
 
-Built with Next.js 16 (App Router), PostgreSQL, Stripe, and NextAuth v5.
+**The decision that shaped the codebase.** For a while this repo also carried
+a multi-tenant SaaS layer (organizations with white-label domains, seat
+billing, invitations, API keys, an audit log) whose only storefront surface
+was a "Plans" nav link. [PR #58](https://github.com/gr8monk3ys/link-flame/pull/58)
+removed it because the app is one storefront with a blog, and anything that
+only serves *running a platform* rather than shopping, content, or
+sustainability was scope with no user. Net: 7 Prisma models (51 to 44), 10
+API routes, 268 tests of SaaS code, and one required deploy secret gone.
+Product subscriptions, loyalty, referrals, gift cards, bundles, and wishlists
+stayed; they are all wired into the shop.
 
-## Features
+Stack: Next.js 16 (App Router, React 19), PostgreSQL on Neon via Prisma,
+NextAuth v5 (split Edge/Node config), Stripe checkout + webhooks, Tailwind v3.
+Package manager is npm; CI, Vercel, and the Dockerfile all run `npm ci`.
 
-**Shopping** — product catalog with variants, value/certification filters,
-cart with guest sessions (auto-merged on login), Stripe checkout, order
-history, product bundles, gift cards, imperfect/seconds sales,
-Subscribe & Save product subscriptions.
-
-**Sustainability** — per-product impact metrics aggregated into a homepage
-impact band, personal and community impact dashboards, carbon-neutral
-shipping messaging, TerraCycle recycling program, brand directory with
-vetted certifications.
-
-**Engagement** — product-match quiz, loyalty tiers with point redemption,
-referral program, wishlists (shareable), saved-for-later, newsletter.
-
-**Content** — database-backed blog with categories and author profiles,
-sustainable-living guides, dynamic sitemap, SEO metadata with JSON-LD.
-
-**Platform** — admin dashboard (blog, products, orders), role-based access
-(ADMIN/EDITOR/USER), rate limiting, CSRF protection on mutations, CSP with
-per-request nonces, standardized API responses, Zod validation throughout.
-
-## Tech stack
-
-- **Next.js 16** — App Router, React 19, Turbopack
-- **PostgreSQL** via Neon (pooled + direct connections) with **Prisma ORM**
-- **NextAuth v5** — JWT strategy, credentials provider, bcrypt; split config
-  for Edge Runtime compatibility
-- **Stripe** — checkout + webhooks (separate signing secret per endpoint)
-- **Tailwind CSS v3** + Radix UI, Inter/Lora type pairing
-- **Vitest** (~500 unit tests) + **Playwright** (~140 E2E, run against a
-  production build, including a WCAG contrast audit in both themes)
-
-## Getting started
+## Run
 
 ```bash
-git clone https://github.com/gr8monk3ys/link-flame.git
-cd link-flame
-npm install
-cp .env.example .env   # then fill in the values below
+git clone https://github.com/gr8monk3ys/link-flame.git && cd link-flame
+npm ci
+cp .env.example .env
 ```
 
-Minimum `.env` for local development:
+Minimum `.env`:
 
 ```env
 DATABASE_URL="postgresql://user:password@localhost:5432/linkflame?schema=public"
 DIRECT_URL="postgresql://user:password@localhost:5432/linkflame?schema=public"
-NEXTAUTH_SECRET="$(openssl rand -base64 32)"
+NEXTAUTH_SECRET="<openssl rand -base64 32>"
 NEXTAUTH_URL="http://localhost:3000"
 ```
 
-Optional integrations degrade gracefully when unset: Stripe (checkout),
-Upstash Redis (rate limiting), Resend (email), Sentry (error tracking).
+Stripe, Upstash Redis (rate limiting), Resend (email), and Sentry are
+optional and switch off when unset.
 
 ```bash
-npx prisma migrate dev   # create schema
-npx prisma db seed       # sample products, brands, blog posts, impact data
+npx prisma migrate dev   # schema
+npx prisma db seed       # sample products, brands, posts, impact data
 npm run dev              # http://localhost:3000
 ```
 
-## Testing
+## Test
 
 ```bash
-npx vitest run           # unit tests
-npx playwright test      # E2E — builds and runs a production server
-npx tsc --noEmit         # type check
-npm run lint             # ESLint
+npm run lint
+npx tsc --noEmit
+npx vitest run           # unit, ~500 tests
+npx playwright test      # E2E, ~140 tests, runs against `next build && next start`
 ```
 
-E2E runs against `next build && next start` by default so production-only
-behavior (CSP, caching) is exercised; set `PLAYWRIGHT_DEV_SERVER=true` to
-use the dev server instead.
+Set `PLAYWRIGHT_DEV_SERVER=true` to run E2E against the dev server instead
+of a production build.
 
-## Deploying
+## Deploy
 
 ```bash
-npm run check:prod-env       # validates required production env vars
-npm run check:stripe-config  # verifies Stripe account configuration
-npm run preflight:production # full gate
+npm run preflight:production   # env check + Stripe config check + lint + unit + build
 ```
 
-Production requires, in addition to the local minimum:
-
-- `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
-- `STRIPE_WEBHOOK_SECRET` — signing secret for the endpoint at `/api/webhook`
-- `STRIPE_SUBSCRIPTION_WEBHOOK_SECRET` — a **separate** endpoint at
-  `/api/subscriptions/webhook` with its own signing secret
-
-Register both webhook endpoints in the Stripe dashboard; the pre-deploy gate
-refuses to pass with a shared or missing secret, by design.
-
-For local webhook testing:
-
-```bash
-stripe listen --forward-to localhost:3000/api/webhook
-stripe trigger checkout.session.completed
-```
-
-Vercel notes: builds use `bun` with `NODE_ENV=production`; all API routes
-export `dynamic = 'force-dynamic'`; configure `DATABASE_URL` and `DIRECT_URL`
-in the dashboard. See [CLAUDE.md](./CLAUDE.md) for the full architecture
-reference (auth split-config pattern, guest cart sessions, API conventions,
-key files).
-
-## AI tooling
-
-`.mcp.json` configures MCP servers for AI-assisted development (see
-[.mcp-setup-guide.md](./.mcp-setup-guide.md)). It is not required to build or
-run the app.
+Production additionally needs `STRIPE_SECRET_KEY`,
+`NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, and two webhook signing secrets:
+`STRIPE_WEBHOOK_SECRET` for `/api/webhook` and
+`STRIPE_SUBSCRIPTION_WEBHOOK_SECRET` for `/api/subscriptions/webhook`. The
+preflight refuses a shared or missing secret. Every API route exports
+`dynamic = 'force-dynamic'` so the Vercel build does not try to prerender
+against a database it cannot reach. See `docs/DEPLOYMENT.md` for the rest.
 
 ## License
 
-GNU GPL 3.0
+GPL-3.0

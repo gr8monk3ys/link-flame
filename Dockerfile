@@ -1,27 +1,26 @@
-FROM oven/bun:1.3.8-alpine AS bunbase
+FROM node:20-alpine AS base
 
 # Install dependencies only when needed
-FROM bunbase AS deps
+FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Install dependencies
-COPY package.json bun.lockb ./
-RUN bun install --frozen-lockfile
+COPY package.json package-lock.json ./
+COPY prisma ./prisma
+COPY scripts ./scripts
+RUN npm ci
 
 # Rebuild the source code only when needed
-FROM bunbase AS builder
+FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Generate Prisma client
-RUN bunx prisma generate
-
 # Build the application
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV SKIP_ENV_VALIDATION=true
-RUN bun run build
+RUN npm run build
 
 # Production image, copy all the files and run next
 FROM node:20-alpine AS runner

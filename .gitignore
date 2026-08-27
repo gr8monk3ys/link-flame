@@ -42,7 +42,10 @@ yarn-error.log*
 .env
 
 # local databases (should never be committed)
-prisma/dev.db
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
 
 # Local agent/tooling settings
 .claude/settings.local.json
