@@ -331,3 +331,26 @@
 .progress-bar-fill {
   @apply h-full bg-primary transition-all duration-500 ease-out;
 }
+
+/* Native date inputs (catalogue filters). There is no DatePicker component in
+   components/ui and this is not the place to add a dependency, so the native
+   control stays - wearing the same tokens as every other field instead of the
+   browser's default chrome. */
+.date-field {
+  @apply h-10 w-full rounded-md border border-border bg-background px-3 text-sm shadow-sm
+  transition-colors focus:border-primary focus:outline-none focus:ring-1 focus:ring-ring;
+  color-scheme: light;
+}
+
+.dark .date-field {
+  color-scheme: dark;
+}
+
+.date-field::-webkit-calendar-picker-indicator {
+  @apply cursor-pointer opacity-50 transition-opacity;
+}
+
+.date-field:hover::-webkit-calendar-picker-indicator,
+.date-field:focus::-webkit-calendar-picker-indicator {
+  @apply opacity-90;
+}

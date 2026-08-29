@@ -2,6 +2,13 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { Star } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import Link from 'next/link';
 
 interface FilterState {
@@ -39,24 +46,28 @@ function SortSection({
     <div>
       <h3 className="text-lg font-medium text-foreground">Sort</h3>
       <div className="mt-4">
-        <label htmlFor="sortBy" className="sr-only">
-          Sort products
-        </label>
-        <select
-          id="sortBy"
+        {/* The native <select> was the one unstyled control on an otherwise
+            custom page. This is the same Radix Select the rest of the app uses. */}
+        <Select
           value={filters.sortBy}
-          onChange={(event) =>
-            onFilterChange({
-              sortBy: event.target.value as FilterState["sortBy"],
-            })
+          onValueChange={(value) =>
+            onFilterChange({ sortBy: value as FilterState['sortBy'] })
           }
-          className="w-full rounded-md border border-border p-2 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-ring"
         >
-          <option value="newest">Newest</option>
-          <option value="price_asc">Price: Low to High</option>
-          <option value="price_desc">Price: High to Low</option>
-          <option value="rating">Top Rated</option>
-        </select>
+          <SelectTrigger
+            id="sortBy"
+            aria-label="Sort products"
+            className="h-10 w-full border-border bg-background text-sm shadow-sm"
+          >
+            <SelectValue placeholder="Newest" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="newest">Newest</SelectItem>
+            <SelectItem value="price_asc">Price: Low to High</SelectItem>
+            <SelectItem value="price_desc">Price: High to Low</SelectItem>
+            <SelectItem value="rating">Top Rated</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );
@@ -264,10 +275,15 @@ function DateRangeSection({
   return (
     <div>
       <h3 className="text-lg font-medium text-foreground">Date Added</h3>
-      <div className="mt-4 grid grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="start-date" className="sr-only">
-            Start Date
+      {/* Stacked in the narrow lg sidebar: side by side, a native date field
+          clips its own mm/dd/yyyy placeholder at 256px. */}
+      <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-1">
+        <div className="space-y-1.5">
+          <label
+            htmlFor="start-date"
+            className="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+          >
+            From
           </label>
           <input
             type="date"
@@ -282,12 +298,17 @@ function DateRangeSection({
                 },
               })
             }
-            className="w-full rounded-md border border-border p-2 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-ring"
+            className={`date-field ${
+              filters.dateRange.start ? 'text-foreground' : 'text-muted-foreground'
+            }`}
           />
         </div>
-        <div>
-          <label htmlFor="end-date" className="sr-only">
-            End Date
+        <div className="space-y-1.5">
+          <label
+            htmlFor="end-date"
+            className="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+          >
+            To
           </label>
           <input
             type="date"
@@ -302,7 +323,9 @@ function DateRangeSection({
                 },
               })
             }
-            className="w-full rounded-md border border-border p-2 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-ring"
+            className={`date-field ${
+              filters.dateRange.end ? 'text-foreground' : 'text-muted-foreground'
+            }`}
           />
         </div>
       </div>

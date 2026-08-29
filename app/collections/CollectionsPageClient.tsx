@@ -140,6 +140,9 @@ function useCollectionsPageState() {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  // A failed request and a genuinely empty catalogue are different things.
+  // Collapsing them is what made an API outage read as "adjust your filters".
+  const [loadFailed, setLoadFailed] = useState(false);
   const [pagination, setPagination] = useState<PaginationState>(() => {
     return {
       currentPage: parsePositiveNumber(searchParams.get('page'), 1),
@@ -296,6 +299,7 @@ function useCollectionsPageState() {
 
   const loadProducts = useCallback(async () => {
     setIsLoading(true);
+    setLoadFailed(false);
     try {
       const response = await fetch(`/api/products?${queryParams.toString()}`);
       if (!response.ok) throw new Error('Failed to fetch products');
@@ -315,6 +319,7 @@ function useCollectionsPageState() {
       if (process.env.NODE_ENV === 'development') {
         console.error('Error fetching products:', error);
       }
+      setLoadFailed(true);
       setProducts([]);
       setPagination((prev) => ({ ...prev, totalPages: 1 }));
     } finally {
@@ -357,6 +362,8 @@ function useCollectionsPageState() {
     queryString: searchParams.toString(),
     products,
     isLoading,
+    loadFailed,
+    reloadProducts: loadProducts,
     currentPage,
     totalPages,
     pageSize,
@@ -372,6 +379,8 @@ export default function CollectionsPageClient() {
     queryString,
     products,
     isLoading,
+    loadFailed,
+    reloadProducts,
     currentPage,
     totalPages,
     pageSize,
@@ -417,6 +426,8 @@ export default function CollectionsPageClient() {
           <ProductGrid
             products={products}
             isLoading={isLoading}
+            loadFailed={loadFailed}
+            onRetry={reloadProducts}
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={handlePageChange}
