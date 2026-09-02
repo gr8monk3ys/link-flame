@@ -20,7 +20,7 @@ describe('Rate Limiting Utilities', () => {
       expect(identifier).toBe('user:user123');
     });
 
-    it('should use IP from x-forwarded-for when no user ID', () => {
+    it('should use the right-most x-forwarded-for entry when no user ID', () => {
       const request = new Request('http://localhost:3000/api/test', {
         headers: {
           'x-forwarded-for': '192.168.1.1, 10.0.0.1',
@@ -29,19 +29,22 @@ describe('Rate Limiting Utilities', () => {
 
       const identifier = getIdentifier(request, null);
 
-      expect(identifier).toBe('ip:192.168.1.1');
+      // x-forwarded-for is a list proxies APPEND to: the right-most entry is
+      // the one our own edge added, the left-most is whatever the caller made
+      // up. Reading [0] would let anyone mint a fresh bucket per request.
+      expect(identifier).toBe('ip:10.0.0.1');
     });
 
     it('should trim whitespace from forwarded IP', () => {
       const request = new Request('http://localhost:3000/api/test', {
         headers: {
-          'x-forwarded-for': '  192.168.1.1  , 10.0.0.1',
+          'x-forwarded-for': '  192.168.1.1  ,  10.0.0.1  ',
         },
       });
 
       const identifier = getIdentifier(request, null);
 
-      expect(identifier).toBe('ip:192.168.1.1');
+      expect(identifier).toBe('ip:10.0.0.1');
     });
 
     it('should fallback to x-real-ip when x-forwarded-for is not available', () => {
@@ -103,10 +106,10 @@ describe('Rate Limiting Utilities', () => {
 
       const identifier = getIdentifier(request, null);
 
-      expect(identifier).toMatch(/^anon:cookie:/);
+      expect(identifier).toMatch(/^anon:session:/);
     });
 
-    it('should handle multiple IPs in x-forwarded-for and use first one', () => {
+    it('should handle multiple IPs in x-forwarded-for and use the last one', () => {
       const request = new Request('http://localhost:3000/api/test', {
         headers: {
           'x-forwarded-for': '203.0.113.1, 198.51.100.1, 192.0.2.1',
@@ -115,7 +118,32 @@ describe('Rate Limiting Utilities', () => {
 
       const identifier = getIdentifier(request, null);
 
-      expect(identifier).toBe('ip:203.0.113.1');
+      expect(identifier).toBe('ip:192.0.2.1');
+    });
+
+    it('should ignore an x-forwarded-for entry that is not an IP address', () => {
+      const request = new Request('http://localhost:3000/api/test', {
+        headers: {
+          'x-forwarded-for': 'not-an-ip',
+        },
+      });
+
+      const identifier = getIdentifier(request, null);
+
+      expect(identifier).toMatch(/^anon:/);
+    });
+
+    it('should prefer a platform-set header over x-forwarded-for', () => {
+      const request = new Request('http://localhost:3000/api/test', {
+        headers: {
+          'x-forwarded-for': '203.0.113.1',
+          'x-real-ip': '198.51.100.7',
+        },
+      });
+
+      const identifier = getIdentifier(request, null);
+
+      expect(identifier).toBe('ip:198.51.100.7');
     });
 
     it('should handle IPv6 addresses', () => {
@@ -241,6 +269,35 @@ describe('Rate Limiting Utilities', () => {
       expect(typeof result.limit).toBe('number');
       expect(typeof result.remaining).toBe('number');
       expect(typeof result.reset).toBe('number');
+    });
+  });
+
+  describe('Limit enforcement', () => {
+    it('should block the 11th request in the standard bucket', async () => {
+      const identifier = `standard-burst-${Date.now()}`;
+
+      for (let i = 0; i < 10; i += 1) {
+        const allowed = await checkRateLimit(identifier);
+        expect(allowed.success).toBe(true);
+      }
+
+      const blocked = await checkRateLimit(identifier);
+      expect(blocked.success).toBe(false);
+      expect(blocked.remaining).toBe(0);
+      expect(blocked.reset).toBeGreaterThan(Date.now());
+    });
+
+    it('should block the 6th request in the strict bucket', async () => {
+      const identifier = `strict-burst-${Date.now()}`;
+
+      for (let i = 0; i < 5; i += 1) {
+        const allowed = await checkStrictRateLimit(identifier);
+        expect(allowed.success).toBe(true);
+      }
+
+      const blocked = await checkStrictRateLimit(identifier);
+      expect(blocked.success).toBe(false);
+      expect(blocked.remaining).toBe(0);
     });
   });
 
