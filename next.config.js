@@ -4,6 +4,9 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // The kit's `import` condition points at its TypeScript source, so Next has
+  // to compile it like first-party code.
+  transpilePackages: ['@gr8monk3ys/next-kit'],
   images: {
     // Use remotePatterns instead of domains (more secure and flexible)
     remotePatterns: [

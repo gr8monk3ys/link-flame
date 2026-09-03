@@ -1,27 +1,37 @@
 /**
- * Rate limiting utilities using Upstash Redis.
+ * Rate limiting utilities.
  *
- * This module provides graceful rate limiting that:
- * - Uses Upstash Redis when credentials are configured
- * - Gracefully degrades to allowing all requests when credentials are missing
- * - Supports standard (10 req/10s) and strict (5 req/min) rate limits
+ * Thin app-specific layer over `@gr8monk3ys/next-kit/rate-limit`. This module
+ * owns the things that are link-flame's: the two named buckets (standard and
+ * strict), the `user:` / `ip:` / `anon:` identifier shape every API route
+ * passes around, the `RATE_LIMIT_NAMESPACES` table, and the response shape the
+ * routes destructure. The window accounting, the store implementations and the
+ * client-identifier rules live in the kit.
+ *
+ * Uses Upstash Redis when credentials are configured, and an in-memory limiter
+ * otherwise — or when Redis is configured but unreachable.
  *
  * **Environment Variables:**
  * - `UPSTASH_REDIS_REST_URL` - Your Upstash Redis REST URL
  * - `UPSTASH_REDIS_REST_TOKEN` - Your Upstash Redis REST token
+ * - `RATE_LIMIT_STRICT_MAX_REQUESTS` - Strict bucket ceiling (default 5)
+ * - `RATE_LIMIT_STRICT_WINDOW_SECONDS` - Strict bucket window (default 60)
  *
  * @see https://upstash.com/docs/redis/overall/getstarted
  * @module lib/rate-limit
  */
 
-import { Ratelimit } from "@upstash/ratelimit";
+import {
+  createRateLimiter,
+  getClientId,
+  MemoryStore,
+  RedisStore,
+  type RateLimiter,
+  type RateLimitStore,
+} from "@gr8monk3ys/next-kit/rate-limit";
 import { Redis } from "@upstash/redis";
 import { logger } from "@/lib/logger";
 
-// Initialize Redis client (requires UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN env vars)
-let redis: Redis | null = null;
-let ratelimit: Ratelimit | null = null;
-let strictRatelimit: Ratelimit | null = null;
 let hasLoggedStandardFallback = false;
 let hasLoggedStrictFallback = false;
 
@@ -38,6 +48,9 @@ function parsePositiveIntegerEnv(name: string, fallback: number): number {
   return parsed;
 }
 
+const STANDARD_RATE_LIMIT_MAX_REQUESTS = 10;
+const STANDARD_RATE_LIMIT_WINDOW_MS = 10_000;
+
 const STRICT_RATE_LIMIT_MAX_REQUESTS = parsePositiveIntegerEnv(
   "RATE_LIMIT_STRICT_MAX_REQUESTS",
   5
@@ -48,111 +61,99 @@ const STRICT_RATE_LIMIT_WINDOW_SECONDS = parsePositiveIntegerEnv(
 );
 const STRICT_RATE_LIMIT_WINDOW_MS = STRICT_RATE_LIMIT_WINDOW_SECONDS * 1_000;
 
-// Only initialize if Upstash credentials are available
-if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
-  redis = new Redis({
-    url: process.env.UPSTASH_REDIS_REST_URL,
-    token: process.env.UPSTASH_REDIS_REST_TOKEN,
-  });
+/**
+ * Redis key namespace.
+ *
+ * `v2` because the counters changed shape: `@upstash/ratelimit` wrote
+ * `@upstash/ratelimit:<identifier>:<window-index>` counters from its own Lua
+ * scripts, and the kit's `RedisStore` writes plain `INCR` counters. A distinct
+ * namespace means the two never meet — the old keys simply drain on the TTLs
+ * Upstash already set.
+ */
+const REDIS_KEY_PREFIX = "linkflame:ratelimit:v2:";
 
-  // Create a rate limiter that allows 10 requests per 10 seconds
-  ratelimit = new Ratelimit({
-    redis,
-    limiter: Ratelimit.slidingWindow(10, "10 s"),
-    analytics: true,
-  });
+/**
+ * Module-level singleton Redis-backed store.
+ *
+ * The Upstash REST client already satisfies the kit's `RedisLike` shape
+ * (`incr` / `pexpire` / `pttl` / `del`), so no adapter is needed. Built once at
+ * module scope, exactly as the two `Ratelimit` instances it replaces were.
+ */
+const redisStore: RateLimitStore | null =
+  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
+    ? new RedisStore(
+        new Redis({
+          url: process.env.UPSTASH_REDIS_REST_URL,
+          token: process.env.UPSTASH_REDIS_REST_TOKEN,
+        }),
+        {
+          prefix: REDIS_KEY_PREFIX,
+          // Surface the failure to the caller below rather than admitting the
+          // request, so an Upstash outage degrades to the in-memory limiter
+          // instead of switching rate limiting off entirely.
+          onError: "closed",
+        }
+      )
+    : null;
 
-  // Create a stricter rate limiter: 5 requests per minute
-  strictRatelimit = new Ratelimit({
-    redis,
-    limiter: Ratelimit.slidingWindow(
-      STRICT_RATE_LIMIT_MAX_REQUESTS,
-      `${STRICT_RATE_LIMIT_WINDOW_SECONDS} s`
-    ),
-    analytics: true,
-  });
-}
+/**
+ * In-memory fallback, shared by both buckets. Does not survive a cold start and
+ * does not coordinate across instances — both were true of the hand-rolled Map
+ * it replaces. The bucket prefixes below keep standard and strict apart.
+ */
+const memoryStore = new MemoryStore();
 
-// In-memory rate limiting fallback when Redis is unavailable
-const memoryStore = new Map<string, { count: number; resetAt: number }>();
-
-function hashString(value: string): string {
-  let hash = 0;
-  for (let i = 0; i < value.length; i += 1) {
-    hash = Math.imul(31, hash) + value.charCodeAt(i) | 0;
-  }
-  return (hash >>> 0).toString(36);
-}
-
-function getCookieValue(cookieHeader: string, name: string): string | null {
-  const entries = cookieHeader.split(";");
-  for (const entry of entries) {
-    const [rawName, ...rawValueParts] = entry.trim().split("=");
-    if (rawName === name && rawValueParts.length > 0) {
-      return rawValueParts.join("=");
-    }
-  }
-  return null;
-}
-
-function getAnonymousFingerprint(request: Request): string {
-  const cookieHeader = request.headers.get("cookie") || "";
-  const sessionCookieNames = [
-    "__Secure-next-auth.session-token",
-    "next-auth.session-token",
-    "__Host-next-auth.csrf-token",
-    "next-auth.csrf-token",
-    "guest_session_id",
-  ];
-
-  for (const name of sessionCookieNames) {
-    const value = getCookieValue(cookieHeader, name);
-    if (value) {
-      return `cookie:${hashString(`${name}:${value}`)}`;
-    }
-  }
-
-  const userAgent = request.headers.get("user-agent");
-  if (userAgent) {
-    return `ua:${hashString(userAgent)}`;
-  }
-
-  return "unknown";
-}
-
-// Clean up expired entries every 30 seconds
-const cleanupInterval = setInterval(() => {
-  const now = Date.now();
-  for (const [key, entry] of memoryStore) {
-    if (entry.resetAt <= now) {
-      memoryStore.delete(key);
-    }
-  }
-}, 30_000);
-if (typeof cleanupInterval === 'object' && 'unref' in cleanupInterval) {
-  cleanupInterval.unref();
-}
-
-function checkMemoryRateLimit(
-  bucket: string,
-  identifier: string,
-  maxRequests: number,
+function limiter(
+  store: RateLimitStore,
+  bucket: "standard" | "strict",
+  limit: number,
   windowMs: number
-): { success: boolean; limit: number; remaining: number; reset: number } {
-  const namespacedIdentifier = `${bucket}:${identifier}`;
-  const now = Date.now();
-  const entry = memoryStore.get(namespacedIdentifier);
+): RateLimiter {
+  return createRateLimiter({ store, limit, windowMs, prefix: bucket });
+}
 
-  if (!entry || entry.resetAt <= now) {
-    memoryStore.set(namespacedIdentifier, { count: 1, resetAt: now + windowMs });
-    return { success: true, limit: maxRequests, remaining: maxRequests - 1, reset: now + windowMs };
-  }
+// Two limiters per store. Giving each bucket its own prefix also fixes a
+// collision the Upstash version had: both `Ratelimit` instances used the
+// default `@upstash/ratelimit` prefix, so standard and strict shared a key
+// space and only the window index kept them apart.
+const redisStandard = redisStore
+  ? limiter(redisStore, "standard", STANDARD_RATE_LIMIT_MAX_REQUESTS, STANDARD_RATE_LIMIT_WINDOW_MS)
+  : null;
+const redisStrict = redisStore
+  ? limiter(redisStore, "strict", STRICT_RATE_LIMIT_MAX_REQUESTS, STRICT_RATE_LIMIT_WINDOW_MS)
+  : null;
+const memoryStandard = limiter(
+  memoryStore,
+  "standard",
+  STANDARD_RATE_LIMIT_MAX_REQUESTS,
+  STANDARD_RATE_LIMIT_WINDOW_MS
+);
+const memoryStrict = limiter(
+  memoryStore,
+  "strict",
+  STRICT_RATE_LIMIT_MAX_REQUESTS,
+  STRICT_RATE_LIMIT_WINDOW_MS
+);
 
-  entry.count += 1;
-  const remaining = Math.max(0, maxRequests - entry.count);
-  const success = entry.count <= maxRequests;
+export interface RateLimitStatus {
+  success: boolean;
+  limit: number;
+  remaining: number;
+  reset: number;
+}
 
-  return { success, limit: maxRequests, remaining, reset: entry.resetAt };
+async function checkWith(
+  rateLimiter: RateLimiter,
+  identifier: string
+): Promise<RateLimitStatus> {
+  const result = await rateLimiter.check(identifier);
+
+  return {
+    success: result.ok,
+    limit: result.limit,
+    remaining: result.remaining,
+    reset: result.resetAt,
+  };
 }
 
 function logFallback(bucket: "standard" | "strict"): void {
@@ -178,27 +179,43 @@ function logFallback(bucket: "standard" | "strict"): void {
   logger.warn(message);
 }
 
+async function check(
+  bucket: "standard" | "strict",
+  redisLimiter: RateLimiter | null,
+  memoryLimiter: RateLimiter,
+  identifier: string
+): Promise<RateLimitStatus> {
+  if (!redisLimiter) {
+    logFallback(bucket);
+    return checkWith(memoryLimiter, identifier);
+  }
+
+  try {
+    return await checkWith(redisLimiter, identifier);
+  } catch (error) {
+    // An Upstash outage must not turn every request into a 500. Fall back to
+    // the in-memory limiter, which still enforces the configured limits
+    // (per instance) rather than failing open entirely.
+    logger.error("Rate limiter unavailable, falling back to in-memory", error);
+    return checkWith(memoryLimiter, identifier);
+  }
+}
+
 /**
- * Check rate limit for a given identifier using the standard rate limit (10 requests per 10 seconds).
- *
- * This function uses Upstash Redis with a sliding window algorithm to track request counts.
- * If Upstash credentials are not configured, it gracefully allows all requests with a warning.
+ * Check rate limit for a given identifier using the standard rate limit
+ * (10 requests per 10 seconds).
  *
  * **Rate Limit Configuration:**
- * - **Standard**: 10 requests per 10 seconds (sliding window)
- * - **Analytics**: Enabled for tracking usage patterns
+ * - **Standard**: 10 requests per 10 seconds (fixed window)
  *
  * **Graceful Degradation:**
- * When `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` are not set, this function
- * returns `success: true` with infinite limits and logs a warning.
+ * When `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` are not set — or
+ * when Redis is configured but unreachable — the same limits are enforced by an
+ * in-memory limiter, per instance, and a warning is logged once.
  *
- * @param {string} identifier - Unique identifier for the requester (e.g., "user:abc123" or "ip:192.168.1.1")
+ * @param {string} identifier - Unique identifier for the requester (e.g. "user:abc123" or "ip:192.168.1.1")
  *                              Use {@link getIdentifier} to generate this from a Request object
- * @returns {Promise<Object>} Rate limit status object
- * @returns {boolean} success - Whether the request is allowed (true) or rate limited (false)
- * @returns {number} limit - Maximum number of requests allowed in the window
- * @returns {number} remaining - Number of requests remaining in current window
- * @returns {number} reset - Unix timestamp (ms) when the rate limit resets
+ * @returns {Promise<RateLimitStatus>} Rate limit status object
  *
  * @example
  * ```typescript
@@ -220,48 +237,55 @@ function logFallback(bucket: "standard" | "strict"): void {
  * }
  * ```
  */
-export async function checkRateLimit(identifier: string): Promise<{
-  success: boolean;
-  limit: number;
-  remaining: number;
-  reset: number;
-}> {
-  // If Redis rate limiting is not configured, use in-memory fallback
-  if (!ratelimit) {
-    logFallback("standard");
-    return checkMemoryRateLimit("standard", identifier, 10, 10_000);
-  }
-
-  const { success, limit, remaining, reset } = await ratelimit.limit(identifier);
-
-  return {
-    success,
-    limit,
-    remaining,
-    reset,
-  };
+export async function checkRateLimit(identifier: string): Promise<RateLimitStatus> {
+  return check("standard", redisStandard, memoryStandard, identifier);
 }
+
+/**
+ * Session cookies consulted when no trustworthy IP is available, so an
+ * unidentified caller gets its own bucket instead of sharing one global
+ * "anonymous" bucket that any single client could exhaust for everyone.
+ */
+const ANONYMOUS_SESSION_COOKIES = [
+  "__Secure-next-auth.session-token",
+  "next-auth.session-token",
+  "__Host-next-auth.csrf-token",
+  "next-auth.csrf-token",
+  "guest_session_id",
+];
 
 /**
  * Extracts a unique identifier from a request for rate limiting purposes.
  *
- * This function determines the best identifier to use for rate limiting by prioritizing
- * authenticated user IDs over IP addresses. Using user IDs is more accurate because:
- * - Users behind shared IPs (corporate networks, VPNs) won't affect each other
- * - Users can't bypass limits by changing IP addresses
+ * Prioritises authenticated user IDs over IP addresses. Using user IDs is more
+ * accurate because users behind shared IPs (corporate networks, VPNs) do not
+ * affect each other, and a user cannot bypass a limit by changing IP.
  *
  * **Identifier Priority:**
  * 1. **User ID** (if authenticated): `"user:{userId}"`
- * 2. **IP Address** (if not authenticated): `"ip:{ipAddress}"`
+ * 2. **IP Address**: `"ip:{ipAddress}"`
+ * 3. **Session cookie / request fingerprint**: `"anon:session:{hash}"` or
+ *    `"anon:fingerprint:{hash}"`
  *
- * **IP Detection Strategy:**
- * - Checks `x-forwarded-for` header first (for proxies/load balancers)
- * - Falls back to `x-real-ip` header
- * - Returns `"ip:unknown"` if neither is available
+ * **IP Detection Strategy** (delegated to the kit's `getClientId`):
+ * `x-real-ip` (a single-value header our own edge sets), then the RIGHT-most
+ * `x-forwarded-for` entry — the hop our own edge appended. Taking `[0]`, as
+ * this module used to, lets a caller mint a fresh bucket per request just by
+ * rotating the header. Candidates that do not parse as an IP are discarded
+ * rather than trusted as a bucket key.
+ *
+ * No `platform:` is declared, and that is deliberate. A platform header is only
+ * unforgeable on the platform that writes it: next-kit <= 0.1.1 read
+ * `cf-connecting-ip` unconditionally, which is client-controlled anywhere there
+ * is no Cloudflare in front to overwrite an inbound copy — a free way to rotate
+ * buckets. link-flame ships as a container (see `Dockerfile`) with no such edge
+ * declared, so it takes the kit's default from 0.1.2 on. **If this is ever put
+ * behind Cloudflare, pass `platform: "cloudflare"` here** so its header is
+ * trusted; behind Vercel, `platform: "vercel"`.
  *
  * @param {Request} request - The incoming HTTP request object
  * @param {string | null} [userId] - Optional authenticated user ID from NextAuth or other auth provider
- * @returns {string} Formatted identifier string (e.g., "user:clerk_abc123" or "ip:192.168.1.1")
+ * @returns {string} Formatted identifier string (e.g. "user:clerk_abc123" or "ip:192.168.1.1")
  *
  * @example
  * ```typescript
@@ -282,26 +306,28 @@ export function getIdentifier(request: Request, userId?: string | null): string 
     return `user:${userId}`;
   }
 
-  // Otherwise use IP address
-  const forwarded = request.headers.get("x-forwarded-for");
-  const ip = forwarded ? forwarded.split(",")[0].trim() : request.headers.get("x-real-ip") || "unknown";
-  if (ip && ip !== "unknown") {
-    return `ip:${ip}`;
-  }
+  const clientId = getClientId(request, {
+    sessionCookieNames: ANONYMOUS_SESSION_COOKIES,
+  });
 
-  return `anon:${getAnonymousFingerprint(request)}`;
+  // `getClientId` returns a bare IP when it found a trustworthy one, and a
+  // `session:` / `fingerprint:` pseudo-identifier otherwise. Keep link-flame's
+  // `ip:` / `anon:` split so keys stay readable in Redis and in logs.
+  return /^(?:session|fingerprint):/.test(clientId)
+    ? `anon:${clientId}`
+    : `ip:${clientId}`;
 }
 
 /**
  * Check rate limit using a stricter limit for sensitive endpoints.
  *
- * This function provides enhanced protection for sensitive operations like authentication,
- * payment processing, and account modifications. It uses a tighter rate limit (5 requests
- * per minute) compared to the standard rate limit (10 requests per 10 seconds).
+ * Provides enhanced protection for sensitive operations like authentication,
+ * payment processing, and account modifications. It uses a tighter rate limit
+ * (5 requests per minute by default) compared to the standard rate limit.
  *
  * **Rate Limit Configuration:**
- * - **Strict**: 5 requests per minute (sliding window)
- * - **Analytics**: Enabled for tracking usage patterns
+ * - **Strict**: `RATE_LIMIT_STRICT_MAX_REQUESTS` (default 5) requests per
+ *   `RATE_LIMIT_STRICT_WINDOW_SECONDS` (default 60) seconds, fixed window
  *
  * **Use Cases:**
  * - Authentication endpoints (login, signup, password reset)
@@ -312,16 +338,12 @@ export function getIdentifier(request: Request, userId?: string | null): string 
  * - Contact form submission
  *
  * **Graceful Degradation:**
- * Like {@link checkRateLimit}, this returns `success: true` with infinite limits
- * when Upstash credentials are not configured.
+ * Like {@link checkRateLimit}, this falls back to an in-memory limiter that
+ * enforces the same limits when Upstash is not configured or unreachable.
  *
- * @param {string} identifier - Unique identifier for the requester (e.g., "user:abc123" or "ip:192.168.1.1")
+ * @param {string} identifier - Unique identifier for the requester (e.g. "user:abc123" or "ip:192.168.1.1")
  *                              Use {@link getIdentifier} to generate this from a Request object
- * @returns {Promise<Object>} Rate limit status object
- * @returns {boolean} success - Whether the request is allowed (true) or rate limited (false)
- * @returns {number} limit - Maximum number of requests allowed in the window (5)
- * @returns {number} remaining - Number of requests remaining in current window
- * @returns {number} reset - Unix timestamp (ms) when the rate limit resets
+ * @returns {Promise<RateLimitStatus>} Rate limit status object
  *
  * @example
  * ```typescript
@@ -344,31 +366,8 @@ export function getIdentifier(request: Request, userId?: string | null): string 
  * }
  * ```
  */
-export async function checkStrictRateLimit(identifier: string): Promise<{
-  success: boolean;
-  limit: number;
-  remaining: number;
-  reset: number;
-}> {
-  // If Redis rate limiting is not configured, use in-memory fallback
-  if (!strictRatelimit) {
-    logFallback("strict");
-    return checkMemoryRateLimit(
-      "strict",
-      identifier,
-      STRICT_RATE_LIMIT_MAX_REQUESTS,
-      STRICT_RATE_LIMIT_WINDOW_MS
-    );
-  }
-
-  const { success, limit, remaining, reset } = await strictRatelimit.limit(identifier);
-
-  return {
-    success,
-    limit,
-    remaining,
-    reset,
-  };
+export async function checkStrictRateLimit(identifier: string): Promise<RateLimitStatus> {
+  return check("strict", redisStrict, memoryStrict, identifier);
 }
 
 /**
