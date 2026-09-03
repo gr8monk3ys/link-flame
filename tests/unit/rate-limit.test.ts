@@ -8,6 +8,33 @@ describe('Rate Limiting Utilities', () => {
   });
 
   describe('getIdentifier', () => {
+    // Regression: next-kit <= 0.1.1 read `cf-connecting-ip` first and
+    // unconditionally. link-flame ships as a container with no Cloudflare edge
+    // declared, so that header is client-controlled here and rotating it would
+    // hand a caller a fresh rate-limit bucket on every request.
+    it('ignores a client-supplied cf-connecting-ip', () => {
+      const headers = { 'x-forwarded-for': '1.1.1.1, 203.0.113.7' };
+      const honest = new Request('http://localhost:3000/api/test', { headers });
+      const spoofed = new Request('http://localhost:3000/api/test', {
+        headers: { ...headers, 'cf-connecting-ip': '6.6.6.6' },
+      });
+      expect(getIdentifier(spoofed, null)).toBe(getIdentifier(honest, null));
+      expect(getIdentifier(spoofed, null)).not.toContain('6.6.6.6');
+    });
+
+    it('a rotating cf-connecting-ip cannot mint new buckets', () => {
+      const ids = ['9.9.9.9', '8.8.8.8', '7.7.7.7'].map((ip) =>
+        getIdentifier(
+          new Request('http://localhost:3000/api/test', {
+            headers: { 'x-real-ip': '203.0.113.7', 'cf-connecting-ip': ip },
+          }),
+          null
+        )
+      );
+      expect(new Set(ids).size).toBe(1);
+      expect(ids[0]).toBe('ip:203.0.113.7');
+    });
+
     it('should use user ID when provided', () => {
       const request = new Request('http://localhost:3000/api/test', {
         headers: {
