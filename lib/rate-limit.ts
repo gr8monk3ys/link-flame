@@ -289,11 +289,20 @@ const ANONYMOUS_SESSION_COOKIES = [
  *    `"anon:fingerprint:{hash}"`
  *
  * **IP Detection Strategy** (delegated to the kit's `getClientId`):
- * platform-set headers first (`x-vercel-forwarded-for`, `cf-connecting-ip`,
- * `x-real-ip`), then the RIGHT-most `x-forwarded-for` entry — the hop our own
- * edge appended. Taking `[0]`, as this module used to, lets a caller mint a
- * fresh bucket per request just by rotating the header. Candidates that do not
- * parse as an IP are discarded rather than trusted as a bucket key.
+ * `x-real-ip` (a single-value header our own edge sets), then the RIGHT-most
+ * `x-forwarded-for` entry — the hop our own edge appended. Taking `[0]`, as
+ * this module used to, lets a caller mint a fresh bucket per request just by
+ * rotating the header. Candidates that do not parse as an IP are discarded
+ * rather than trusted as a bucket key.
+ *
+ * No `platform:` is declared, and that is deliberate. A platform header is only
+ * unforgeable on the platform that writes it: next-kit <= 0.1.1 read
+ * `cf-connecting-ip` unconditionally, which is client-controlled anywhere there
+ * is no Cloudflare in front to overwrite an inbound copy — a free way to rotate
+ * buckets. link-flame ships as a container (see `Dockerfile`) with no such edge
+ * declared, so it takes the kit's default from 0.1.2 on. **If this is ever put
+ * behind Cloudflare, pass `platform: "cloudflare"` here** so its header is
+ * trusted; behind Vercel, `platform: "vercel"`.
  *
  * @param {Request} request - The incoming HTTP request object
  * @param {string | null} [userId] - Optional authenticated user ID from NextAuth or other auth provider
