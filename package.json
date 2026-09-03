@@ -36,7 +36,7 @@
     "vite": "^7.3.6"
   },
   "dependencies": {
-    "@gr8monk3ys/next-kit": "https://github.com/gr8monk3ys/next-kit/archive/refs/tags/v0.1.1.tar.gz",
+    "@gr8monk3ys/next-kit": "https://github.com/gr8monk3ys/next-kit/archive/refs/tags/v0.1.2.tar.gz",
     "@headlessui/react": "^2.2.9",
     "@mdx-js/loader": "^3.1.0",
     "@mdx-js/react": "^3.1.0",
