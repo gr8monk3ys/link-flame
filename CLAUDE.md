@@ -33,3 +33,17 @@ npm run build
 <!-- BEGIN:nextjs-agent-rules -->
 This Next.js version has breaking changes vs. training data. Read `node_modules/next/dist/docs/` before writing framework code. (Block is re-added by `next dev`.)
 <!-- END:nextjs-agent-rules -->
+
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues on `gr8monk3ys/link-flame`, via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The five canonical roles, label string equal to role name. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
