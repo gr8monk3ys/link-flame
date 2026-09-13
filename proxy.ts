@@ -48,7 +48,11 @@ function buildCspHeader(nonce: string): string {
     `style-src ${styleSrc}`,
     `img-src 'self' https://images.unsplash.com https://*.stripe.com data: blob:`,
     `font-src 'self' https://fonts.gstatic.com`,
-    `connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://analytics.google.com https://*.ingest.sentry.io`,
+    // Sentry's US-region ingest host is `<org>.ingest.us.sentry.io`, which
+    // `*.ingest.sentry.io` does not match: the browser SDK loaded and every
+    // envelope it sent was refused by this directive. Both spellings are kept
+    // so a region change does not silently blind us again.
+    `connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://analytics.google.com https://*.ingest.sentry.io https://*.ingest.us.sentry.io`,
     `frame-src 'self' https://js.stripe.com https://hooks.stripe.com`,
     `manifest-src 'self'`,
     `object-src 'none'`,
