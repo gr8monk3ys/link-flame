@@ -208,7 +208,7 @@ export default async function AdminDashboard() {
 
       {/* Low Stock Alert */}
       {lowStockProducts.length > 0 && (
-        <div className="rounded-lg border-l-4 border-yellow-400 bg-yellow-50 p-6 dark:bg-yellow-950/40">
+        <div className="rounded-lg border border-yellow-400/50 bg-yellow-50 p-6 dark:bg-yellow-950/40">
           <div className="flex items-start">
             <div className="shrink-0">
               <Package className="size-6 text-yellow-400" />

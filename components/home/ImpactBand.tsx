@@ -26,7 +26,7 @@ export async function ImpactBand() {
     >
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="mb-10 max-w-2xl">
-          <p className="text-sm font-medium uppercase tracking-widest text-primary-foreground/70">
+          <p className="text-sm font-medium uppercase tracking-widest text-primary-foreground/90">
             Measured, not promised
           </p>
           <h2
@@ -35,7 +35,7 @@ export async function ImpactBand() {
           >
             What a year of swaps adds up to
           </h2>
-          <p className="mt-3 text-primary-foreground/80">
+          <p className="mt-3 text-primary-foreground/90">
             Every product here carries a measured yearly impact versus its
             single-use equivalent. One of each, for one year:
           </p>
@@ -51,7 +51,7 @@ export async function ImpactBand() {
                 <CountUp value={metric.total} />
               </dd>
               <dt className="mt-2">
-                <span className="block text-sm font-medium uppercase tracking-wide text-primary-foreground/70">
+                <span className="block text-sm font-medium uppercase tracking-wide text-primary-foreground/90">
                   {metric.unit}
                 </span>
                 <span className="mt-1 block text-sm text-primary-foreground/90">

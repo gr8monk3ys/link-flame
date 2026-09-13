@@ -70,8 +70,8 @@ export function getMetadata(): Metadata {
 export function getViewport(): Viewport {
   return {
     themeColor: [
-      { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-      { media: '(prefers-color-scheme: dark)', color: '#000000' },
+      { media: '(prefers-color-scheme: light)', color: '#fcfaf8' },
+      { media: '(prefers-color-scheme: dark)', color: '#15110f' },
     ],
   }
 }
