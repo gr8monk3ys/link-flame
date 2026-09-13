@@ -124,16 +124,13 @@
   @apply object-cover w-full h-full rounded-lg transition-transform duration-300 hover:scale-105;
 }
 
-/* Enhanced Text Gradients */
-/* The gradient used to end on accent/70, which blends to 1.55:1 against the
-   cream background - the headline faded from readable to nearly invisible
-   across its own width. Clipped gradient text computes as
-   `color: rgba(0,0,0,0)`, so the contrast spec cannot see it either.
-   Staying inside the primary ramp keeps the effect and the legibility: the
-   lightest stop here is 4.4:1 on --background. */
+/* Text emphasis (formerly a clipped gradient) */
+/* Clipped gradient text computes as `color: rgba(0,0,0,0)`, so contrast
+   tooling cannot see it, and the fade across its own width fought the
+   headline. The class name is kept for the pages that use it; emphasis now
+   comes from the solid primary hue. */
 .text-gradient {
-  @apply bg-gradient-to-r from-primary via-primary to-primary/75 bg-clip-text text-transparent
-  transition-all duration-300 hover:to-primary;
+  @apply text-primary;
 }
 
 /* Enhanced Animated Underline */

@@ -31,13 +31,13 @@ const sizeConfig = {
     badge: "px-1.5 py-0.5 text-xs gap-1",
     icon: "h-3 w-3",
     label: "text-xs gap-1",
-    corner: "w-16 h-16 text-[8px]",
+    corner: "w-16 h-16 text-xs",
   },
   md: {
     badge: "px-2 py-1 text-xs gap-1.5",
     icon: "h-4 w-4",
     label: "text-sm gap-1.5",
-    corner: "w-20 h-20 text-[10px]",
+    corner: "w-20 h-20 text-xs",
   },
   lg: {
     badge: "px-2.5 py-1.5 text-sm gap-2",
@@ -94,7 +94,7 @@ export function PlasticFreeTag({
           config.corner,
           className
         )}
-        style={{ width: size === "sm" ? 80 : size === "md" ? 100 : 120 }}
+        style={{ width: size === "sm" ? 96 : size === "md" ? 104 : 120 }}
         title="Plastic-Free Product"
       >
         <div className="flex h-6 items-center justify-center">

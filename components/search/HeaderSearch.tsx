@@ -66,8 +66,8 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
         <div className="hidden items-center gap-2 rounded-md border bg-muted/50 px-3 py-1.5 lg:flex">
           <Icons.search className="size-4 text-muted-foreground" />
           <span className="text-sm text-muted-foreground">Search...</span>
-          <kbd className="pointer-events-none ml-4 hidden h-5 select-none items-center gap-1 rounded border bg-background px-1.5 font-mono text-[10px] font-medium opacity-100 sm:inline-flex">
-            <span className="text-xs">Cmd</span>K
+          <kbd className="pointer-events-none ml-4 hidden h-5 select-none items-center gap-1 rounded border bg-background px-1.5 font-mono text-xs font-medium opacity-100 sm:inline-flex">
+            <span>Cmd</span>K
           </kbd>
         </div>
       </button>
