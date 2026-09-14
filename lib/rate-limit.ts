@@ -24,6 +24,8 @@ let ratelimit: Ratelimit | null = null;
 let strictRatelimit: Ratelimit | null = null;
 let hasLoggedStandardFallback = false;
 let hasLoggedStrictFallback = false;
+let hasLoggedStandardRedisFailure = false;
+let hasLoggedStrictRedisFailure = false;
 
 function parsePositiveIntegerEnv(name: string, fallback: number): number {
   const rawValue = process.env[name];
@@ -179,6 +181,30 @@ function logFallback(bucket: "standard" | "strict"): void {
 }
 
 /**
+ * Log (once per bucket, per process) that the Redis-backed limiter threw, and
+ * that we are serving the request from the in-memory limiter instead.
+ *
+ * A rate limiter is a guard rail, not a dependency of the thing it guards. If
+ * Upstash is unreachable — or answers with a shape the client cannot parse —
+ * the correct behaviour is to keep serving traffic under the local limit, not
+ * to take every rate-limited route down with it.
+ */
+function logRedisFailure(bucket: "standard" | "strict", error: unknown): void {
+  if (bucket === "standard") {
+    if (hasLoggedStandardRedisFailure) return;
+    hasLoggedStandardRedisFailure = true;
+  } else {
+    if (hasLoggedStrictRedisFailure) return;
+    hasLoggedStrictRedisFailure = true;
+  }
+
+  logger.error(
+    `Redis rate limiting (${bucket}) failed; falling back to in-memory limits.`,
+    error instanceof Error ? error : new Error(String(error))
+  );
+}
+
+/**
  * Check rate limit for a given identifier using the standard rate limit (10 requests per 10 seconds).
  *
  * This function uses Upstash Redis with a sliding window algorithm to track request counts.
@@ -232,14 +258,21 @@ export async function checkRateLimit(identifier: string): Promise<{
     return checkMemoryRateLimit("standard", identifier, 10, 10_000);
   }
 
-  const { success, limit, remaining, reset } = await ratelimit.limit(identifier);
+  try {
+    const { success, limit, remaining, reset } = await ratelimit.limit(identifier);
 
-  return {
-    success,
-    limit,
-    remaining,
-    reset,
-  };
+    return {
+      success,
+      limit,
+      remaining,
+      reset,
+    };
+  } catch (error) {
+    // Fail open onto the in-memory limiter. Never let the limiter's own
+    // outage become the caller's 500.
+    logRedisFailure("standard", error);
+    return checkMemoryRateLimit("standard", identifier, 10, 10_000);
+  }
 }
 
 /**
@@ -361,14 +394,25 @@ export async function checkStrictRateLimit(identifier: string): Promise<{
     );
   }
 
-  const { success, limit, remaining, reset } = await strictRatelimit.limit(identifier);
+  try {
+    const { success, limit, remaining, reset } = await strictRatelimit.limit(identifier);
 
-  return {
-    success,
-    limit,
-    remaining,
-    reset,
-  };
+    return {
+      success,
+      limit,
+      remaining,
+      reset,
+    };
+  } catch (error) {
+    // Fail open onto the in-memory limiter (see checkRateLimit).
+    logRedisFailure("strict", error);
+    return checkMemoryRateLimit(
+      "strict",
+      identifier,
+      STRICT_RATE_LIMIT_MAX_REQUESTS,
+      STRICT_RATE_LIMIT_WINDOW_MS
+    );
+  }
 }
 
 /**
