@@ -10,12 +10,14 @@ import { Suspense } from "react"
 
 interface SiteHeaderProps {
   className?: string
+  /** CSP nonce for the announcement bar's inline pre-paint script. */
+  nonce?: string
 }
 
-export function SiteHeader({ className }: SiteHeaderProps) {
+export function SiteHeader({ className, nonce }: SiteHeaderProps) {
   return (
     <header className={cn("sticky top-0 z-40 w-full border-b border-border/60 bg-background/95 backdrop-blur-md", className)}>
-      <AnnouncementBar />
+      <AnnouncementBar nonce={nonce} />
       <div className="container flex h-[4.5rem] items-center justify-between">
         <MainNav items={siteConfig.mainNav} />
         <div className="flex items-center space-x-4">

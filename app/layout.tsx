@@ -114,7 +114,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                       lines on mobile, making it ~162px), so content rendered
                       underneath the header on small screens. Leaving it in
                       flow is correct at any header height. */}
-                  <SiteHeader />
+                  <SiteHeader nonce={nonce} />
                   <main className="container mx-auto flex-1 px-4 pt-8 sm:px-6 lg:px-8">
                     {children}
                   </main>

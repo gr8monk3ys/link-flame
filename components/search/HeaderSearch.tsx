@@ -30,12 +30,36 @@ interface HeaderSearchProps {
  */
 export function HeaderSearch({ className }: HeaderSearchProps) {
   const [isOpen, setIsOpen] = useState(false)
+  // `dynamic()` still fetches its chunk the moment the component mounts, so
+  // the closed dialog (Radix Dialog + PredictiveSearch) shipped on every page
+  // load. Mount it on first open instead; it stays mounted afterwards so the
+  // close animation and any typed query survive reopening.
+  const [hasOpened, setHasOpened] = useState(false)
+  const openSearch = () => {
+    setHasOpened(true)
+    setIsOpen(true)
+  }
+
+  // Warm the chunk once the browser is idle so the first open is still
+  // instant; by then the hero has painted and this no longer competes with it.
+  useEffect(() => {
+    const warm = () => {
+      void import('./SearchDialog')
+    }
+    if (typeof window.requestIdleCallback === 'function') {
+      const id = window.requestIdleCallback(warm)
+      return () => window.cancelIdleCallback(id)
+    }
+    const id = window.setTimeout(warm, 2000)
+    return () => window.clearTimeout(id)
+  }, [])
 
   // Keyboard shortcut handler (Cmd/Ctrl + K)
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
         event.preventDefault()
+        setHasOpened(true)
         setIsOpen(true)
       }
     }
@@ -49,7 +73,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
       {/* Search Button - Mobile: icon only, Desktop: with shortcut hint */}
       <button
         type="button"
-        onClick={() => setIsOpen(true)}
+        onClick={openSearch}
         className={cn(
           'flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary',
           className
@@ -73,7 +97,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
       </button>
 
       {/* Search Dialog */}
-      <SearchDialog open={isOpen} onOpenChange={setIsOpen} />
+      {hasOpened && <SearchDialog open={isOpen} onOpenChange={setIsOpen} />}
     </>
   )
 }

@@ -55,6 +55,13 @@
   }
 }
 
+/* Set on <html> by the announcement bar's inline script before first paint,
+   so a dismissed bar is never painted and then removed (see
+   components/announcement-bar.tsx). */
+.announcement-dismissed [data-announcement-bar] {
+  display: none;
+}
+
 @layer base {
   * {
     @apply border-border;

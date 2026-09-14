@@ -1,5 +1,3 @@
-"use client"
-
 import Link from "next/link"
 import { Icons } from "@/components/shared/icons"
 import { siteConfig } from "@/config/site"
