@@ -1,6 +1,5 @@
 'use client'
 
-import * as Sentry from '@sentry/nextjs'
 import { useEffect } from 'react'
 
 export default function GlobalError({
@@ -11,7 +10,9 @@ export default function GlobalError({
   reset: () => void
 }) {
   useEffect(() => {
-    Sentry.captureException(error)
+    // Loaded on demand so the SDK stays out of the root layout's client graph;
+    // instrumentation-client.ts defers it the same way.
+    void import('@/lib/sentry-browser').then(({ captureException }) => captureException(error))
   }, [error])
 
   return (
