@@ -16,6 +16,19 @@ const FALLBACK_PROD_URL = "https://linkflame.com";
  * lands on the production domain rather than leaking a local address.
  */
 export function getBaseUrl(): string {
+  return normalizeBaseUrl(resolveBaseUrl());
+}
+
+/**
+ * Dashboard-pasted values arrive with a trailing newline or slash. Left
+ * as-is, robots.txt printed the sitemap directive across two lines
+ * (`Sitemap: https://host\n/sitemap.xml`), which crawlers cannot read.
+ */
+function normalizeBaseUrl(url: string): string {
+  return url.trim().replace(/\/+$/, "");
+}
+
+function resolveBaseUrl(): string {
   if (process.env.NEXT_PUBLIC_URL) {
     return process.env.NEXT_PUBLIC_URL;
   }

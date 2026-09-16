@@ -53,7 +53,7 @@ export default function CheckoutPage() {
   if (status === "loading") {
     return (
       <div className="container flex min-h-[calc(100vh-200px)] items-center justify-center">
-        <div className="size-8 animate-spin rounded-full border-b-2 border-primary"></div>
+        <div className="loading-spinner" role="status" aria-label="Loading checkout" />
       </div>
     );
   }

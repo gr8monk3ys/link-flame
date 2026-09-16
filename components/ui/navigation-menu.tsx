@@ -4,7 +4,6 @@ import * as React from "react"
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
 import { cva } from "class-variance-authority"
 import { ChevronDown } from "lucide-react"
-import { motion } from "framer-motion"
 
 import { cn } from "@/lib/utils"
 
@@ -57,15 +56,16 @@ const NavigationMenuTrigger = React.forwardRef<
     {...props}
   >
     {children}{" "}
-    <motion.div
-      whileHover={{ scale: 1.2 }}
-      transition={{ type: "spring", stiffness: 400, damping: 10 }}
-    >
+    {/* The chevron used to be a framer-motion `whileHover` spring. That was
+        the only reason framer-motion (~35 KB gzipped) shipped in the root
+        layout bundle on every page; a CSS transform gives the same grow-on-
+        hover for zero bytes. */}
+    <span className="inline-block transition-transform duration-200 ease-out group-hover:scale-125">
       <ChevronDown
         className="relative top-px ml-1 size-3 transition duration-200 group-data-[state=open]:rotate-180"
         aria-hidden="true"
       />
-    </motion.div>
+    </span>
   </NavigationMenuPrimitive.Trigger>
 ))
 NavigationMenuTrigger.displayName = NavigationMenuPrimitive.Trigger.displayName
@@ -74,12 +74,7 @@ const NavigationMenuContent = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Content>
 >(({ className, ...props }, ref) => (
-  <motion.div
-    initial={{ opacity: 0, y: -10 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -10 }}
-    transition={{ duration: 0.2 }}
-  >
+  <div className="duration-200 animate-in fade-in slide-in-from-top-2">
     <NavigationMenuPrimitive.Content
       ref={ref}
       className={cn(
@@ -88,7 +83,7 @@ const NavigationMenuContent = React.forwardRef<
       )}
       {...props}
     />
-  </motion.div>
+  </div>
 ))
 NavigationMenuContent.displayName = NavigationMenuPrimitive.Content.displayName
 
@@ -99,12 +94,7 @@ const NavigationMenuViewport = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Viewport>
 >(({ className, ...props }, ref) => (
   <div className={cn("absolute left-0 top-full flex justify-center")}>
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 10 }}
-      transition={{ duration: 0.2 }}
-    >
+    <div className="duration-200 animate-in fade-in slide-in-from-bottom-2">
       <NavigationMenuPrimitive.Viewport
         className={cn(
           "origin-top-center relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 md:w-[var(--radix-navigation-menu-viewport-width)]",
@@ -113,7 +103,7 @@ const NavigationMenuViewport = React.forwardRef<
         ref={ref}
         {...props}
       />
-    </motion.div>
+    </div>
   </div>
 ))
 NavigationMenuViewport.displayName =

@@ -95,7 +95,10 @@ export async function FeaturedProducts() {
                       alt={product.title}
                       fill
                       className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      // Card width, not viewport width: one column inside a 2rem-padded
+                      // container on phones. `100vw` made phones fetch the 750px
+                      // rendition for a ~350px slot (Lighthouse: 56 KiB wasted).
+                      sizes="(max-width: 639px) calc(100vw - 4rem), (max-width: 1023px) 45vw, 300px"
                     />
                     {hasDiscount && (
                       <Badge className="absolute left-2 top-2 bg-red-500 text-white">

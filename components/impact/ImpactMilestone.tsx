@@ -100,7 +100,7 @@ export function ImpactMilestone({
         {/* Celebration icon */}
         <div className="mb-4 flex justify-center">
           <div className="relative">
-            <PartyPopper className="size-16 animate-bounce text-yellow-500" />
+            <PartyPopper className="scale-animation size-16 text-yellow-500" />
             <div className="absolute -right-2 -top-2">
               <span className="text-2xl">🎉</span>
             </div>

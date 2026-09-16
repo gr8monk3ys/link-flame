@@ -102,8 +102,8 @@ export function SearchTrigger({ className, children }: SearchTriggerProps) {
               <path d="m21 21-4.3-4.3" />
             </svg>
             <span className="hidden lg:inline-flex">Search...</span>
-            <kbd className="pointer-events-none ml-2 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 lg:inline-flex">
-              <span className="text-xs">Cmd</span>K
+            <kbd className="pointer-events-none ml-2 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-xs font-medium opacity-100 lg:inline-flex">
+              <span>Cmd</span>K
             </kbd>
           </div>
         )}

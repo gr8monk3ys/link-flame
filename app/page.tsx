@@ -8,8 +8,11 @@ import { SustainabilityCommitment } from "@/components/sustainability";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 
-// Render at request time — DB not available during Vercel build
-export const dynamic = 'force-dynamic';
+// Prerendered and revalidated hourly, so the CDN serves the landing page
+// without waiting on a serverless cold start (4.3 s TTFB was measured). The
+// data sections below catch their own errors, so a build without a reachable
+// database still ships a page; the next revalidation fills them in.
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   // absolute: the root template appends "- Link Flame" to child titles,

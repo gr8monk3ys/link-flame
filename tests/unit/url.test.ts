@@ -52,3 +52,20 @@ describe('getBaseUrl', () => {
     expect(getBaseUrl()).toBe('https://linkflame.com')
   })
 })
+
+describe('getBaseUrl normalisation', () => {
+  const original = { ...process.env }
+
+  afterEach(() => {
+    process.env = { ...original }
+  })
+
+  it('strips whitespace and a trailing slash from a pasted URL', () => {
+    // A dashboard value with a trailing newline made robots.txt emit
+    // "Sitemap: https://host\n/sitemap.xml" across two lines.
+    vi.stubEnv('NODE_ENV', 'production')
+    process.env.NEXT_PUBLIC_URL = 'https://link-flame.vivancedata.com/\n'
+    expect(getBaseUrl()).toBe('https://link-flame.vivancedata.com')
+    expect(`${getBaseUrl()}/sitemap.xml`).toBe('https://link-flame.vivancedata.com/sitemap.xml')
+  })
+})
