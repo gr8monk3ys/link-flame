@@ -17,7 +17,7 @@ npm run build
 ## Where things live
 
 - `auth.config.ts` is Edge-safe (used by `proxy.ts`); `auth.ts` adds Credentials + Prisma + bcrypt. Never import Node-only modules into `auth.config.ts`.
-- `proxy.ts` protects `/account/*` and `/admin/*`, sets CSP nonce + request-id headers.
+- `proxy.ts` protects `/account/*` and `/admin/*` and sets the CSP + request-id headers. Policy lives in `lib/csp.ts`: only the routes in `NONCE_ROUTE_PREFIXES` get a per-request nonce (and each has a `force-dynamic` layout); everything else is prerenderable. Never read `headers()`/`cookies()` in `app/layout.tsx` — it makes every route dynamic.
 - `lib/auth.ts` (`getServerAuth`, `requireRole`), `lib/csrf.ts`, `lib/api-response.ts`, `lib/env.ts` (Zod; warns, never throws at build), `lib/session.ts` (30-day guest cart cookie), `lib/providers/CartProvider.tsx`.
 - API routes in `app/api/*`; each exports `dynamic = 'force-dynamic'` or the Vercel build tries to prerender it without a DB.
 - `prisma/schema.prisma` (Postgres, money is `@db.Decimal(10,2)`), `prisma/seed.ts`. `prisma/migrations_legacy_sqlite/` is history only.
