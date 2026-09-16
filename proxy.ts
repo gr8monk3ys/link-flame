@@ -1,6 +1,7 @@
 import NextAuth from 'next-auth'
 import authConfig from '@/auth.config'
 import { NextResponse } from 'next/server'
+import { buildCspHeader, routeUsesNonce } from '@/lib/csp'
 
 const { auth } = NextAuth(authConfig)
 
@@ -24,53 +25,16 @@ function generateNonce(): string {
   return btoa(binary)
 }
 
-/**
- * Build CSP header. We keep this reasonably strict while still allowing Next.js
- * to work without wiring nonces into every script tag.
- *
- * Production uses nonce-based script-src with 'strict-dynamic' for CSP Level 3
- * browsers. The nonce is generated per-request and propagated via x-nonce header.
- */
-function buildCspHeader(nonce: string): string {
-  const isDevelopment = process.env.NODE_ENV === 'development'
-
-  const scriptSrc = isDevelopment
-    ? `'self' 'unsafe-eval' 'unsafe-inline'`
-    : `'self' 'nonce-${nonce}' 'strict-dynamic' https://js.stripe.com https://www.googletagmanager.com https://www.google-analytics.com`
-
-  const styleSrc = isDevelopment
-    ? `'self' 'unsafe-inline' https://fonts.googleapis.com`
-    : `'self' 'unsafe-inline' https://fonts.googleapis.com`
-
-  const directives = [
-    `default-src 'self'`,
-    `script-src ${scriptSrc}`,
-    `style-src ${styleSrc}`,
-    `img-src 'self' https://images.unsplash.com https://*.stripe.com data: blob:`,
-    `font-src 'self' https://fonts.gstatic.com`,
-    // Sentry's US-region ingest host is `<org>.ingest.us.sentry.io`, which
-    // `*.ingest.sentry.io` does not match: the browser SDK loaded and every
-    // envelope it sent was refused by this directive. Both spellings are kept
-    // so a region change does not silently blind us again.
-    `connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://analytics.google.com https://*.ingest.sentry.io https://*.ingest.us.sentry.io`,
-    `frame-src 'self' https://js.stripe.com https://hooks.stripe.com`,
-    `manifest-src 'self'`,
-    `object-src 'none'`,
-    `base-uri 'self'`,
-    `form-action 'self'`,
-    `frame-ancestors 'none'`,
-    `upgrade-insecure-requests`,
-  ]
-
-  return directives.join('; ')
-}
-
 export const proxy = auth((req) => {
   const { pathname } = req.nextUrl
   const isLoggedIn = !!req.auth
 
   const requestId = req.headers.get('x-request-id') || generateRequestId()
-  const nonce = generateNonce()
+  // A nonce forces per-request rendering (Next.js stamps it on every script
+  // at render time), so only routes that carry a session, cart or payment get
+  // one. Everything else is served with the static policy from lib/csp.ts and
+  // can be prerendered. See lib/csp.ts.
+  const nonce = routeUsesNonce(pathname) ? generateNonce() : undefined
 
   // Protected routes that require authentication.
   // Note: `/checkout` is intentionally *not* protected to support guest checkout.
@@ -89,7 +53,7 @@ export const proxy = auth((req) => {
   // Propagate request-scoped headers to the app.
   const requestHeaders = new Headers(req.headers)
   requestHeaders.set('x-request-id', requestId)
-  requestHeaders.set('x-nonce', nonce)
+  if (nonce) requestHeaders.set('x-nonce', nonce)
 
   const response = NextResponse.next({
     request: {
@@ -98,7 +62,7 @@ export const proxy = auth((req) => {
   })
 
   response.headers.set('x-request-id', requestId)
-  response.headers.set('x-nonce', nonce)
+  if (nonce) response.headers.set('x-nonce', nonce)
   response.headers.set('Content-Security-Policy', buildCspHeader(nonce))
 
   return response

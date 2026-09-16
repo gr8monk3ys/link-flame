@@ -11,21 +11,16 @@ const DISMISSED_CLASS = "announcement-dismissed";
  * Runs inline, before the bar is parsed, so a visitor who dismissed the bar
  * never sees it flash. Pairs with the `.announcement-dismissed` rule in
  * globals.css. It is the same pre-hydration trick next-themes uses for the
- * colour scheme, and it needs the CSP nonce for the same reason.
+ * colour scheme. The strict CSP allows it by SHA-256 hash (lib/csp.ts), so
+ * change `INLINE_SCRIPT_HASHES.announcement` whenever this string changes.
  */
-const PRE_PAINT_SCRIPT = `try{if(localStorage.getItem(${JSON.stringify(
+export const PRE_PAINT_SCRIPT = `try{if(localStorage.getItem(${JSON.stringify(
   STORAGE_KEY
 )})==="1")document.documentElement.classList.add(${JSON.stringify(
   DISMISSED_CLASS
 )})}catch(e){}`;
 
-export function AnnouncementBar({
-  className,
-  nonce,
-}: {
-  className?: string;
-  nonce?: string;
-}) {
+export function AnnouncementBar({ className }: { className?: string }) {
   // The bar is in the server HTML. It used to start `dismissed` and appear
   // after hydration, which pushed the whole page down by its height (a 0.10
   // layout shift on mobile) and repainted the hero on every visit.
@@ -58,7 +53,7 @@ export function AnnouncementBar({
 
   return (
     <>
-      <script nonce={nonce} dangerouslySetInnerHTML={{ __html: PRE_PAINT_SCRIPT }} />
+      <script dangerouslySetInnerHTML={{ __html: PRE_PAINT_SCRIPT }} />
       <div
         data-announcement-bar=""
         className={cn(

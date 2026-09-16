@@ -11,6 +11,11 @@ import {
   LogOut
 } from 'lucide-react';
 
+// Keeps the per-request CSP nonce policy honest (lib/csp.ts): nonce routes
+// must render per request. Already true here via getServerAuth, made explicit
+// because tests/unit/csp.test.tsx checks every nonce route for it.
+export const dynamic = 'force-dynamic';
+
 export default async function AdminLayout({
   children,
 }: {
