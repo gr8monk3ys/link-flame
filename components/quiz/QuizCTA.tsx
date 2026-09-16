@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/button';
 
@@ -23,6 +23,28 @@ export function QuizCTA({
   onQuizComplete,
 }: QuizCTAProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // `dynamic()` fetches its chunk as soon as the component mounts, so the
+  // closed modal (Radix Dialog + the quiz flow) was downloaded on every home
+  // page view. Mount it on first open instead; it stays mounted afterwards so
+  // the close animation and the reset-on-close effect keep working.
+  const [hasOpened, setHasOpened] = useState(false);
+  const openModal = () => {
+    setHasOpened(true);
+    setIsModalOpen(true);
+  };
+  // Warm the chunk once the browser is idle so the first open is still
+  // instant; by then the hero has painted and this no longer competes with it.
+  useEffect(() => {
+    const warm = () => {
+      void import('./QuizModal');
+    };
+    if (typeof window.requestIdleCallback === 'function') {
+      const id = window.requestIdleCallback(warm);
+      return () => window.cancelIdleCallback(id);
+    }
+    const id = window.setTimeout(warm, 2000);
+    return () => window.clearTimeout(id);
+  }, []);
 
   const handleComplete = (visibleId: string) => {
     if (onQuizComplete) {
@@ -34,7 +56,7 @@ export function QuizCTA({
     return (
       <>
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={openModal}
           className={cn(
             'group inline-flex items-center gap-2 font-medium text-primary transition-colors hover:text-primary/80',
             className
@@ -45,11 +67,13 @@ export function QuizCTA({
           <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
         </button>
 
-        <QuizModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onComplete={handleComplete}
-        />
+        {hasOpened && (
+          <QuizModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            onComplete={handleComplete}
+          />
+        )}
       </>
     );
   }
@@ -82,18 +106,20 @@ export function QuizCTA({
               </p>
             </div>
 
-            <Button onClick={() => setIsModalOpen(true)} className="w-full">
+            <Button onClick={openModal} className="w-full">
               Take the Quiz
               <ArrowRight className="ml-2 size-4" />
             </Button>
           </div>
         </div>
 
-        <QuizModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onComplete={handleComplete}
-        />
+        {hasOpened && (
+          <QuizModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            onComplete={handleComplete}
+          />
+        )}
       </>
     );
   }
@@ -135,7 +161,7 @@ export function QuizCTA({
             <div className="flex flex-col items-center justify-center gap-4 pt-4 sm:flex-row">
               <Button
                 size="lg"
-                onClick={() => setIsModalOpen(true)}
+                onClick={openModal}
                 className="gap-2 px-8"
               >
                 <Sparkles className="size-5" />
@@ -149,11 +175,13 @@ export function QuizCTA({
         </div>
       </section>
 
-      <QuizModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onComplete={handleComplete}
-      />
+      {hasOpened && (
+        <QuizModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onComplete={handleComplete}
+        />
+      )}
     </>
   );
 }

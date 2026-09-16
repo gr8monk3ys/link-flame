@@ -2,11 +2,11 @@ import "@/styles/globals.css"
 import "@/lib/env"
 import { Suspense } from "react"
 import { Metadata, Viewport } from "next"
-import { headers } from "next/headers"
 import { siteConfig } from "@/config/site"
 import { fontSans, fontSerif } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
 import { ThemeProvider } from "@/components/layout/theme-provider"
+import { SITE_THEME_PROPS } from "@/config/theme"
 import { Analytics } from "@/components/layout/analytics"
 import { SessionProvider } from "next-auth/react";
 import { SiteHeader } from "@/components/site-header"
@@ -70,8 +70,8 @@ export function getMetadata(): Metadata {
 export function getViewport(): Viewport {
   return {
     themeColor: [
-      { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-      { media: '(prefers-color-scheme: dark)', color: '#000000' },
+      { media: '(prefers-color-scheme: light)', color: '#fcfaf8' },
+      { media: '(prefers-color-scheme: dark)', color: '#15110f' },
     ],
   }
 }
@@ -83,9 +83,11 @@ interface RootLayoutProps {
   children: React.ReactNode
 }
 
-export default async function RootLayout({ children }: RootLayoutProps) {
-  const nonce = (await headers()).get("x-nonce") ?? ""
-
+// No request headers are read here on purpose: `headers()` in the root
+// layout made every route dynamic (the CSP nonce it fetched cannot exist in
+// prerendered HTML). The two inline scripts below are allowed by hash instead;
+// see lib/csp.ts.
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head />
@@ -97,13 +99,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         )}
       >
         <SessionProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="light"
-            enableSystem={true}
-            disableTransitionOnChange
-            nonce={nonce}
-          >
+          <ThemeProvider {...SITE_THEME_PROPS}>
             <CartProvider>
               <ErrorBoundary>
                 <div className="relative flex min-h-screen flex-col">
@@ -120,7 +116,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                   </main>
                   <SiteFooter className="mt-auto" />
                 </div>
-                {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && <Analytics nonce={nonce} />}
+                {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && <Analytics />}
                 <ServiceWorkerRegistration />
                 <Suspense fallback={null}>
                   <WelcomeBonusNotification />

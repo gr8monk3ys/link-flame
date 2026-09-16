@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-13T00:00:00Z",
+  "title": "Design System: Link Flame",
+  "extensions": {
+    "colorMeta": {
+      "forest": { "role": "primary", "displayName": "Forest", "canonical": "hsl(152 45% 30%)", "tonalRamp": ["#153727", "#1f513a", "#2a6f4f", "#358d64", "#43b17e", "#72caa1", "#aee0c9", "#e1f4eb"] },
+      "forest-deep": { "role": "primary", "displayName": "Forest Deep", "canonical": "#1f513a", "tonalRamp": ["#153727", "#1f513a", "#2a6f4f", "#358d64", "#43b17e", "#72caa1", "#aee0c9", "#e1f4eb"] },
+      "forest-bright": { "role": "primary", "displayName": "Forest Bright", "canonical": "hsl(152 50% 42%)", "tonalRamp": ["#153727", "#1f513a", "#2a6f4f", "#358d64", "#43b17e", "#72caa1", "#aee0c9", "#e1f4eb"] },
+      "honey": { "role": "secondary", "displayName": "Honey", "canonical": "hsl(38 80% 55%)", "tonalRamp": ["#533809", "#81570e", "#ae7613", "#dc9518", "#e8a530", "#efbf6c", "#f6dbac", "#fcf3e3"] },
+      "honey-dark": { "role": "secondary", "displayName": "Honey Dark", "canonical": "hsl(38 65% 45%)", "tonalRamp": ["#533809", "#81570e", "#ae7613", "#dc9518", "#e8a530", "#efbf6c", "#f6dbac", "#fcf3e3"] },
+      "paper": { "role": "neutral", "displayName": "Paper", "canonical": "hsl(40 33% 98%)", "tonalRamp": ["#15120f", "#2c2621", "#584d41", "#7b6b5b", "#a8998a", "#d4ccc4", "#f0edea", "#fbfaf9"] },
+      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "hsl(25 15% 15%)", "tonalRamp": ["#15120f", "#2c2621", "#584d41", "#7b6b5b", "#a8998a", "#d4ccc4", "#f0edea", "#fbfaf9"] },
+      "ink-muted": { "role": "neutral", "displayName": "Ink Muted", "canonical": "hsl(25 10% 42%)", "tonalRamp": ["#15120f", "#2c2621", "#584d41", "#7b6b5b", "#a8998a", "#d4ccc4", "#f0edea", "#fbfaf9"] },
+      "linen": { "role": "neutral", "displayName": "Linen", "canonical": "hsl(35 30% 93%)", "tonalRamp": ["#15120f", "#2c2621", "#584d41", "#7b6b5b", "#a8998a", "#d4ccc4", "#f0edea", "#fbfaf9"] },
+      "sand-border": { "role": "neutral", "displayName": "Sand Border", "canonical": "hsl(35 15% 88%)", "tonalRamp": ["#15120f", "#2c2621", "#584d41", "#7b6b5b", "#a8998a", "#d4ccc4", "#f0edea", "#fbfaf9"] },
+      "night": { "role": "neutral", "displayName": "Night", "canonical": "hsl(25 15% 7%)", "tonalRamp": ["#15120f", "#2c2621", "#584d41", "#7b6b5b", "#a8998a", "#d4ccc4", "#f0edea", "#fbfaf9"] },
+      "bone": { "role": "neutral", "displayName": "Bone", "canonical": "hsl(35 20% 92%)", "tonalRamp": ["#15120f", "#2c2621", "#584d41", "#7b6b5b", "#a8998a", "#d4ccc4", "#f0edea", "#fbfaf9"] },
+      "ember": { "role": "destructive", "displayName": "Ember", "canonical": "hsl(0 84.2% 60.2%)", "tonalRamp": ["#450a0a", "#7f1d1d", "#b91c1c", "#dc2626", "#ef4444", "#f87171", "#fca5a5", "#fee2e2"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Home hero headline only; second line takes Forest." },
+      "headline": { "displayName": "Headline", "purpose": "Section h2 and impact-band numerals, always Lora." },
+      "title": { "displayName": "Title", "purpose": "Card titles, h3, product names." },
+      "body": { "displayName": "Body", "purpose": "Product copy and prose; leads at 1.125rem." },
+      "label": { "displayName": "Label", "purpose": "Uppercase eyebrows and unit labels, 0.1em tracking." },
+      "mono": { "displayName": "Mono", "purpose": "Code and tabular data only; never a costume." }
+    },
+    "shadows": [
+      { "name": "warm-sm", "value": "0 1px 2px 0 rgba(120, 85, 40, 0.05)", "purpose": "Card at rest." },
+      { "name": "warm", "value": "0 1px 3px 0 rgba(120, 85, 40, 0.08), 0 1px 2px -1px rgba(120, 85, 40, 0.08)", "purpose": "Popovers and dropdowns." },
+      { "name": "warm-md", "value": "0 4px 6px -1px rgba(120, 85, 40, 0.08), 0 2px 4px -2px rgba(120, 85, 40, 0.06)", "purpose": "Card and primary button hover." },
+      { "name": "warm-lg", "value": "0 10px 15px -3px rgba(120, 85, 40, 0.08), 0 4px 6px -4px rgba(120, 85, 40, 0.06)", "purpose": "Hero photograph well." }
+    ],
+    "motion": [
+      { "name": "duration-fast", "value": "200ms", "purpose": "Button colour and shadow transitions." },
+      { "name": "duration-base", "value": "300ms", "purpose": "Card hover shadow, image scale." },
+      { "name": "ease-standard", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Default Tailwind ease for state transitions." },
+      { "name": "count-up", "value": "1200ms ease-out", "purpose": "Impact band numerals; the page's one authored moment." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" },
+      { "name": "2xl", "value": "1400px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Forest ground, Paper text; the default action.",
+      "html": "<button class=\"ds-btn-primary\">Shop all products</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 8px 16px; border: none; border-radius: 8px; background: hsl(var(--primary, 152 45% 30%)); color: hsl(var(--primary-foreground, 40 33% 98%)); font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: background-color 200ms, box-shadow 200ms, transform 200ms; } .ds-btn-primary:hover { background: hsl(152 45% 30% / 0.9); box-shadow: 0 4px 6px -1px rgba(120, 85, 40, 0.08), 0 2px 4px -2px rgba(120, 85, 40, 0.06); } .ds-btn-primary:active { transform: scale(0.98); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px hsl(40 33% 98%), 0 0 0 4px hsl(152 45% 30%); }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary action beside a primary; Forest text on a 20% Forest stroke.",
+      "html": "<button class=\"ds-btn-outline\">Take the 2-minute quiz</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 8px 16px; border: 2px solid hsl(152 45% 30% / 0.2); border-radius: 8px; background: transparent; color: hsl(152 45% 30%); font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: background-color 200ms; } .ds-btn-outline:hover { background: hsl(152 45% 30% / 0.05); } .ds-btn-outline:focus-visible { outline: none; box-shadow: 0 0 0 2px hsl(40 33% 98%), 0 0 0 4px hsl(152 45% 30%); }"
+    },
+    {
+      "name": "Accent Button",
+      "kind": "button",
+      "refersTo": "button-accent",
+      "description": "Honey ground with Ink text; reserved for the quiz call-to-action.",
+      "html": "<button class=\"ds-btn-accent\">Take the 2-minute quiz</button>",
+      "css": ".ds-btn-accent { display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 8px 32px; border: none; border-radius: 8px; background: hsl(38 80% 55%); color: hsl(25 15% 15%); font-family: Inter, system-ui, sans-serif; font-size: 1rem; font-weight: 500; cursor: pointer; transition: background-color 200ms, box-shadow 200ms, transform 200ms; } .ds-btn-accent:hover { background: hsl(38 80% 55% / 0.9); box-shadow: 0 4px 6px -1px rgba(120, 85, 40, 0.08), 0 2px 4px -2px rgba(120, 85, 40, 0.06); } .ds-btn-accent:active { transform: scale(0.98); } .ds-btn-accent:focus-visible { outline: none; box-shadow: 0 0 0 2px hsl(40 33% 98%), 0 0 0 4px hsl(152 45% 30%); }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Sand stroke on a transparent ground; Forest ring on focus.",
+      "html": "<input class=\"ds-input\" type=\"email\" placeholder=\"you@example.com\" />",
+      "css": ".ds-input { display: flex; width: 100%; max-width: 320px; height: 40px; padding: 8px 12px; border: 1px solid hsl(35 15% 88%); border-radius: 10px; background: transparent; color: hsl(25 15% 15%); font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; transition: box-shadow 200ms; } .ds-input::placeholder { color: hsl(25 10% 42%); } .ds-input:focus-visible { outline: none; box-shadow: 0 0 0 2px hsl(40 33% 98%), 0 0 0 4px hsl(152 45% 30%); } .ds-input:disabled { opacity: 0.5; cursor: not-allowed; }"
+    },
+    {
+      "name": "Badge",
+      "kind": "chip",
+      "refersTo": "badge",
+      "description": "Pill; Forest ground for default, 10% Forest tint for eco values.",
+      "html": "<span class=\"ds-badge\">Plastic-free</span> <span class=\"ds-badge ds-badge-tint\">Zero-waste</span>",
+      "css": ".ds-badge { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 9999px; background: hsl(152 45% 30%); color: hsl(40 33% 98%); font-family: Inter, system-ui, sans-serif; font-size: 0.75rem; font-weight: 600; transition: background-color 200ms; } .ds-badge:hover { background: hsl(152 45% 30% / 0.8); } .ds-badge-tint { background: hsl(152 45% 30% / 0.1); color: hsl(152 45% 30%); } .ds-badge-tint:hover { background: hsl(152 45% 30% / 0.2); }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Paper Card on a Sand border with a warm shadow that deepens on hover.",
+      "html": "<div class=\"ds-card\"><h3 class=\"ds-card-title\">Measured impact</h3><p class=\"ds-card-body\">Every product carries a measured yearly impact versus the single-use item it replaces.</p></div>",
+      "css": ".ds-card { max-width: 360px; padding: 24px; border: 1px solid hsl(35 15% 88% / 0.7); border-radius: 12px; background: hsl(40 25% 99%); color: hsl(25 15% 15%); box-shadow: 0 1px 2px 0 rgba(120, 85, 40, 0.05); transition: box-shadow 300ms; } .ds-card:hover { box-shadow: 0 4px 6px -1px rgba(120, 85, 40, 0.08), 0 2px 4px -2px rgba(120, 85, 40, 0.06); } .ds-card-title { margin: 0 0 8px; font-family: Inter, system-ui, sans-serif; font-size: 1.125rem; font-weight: 600; letter-spacing: -0.025em; line-height: 1; } .ds-card-body { margin: 0; font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; line-height: 1.625; color: hsl(25 10% 42%); }"
+    },
+    {
+      "name": "Nav Link",
+      "kind": "nav",
+      "refersTo": "button-outline",
+      "description": "Header item: Ink Muted, turns Forest on hover, 0.875rem medium.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link\" href=\"#\">Shop</a><a class=\"ds-nav-link\" href=\"#\">Brands</a><a class=\"ds-nav-link ds-nav-link-active\" href=\"#\">Company</a><a class=\"ds-nav-link\" href=\"#\">Eco Living</a></nav>",
+      "css": ".ds-nav { display: flex; gap: 40px; padding: 16px 0; border-bottom: 1px solid hsl(35 15% 88% / 0.6); background: hsl(40 33% 98% / 0.95); } .ds-nav-link { font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; color: hsl(25 10% 42%); text-decoration: none; transition: color 200ms; } .ds-nav-link:hover { color: hsl(152 45% 30%); } .ds-nav-link-active { color: hsl(25 15% 15%); } .ds-nav-link:focus-visible { outline: none; border-radius: 4px; box-shadow: 0 0 0 2px hsl(40 33% 98%), 0 0 0 4px hsl(152 45% 30%); }"
+    },
+    {
+      "name": "Impact Band",
+      "kind": "custom",
+      "refersTo": "impact-band",
+      "description": "Full-bleed Forest section with Lora tabular numerals; the storefront's signature moment.",
+      "html": "<section class=\"ds-impact\"><p class=\"ds-impact-eyebrow\">Measured, not promised</p><h2 class=\"ds-impact-title\">What a year of swaps adds up to</h2><dl class=\"ds-impact-grid\"><div class=\"ds-impact-cell\"><dd class=\"ds-impact-num\">4,380</dd><dt><span class=\"ds-impact-unit\">bottles</span><span class=\"ds-impact-name\">Plastic bottles saved</span></dt></div><div class=\"ds-impact-cell\"><dd class=\"ds-impact-num\">1,095</dd><dt><span class=\"ds-impact-unit\">items</span><span class=\"ds-impact-name\">Single-use items replaced</span></dt></div></dl></section>",
+      "css": ".ds-impact { padding: 48px 32px; background: hsl(152 45% 30%); color: hsl(40 33% 98%); } .ds-impact-eyebrow { margin: 0; font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: hsl(40 33% 98% / 0.9); } .ds-impact-title { margin: 8px 0 32px; font-family: Lora, Georgia, serif; font-size: 1.875rem; font-weight: 400; letter-spacing: -0.025em; } .ds-impact-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin: 0; } .ds-impact-cell { padding-left: 16px; border-left: 1px solid hsl(40 33% 98% / 0.2); } .ds-impact-num { margin: 0; font-family: Lora, Georgia, serif; font-size: 2.25rem; font-variant-numeric: tabular-nums; letter-spacing: -0.025em; } .ds-impact-unit { display: block; margin-top: 8px; font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; color: hsl(40 33% 98% / 0.9); } .ds-impact-name { display: block; margin-top: 4px; font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; color: hsl(40 33% 98% / 0.9); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Screened Shelf",
+    "overview": "Link Flame looks like a small shop that stocks few things on purpose. The ground is warm paper, not white; the type pairs a bookish serif (Lora) for what the shop believes with a plain sans (Inter) for what it sells; and one forest green does the work of the brand. The accent, a honey amber, appears rarely and only where the shop wants a second decision made (the quiz). Everything else is tonal: linen-toned secondary surfaces, sand-coloured borders, and shadows tinted brown rather than black so that lifted elements still look like they sit on paper.\n\nThe system is confident but quiet. Sections own their own vertical rhythm (64 to 112px), cards keep a single soft border and a warm shadow that only deepens on hover, and the one loud moment on the home page is the full-bleed forest band that prints the catalogue's summed impact in serif numerals. The copy carries the attitude (\"Measured, not promised\"); the visuals stay out of its way.",
+    "keyCharacteristics": [
+      "Warm paper ground (`paper`), never pure white in light mode",
+      "One brand hue (`forest`), spent on actions, links, icons, and the impact band",
+      "Honey amber is a second-decision colour, not a decoration",
+      "Lora for headings and big numbers; Inter for everything the shopper acts on",
+      "Brown-tinted shadows (`warm-*`), never grey",
+      "12px is the default corner; pills for badges and value chips",
+      "Light and dark are both first-class; every colour has a dark twin"
+    ],
+    "rules": [
+      { "name": "The One Hue Rule", "body": "Forest is the only colour that may fill a section. Honey may fill a button; nothing else may fill anything.", "section": "colors" },
+      { "name": "The Tinted Secondary Rule", "body": "Secondary text on a Forest surface is Paper at reduced opacity (90%, never lower than 85%); on a Paper surface it is Ink Muted. Never grey.", "section": "colors" },
+      { "name": "The Dark Twin Rule", "body": "Every light token has a dark-theme value in styles/globals.css. Hard-coded Tailwind palette colours (text-green-700, bg-blue-100) are legacy drift in the commitment strips and admin pages; new work uses the tokens.", "section": "colors" },
+      { "name": "The Serif Speaks First Rule", "body": "Every h1 and h2 is Lora. Sans headings are reserved for h3 and below.", "section": "typography" },
+      { "name": "The Tabular Numbers Rule", "body": "Any number that counts (impact totals, prices in a list) sets tabular-nums.", "section": "typography" },
+      { "name": "The Brown Shadow Rule", "body": "Shadows are tinted rgba(120, 85, 40, a). A neutral black shadow on this ground reads as a different product.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do set every colour through the HSL tokens in styles/globals.css and the Tailwind aliases (bg-primary, text-muted-foreground), so the dark theme follows for free.",
+      "Do keep secondary text on Forest at 90% Paper or stronger; 70% and 80% both fall below 4.5:1 (3.7:1 and 4.3:1).",
+      "Do use Lora for h1, h2, and counted numerals; Inter elsewhere.",
+      "Do let data-driven sections return null when empty.",
+      "Do tint shadows brown (warm-*) and borders Sand.",
+      "Do keep hover motion to 200 to 300ms with a shadow or colour change; the count-up in the impact band is the page's one authored moment."
+    ],
+    "donts": [
+      "Don't fill a section with any colour other than Forest, or a button with any colour other than Forest, Honey, Linen, or Ember.",
+      "Don't pair Honey with white or Paper text; it is 2.7:1 in dark mode.",
+      "Don't add new Tailwind palette colours (green-700, blue-100, purple-600); the commitment strips and admin pages that use them are drift to migrate, not a pattern to extend.",
+      "Don't use gradient text; emphasis is weight, size, or Forest.",
+      "Don't put a coloured border-left thicker than 1px on a card or callout.",
+      "Don't use bounce or elastic easing; ease-out only."
+    ]
+  }
+}

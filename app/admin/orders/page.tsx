@@ -540,7 +540,7 @@ export default function AdminOrdersPage() {
         </div>
         <div className="rounded-lg bg-card p-4 shadow">
           <p className="text-sm text-muted-foreground">Refunded</p>
-          <p className="mt-1 text-2xl font-bold text-purple-600 dark:text-purple-400">
+          <p className="mt-1 text-2xl font-bold text-muted-foreground">
             {orders.filter((o) => o.status === 'refunded').length}
           </p>
         </div>

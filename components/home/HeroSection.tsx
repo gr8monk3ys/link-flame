@@ -49,13 +49,21 @@ export default function HeroSection() {
 
         <div className="lg:col-span-7">
           <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-secondary shadow-warm-lg sm:aspect-[3/2]">
+            {/* Largest element in the mobile viewport, so it is the LCP
+                candidate. `preload` (Next 16's name for `priority`) emits the
+                <link rel="preload">; `fetchPriority="high"` is what moves the
+                request ahead of the font and script queue, and Next 16 no
+                longer sets it for you. `sizes` mirrors the real layout: full
+                container width below lg (the container has 1rem side
+                padding), ~55% of the 1400px-capped container above it. */}
             <Image
               src="/images/soap-bars.jpg"
               alt="Stacked bars of plastic-free soap"
               fill
-              sizes="(max-width: 1024px) 100vw, 58vw"
+              sizes="(max-width: 1023px) calc(100vw - 2rem), (max-width: 1400px) 55vw, 770px"
               className="object-cover"
-              priority
+              preload
+              fetchPriority="high"
             />
           </div>
         </div>

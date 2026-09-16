@@ -1,21 +1,19 @@
+# Dependabot retune 2026-09-10: this repo is deployed, so version updates stay on,
+# but monthly with a small PR cap. Security updates are a repo setting and unaffected.
 version: 2
 updates:
-  # Enable version updates for npm
-  # npm version bumps handled by the dep-hygiene loop
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 0
-    groups:
-      development-dependencies:
-        dependency-type: "development"
-      production-dependencies:
-        dependency-type: "production"
-
-  # Enable version updates for GitHub Actions
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 2
+- package-ecosystem: npm
+  directory: /
+  schedule:
+    interval: monthly
+  open-pull-requests-limit: 3
+  groups:
+    development-dependencies:
+      dependency-type: development
+    production-dependencies:
+      dependency-type: production
+- package-ecosystem: github-actions
+  directory: /
+  schedule:
+    interval: monthly
+  open-pull-requests-limit: 3
