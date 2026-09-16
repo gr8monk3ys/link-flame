@@ -7,6 +7,8 @@ import { useCart } from '@/lib/providers/CartProvider';
 import { useSavedItems } from '@/hooks/useSavedItems';
 import { toast } from 'sonner';
 import { ImperfectBadge } from '@/components/imperfect';
+import { Button } from '@/components/ui/button';
+import { AlertTriangle, RefreshCw } from 'lucide-react';
 
 interface Product {
   id: string;
@@ -29,6 +31,9 @@ interface Product {
 interface ProductGridProps {
   products: Product[];
   isLoading?: boolean;
+  /** True when the catalogue request itself failed, as opposed to returning nothing. */
+  loadFailed?: boolean;
+  onRetry?: () => void;
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
@@ -84,6 +89,35 @@ function ProductGridEmptyState() {
       <div>
         <h3 className="mt-2 text-sm font-medium text-foreground">No products found</h3>
         <p className="mt-1 text-sm text-muted-foreground">Try adjusting your filters</p>
+      </div>
+    </div>
+  );
+}
+
+function ProductGridErrorState({ onRetry }: { onRetry?: () => void }) {
+  return (
+    <div
+      role="alert"
+      className="flex min-h-[400px] items-center justify-center rounded-lg border-2 border-dashed border-destructive/30 bg-card p-12 text-center"
+    >
+      <div className="max-w-sm">
+        <AlertTriangle
+          className="mx-auto size-6 text-destructive"
+          aria-hidden="true"
+        />
+        <h3 className="mt-4 font-serif text-xl text-foreground">
+          We could not load the shelves
+        </h3>
+        <p className="mt-2 text-sm text-muted-foreground">
+          This one is on us, not on your filters. The product catalogue did not
+          answer just now. Give it another go in a moment.
+        </p>
+        {onRetry ? (
+          <Button variant="outline" size="sm" className="mt-6" onClick={onRetry}>
+            <RefreshCw className="mr-2 size-4" aria-hidden="true" />
+            Try again
+          </Button>
+        ) : null}
       </div>
     </div>
   );
@@ -346,6 +380,8 @@ function ProductPagination({
 function ProductGrid({
   products,
   isLoading,
+  loadFailed,
+  onRetry,
   currentPage,
   totalPages,
   onPageChange,
@@ -392,6 +428,10 @@ function ProductGrid({
 
   if (isLoading) {
     return <ProductGridLoading />;
+  }
+
+  if (loadFailed) {
+    return <ProductGridErrorState onRetry={onRetry} />;
   }
 
   if (products.length === 0) {
