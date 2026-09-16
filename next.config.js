@@ -62,6 +62,17 @@ const nextConfig = {
     serverActions: {
       allowedOrigins: ['localhost:3000'],
     },
+    // Inline the global stylesheet into the document instead of linking it.
+    // Measured through an HTTP/2 proxy with Lighthouse mobile throttling: the
+    // 21 KB render-blocking stylesheet was requested at 0.6 s and finished
+    // last at 2.6 s, behind ~19 script chunks and the hero image that share
+    // the same multiplexed connection, so first paint waited on the slowest
+    // stream. With the CSS in the HTML, first paint needs nothing but the
+    // document (FCP 2.67 s -> 0.93 s, Lighthouse 92 -> 100). Cost: Next
+    // repeats the CSS in the RSC payload, so the home document carries three
+    // copies and grew from 27 KB to 98 KB gzipped. style-src already allows
+    // 'unsafe-inline' (lib/csp.ts), so no CSP change is needed.
+    inlineCss: true,
   },
   turbopack: {
     // Pin Turbopack root to this workspace to avoid monorepo lockfile ambiguity warnings.
