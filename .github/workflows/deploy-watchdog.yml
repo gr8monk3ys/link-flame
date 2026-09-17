@@ -1,0 +1,81 @@
+name: Deploy Watchdog
+
+# Guards the failure mode of 2026-09-14/15: Vercel's free-tier cap of 100
+# deploys per day was hit fleet-wide, and merges past the cap were silently
+# dropped — every PR "landed" green, no deployment happened, and healthcalc
+# served a stale build for two days before anyone noticed. CI is honest about
+# the code and blind to the outcome. This check fails loudly when the newest
+# default-branch commit has no successful Production deployment attached,
+# which is exactly what that outage looked like from the GitHub side.
+#
+# Vercel records each deploy as a GitHub Deployment (environment "Production")
+# on the deployed commit, so this needs only the repo's own API — no Vercel
+# token, nothing to rotate.
+
+on:
+  schedule:
+    - cron: '41 9 * * *' # daily; a scheduled failure emails the workflow's author
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: read
+
+jobs:
+  verify:
+    name: Latest main commit has a live Production deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check newest commit for a successful Production deployment
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const { data: repoInfo } = await github.rest.repos.get({ owner, repo });
+            const branch = repoInfo.default_branch;
+            const { data: head } = await github.rest.repos.getCommit({ owner, repo, ref: branch });
+
+            const ageMinutes = (Date.now() - new Date(head.commit.committer.date)) / 60000;
+            core.info(`${branch} head: ${head.sha} (${Math.round(ageMinutes)} min old)`);
+
+            // A build takes a few minutes; give a fresh merge generous headroom
+            // before declaring the pipeline broken.
+            if (ageMinutes < 45) {
+              core.info('Commit is fresh; a deploy may still be in flight. Passing.');
+              return;
+            }
+
+            const { data: deployments } = await github.rest.repos.listDeployments({
+              owner, repo, sha: head.sha, environment: 'Production', per_page: 5,
+            });
+            if (deployments.length === 0) {
+              core.setFailed(
+                `No Production deployment exists for ${branch}@${head.sha.slice(0, 7)}. ` +
+                'This is what the 2026-09-14/15 outage looked like: merges land, nothing ' +
+                'deploys (Vercel free tier: 100 deploys/day, excess merges dropped silently). ' +
+                'Check the Vercel project for a dropped or failed build and redeploy the head.'
+              );
+              return;
+            }
+
+            // Pass if ANY deployment on this commit ever reached 'success'.
+            // Vercel opens a second deployment for a redeploy and marks the
+            // superseded one 'inactive', so reading only the newest status of
+            // only the newest deployment would fail a perfectly live site.
+            const seen = [];
+            for (const deployment of deployments) {
+              const { data: statuses } = await github.rest.repos.listDeploymentStatuses({
+                owner, repo, deployment_id: deployment.id, per_page: 20,
+              });
+              const states = statuses.map((status) => status.state);
+              seen.push(`${deployment.id}:[${states.join(',') || 'no status'}]`);
+              if (states.includes('success')) {
+                core.info(`Production deployment ${deployment.id} reached success. All good.`);
+                return;
+              }
+            }
+
+            core.setFailed(
+              `No Production deployment for ${head.sha.slice(0, 7)} ever reached 'success' — ` +
+              `states seen: ${seen.join(' ')}. Inspect the deployment in Vercel.`
+            );
