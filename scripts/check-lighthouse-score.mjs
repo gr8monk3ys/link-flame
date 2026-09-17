@@ -18,7 +18,11 @@ import { spawnSync } from "node:child_process";
 // does. A floor that flakes gets bypassed, and a bypassed check is no check at
 // all. Raise a floor whenever the real score improves.
 const SCORE_FLOORS = {
-  performance: 98,
+  // 97 = two under the worst score a shared GitHub runner has produced for
+  // these routes (99 on /, 100 on the other two). Locally the same build
+  // measures 100 everywhere; the runner is the slower of the two environments,
+  // so it is the one the floor is set from.
+  performance: 97,
   accessibility: 100,
   // Not 100, and deliberately not "fixed" by touching the CSP. Every page
   // loses the same 4 points to the `errors-in-console` audit because the CSP
@@ -42,14 +46,15 @@ const ROUTE_FLOOR_OVERRIDES = {
     // catalogue grid renders below a placeholder shorter than the loaded
     // content, so the page jumps once products arrive. Fixing the placeholder
     // height should take this route back to the global floor.
-    performance: 74,
+    // 73 = two under the runner's 75 (76 locally).
+    performance: 73,
     // `select-name`: the sort <select> has no associated label.
     accessibility: 95,
   },
   "/blogs": {
     // Server-rendered from the database, so it varies where the static routes
-    // do not (99, 99, 100 observed).
-    performance: 97,
+    // do not (99, 99, 100 locally). 96 = two under the runner's 98.
+    performance: 96,
     // `target-size`: the category chips are under 24x24 px.
     accessibility: 96,
   },
