@@ -29,7 +29,8 @@
     "test:e2e:debug": "playwright test --debug",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:report": "playwright show-report",
-    "analyze": "ANALYZE=true next build"
+    "analyze": "ANALYZE=true next build",
+    "lighthouse:ci": "node scripts/check-lighthouse-score.mjs http://127.0.0.1:3000 / /products /blogs /guides-and-tips /about-us"
   },
   "overrides": {
     "qs": "6.16.0",

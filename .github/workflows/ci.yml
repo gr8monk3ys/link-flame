@@ -224,6 +224,94 @@ jobs:
           path: .next/
           retention-days: 1
 
+  # Lighthouse score floors on the public routes, against the production
+  # build served with the same Postgres service + seed the E2E job uses.
+  # Floors live in scripts/check-lighthouse-score.mjs, along with a
+  # compressed-byte cap on the home document (experimental.inlineCss made
+  # the HTML carry the stylesheet, and a score alone would not notice it
+  # slowly growing). Desktop preset: mobile throttling is too noisy on
+  # shared runners; production mobile numbers are measured separately.
+  lighthouse:
+    name: Lighthouse (score floors)
+    runs-on: ubuntu-latest
+    needs: [lint, unit-tests]
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: linkflame
+          POSTGRES_PASSWORD: linkflame
+          POSTGRES_DB: linkflame_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U linkflame -d linkflame_test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    env:
+      DATABASE_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
+      DIRECT_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
+      NEXTAUTH_URL: http://127.0.0.1:3000
+      NEXTAUTH_SECRET: lighthouse-secret-for-ci-only-not-production
+      NEXT_PUBLIC_APP_URL: http://127.0.0.1:3000
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Setup test database
+        run: npx prisma db push
+
+      - name: Seed test database
+        run: npx prisma db seed
+
+      - name: Build application
+        run: npm run build
+
+      - name: Start application
+        run: |
+          npm run start -- -p 3000 > /tmp/link-flame.log 2>&1 &
+          echo $! > /tmp/link-flame.pid
+          for _ in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:3000/ > /dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          cat /tmp/link-flame.log
+          exit 1
+
+      - name: Enforce Lighthouse scores
+        run: npm run lighthouse:ci
+
+      - name: Upload Lighthouse artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-artifacts
+          path: artifacts/lighthouse
+          retention-days: 7
+
+      - name: Stop application
+        if: always()
+        run: |
+          if [ -f /tmp/link-flame.pid ]; then
+            kill "$(cat /tmp/link-flame.pid)" || true
+          fi
+          cat /tmp/link-flame.log || true
+
   # Database migration check (dry run)
   migration-check:
     name: Migration Check

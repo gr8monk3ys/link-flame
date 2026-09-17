@@ -54,5 +54,8 @@ yarn-error.log*
 .vercel
 .env*
 
+# Lighthouse reports from scripts/check-lighthouse-score.mjs
+artifacts/
+
 # Claude Code session artifacts
 .claude/
