@@ -40,33 +40,33 @@ const SCORE_FLOORS = {
 // Routes with a known, deterministic defect are pinned at what they score
 // today so a further regression still fails while the existing one is fixed.
 // Delete the override once the route reaches the global floor.
+//
+// /products, /guides-and-tips and /about-us used to appear here. Their defects
+// are fixed (the catalogue now server-renders instead of swapping a 200px
+// placeholder for a 3,600px page, the page-size <select> has a label, the
+// guide cards are <h2>, and the "Learn more" link says what it leads to), so
+// the three routes are gone from this list and held to the global floors:
+// measured locally over three runs, /products 98/98/99 and 100 everywhere
+// else, /guides-and-tips and /about-us 100 in every category.
 const ROUTE_FLOOR_OVERRIDES = {
-  "/products": {
-    // `cumulative-layout-shift` 0.59 (76/100, three identical runs): the
-    // catalogue grid renders below a placeholder shorter than the loaded
-    // content, so the page jumps once products arrive. Fixing the placeholder
-    // height should take this route back to the global floor.
-    // 73 = two under the runner's 75 (76 locally).
-    performance: 73,
-    // `select-name`: the sort <select> has no associated label.
-    accessibility: 95,
-  },
   "/blogs": {
     // Server-rendered from the database, so it varies where the static routes
-    // do not (99, 99, 100 locally). 96 = two under the runner's 98.
+    // do not (99, 100, 100 locally). 96 = two under the runner's 98. This one
+    // is runner variance rather than a defect, so it outlives the fixes above.
     performance: 96,
-    // `target-size`: the category chips are under 24x24 px.
+    // `target-size`: the category chips on the post cards are text-xs links
+    // well under 24x24 px. Left deliberately: they sit inline in the card
+    // metadata line, and padding them out to 24px either overlaps the title
+    // above or re-spaces every card. That is a design decision, not a bug fix.
     accessibility: 96,
   },
-  "/guides-and-tips": {
-    // `heading-order`: card titles are <h3> under an <h1> with no <h2>.
-    accessibility: 98,
-  },
-  "/about-us": {
-    // `link-text`: a "Learn more" link with no descriptive text.
-    seo: 91,
-  },
 };
+
+// Layout shift is what put /products at 73. A shift small enough to keep the
+// performance score at 97 is still a page that jumps, so it gets its own cap
+// rather than being left to the score to notice. Measured 2026-09-16 over
+// three runs: 0 on all five routes.
+const CLS_MAX = 0.05;
 
 // Set LIGHTHOUSE_ATTEMPTS=1 for a quick local measurement pass.
 const MAX_ATTEMPTS = Number.parseInt(process.env.LIGHTHOUSE_ATTEMPTS ?? "4", 10);
@@ -121,12 +121,22 @@ try {
     const failures = Object.entries(bestAttempt.scores).filter(([k, score]) => score < (floors[k] ?? 100));
     copyFileSync(bestAttempt.reportPath, join(artifactDir, `${artifactSlug(route)}.json`));
 
+    const cls = readCls(bestAttempt.reportPath);
+    console.log(`[lighthouse] ${route} cumulative-layout-shift = ${cls} (cap ${CLS_MAX})`);
+
     if (failures.length > 0) {
       failedRoutes.push(route);
       console.error(
         `[lighthouse] ${route} fell below its score floors after ${attemptsRun} attempt(s): ${failures
           .map(([category, score]) => `${category}=${score} (floor ${floors[category] ?? 100})`)
           .join(", ")}`
+      );
+      logFailureDiagnostics(bestAttempt.reportPath);
+    } else if (cls > CLS_MAX) {
+      failedRoutes.push(route);
+      console.error(
+        `[lighthouse] ${route} shifted its layout: cumulative-layout-shift ${cls} is over the ${CLS_MAX} cap. ` +
+          "Something is rendering after the server HTML without reserving its space."
       );
       logFailureDiagnostics(bestAttempt.reportPath);
     }
@@ -213,6 +223,11 @@ function checkDocumentBudget(url) {
 
 function warmRoute(url) {
   spawnSync("curl", ["-fsSLo", "/dev/null", url], { stdio: "ignore" });
+}
+
+function readCls(reportPath) {
+  const report = JSON.parse(readFileSync(reportPath, "utf-8"));
+  return Math.round((report.audits["cumulative-layout-shift"]?.numericValue ?? 0) * 1000) / 1000;
 }
 
 function artifactSlug(route) {

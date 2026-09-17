@@ -16,6 +16,8 @@ interface ProductValue {
 interface ActiveFiltersProps {
   className?: string;
   queryString: string;
+  /** Values rendered by the server, so the chips do not pop in after a fetch. */
+  initialValues?: ProductValue[];
 }
 
 function pushWithParams(
@@ -27,10 +29,10 @@ function pushWithParams(
   router.push(query ? `${pathname}?${query}` : pathname);
 }
 
-export function ActiveFilters({ className, queryString }: ActiveFiltersProps) {
+export function ActiveFilters({ className, queryString, initialValues }: ActiveFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const [allValues, setAllValues] = useState<ProductValue[]>([]);
+  const [allValues, setAllValues] = useState<ProductValue[]>(initialValues ?? []);
 
   const params = useMemo(() => new URLSearchParams(queryString), [queryString]);
   const selectedValueSlugs = useMemo(() => params.get('values')?.split(',').filter(Boolean) || [], [params]);
@@ -60,9 +62,10 @@ export function ActiveFilters({ className, queryString }: ActiveFiltersProps) {
   }, []);
 
   useEffect(() => {
+    if (initialValues) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void loadValues();
-  }, [loadValues]);
+  }, [initialValues, loadValues]);
 
   const removeValueFilter = useCallback((slug: string) => {
     const nextParams = new URLSearchParams(queryString);

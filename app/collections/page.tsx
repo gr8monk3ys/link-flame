@@ -1,6 +1,8 @@
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import CollectionsPageClient from './CollectionsPageClient';
+import CollectionsPageSkeleton from './CollectionsPageSkeleton';
+import { getProductValues } from '@/lib/products/values';
 
 export const metadata: Metadata = {
   title: 'Collections',
@@ -8,19 +10,21 @@ export const metadata: Metadata = {
     'Explore sustainable collections and filter products by category, rating, value, and price.',
 };
 
-function CollectionsPageFallback() {
-  return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="h-8 w-40 animate-pulse rounded bg-muted" />
-      <div className="mt-6 h-40 animate-pulse rounded-lg bg-muted" />
-    </div>
-  );
-}
+// The catalogue reads the query string (`useSearchParams`) at the top of its
+// client tree. On a statically prerendered route that bails the whole tree out
+// to client rendering: the HTML carried only the Suspense fallback, the footer
+// sat at y=446, and hydration then grew the document to ~3,600px - one layout
+// shift worth 0.54 of a 0.59 CLS. Rendering this route per request instead
+// puts the real page in the HTML, so the first frame and the hydrated frame
+// are the same frame.
+export const dynamic = 'force-dynamic';
 
-export default function CollectionsPage() {
+export default async function CollectionsPage() {
+  const values = await getProductValues();
+
   return (
-    <Suspense fallback={<CollectionsPageFallback />}>
-      <CollectionsPageClient />
+    <Suspense fallback={<CollectionsPageSkeleton />}>
+      <CollectionsPageClient initialValues={values} />
     </Suspense>
   );
 }

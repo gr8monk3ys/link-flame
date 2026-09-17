@@ -61,7 +61,7 @@ export default function EcoLivingPage() {
                   <div className="mb-4 inline-flex self-start rounded-lg bg-primary/10 p-2">
                     <Icon className="size-6 text-primary" aria-hidden="true" />
                   </div>
-                  <CardTitle className="flex items-center justify-between">
+                  <CardTitle as="h2" className="flex items-center justify-between">
                     {category.title}
                     <ArrowRight className="size-5 text-muted-foreground transition-transform group-hover:translate-x-1" />
                   </CardTitle>
