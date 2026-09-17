@@ -5,6 +5,7 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import FilterSidebar from '@/components/collections/FilterSidebar';
 import ProductGrid from '@/components/collections/ProductGrid';
 import { ValueFilterBar, ValueFilterSidebar, ActiveFilters } from '@/components/filters';
+import type { ProductValueSummary } from '@/lib/products/values';
 import { useDebounce } from '@/lib/hooks/useDebounce';
 
 interface ProductValue {
@@ -373,7 +374,17 @@ function useCollectionsPageState() {
   };
 }
 
-export default function CollectionsPageClient() {
+interface CollectionsPageClientProps {
+  /**
+   * The "Shop by Values" list, read from the database during the server
+   * render. Handing it down means the values bar and the values sidebar paint
+   * their real contents in the first frame; both used to start as skeletons
+   * and grow when their own `/api/products/values` calls resolved.
+   */
+  initialValues: ProductValueSummary[];
+}
+
+export default function CollectionsPageClient({ initialValues }: CollectionsPageClientProps) {
   const {
     filters,
     queryString,
@@ -405,10 +416,10 @@ export default function CollectionsPageClient() {
 
       <div className="border-b border-border py-6">
         <h2 className="mb-4 text-lg font-semibold text-foreground">Shop by Values</h2>
-        <ValueFilterBar />
+        <ValueFilterBar initialValues={initialValues} />
       </div>
 
-      <ActiveFilters className="py-4" queryString={queryString} />
+      <ActiveFilters className="py-4" queryString={queryString} initialValues={initialValues} />
 
       <div className="flex flex-col gap-8 py-8 lg:flex-row">
         <div className="w-full space-y-6 lg:w-64">
@@ -416,6 +427,7 @@ export default function CollectionsPageClient() {
             title="Values"
             collapsible={true}
             defaultExpanded={true}
+            initialValues={initialValues}
           />
           <FilterSidebar
             filters={filters}

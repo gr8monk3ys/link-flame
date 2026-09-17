@@ -70,7 +70,13 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
 
   return (
     <>
-      {/* Search Button - Mobile: icon only, Desktop: with shortcut hint */}
+      {/* Search Button - Mobile: icon only, Desktop: with shortcut hint.
+
+          No aria-label: it read "Search" while the button visibly read
+          "Search... Cmd K", so someone using speech input to say the words in
+          front of them could not reach this control (WCAG 2.5.3 Label in
+          Name). The name now comes from whichever of the two layouts below is
+          the visible one. */}
       <button
         type="button"
         onClick={openSearch}
@@ -78,7 +84,6 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
           'flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary',
           className
         )}
-        aria-label="Search"
       >
         {/* Mobile: Just the icon */}
         <div className="flex items-center lg:hidden">

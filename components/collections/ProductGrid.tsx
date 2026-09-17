@@ -299,7 +299,15 @@ function ProductPagination({
           </p>
         </div>
         <div className="flex items-center space-x-4">
+          {/* The page-size control had no accessible name at all: a screen
+              reader reached a combobox and announced nothing. The label is
+              visible rather than sr-only - the number in the control ("Show
+              24") does not say what it counts either. */}
+          <label htmlFor="products-per-page" className="text-sm text-muted-foreground">
+            Per page
+          </label>
           <select
+            id="products-per-page"
             value={pageSize}
             onChange={(e) => onPageSizeChange(Number(e.target.value))}
             className="rounded-md border border-border py-2 pl-3 pr-10 text-sm"

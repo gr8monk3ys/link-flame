@@ -151,7 +151,7 @@ export default function AboutUsPage() {
             </CardHeader>
             <CardContent>
               <Link href="/write-for-us" className={buttonVariants()}>
-                Learn more
+                See our writer guidelines
               </Link>
             </CardContent>
           </Card>

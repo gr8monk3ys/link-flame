@@ -15,6 +15,12 @@ interface ProductValue {
 
 interface ValueFilterBarProps {
   className?: string;
+  /**
+   * Values rendered by the server. When present the bar paints its real chips
+   * in the very first frame instead of a skeleton the fetch later replaces -
+   * that swap was a third of this page's layout shift.
+   */
+  initialValues?: ProductValue[];
 }
 
 // Value icons using SVG paths (same as ValueBadge)
@@ -94,14 +100,14 @@ const defaultIcon = (
   </svg>
 );
 
-export function ValueFilterBar({ className }: ValueFilterBarProps) {
+export function ValueFilterBar({ className, initialValues }: ValueFilterBarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const [values, setValues] = useState<ProductValue[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [values, setValues] = useState<ProductValue[]>(initialValues ?? []);
+  const [loading, setLoading] = useState(!initialValues);
   const [showLeftScroll, setShowLeftScroll] = useState(false);
   const [showRightScroll, setShowRightScroll] = useState(false);
 
@@ -110,8 +116,10 @@ export function ValueFilterBar({ className }: ValueFilterBarProps) {
     return searchParams.get('values')?.split(',').filter(Boolean) || [];
   }, [searchParams]);
 
-  // Fetch available values
+  // Fetch available values. Skipped when the server already handed them over.
   useEffect(() => {
+    if (initialValues) return;
+
     async function fetchValues() {
       try {
         const response = await fetch('/api/products/values');
@@ -130,7 +138,7 @@ export function ValueFilterBar({ className }: ValueFilterBarProps) {
       }
     }
     fetchValues();
-  }, []);
+  }, [initialValues]);
 
   // Check scroll position for gradient indicators
   const checkScrollPosition = useCallback(() => {
@@ -181,11 +189,14 @@ export function ValueFilterBar({ className }: ValueFilterBarProps) {
 
   if (loading) {
     return (
-      <div className={cn('flex gap-2 overflow-hidden', className)}>
+      <div className={cn('flex gap-2 overflow-hidden px-0.5 py-1', className)}>
         {[1, 2, 3, 4, 5].map((i) => (
           <div
             key={i}
-            className="h-9 w-28 shrink-0 animate-pulse rounded-full bg-muted"
+            /* h-[38px] = py-2 + text-sm line box + the chip's 1px border. A
+               skeleton one size off pushes the whole catalogue down when the
+               real chips land. */
+            className="h-[38px] w-28 shrink-0 animate-pulse rounded-full bg-muted"
           />
         ))}
       </div>

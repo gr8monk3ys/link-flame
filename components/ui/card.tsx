@@ -29,11 +29,17 @@ const CardHeader = React.forwardRef<
 ))
 CardHeader.displayName = "CardHeader"
 
+/**
+ * `as` exists because a card title's correct heading level depends on what is
+ * above it, not on the card. A grid of cards sitting directly under the page
+ * <h1> needs <h2>; defaulting every one to <h3> skipped a level and failed
+ * `heading-order`. The fix is the level, never demoting the heading to a div.
+ */
 const CardTitle = React.forwardRef<
   HTMLHeadingElement,
-  React.HTMLAttributes<HTMLHeadingElement>
->(({ className, children, ...props }, ref) => (
-  <h3
+  React.HTMLAttributes<HTMLHeadingElement> & { as?: "h2" | "h3" | "h4" | "h5" | "h6" }
+>(({ className, children, as: Heading = "h3", ...props }, ref) => (
+  <Heading
     ref={ref}
     className={cn(
       "text-lg font-semibold leading-none tracking-tight",
@@ -42,7 +48,7 @@ const CardTitle = React.forwardRef<
     {...props}
   >
     {children ?? <span className="sr-only">Card title</span>}
-  </h3>
+  </Heading>
 ))
 CardTitle.displayName = "CardTitle"
 

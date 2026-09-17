@@ -24,12 +24,10 @@ interface MainNavProps {
 }
 
 export function MainNav({ className, items }: MainNavProps) {
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
+  // The desktop menu used to be gated on a `mounted` flag, so the server sent
+  // an empty <div> and the links appeared a frame after hydration - the header
+  // grew from 116x24 to 518x40 in front of the reader. Radix's NavigationMenu
+  // renders the same markup on both sides, so there is nothing to gate on.
   const [showMobileMenu, setShowMobileMenu] = React.useState(false);
 
   return (
@@ -62,7 +60,7 @@ export function MainNav({ className, items }: MainNavProps) {
         </svg>
       </button>
       <div className="hidden gap-6 md:flex md:gap-10">
-        {mounted && items ? (
+        {items ? (
           <NavigationMenu>
             <NavigationMenuList>
               {items.map((item) =>

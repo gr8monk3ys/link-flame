@@ -18,6 +18,12 @@ interface ValueFilterSidebarProps {
   title?: string;
   collapsible?: boolean;
   defaultExpanded?: boolean;
+  /**
+   * Values rendered by the server. Without them this list starts as a five-row
+   * skeleton and grows to however many values the database holds - roughly
+   * 900px of growth in the left column, above the fold, on every page load.
+   */
+  initialValues?: ProductValue[];
 }
 
 export function ValueFilterSidebar({
@@ -25,13 +31,14 @@ export function ValueFilterSidebar({
   title = 'Shop by Values',
   collapsible = true,
   defaultExpanded = true,
+  initialValues,
 }: ValueFilterSidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const [values, setValues] = useState<ProductValue[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [values, setValues] = useState<ProductValue[]>(initialValues ?? []);
+  const [loading, setLoading] = useState(!initialValues);
   const [expanded, setExpanded] = useState(defaultExpanded);
 
   // Get currently selected values from URL - memoized to prevent recalculation
@@ -39,8 +46,10 @@ export function ValueFilterSidebar({
     return searchParams.get('values')?.split(',').filter(Boolean) || [];
   }, [searchParams]);
 
-  // Fetch available values
+  // Fetch available values. Skipped when the server already handed them over.
   useEffect(() => {
+    if (initialValues) return;
+
     async function fetchValues() {
       try {
         const response = await fetch('/api/products/values');
@@ -59,7 +68,7 @@ export function ValueFilterSidebar({
       }
     }
     fetchValues();
-  }, []);
+  }, [initialValues]);
 
   // Toggle value selection
   const toggleValue = useCallback((slug: string) => {
