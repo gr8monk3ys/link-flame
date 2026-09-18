@@ -18,13 +18,19 @@
 // `replaysOnErrorSampleRate` setting has always been a no-op and no replay
 // code is in the bundle. It stays off; turning it on is a product decision,
 // not a bundle one.
+import { SENTRY_ENABLED, SENTRY_ENV } from './lib/sentry-enabled'
+
 type Sdk = typeof import('./lib/sentry-browser')
 type Queued =
   | { kind: 'error'; event: ErrorEvent }
   | { kind: 'unhandledrejection'; event: PromiseRejectionEvent }
 
 const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN
-const enabled = !!dsn && typeof window !== 'undefined'
+// `SENTRY_ENABLED` keeps this to deployed Vercel environments: without it a
+// local `next build && next start` with a DSN in `.env` reports into the
+// shared production error quota. See lib/sentry-enabled.ts. Nothing below
+// runs when it is false - no listeners, and the SDK chunk is never fetched.
+const enabled = !!dsn && SENTRY_ENABLED && typeof window !== 'undefined'
 
 let sdk: Sdk | undefined
 let loading: Promise<Sdk | undefined> | undefined
@@ -68,6 +74,7 @@ function load(): Promise<Sdk | undefined> {
         window.removeEventListener('unhandledrejection', onUnhandledRejection)
         mod.init({
           dsn,
+          environment: SENTRY_ENV,
           tracesSampleRate: 0.1,
           replaysSessionSampleRate: 0,
           replaysOnErrorSampleRate: 1.0,

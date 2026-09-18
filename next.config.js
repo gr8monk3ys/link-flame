@@ -4,6 +4,16 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Inlined into the browser bundle at build time so lib/sentry-enabled.ts can
+  // tell a deploy from a laptop on the client too. Vercel only guarantees the
+  // unprefixed VERCEL_ENV; whether NEXT_PUBLIC_VERCEL_ENV reaches the client
+  // depends on a per-project "expose system environment variables" setting, so
+  // this derives it here instead of depending on that setting being on. Empty
+  // string anywhere Vercel is not building, which is what closes the gate.
+  env: {
+    NEXT_PUBLIC_VERCEL_ENV:
+      process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.VERCEL_ENV || '',
+  },
   images: {
     // Use remotePatterns instead of domains (more secure and flexible)
     remotePatterns: [
