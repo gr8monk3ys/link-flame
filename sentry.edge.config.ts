@@ -1,8 +1,14 @@
 import * as Sentry from '@sentry/nextjs'
 
+import { SENTRY_ENABLED, SENTRY_ENV } from './lib/sentry-enabled'
+
+const dsn = process.env.SENTRY_DSN
+const enabled = !!dsn && SENTRY_ENABLED
+
 Sentry.init({
-  dsn: process.env.SENTRY_DSN,
+  dsn,
   tracesSampleRate: 0.1,
   debug: false,
-  enabled: !!process.env.SENTRY_DSN,
+  environment: SENTRY_ENV,
+  enabled,
 })
