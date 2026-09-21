@@ -124,4 +124,38 @@ describe('Rate limiting over Redis', () => {
     expect((await checkStrictRateLimit('ip:192.0.2.44')).success).toBe(false);
     expect(fake.values.size).toBe(0);
   });
+
+  it('falls back to the in-memory limiter for the standard bucket when Redis is unreachable', async () => {
+    const { checkRateLimit } = await importRateLimit();
+
+    fake.setFailing(true);
+
+    // Same contract as the strict bucket: the standard ceiling (10 per 10s)
+    // is still enforced from the in-memory limiter, no request becomes a 500,
+    // and nothing is written to Redis while it is down.
+    for (let i = 0; i < 10; i += 1) {
+      expect((await checkRateLimit('ip:192.0.2.45')).success).toBe(true);
+    }
+    const blocked = await checkRateLimit('ip:192.0.2.45');
+    expect(blocked.success).toBe(false);
+    expect(blocked.remaining).toBe(0);
+    expect(blocked.limit).toBe(10);
+    expect(fake.values.size).toBe(0);
+  });
+
+  it('logs the Redis failure once per bucket and keeps serving', async () => {
+    const { checkRateLimit, checkStrictRateLimit } = await importRateLimit();
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    fake.setFailing(true);
+
+    await checkRateLimit('ip:192.0.2.46');
+    await checkRateLimit('ip:192.0.2.46');
+    await checkStrictRateLimit('ip:192.0.2.46');
+    await checkStrictRateLimit('ip:192.0.2.46');
+
+    const messages = errorSpy.mock.calls.map((call) => String(call[0]));
+    expect(messages.filter((m) => m.includes('(standard) failed'))).toHaveLength(1);
+    expect(messages.filter((m) => m.includes('(strict) failed'))).toHaveLength(1);
+  });
 });
