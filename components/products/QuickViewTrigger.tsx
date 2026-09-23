@@ -242,7 +242,7 @@ export function QuickViewTrigger({
         aria-expanded={isOpen}
       >
         {isLoading ? (
-          <Loader2 className={cn(iconSizes[size], "animate-spin text-muted-foreground")} />
+          <span className="inline-flex shrink-0 animate-spin"><Loader2 className={cn(iconSizes[size], "text-muted-foreground")} /></span>
         ) : (
           <Eye
             className={cn(

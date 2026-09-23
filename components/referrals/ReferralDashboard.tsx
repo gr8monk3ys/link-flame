@@ -87,7 +87,7 @@ export function ReferralDashboard() {
   if (sessionStatus === "loading" || loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="size-8 animate-spin text-primary" />
+        <span className="inline-flex shrink-0 animate-spin"><Loader2 className="size-8 text-primary" /></span>
       </div>
     );
   }

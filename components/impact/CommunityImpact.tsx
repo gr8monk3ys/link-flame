@@ -95,7 +95,7 @@ export function CommunityImpact({
   if (isLoading) {
     return (
       <div className={cn("flex items-center justify-center py-12", className)}>
-        <Loader2 className="size-8 animate-spin text-muted-foreground" />
+        <span className="inline-flex shrink-0 animate-spin"><Loader2 className="size-8 text-muted-foreground" /></span>
       </div>
     );
   }

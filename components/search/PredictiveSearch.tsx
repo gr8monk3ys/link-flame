@@ -263,7 +263,7 @@ export function PredictiveSearch({
         {/* Loading Spinner */}
         {isLoading && (
           <div className="absolute right-12 top-1/2 -translate-y-1/2">
-            <svg
+            <span className="inline-flex shrink-0 animate-spin" aria-hidden="true"><svg
               xmlns="http://www.w3.org/2000/svg"
               width="18"
               height="18"
@@ -273,10 +273,10 @@ export function PredictiveSearch({
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="animate-spin text-muted-foreground"
+              className="text-muted-foreground"
             >
               <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-            </svg>
+            </svg></span>
           </div>
         )}
 

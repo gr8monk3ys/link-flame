@@ -258,7 +258,7 @@ export function QuizModal({
               >
                 {isLoadingQuestions ? (
                   <>
-                    <Loader2 className="mr-2 size-4 animate-spin" />
+                    <span className="mr-2 inline-flex shrink-0 animate-spin"><Loader2 className="size-4" /></span>
                     Loading…
                   </>
                 ) : (
@@ -314,7 +314,7 @@ export function QuizModal({
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="mr-2 size-4 animate-spin" />
+                      <span className="mr-2 inline-flex shrink-0 animate-spin"><Loader2 className="size-4" /></span>
                       Getting Results…
                     </>
                   ) : (
@@ -334,7 +334,7 @@ export function QuizModal({
         {/* Loading Screen */}
         {state === 'loading' && (
           <div className="py-12 text-center">
-            <Loader2 className="mx-auto mb-4 size-12 animate-spin text-primary" />
+            <span className="mx-auto mb-4 flex w-fit shrink-0 animate-spin"><Loader2 className="size-12 text-primary" /></span>
             <h3 className="mb-2 text-xl font-semibold">
               Finding Your Perfect Products
             </h3>

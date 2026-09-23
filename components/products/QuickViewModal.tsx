@@ -555,7 +555,7 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
                     >
                       {isAddingToCart ? (
                         <>
-                          <Loader2 className="mr-2 size-5 animate-spin" />
+                          <span className="mr-2 inline-flex shrink-0 animate-spin"><Loader2 className="size-5" /></span>
                           Adding…
                         </>
                       ) : isOutOfStock ? (

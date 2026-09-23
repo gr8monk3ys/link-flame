@@ -157,7 +157,7 @@ export function ReferralCodeInput({
           disabled={disabled || loading || !code.trim()}
         >
           {loading ? (
-            <Loader2 className="size-4 animate-spin" />
+            <span className="inline-flex shrink-0 animate-spin"><Loader2 className="size-4" /></span>
           ) : (
             "Apply"
           )}

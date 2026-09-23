@@ -115,7 +115,7 @@ export function SubscriptionDashboard() {
   if (authStatus === 'loading') {
     return (
       <div className="flex items-center justify-center py-12">
-        <RefreshCw className="size-8 animate-spin text-muted-foreground" />
+        <span className="inline-flex shrink-0 animate-spin"><RefreshCw className="size-8 text-muted-foreground" /></span>
       </div>
     );
   }
@@ -215,7 +215,7 @@ export function SubscriptionDashboard() {
           disabled={isLoading}
           className="ml-auto inline-flex items-center rounded-md border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <RefreshCw className={`mr-1.5 size-4 ${isLoading ? 'animate-spin' : ''}`} />
+          <span className={`mr-1.5 inline-flex shrink-0 ${isLoading ? "animate-spin" : ""}`}><RefreshCw className="size-4" /></span>
           Refresh
         </button>
       </div>
@@ -223,7 +223,7 @@ export function SubscriptionDashboard() {
       {/* Subscriptions list */}
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
-          <RefreshCw className="size-8 animate-spin text-muted-foreground" />
+          <span className="inline-flex shrink-0 animate-spin"><RefreshCw className="size-8 text-muted-foreground" /></span>
         </div>
       ) : filteredSubscriptions.length > 0 ? (
         <div className="space-y-4">

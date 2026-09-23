@@ -205,7 +205,7 @@ export function BundleSummary({
         >
           {isLoading ? (
             <>
-              <Loader2 className="mr-2 size-4 animate-spin" />
+              <span className="mr-2 inline-flex shrink-0 animate-spin"><Loader2 className="size-4" /></span>
               Adding to Cart…
             </>
           ) : meetsMinimum ? (
