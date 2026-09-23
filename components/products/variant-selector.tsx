@@ -141,6 +141,7 @@ export function VariantSelector({
                 <button
                   key={value as string}
                   type="button"
+                  aria-pressed={isSelected}
                   onClick={() => setSelectedSize(value as string)}
                   disabled={!isAvailable}
                   className={`
@@ -182,6 +183,8 @@ export function VariantSelector({
                 <button
                   key={value as string}
                   type="button"
+                  aria-pressed={isSelected}
+                  aria-label={value as string}
                   onClick={() => setSelectedColor(value as string)}
                   disabled={!isAvailable}
                   className={`
@@ -241,6 +244,7 @@ export function VariantSelector({
                 <button
                   key={value as string}
                   type="button"
+                  aria-pressed={isSelected}
                   onClick={() => setSelectedMaterial(value as string)}
                   disabled={!isAvailable}
                   className={`
@@ -266,7 +270,7 @@ export function VariantSelector({
       {/* Variant SKU (if available) */}
       {selectedVariant?.sku && (
         <p className="text-xs text-muted-foreground">
-          SKU: {selectedVariant.sku}
+          SKU: <span translate="no">{selectedVariant.sku}</span>
         </p>
       )}
     </div>

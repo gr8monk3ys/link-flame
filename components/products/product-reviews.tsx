@@ -196,14 +196,16 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
 
               {/* Star Rating */}
               <div>
-                <label className="mb-2 block text-sm font-medium">
+                <p id="review-rating-label" className="mb-2 block text-sm font-medium">
                   Rating *
-                </label>
-                <div className="flex items-center gap-1">
+                </p>
+                <div className="flex items-center gap-1" role="group" aria-labelledby="review-rating-label">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       key={star}
                       type="button"
+                      aria-label={`${star} ${star === 1 ? 'star' : 'stars'}`}
+                      aria-pressed={star <= rating}
                       onClick={() => setRating(star)}
                       onMouseEnter={() => setHoverRating(star)}
                       onMouseLeave={() => setHoverRating(0)}

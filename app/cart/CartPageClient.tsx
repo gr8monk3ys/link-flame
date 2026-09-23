@@ -111,7 +111,7 @@ const CartItemRow = memo(({
           variant="ghost"
           size="sm"
           onClick={() => removeItem(item.id, item.variantId ?? null, item.cartItemId)}
-          aria-label="Remove item"
+          aria-label={`Remove ${item.title} from cart`}
           className="h-8 px-2"
         >
           <svg aria-hidden="true"
@@ -137,7 +137,7 @@ const CartItemRow = memo(({
           size="sm"
           onClick={handleSaveForLater}
           disabled={isSaving}
-          aria-label="Save for later"
+          aria-label={`Save ${item.title} for later`}
           className="h-8 px-2 text-xs"
         >
           {isSaving ? (

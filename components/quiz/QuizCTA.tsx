@@ -64,7 +64,7 @@ export function QuizCTA({
         >
           <Sparkles className="size-4" />
           Find your perfect products
-          <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+          <span className="inline-flex transition-transform group-hover:translate-x-1"><ArrowRight className="size-4" /></span>
         </button>
 
         {hasOpened && (

@@ -107,7 +107,8 @@ export function BrandFilters({ className }: BrandFiltersProps) {
       <div className="border-b pb-4">
         <button
           type="button"
-          onClick={() => setShowCertifications(!showCertifications)}
+          onClick={() => setShowCertifications((v) => !v)}
+          aria-expanded={showCertifications}
           className="flex w-full items-center justify-between py-2 text-left font-medium"
         >
           <span>Certifications</span>
@@ -123,7 +124,7 @@ export function BrandFilters({ className }: BrandFiltersProps) {
             {BRAND_CERTIFICATIONS.map((cert) => {
               const isActive = activeCertification === cert.slug
               return (
-                <button
+                <button aria-pressed={isActive}
                   key={cert.slug}
                   type="button"
                   onClick={() => updateFilter('certification', cert.slug)}
@@ -170,7 +171,8 @@ export function BrandFilters({ className }: BrandFiltersProps) {
       <div>
         <button
           type="button"
-          onClick={() => setShowValues(!showValues)}
+          onClick={() => setShowValues((v) => !v)}
+          aria-expanded={showValues}
           className="flex w-full items-center justify-between py-2 text-left font-medium"
         >
           <span>Brand Values</span>
@@ -186,7 +188,7 @@ export function BrandFilters({ className }: BrandFiltersProps) {
             {BRAND_VALUES.map((val) => {
               const isActive = activeValue === val.slug
               return (
-                <button
+                <button aria-pressed={isActive}
                   key={val.slug}
                   type="button"
                   onClick={() => updateFilter('value', val.slug)}

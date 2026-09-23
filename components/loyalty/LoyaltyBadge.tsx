@@ -142,6 +142,7 @@ export function LoyaltyBadge({ className, showPoints = true, compact = false }: 
           className
         )}
         title={`${tierConfig.label} - ${loyaltyData.availablePoints} points`}
+        aria-label={`${tierConfig.label} tier, ${formatNumber(loyaltyData.availablePoints)} points`}
       >
         {tierConfig.icon}
         <span>{loyaltyData.availablePoints}</span>
@@ -210,7 +211,7 @@ export function LoyaltyBadgeIcon({ className }: { className?: string }) {
   const tierConfig = TIER_CONFIG[tier] || TIER_CONFIG.SEEDLING
 
   return (
-    <Link
+    <Link aria-label={`${tierConfig.label} tier`}
       href="/account/loyalty"
       className={cn(
         'flex size-8 items-center justify-center rounded-full border transition-colors hover:opacity-80',

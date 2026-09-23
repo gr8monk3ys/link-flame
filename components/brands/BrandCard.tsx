@@ -73,7 +73,7 @@ export const BrandCard = memo(function BrandCard({ brand, variant = 'default', c
 
         {/* Info */}
         <div className="min-w-0 flex-1">
-          <h3 className="truncate font-semibold text-foreground transition-colors group-hover:text-primary">
+          <h3 className="truncate font-semibold text-foreground transition-colors group-hover:text-primary" translate="no">
             {brand.name}
           </h3>
           {brand.productCount !== undefined && (
@@ -112,7 +112,7 @@ export const BrandCard = memo(function BrandCard({ brand, variant = 'default', c
 
         {/* Content */}
         <div className="p-6">
-          <h3 className="text-xl font-bold text-foreground transition-colors group-hover:text-primary">
+          <h3 className="text-xl font-bold text-foreground transition-colors group-hover:text-primary" translate="no">
             {brand.name}
           </h3>
 
@@ -186,7 +186,7 @@ export const BrandCard = memo(function BrandCard({ brand, variant = 'default', c
 
       {/* Content */}
       <div className="p-4">
-        <h3 className="font-semibold text-foreground transition-colors group-hover:text-primary">
+        <h3 className="font-semibold text-foreground transition-colors group-hover:text-primary" translate="no">
           {brand.name}
         </h3>
 

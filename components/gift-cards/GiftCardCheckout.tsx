@@ -149,7 +149,7 @@ export function GiftCardCheckout({
             </div>
             <div>
               <p className="font-medium text-green-800 dark:text-green-200">Gift Card Applied</p>
-              <p className="font-mono text-sm text-green-700 dark:text-green-300">{appliedCard.code}</p>
+              <p className="font-mono text-sm text-green-700 dark:text-green-300" translate="no">{appliedCard.code}</p>
               <p className="mt-1 text-sm text-green-700 dark:text-green-400">
                 {formatPrice(appliedCard.amountApplied)} discount applied
                 {appliedCard.remainingBalance > 0 && (
@@ -200,11 +200,7 @@ export function GiftCardCheckout({
           </svg>
           <span className="font-medium text-foreground">Have a gift card?</span>
         </div>
-        <svg aria-hidden="true"
-          className={cn(
-            'size-5 text-muted-foreground transition-transform',
-            isExpanded && 'rotate-180'
-          )}
+        <span className={cn('inline-flex transition-transform', isExpanded && 'rotate-180')}><svg aria-hidden="true" className="size-5 text-muted-foreground"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -215,7 +211,7 @@ export function GiftCardCheckout({
             strokeWidth={2}
             d="M19 9l-7 7-7-7"
           />
-        </svg>
+        </svg></span>
       </button>
 
       {isExpanded && (

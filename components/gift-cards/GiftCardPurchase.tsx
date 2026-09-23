@@ -198,7 +198,7 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
           <div className="mt-6 space-y-3 rounded-lg bg-muted p-4">
             <div>
               <p className="text-xs uppercase tracking-wide text-muted-foreground">Gift Card Code</p>
-              <p className="mt-1 font-mono text-xl font-bold tracking-wider text-foreground">
+              <p className="mt-1 font-mono text-xl font-bold tracking-wider text-foreground" translate="no">
                 {purchasedCard.code}
               </p>
             </div>
@@ -251,7 +251,7 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
           <Label id="amount-label">Select Amount</Label>
           <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
             {PRESET_AMOUNTS.map((amount) => (
-              <Button
+              <Button aria-pressed={selectedAmount === amount && !isCustom}
                 key={amount}
                 type="button"
                 variant={selectedAmount === amount && !isCustom ? 'default' : 'outline'}

@@ -132,17 +132,13 @@ export function ValueFilterSidebar({
             className="flex flex-1 items-center justify-between gap-2 rounded-sm text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <h3 className="text-sm font-semibold text-foreground">{title}</h3>
-            <svg aria-hidden="true"
-              className={cn(
-                'size-4 text-muted-foreground transition-transform',
-                expanded && 'rotate-180'
-              )}
+            <span className={cn('inline-flex transition-transform', expanded && 'rotate-180')}><svg aria-hidden="true" className="size-4 text-muted-foreground"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
+            </svg></span>
           </button>
         ) : (
           <h3 className="text-sm font-semibold text-foreground">{title}</h3>

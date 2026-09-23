@@ -342,15 +342,15 @@ export default function TerraCyclePage() {
                 </p>
                 <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-emerald-700 dark:text-emerald-400">
                   Learn more
-                  <svg aria-hidden="true"
-                    className="size-4 transition-transform group-hover:translate-x-1"
+                  <span className="inline-flex transition-transform group-hover:translate-x-1"><svg aria-hidden="true"
+                    className="size-4"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
                   >
                     <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
+                  </svg></span>
                 </span>
               </Link>
             ))}

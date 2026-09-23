@@ -248,14 +248,14 @@ export default function AdminBlogPage() {
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                     <div className="flex justify-end gap-2">
-                      <Link
+                      <Link aria-label={`View ${post.title}`}
                         href={`/blogs/${post.slug}`}
                         target="_blank"
                         className="p-1 text-muted-foreground hover:text-foreground"
                       >
                         <Eye className="size-5" />
                       </Link>
-                      <Link
+                      <Link aria-label={`Edit ${post.title}`}
                         href={`/admin/blog/${post.id}/edit`}
                         className="p-1 text-blue-600 hover:text-blue-900 dark:text-blue-400"
                       >
@@ -271,7 +271,7 @@ export default function AdminBlogPage() {
                       >
                         {post.published ? 'Unpublish' : 'Publish'}
                       </button>
-                      <button
+                      <button aria-label={`Delete ${post.title}`}
                         onClick={() => handleDelete(post.id)}
                         className="p-1 text-red-600 hover:text-red-900 dark:text-red-400"
                       >

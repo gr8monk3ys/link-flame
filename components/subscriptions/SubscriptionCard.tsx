@@ -225,15 +225,20 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
           </div>
           <button
             type="button"
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="text-muted-foreground hover:text-foreground"
+            onClick={() => setIsExpanded((v) => !v)}
+            aria-expanded={isExpanded}
+            aria-label={isExpanded ? 'Hide subscription details' : 'Show subscription details'}
+            className="rounded-sm text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <ChevronRight
+            {/* Rotate a wrapper, not the SVG (react-best-practices 6.1). */}
+            <span
               className={cn(
-                'size-5 transition-transform',
+                'inline-flex transition-transform',
                 isExpanded ? 'rotate-90' : ''
               )}
-            />
+            >
+              <ChevronRight className="size-5" />
+            </span>
           </button>
         </div>
       </div>

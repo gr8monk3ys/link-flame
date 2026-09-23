@@ -80,7 +80,7 @@ export function BrandHero({ brand, className }: BrandHeroProps) {
 
           {/* Content Section */}
           <div className="text-center lg:text-left">
-            <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+            <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl" translate="no">
               {brand.name}
             </h1>
 

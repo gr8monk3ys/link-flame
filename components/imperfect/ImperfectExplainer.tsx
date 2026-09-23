@@ -52,7 +52,7 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
             >
               <summary className="flex cursor-pointer list-none items-center justify-between p-6">
                 <span className="font-medium text-foreground">{faq.question}</span>
-                <ChevronDownIcon className="size-5 text-muted-foreground transition-transform group-open:rotate-180" />
+                <span className="inline-flex transition-transform group-open:rotate-180"><ChevronDownIcon className="size-5 text-muted-foreground" /></span>
               </summary>
               <div className="px-6 pb-6">
                 <p className="text-muted-foreground">{faq.answer}</p>

@@ -92,7 +92,7 @@ export function CreateWishlistModal({ onSubmit, trigger }: CreateWishlistModalPr
           <div>
             <label className="mb-2 block text-sm font-medium">Visibility</label>
             <div className="flex gap-2">
-              <button
+              <button aria-pressed={!isPublic}
                 type="button"
                 onClick={() => setIsPublic(false)}
                 className={`flex flex-1 items-center justify-center gap-2 rounded-lg border p-3 transition-colors ${
@@ -104,7 +104,7 @@ export function CreateWishlistModal({ onSubmit, trigger }: CreateWishlistModalPr
                 <Lock className="size-4" />
                 <span>Private</span>
               </button>
-              <button
+              <button aria-pressed={isPublic}
                 type="button"
                 onClick={() => setIsPublic(true)}
                 className={`flex flex-1 items-center justify-center gap-2 rounded-lg border p-3 transition-colors ${

@@ -84,7 +84,7 @@ export function ShareWishlistButton({
                 readOnly
                 className="flex-1 rounded-md border bg-muted px-3 py-2 text-sm"
               />
-              <Button size="icon" onClick={handleCopy}>
+              <Button size="icon" onClick={handleCopy} aria-label={copied ? "Link copied" : "Copy link"}>
                 {copied ? (
                   <Check className="size-4 text-green-500" />
                 ) : (

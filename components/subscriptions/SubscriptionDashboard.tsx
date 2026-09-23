@@ -196,7 +196,7 @@ export function SubscriptionDashboard() {
       {/* Filters */}
       <div className="flex items-center gap-2">
         {filterOptions.map((option) => (
-          <button
+          <button aria-pressed={filter === option.value}
             key={option.value}
             type="button"
             onClick={() => setFilter(option.value)}

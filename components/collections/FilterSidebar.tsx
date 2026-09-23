@@ -180,6 +180,9 @@ function RatingSection({
         {[5, 4, 3, 2, 1].map((rating) => (
           <button
             key={rating}
+            type="button"
+            aria-pressed={filters.rating === rating}
+            aria-label={`${rating} stars and up`}
             onClick={() =>
               onFilterChange({
                 rating: filters.rating === rating ? null : rating,

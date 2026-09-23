@@ -224,7 +224,7 @@ export default function OrdersPage() {
                       </div>
                     )}
                     <div>
-                      <CardTitle as="h2" className="text-lg">Order #{order.id.slice(0, 8)}</CardTitle>
+                      <CardTitle as="h2" className="text-lg">Order #<span translate="no">{order.id.slice(0, 8)}</span></CardTitle>
                       <CardDescription>
                         Placed on {formatDate(order.createdAt, "long")}
                       </CardDescription>
@@ -270,7 +270,7 @@ export default function OrdersPage() {
                 {order.trackingNumber && (
                   <div className="mb-4 rounded-md bg-muted p-3">
                     <div className="text-sm">
-                      <strong>Tracking #:</strong> {order.trackingNumber}
+                      <strong>Tracking #:</strong> <span translate="no">{order.trackingNumber}</span>
                     </div>
                   </div>
                 )}

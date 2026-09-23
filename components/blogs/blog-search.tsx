@@ -80,17 +80,18 @@ export function BlogSearch({ categories = [], tags = [] }: BlogSearchProps) {
           />
         </div>
         {showFilterOptions && (
-          <Button
+          <Button aria-label="Toggle filters"
             variant={showFilters ? "default" : "outline"}
             size="icon"
-            onClick={() => setShowFilters(!showFilters)}
+            onClick={() => setShowFilters((v) => !v)}
+            aria-expanded={showFilters}
             title="Toggle filters"
           >
             <Filter className="size-4" />
           </Button>
         )}
         {hasActiveFilters && (
-          <Button
+          <Button aria-label="Clear all filters"
             variant="ghost"
             size="icon"
             onClick={clearFilters}
@@ -151,7 +152,7 @@ export function BlogSearch({ categories = [], tags = [] }: BlogSearchProps) {
           {query.trim() && (
             <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1">
               Query: &ldquo;{query}&rdquo;
-              <button
+              <button aria-label="Remove search filter"
                 onClick={() => setQuery("")}
                 className="hover:text-destructive"
                 title="Remove filter"
@@ -163,7 +164,7 @@ export function BlogSearch({ categories = [], tags = [] }: BlogSearchProps) {
           {selectedCategory && (
             <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1">
               Category: {selectedCategory}
-              <button
+              <button aria-label="Remove category filter"
                 onClick={() => setSelectedCategory("")}
                 className="hover:text-destructive"
                 title="Remove filter"
@@ -175,7 +176,7 @@ export function BlogSearch({ categories = [], tags = [] }: BlogSearchProps) {
           {selectedTag && (
             <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1">
               Tag: {selectedTag}
-              <button
+              <button aria-label="Remove tag filter"
                 onClick={() => setSelectedTag("")}
                 className="hover:text-destructive"
                 title="Remove filter"

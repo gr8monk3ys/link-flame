@@ -214,13 +214,13 @@ export default function AdminProductsPage() {
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                     <div className="flex justify-end gap-2">
-                      <Link
+                      <Link aria-label={`Edit ${product.title}`}
                         href={`/admin/products/${product.id}/edit`}
                         className="p-1 text-blue-600 hover:text-blue-900 dark:text-blue-400"
                       >
                         <Edit className="size-5" />
                       </Link>
-                      <button
+                      <button aria-label={`Delete ${product.title}`}
                         onClick={() => handleDelete(product.id)}
                         className="p-1 text-red-600 hover:text-red-900 dark:text-red-400"
                       >

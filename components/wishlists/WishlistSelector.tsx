@@ -84,7 +84,7 @@ export function WishlistSelector({
 
           <div className="max-h-64 space-y-2 overflow-y-auto">
             {wishlists.map((wishlist) => (
-              <button
+              <button type="button" aria-pressed={selectedWishlistId === wishlist.id}
                 key={wishlist.id}
                 onClick={() => {
                   onSelect(wishlist.id);

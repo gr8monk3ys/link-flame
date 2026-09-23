@@ -168,7 +168,7 @@ export default function OrderDetailPage() {
             <div>
               <CardTitle as="h1" className="text-2xl">Order Details</CardTitle>
               <CardDescription className="mt-2">
-                Order ID: {order.id}
+                Order ID: <span translate="no">{order.id}</span>
               </CardDescription>
               <CardDescription>
                 Placed on {formatDate(order.createdAt, "longWithTime")}
@@ -251,7 +251,7 @@ export default function OrderDetailPage() {
                 <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                   <div>
                     <div className="text-sm text-muted-foreground">Tracking Number</div>
-                    <div className="font-mono font-medium">{order.trackingNumber}</div>
+                    <div className="font-mono font-medium" translate="no">{order.trackingNumber}</div>
                     {order.shippingCarrier && (
                       <div className="text-sm text-muted-foreground">via {order.shippingCarrier}</div>
                     )}

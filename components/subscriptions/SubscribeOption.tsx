@@ -86,7 +86,7 @@ export function SubscribeOption({
       {/* Purchase options */}
       <div className="mt-4 space-y-3">
         {/* One-time purchase option */}
-        <button
+        <button aria-pressed={!isSubscription}
           type="button"
           onClick={() => handleSubscriptionToggle(false)}
           className={cn(
@@ -108,7 +108,7 @@ export function SubscribeOption({
         </button>
 
         {/* Subscription option */}
-        <button
+        <button aria-pressed={isSubscription}
           type="button"
           onClick={() => handleSubscriptionToggle(true)}
           className={cn(

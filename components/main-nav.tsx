@@ -37,8 +37,9 @@ export function MainNav({ className, items }: MainNavProps) {
         <span className="inline-block font-bold">{siteConfig.name}</span>
       </Link>
       <button
-        className="md:hidden"
-        onClick={() => setShowMobileMenu(!showMobileMenu)}
+        type="button"
+        className="rounded-md p-1 hover:bg-muted md:hidden"
+        onClick={() => setShowMobileMenu((v) => !v)}
         aria-label={showMobileMenu ? "Close menu" : "Open menu"}
         aria-expanded={showMobileMenu}
       >

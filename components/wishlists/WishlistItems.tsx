@@ -209,7 +209,7 @@ export function WishlistItems({
 
               <div className="flex gap-1">
                 {onUpdateNote && (
-                  <Button
+                  <Button aria-label={`Add a note to ${item.product?.title ?? "this item"}`}
                     variant="ghost"
                     size="icon"
                     className="size-8"
@@ -224,7 +224,7 @@ export function WishlistItems({
                 )}
 
                 {onMoveTo && otherWishlists.length > 0 && (
-                  <Button
+                  <Button aria-label={`Move ${item.product?.title ?? "this item"} to another list`}
                     variant="ghost"
                     size="icon"
                     className="size-8"
@@ -242,6 +242,7 @@ export function WishlistItems({
                   onClick={() => handleRemove(item.productId)}
                   disabled={removing[item.productId]}
                   title="Remove"
+                  aria-label={`Remove ${item.product?.title ?? "item"} from this list`}
                 >
                   {removing[item.productId] ? (
                     <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />

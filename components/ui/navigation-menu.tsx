@@ -61,10 +61,9 @@ const NavigationMenuTrigger = React.forwardRef<
         layout bundle on every page; a CSS transform gives the same grow-on-
         hover for zero bytes. */}
     <span className="inline-block transition-transform duration-200 ease-out group-hover:scale-125">
-      <ChevronDown
-        className="relative top-px ml-1 size-3 transition duration-200 group-data-[state=open]:rotate-180"
-        aria-hidden="true"
-      />
+      <span className="relative top-px ml-1 inline-flex transition-transform duration-200 group-data-[state=open]:rotate-180">
+        <ChevronDown className="size-3" aria-hidden="true" />
+      </span>
     </span>
   </NavigationMenuPrimitive.Trigger>
 ))
