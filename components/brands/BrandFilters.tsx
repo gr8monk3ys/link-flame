@@ -82,7 +82,7 @@ export function BrandFilters({ className }: BrandFiltersProps) {
                 type="button"
                 onClick={() => updateFilter('certification', null)}
                 aria-label={`Remove ${BRAND_CERTIFICATIONS.find((c) => c.slug === activeCertification)?.name || activeCertification} filter`}
-                className={cn(badgeVariants({ variant: "secondary" }), "cursor-pointer bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring")}
+                className={cn(badgeVariants({ variant: "secondary" }), "cursor-pointer bg-green-100 text-green-800 hover:bg-green-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:bg-green-900/30 dark:text-green-200")}
               >
                 {BRAND_CERTIFICATIONS.find((c) => c.slug === activeCertification)?.name || activeCertification}
                 <X className="ml-1 size-3" />
@@ -93,7 +93,7 @@ export function BrandFilters({ className }: BrandFiltersProps) {
                 type="button"
                 onClick={() => updateFilter('value', null)}
                 aria-label={`Remove ${BRAND_VALUES.find((v) => v.slug === activeValue)?.name || activeValue} filter`}
-                className={cn(badgeVariants({ variant: "secondary" }), "cursor-pointer border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-950/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring")}
+                className={cn(badgeVariants({ variant: "secondary" }), "cursor-pointer border-blue-200 text-blue-700 hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:border-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-950/40")}
               >
                 {BRAND_VALUES.find((v) => v.slug === activeValue)?.name || activeValue}
                 <X className="ml-1 size-3" />

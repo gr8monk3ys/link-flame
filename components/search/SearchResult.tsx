@@ -231,7 +231,7 @@ export function RecentSearchResult({
     <div
       className={cn(
         'flex w-full items-center justify-between rounded-md transition-colors',
-        'hover:bg-accent focus-within:bg-accent',
+        'focus-within:bg-accent hover:bg-accent',
         isHighlighted && 'bg-accent'
       )}
     >
