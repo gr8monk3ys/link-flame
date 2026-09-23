@@ -179,7 +179,7 @@ export function SustainabilityCommitment({
           {commitments.map((commitment) => (
             <div
               key={commitment.title}
-              className="group rounded-xl border bg-card p-6 shadow-sm transition-all hover:shadow-md"
+              className="group rounded-xl border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
             >
               <div className={cn(
                 "mb-4 inline-flex size-12 items-center justify-center rounded-lg",

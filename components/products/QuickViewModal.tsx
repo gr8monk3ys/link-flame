@@ -116,7 +116,7 @@ function ImageGallery({
               type="button"
               onClick={() => onIndexChange(index)}
               className={cn(
-                "relative size-16 shrink-0 overflow-hidden rounded-md border-2 transition-all",
+                "relative size-16 shrink-0 overflow-hidden rounded-md border-2 transition-[border-color,box-shadow]",
                 selectedIndex === index
                   ? "border-green-600 ring-1 ring-green-600"
                   : "border-transparent hover:border-border"

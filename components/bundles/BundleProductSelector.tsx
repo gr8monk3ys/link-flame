@@ -158,7 +158,7 @@ export function BundleProductSelector({
             <Card
               key={product.id}
               className={cn(
-                "overflow-hidden transition-all",
+                "overflow-hidden transition-[box-shadow,opacity]",
                 isSelected && "ring-2 ring-primary",
                 isOutOfStock && "opacity-50"
               )}

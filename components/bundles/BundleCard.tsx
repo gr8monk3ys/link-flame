@@ -50,7 +50,7 @@ export const BundleCard = memo(function BundleCard({ bundle, className }: Bundle
   const previewImages = bundle.products.slice(0, 4).map((bp) => bp.product.image)
 
   return (
-    <Card className={cn("group overflow-hidden transition-all hover:shadow-lg", className)}>
+    <Card className={cn("group overflow-hidden transition-shadow hover:shadow-lg", className)}>
       <Link href={`/bundles/${bundle.slug}`} className="block">
         <CardHeader className="p-0">
           <div className="relative aspect-video overflow-hidden bg-muted">

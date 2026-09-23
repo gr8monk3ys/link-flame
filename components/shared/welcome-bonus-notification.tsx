@@ -52,7 +52,7 @@ export function WelcomeBonusNotification() {
 
   return (
     <div
-      className={`fixed bottom-4 right-4 z-50 max-w-md transition-all duration-300 ${
+      className={`fixed bottom-4 right-4 z-50 max-w-md transition-[transform,opacity] duration-300 ${
         isClosing ? "translate-y-full opacity-0" : "translate-y-0 opacity-100"
       }`}
     >

@@ -99,7 +99,7 @@ export const ImperfectProductCard = memo(function ImperfectProductCard({
       {/* Wishlist button - top right */}
       <button
         className={cn(
-          'absolute right-4 top-4 z-10 rounded-full bg-card p-2 shadow-md transition-all',
+          'absolute right-4 top-4 z-10 rounded-full bg-card p-2 shadow-md transition-opacity',
           isWishlisted
             ? 'text-red-500 opacity-100'
             : 'text-foreground opacity-0 group-hover:opacity-100'

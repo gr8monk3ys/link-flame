@@ -193,7 +193,7 @@ export function QuizResults({
             <Card
               key={product.id}
               className={cn(
-                'group overflow-hidden transition-all duration-500',
+                'group overflow-hidden transition-[transform,opacity,box-shadow] duration-500',
                 'hover:-translate-y-1 hover:shadow-lg',
                 isAnimated
                   ? 'translate-y-0 opacity-100'

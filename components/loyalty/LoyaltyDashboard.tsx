@@ -202,12 +202,9 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
               </div>
               <div className="h-2 overflow-hidden rounded-full bg-muted">
                 <div
-                  className={cn('h-full transition-all', tierConfig.color)}
+                  className={cn('size-full origin-left transition-transform', tierConfig.color)}
                   style={{
-                    width: `${Math.min(
-                      100,
-                      ((summary.lifetimePoints % 500) / 500) * 100
-                    )}%`,
+                    transform: `scaleX(${Math.min(1, (summary.lifetimePoints % 500) / 500)})`,
                   }}
                 />
               </div>

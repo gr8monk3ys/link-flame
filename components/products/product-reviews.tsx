@@ -169,8 +169,8 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
                 <span className="w-16 text-sm">{rating} star</span>
                 <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
                   <div
-                    className="h-full bg-yellow-400 transition-all"
-                    style={{ width: `${percentage}%` }}
+                    className="size-full origin-left bg-yellow-400 transition-transform"
+                    style={{ transform: `scaleX(${percentage / 100})` }}
                   />
                 </div>
                 <span className="w-12 text-right text-sm text-muted-foreground">

@@ -153,7 +153,7 @@ export function LoyaltyBadge({ className, showPoints = true, compact = false }: 
     <Link
       href="/account/loyalty"
       className={cn(
-        'group flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-medium transition-all hover:shadow-sm',
+        'group flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-medium transition-shadow hover:shadow-sm',
         tierConfig.color,
         className
       )}

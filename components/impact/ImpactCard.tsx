@@ -121,8 +121,8 @@ export function ImpactCard({
             </div>
             <div className="h-2 overflow-hidden rounded-full bg-muted">
               <div
-                className="h-full bg-green-500 transition-all duration-500"
-                style={{ width: `${Math.min(progress, 100)}%` }}
+                className="size-full origin-left bg-green-500 transition-transform duration-500"
+                style={{ transform: `scaleX(${Math.min(progress, 100) / 100})` }}
               />
             </div>
           </div>

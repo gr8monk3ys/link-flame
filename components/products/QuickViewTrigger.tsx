@@ -220,7 +220,7 @@ export function QuickViewTrigger({
           "group relative flex items-center justify-center rounded-full",
           "bg-card/90 shadow-md backdrop-blur-sm",
           "border border-border",
-          "transition-all duration-200 ease-in-out",
+          "transition-[transform,opacity,background-color,box-shadow] duration-200 ease-in-out",
           // Hover/Focus states
           "hover:scale-105 hover:bg-card hover:shadow-lg",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",

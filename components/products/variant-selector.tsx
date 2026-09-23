@@ -145,7 +145,7 @@ export function VariantSelector({
                   disabled={!isAvailable}
                   className={`
                     relative min-w-12 rounded-md border px-4 py-2 text-sm font-medium
-                    transition-all duration-150
+                    transition-colors duration-150
                     ${isSelected
                       ? "border-green-600 bg-green-700 text-white"
                       : isAvailable
@@ -245,7 +245,7 @@ export function VariantSelector({
                   disabled={!isAvailable}
                   className={`
                     relative rounded-md border px-4 py-2 text-sm font-medium
-                    transition-all duration-150
+                    transition-colors duration-150
                     ${isSelected
                       ? "border-green-600 bg-green-700 text-white"
                       : isAvailable

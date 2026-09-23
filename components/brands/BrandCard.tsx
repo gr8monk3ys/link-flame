@@ -52,7 +52,7 @@ export const BrandCard = memo(function BrandCard({ brand, variant = 'default', c
       <Link
         href={`/brands/${brand.slug}`}
         className={cn(
-          'group flex items-center gap-4 rounded-lg border bg-card p-4 transition-all hover:shadow-md',
+          'group flex items-center gap-4 rounded-lg border bg-card p-4 transition-shadow hover:shadow-md',
           className
         )}
       >
@@ -91,7 +91,7 @@ export const BrandCard = memo(function BrandCard({ brand, variant = 'default', c
       <Link
         href={`/brands/${brand.slug}`}
         className={cn(
-          'group block overflow-hidden rounded-xl border bg-card transition-all hover:shadow-lg',
+          'group block overflow-hidden rounded-xl border bg-card transition-shadow hover:shadow-lg',
           className
         )}
       >
@@ -159,7 +159,7 @@ export const BrandCard = memo(function BrandCard({ brand, variant = 'default', c
     <Link
       href={`/brands/${brand.slug}`}
       className={cn(
-        'group block overflow-hidden rounded-xl border bg-card transition-all hover:shadow-md',
+        'group block overflow-hidden rounded-xl border bg-card transition-shadow hover:shadow-md',
         className
       )}
     >

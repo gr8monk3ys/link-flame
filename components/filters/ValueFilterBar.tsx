@@ -239,7 +239,7 @@ export function ValueFilterBar({ className, initialValues }: ValueFilterBarProps
               key={value.id}
               onClick={() => toggleValue(value.slug)}
               className={cn(
-                'inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all',
+                'inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors',
                 'shrink-0 whitespace-nowrap border',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
                 isSelected

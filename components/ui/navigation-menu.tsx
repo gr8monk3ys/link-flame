@@ -116,7 +116,7 @@ const NavigationMenuIndicator = React.forwardRef<
   <NavigationMenuPrimitive.Indicator
     ref={ref}
     className={cn(
-      "absolute top-px h-[2px] w-full bg-primary transition-all",
+      "absolute top-px h-[2px] w-full bg-primary transition-transform",
       className
     )}
     {...props}

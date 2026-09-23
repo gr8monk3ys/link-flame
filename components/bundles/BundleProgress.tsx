@@ -61,11 +61,11 @@ export function BundleProgress({
       <div className="relative h-2 overflow-hidden rounded-full bg-muted">
         <div
           className={cn(
-            "absolute inset-y-0 left-0 transition-all duration-300",
+            "absolute inset-0 origin-left transition-transform duration-300",
             isComplete ? "bg-green-500" : "bg-primary",
             isOverMax && "bg-destructive"
           )}
-          style={{ width: `${Math.min(progress, 100)}%` }}
+          style={{ transform: `scaleX(${Math.min(progress, 100) / 100})` }}
         />
       </div>
 

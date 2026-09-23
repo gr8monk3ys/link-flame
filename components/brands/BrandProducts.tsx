@@ -39,7 +39,7 @@ function ProductCard({ product }: { product: BrandProduct }) {
   return (
     <Link
       href={`/products/${product.id}`}
-      className="group block overflow-hidden rounded-lg border bg-card transition-all hover:shadow-md"
+      className="group block overflow-hidden rounded-lg border bg-card transition-shadow hover:shadow-md"
     >
       {/* Image */}
       <div className="relative aspect-square bg-muted">

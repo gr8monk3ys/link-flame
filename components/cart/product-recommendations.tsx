@@ -69,7 +69,7 @@ export default function ProductRecommendations() {
       <h2 className="text-xl font-medium">You might also like</h2>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {products.map((product) => (
-          <div key={product.id} className="group rounded-lg border p-3 transition-all hover:shadow-md">
+          <div key={product.id} className="group rounded-lg border p-3 transition-shadow hover:shadow-md">
             <Link href={`/products/${product.id}`} className="block">
               <div className="relative mb-3 aspect-square overflow-hidden rounded-md">
                 <Image

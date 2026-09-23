@@ -153,7 +153,7 @@ export function RecyclingSteps({ className }: RecyclingStepsProps) {
               <div
                 key={step.number}
                 className={cn(
-                  "relative rounded-2xl border bg-card p-6 shadow-sm transition-all hover:shadow-md",
+                  "relative rounded-2xl border bg-card p-6 shadow-sm transition-shadow hover:shadow-md",
                   step.borderColor
                 )}
               >
