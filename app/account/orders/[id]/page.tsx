@@ -237,9 +237,9 @@ export default function OrderDetailPage() {
               {/* Progress line */}
               <div className="absolute inset-x-0 top-5 -z-0 h-0.5 bg-muted">
                 <div
-                  className="h-full bg-primary transition-all duration-500"
+                  className="size-full origin-left bg-primary transition-transform duration-500"
                   style={{
-                    width: `${(order.shippingProgress.filter(s => s.completed).length / (order.shippingProgress.length - 1)) * 100}%`
+                    transform: `scaleX(${Math.min(1, order.shippingProgress.filter(s => s.completed).length / (order.shippingProgress.length - 1))})`
                   }}
                 />
               </div>

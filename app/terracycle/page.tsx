@@ -332,7 +332,7 @@ export default function TerraCyclePage() {
               <Link
                 key={item.title}
                 href={item.href}
-                className="group rounded-xl border bg-card p-6 shadow-sm transition-all hover:shadow-md"
+                className="group rounded-xl border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
               >
                 <h3 className="text-lg font-semibold text-foreground group-hover:text-emerald-700 dark:text-white dark:group-hover:text-emerald-400">
                   {item.title}
