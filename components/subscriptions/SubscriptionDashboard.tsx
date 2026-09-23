@@ -133,7 +133,7 @@ export function SubscriptionDashboard() {
         <div className="mt-6">
           <Link
             href="/auth/signin"
-            className="inline-flex items-center rounded-md bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
+            className="inline-flex items-center rounded-md bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800"
           >
             Sign in
           </Link>
@@ -156,7 +156,7 @@ export function SubscriptionDashboard() {
         </div>
         <Link
           href="/products"
-          className="inline-flex items-center rounded-md bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
+          className="inline-flex items-center rounded-md bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800"
         >
           <Plus className="mr-2 size-4" />
           Add subscription
@@ -203,7 +203,7 @@ export function SubscriptionDashboard() {
             className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
               filter === option.value
                 ? 'bg-green-700 text-white'
-                : 'bg-muted text-foreground hover:bg-muted'
+                : 'bg-muted text-foreground hover:bg-muted/80'
             }`}
           >
             {option.label}
@@ -252,7 +252,7 @@ export function SubscriptionDashboard() {
             <div className="mt-6">
               <Link
                 href="/products"
-                className="inline-flex items-center rounded-md bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
+                className="inline-flex items-center rounded-md bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800"
               >
                 <Sparkles className="mr-2 size-4" />
                 Browse products

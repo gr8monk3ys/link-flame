@@ -122,7 +122,7 @@ export function SustainabilityCommitment({
         </ul>
         <Link
           href="/sustainability"
-          className="inline-flex items-center gap-1 text-sm font-medium text-green-700 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
+          className="inline-flex items-center gap-1 text-sm font-medium text-green-700 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300"
         >
           Read the full commitment
           <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -200,7 +200,7 @@ export function SustainabilityCommitment({
         <div className="mt-10 text-center">
           <Link
             href="/sustainability"
-            className="inline-flex items-center gap-2 rounded-lg bg-green-700 px-6 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-700"
+            className="inline-flex items-center gap-2 rounded-lg bg-green-700 px-6 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-green-800 dark:bg-green-700 dark:hover:bg-green-700"
           >
             Learn About Our Impact
             <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

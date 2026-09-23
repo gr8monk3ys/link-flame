@@ -194,7 +194,7 @@ export default function SustainabilityPage() {
               <div className="mt-8">
                 <Link
                   href="/impact"
-                  className="inline-flex items-center gap-2 font-medium text-green-700 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
+                  className="inline-flex items-center gap-2 font-medium text-green-700 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300"
                 >
                   View our impact report
                   <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -247,7 +247,7 @@ export default function SustainabilityPage() {
               <div className="mt-8">
                 <Link
                   href="/terracycle"
-                  className="inline-flex items-center gap-2 rounded-lg bg-emerald-700 px-6 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-emerald-700"
+                  className="inline-flex items-center gap-2 rounded-lg bg-emerald-700 px-6 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-emerald-800"
                 >
                   Learn About TerraCycle
                   <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -312,7 +312,7 @@ export default function SustainabilityPage() {
                   href={partner.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-green-700 hover:text-green-700 dark:text-green-400"
+                  className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-green-700 hover:text-green-800 dark:text-green-400"
                 >
                   Learn more
                   <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

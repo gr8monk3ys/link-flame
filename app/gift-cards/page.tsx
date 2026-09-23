@@ -57,7 +57,7 @@ export default function GiftCardsPage() {
           <div className="mt-4 text-center">
             <Link
               href="/gift-cards/check-balance"
-              className="text-sm text-green-700 hover:text-green-700 hover:underline dark:text-green-400"
+              className="text-sm text-green-700 hover:text-green-800 hover:underline dark:text-green-400"
             >
               Need more details? View full balance page
             </Link>

@@ -309,7 +309,7 @@ export function RedeemPointsModal({
           <Button
             onClick={handleRedeem}
             disabled={!canRedeem || redeeming}
-            className="bg-green-700 hover:bg-green-700"
+            className="bg-green-700 hover:bg-green-800"
           >
             {redeeming ? (
               <>
@@ -547,7 +547,7 @@ export function InlineRedeemWidget({
             onClick={handleApplyDiscount}
             disabled={!canApply || applying}
             className={cn(
-              'bg-green-700 hover:bg-green-700',
+              'bg-green-700 hover:bg-green-800',
               applying && 'opacity-50'
             )}
           >

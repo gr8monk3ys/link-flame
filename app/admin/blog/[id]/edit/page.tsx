@@ -375,7 +375,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
                 type="button"
                 onClick={(e) => handleSubmit(e)}
                 disabled={saving}
-                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-700 px-6 py-3 text-white transition-colors hover:bg-green-700 disabled:opacity-50"
+                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-700 px-6 py-3 text-white transition-colors hover:bg-green-800 disabled:opacity-50"
               >
                 <Save className="size-5" />
                 {saving ? 'Saving…' : 'Save Changes'}
@@ -403,7 +403,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
                 type="button"
                 onClick={(e) => handleSubmit(e, true)}
                 disabled={saving}
-                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-700 px-6 py-3 text-white transition-colors hover:bg-green-700 disabled:opacity-50"
+                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-700 px-6 py-3 text-white transition-colors hover:bg-green-800 disabled:opacity-50"
               >
                 <Save className="size-5" />
                 {saving ? 'Publishing…' : 'Publish'}

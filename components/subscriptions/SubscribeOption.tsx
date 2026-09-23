@@ -92,7 +92,7 @@ export function SubscribeOption({
           className={cn(
             !isSubscription
               ? 'border-green-600 bg-card ring-2 ring-green-600'
-              : 'border-border bg-card hover:border-border',
+              : 'border-border bg-card hover:border-primary/40',
             'relative flex w-full cursor-pointer items-center justify-between rounded-lg border p-3 focus-visible:outline-none'
           )}
         >
@@ -114,7 +114,7 @@ export function SubscribeOption({
           className={cn(
             isSubscription
               ? 'border-green-600 bg-green-50 ring-2 ring-green-600 dark:bg-green-950/40'
-              : 'border-border bg-card hover:border-border',
+              : 'border-border bg-card hover:border-primary/40',
             'relative flex w-full cursor-pointer flex-col rounded-lg border p-3 focus-visible:outline-none'
           )}
         >

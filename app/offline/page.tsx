@@ -31,13 +31,13 @@ export default function OfflinePage() {
         <div className="space-y-4">
           <button
             onClick={() => window.location.reload()}
-            className="inline-flex items-center rounded-md border border-transparent bg-green-700 px-6 py-3 text-base font-medium text-white hover:bg-green-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            className="inline-flex items-center rounded-md border border-transparent bg-green-700 px-6 py-3 text-base font-medium text-white hover:bg-green-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             Try Again
           </button>
           <p className="text-sm text-muted-foreground">
             Or browse our{" "}
-            <Link href="/" className="text-green-700 hover:text-green-700 dark:text-green-400">
+            <Link href="/" className="text-green-700 hover:text-green-800 dark:text-green-400">
               cached pages
             </Link>
           </p>

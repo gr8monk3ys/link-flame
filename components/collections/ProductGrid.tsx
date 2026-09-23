@@ -150,7 +150,7 @@ function ProductCard({
 
       <button
         data-testid="add-to-cart-button"
-        className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white opacity-0 shadow-md transition-opacity hover:bg-primary group-hover:opacity-100"
+        className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white opacity-0 shadow-md transition-opacity hover:bg-primary/90 group-hover:opacity-100"
         aria-label={`Add ${product.title} to cart`}
         onClick={() => onAddToCart(product)}
       >

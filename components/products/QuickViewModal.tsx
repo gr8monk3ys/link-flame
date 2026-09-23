@@ -550,7 +550,7 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
                     <Button
                       onClick={handleAddToCart}
                       disabled={isOutOfStock || needsVariant || isAddingToCart || cartLoading}
-                      className="h-12 flex-1 bg-green-700 text-base hover:bg-green-700"
+                      className="h-12 flex-1 bg-green-700 text-base hover:bg-green-800"
                       size="lg"
                     >
                       {isAddingToCart ? (
@@ -594,7 +594,7 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
                   <Link
                     href={`/products/${product.id}`}
                     onClick={() => onOpenChange(false)}
-                    className="inline-flex items-center rounded text-sm font-medium text-green-700 hover:text-green-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 dark:text-green-400"
+                    className="inline-flex items-center rounded text-sm font-medium text-green-700 hover:text-green-800 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 dark:text-green-400"
                   >
                     <Eye className="mr-2 size-4" />
                     View Full Details

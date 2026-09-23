@@ -63,7 +63,7 @@ export function WelcomeBonusNotification() {
 
         <button
           onClick={handleDismiss}
-          className="absolute right-2 top-2 rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-muted-foreground"
+          className="absolute right-2 top-2 rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           aria-label="Dismiss notification"
         >
           <X className="size-4" />
@@ -88,7 +88,7 @@ export function WelcomeBonusNotification() {
 
             <div className="mt-3 flex gap-2">
               <Link href="/account/loyalty">
-                <Button size="sm" className="bg-green-700 hover:bg-green-700">
+                <Button size="sm" className="bg-green-700 hover:bg-green-800">
                   View My Points
                 </Button>
               </Link>

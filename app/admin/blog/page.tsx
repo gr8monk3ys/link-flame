@@ -136,7 +136,7 @@ export default function AdminBlogPage() {
         </div>
         <Link
           href="/admin/blog/new"
-          className="flex items-center gap-2 rounded-lg bg-green-700 px-4 py-2 text-white transition-colors hover:bg-green-700"
+          className="flex items-center gap-2 rounded-lg bg-green-700 px-4 py-2 text-white transition-colors hover:bg-green-800"
         >
           <Plus className="size-5" />
           New Post
@@ -265,7 +265,7 @@ export default function AdminBlogPage() {
                         onClick={() => togglePublished(post.id, post.published)}
                         className={`rounded px-2 py-1 text-xs font-medium ${
                           post.published
-                            ? 'bg-muted text-foreground hover:bg-muted'
+                            ? 'bg-muted text-foreground hover:bg-muted/80'
                             : 'bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-300'
                         }`}
                       >

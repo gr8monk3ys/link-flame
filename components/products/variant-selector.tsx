@@ -149,7 +149,7 @@ export function VariantSelector({
                     ${isSelected
                       ? "border-green-600 bg-green-700 text-white"
                       : isAvailable
-                        ? "border-border bg-card text-foreground hover:border-border"
+                        ? "border-border bg-card text-foreground hover:border-primary/40"
                         : "cursor-not-allowed border-border bg-muted text-muted-foreground/40"
                     }
                     ${!isAvailable && !isSelected ? "line-through" : ""}
@@ -249,7 +249,7 @@ export function VariantSelector({
                     ${isSelected
                       ? "border-green-600 bg-green-700 text-white"
                       : isAvailable
-                        ? "border-border bg-card text-foreground hover:border-border"
+                        ? "border-border bg-card text-foreground hover:border-primary/40"
                         : "cursor-not-allowed border-border bg-muted text-muted-foreground/40"
                     }
                     ${!isAvailable && !isSelected ? "line-through" : ""}

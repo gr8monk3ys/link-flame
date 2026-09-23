@@ -252,7 +252,7 @@ export default async function BlogPost({ params }: PageProps<{ slug: string }>) 
               <a
                 key={tag}
                 href={`/blogs/tags/${tag.toLowerCase()}`}
-                className="inline-block rounded-full bg-muted px-3 py-1 text-sm text-muted-foreground hover:bg-muted"
+                className="inline-block rounded-full bg-muted px-3 py-1 text-sm text-muted-foreground hover:bg-muted/80"
               >
                 #{tag}
               </a>

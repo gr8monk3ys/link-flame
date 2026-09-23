@@ -80,7 +80,7 @@ export const BundleCard = memo(function BundleCard({ bundle, className }: Bundle
             )}
 
             {/* Discount Badge */}
-            <Badge className="absolute left-3 top-3 bg-green-700 text-white hover:bg-green-700">
+            <Badge className="absolute left-3 top-3 bg-green-700 text-white hover:bg-green-800">
               Save {bundle.discountPercent}%
             </Badge>
 

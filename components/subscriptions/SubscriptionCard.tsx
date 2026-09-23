@@ -226,7 +226,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
           <button
             type="button"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="text-muted-foreground hover:text-muted-foreground"
+            className="text-muted-foreground hover:text-foreground"
           >
             <ChevronRight
               className={cn(
@@ -419,7 +419,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
                 type="button"
                 onClick={handlePauseResume}
                 disabled={isLoading}
-                className="inline-flex items-center rounded-md border border-green-600 bg-green-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex items-center rounded-md border border-green-600 bg-green-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Play className="mr-1.5 size-4" />
                 Resume

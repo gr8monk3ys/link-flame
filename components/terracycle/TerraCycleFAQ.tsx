@@ -128,7 +128,7 @@ export function TerraCycleFAQ({ className }: TerraCycleFAQProps) {
           </p>
           <a
             href="/contact"
-            className="inline-flex items-center gap-2 font-medium text-emerald-700 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300"
+            className="inline-flex items-center gap-2 font-medium text-emerald-700 hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300"
           >
             Contact our support team
             <svg

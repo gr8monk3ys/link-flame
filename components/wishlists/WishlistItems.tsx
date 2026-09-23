@@ -238,7 +238,7 @@ export function WishlistItems({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="size-8 text-destructive hover:text-destructive"
+                  className="size-8 text-destructive hover:text-destructive/80"
                   onClick={() => handleRemove(item.productId)}
                   disabled={removing[item.productId]}
                   title="Remove"

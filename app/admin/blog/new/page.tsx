@@ -309,7 +309,7 @@ const example = 'value';
             type="button"
             onClick={(e) => handleSubmit(e, true)}
             disabled={loading}
-            className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-700 px-6 py-3 text-white transition-colors hover:bg-green-700 disabled:opacity-50"
+            className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-700 px-6 py-3 text-white transition-colors hover:bg-green-800 disabled:opacity-50"
           >
             <Save className="size-5" />
             {loading ? 'Publishing…' : 'Publish'}

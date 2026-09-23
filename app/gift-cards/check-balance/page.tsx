@@ -172,7 +172,7 @@ export default function CheckBalancePage() {
         </p>
         <Link
           href="/contact"
-          className="mt-3 inline-flex items-center text-sm font-medium text-green-700 hover:text-green-700 dark:text-green-400"
+          className="mt-3 inline-flex items-center text-sm font-medium text-green-700 hover:text-green-800 dark:text-green-400"
         >
           Contact Support
           <svg
