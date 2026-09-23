@@ -70,22 +70,58 @@
     @apply bg-background text-foreground;
   }
   h1 {
-    @apply scroll-m-20 text-4xl font-semibold tracking-normal font-serif lg:text-5xl;
+    @apply scroll-m-20 text-balance text-4xl font-semibold tracking-normal font-serif lg:text-5xl;
   }
   h2 {
-    @apply scroll-m-20 pb-2 text-3xl font-semibold tracking-normal font-serif first:mt-0;
+    @apply scroll-m-20 text-balance pb-2 text-3xl font-semibold tracking-normal font-serif first:mt-0;
   }
   h3 {
-    @apply scroll-m-20 text-2xl font-semibold tracking-tight;
+    @apply scroll-m-20 text-balance text-2xl font-semibold tracking-tight;
   }
   h4 {
-    @apply scroll-m-20 text-xl font-semibold tracking-tight;
+    @apply scroll-m-20 text-balance text-xl font-semibold tracking-tight;
   }
   p {
     @apply leading-relaxed [&:not(:first-child)]:mt-6;
   }
   .container {
     @apply mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl;
+  }
+}
+
+@layer base {
+  html {
+    /* The header is sticky and up to ~160px tall on mobile (the announcement
+       bar wraps). Keep anchor jumps and keyboard focus from landing under it. */
+    scroll-padding-top: 10rem;
+    /* Taps get the element's own :active/:hover styling instead of the grey
+       iOS/Android flash. */
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* No double-tap-to-zoom delay on controls. */
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  label,
+  summary,
+  [role="button"] {
+    touch-action: manipulation;
+  }
+}
+
+/* Honour the OS "reduce motion" setting everywhere: transitions and keyframe
+   animations (spinners, shimmers, slide-ins, count-ups driven by CSS) collapse
+   to their end state instead of moving. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
