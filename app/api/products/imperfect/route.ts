@@ -12,6 +12,12 @@ import { logger } from "@/lib/logger";
 import { checkRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { IMPERFECT_REASONS } from "@/lib/products/imperfect";
 
+const NORMALIZED_REASONS = IMPERFECT_REASONS.map((reason) => ({
+  reason,
+  idPhrase: reason.id.replace("_", " "),
+  labelLc: reason.label.toLowerCase(),
+}));
+
 export const dynamic = 'force-dynamic'
 
 // Schema for imperfect products query
@@ -153,11 +159,14 @@ export async function GET(request: NextRequest) {
       const imperfectPrice = effectiveBasePrice * (1 - discountPercent / 100);
       const totalSavings = effectiveBasePrice - imperfectPrice;
 
-      // Find matching reason details
-      const reasonDetails = IMPERFECT_REASONS.find(
-        (r) => product.imperfectReason?.toLowerCase().includes(r.id.replace("_", " ")) ||
-               r.label.toLowerCase() === product.imperfectReason?.toLowerCase()
-      );
+      // Find matching reason details (reason lowercased once per product,
+      // reason table normalised once per module: react-best-practices 7.4)
+      const reasonLc = product.imperfectReason?.toLowerCase();
+      const reasonDetails = reasonLc
+        ? NORMALIZED_REASONS.find(
+            (r) => reasonLc.includes(r.idPhrase) || r.labelLc === reasonLc
+          )?.reason
+        : undefined;
 
       // Calculate average rating
       const avgRating = product.reviews.length > 0
@@ -191,18 +200,6 @@ export async function GET(request: NextRequest) {
         createdAt: product.createdAt,
       };
     });
-
-    // Calculate aggregate stats for the collection
-    const stats = {
-      totalItems: total,
-      averageDiscount: products.length > 0
-        ? Math.round(products.reduce((sum, p) => sum + (p.imperfectDiscount ?? 0), 0) / products.length)
-        : 0,
-      maxDiscount: products.length > 0
-        ? Math.max(...products.map((p) => p.imperfectDiscount ?? 0))
-        : 0,
-      categories: [...new Set(products.map((p) => p.category))],
-    };
 
     const totalPages = Math.ceil(total / pageSize);
 

@@ -5,6 +5,13 @@ import { QuizResults } from '@/components/quiz/QuizResults';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { cache } from 'react';
+
+// generateMetadata and the page both need this row; React.cache runs the
+// query once per request (react-best-practices 3.9).
+const getQuizResponse = cache((visibleId: string) =>
+  prisma.quizResponse.findUnique({ where: { visibleId } })
+);
 
 // Render at request time — DB not available during Vercel build
 export const dynamic = 'force-dynamic';
@@ -18,10 +25,7 @@ export async function generateMetadata({
 }: QuizResultsPageProps): Promise<Metadata> {
   const { id } = await params;
 
-  const result = await prisma.quizResponse.findUnique({
-    where: { visibleId: id },
-    select: { visibleId: true, completedAt: true },
-  });
+  const result = await getQuizResponse(id);
 
   if (!result) {
     return {
@@ -45,10 +49,8 @@ export async function generateMetadata({
 export default async function QuizResultsPage({ params }: QuizResultsPageProps) {
   const { id } = await params;
 
-  // Fetch the quiz response
-  const result = await prisma.quizResponse.findUnique({
-    where: { visibleId: id },
-  });
+  // Fetch the quiz response (deduplicated with generateMetadata's lookup)
+  const result = await getQuizResponse(id);
 
   if (!result) {
     notFound();

@@ -250,14 +250,15 @@ export async function DELETE(req: Request) {
       );
     }
 
-    const { userId } = await getServerAuth();
-    const userIdToUse = await getUserIdForCart(userId);
-
+    // Validate the query before the auth/DB lookups (react-best-practices 1.1).
     const url = new URL(req.url);
     const productId = url.searchParams.get("productId");
     if (!productId) {
       return errorResponse("Product ID is required", undefined, undefined, 400);
     }
+
+    const { userId } = await getServerAuth();
+    const userIdToUse = await getUserIdForCart(userId);
 
     // Find the saved item across all wishlists
     const savedItem = await prisma.savedItem.findFirst({

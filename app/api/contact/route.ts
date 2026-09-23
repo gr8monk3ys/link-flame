@@ -11,6 +11,7 @@ import {
   successResponse,
 } from "@/lib/api-response";
 import { logger } from "@/lib/logger";
+import { after } from 'next/server';
 
 export const dynamic = 'force-dynamic'
 
@@ -65,8 +66,14 @@ export async function POST(req: Request) {
     });
 
     // Send notification email to admin and confirmation to user (if configured)
+    // after the response: the submission is already stored, so the visitor
+    // should not wait on the email provider (react-best-practices 3.10).
     if (isEmailConfigured()) {
-      await sendContactNotification({ name, email, subject, message });
+      after(() =>
+        sendContactNotification({ name, email, subject, message }).catch((err) => {
+          logger.error('Failed to send contact notification email', err);
+        })
+      );
     } else {
       logger.warn('Email service not configured - skipping notification emails');
     }

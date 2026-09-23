@@ -349,13 +349,19 @@ export async function DELETE(req: Request) {
       );
     }
 
-    const { userId } = await getServerAuth();
-    const userIdToUse = await getUserIdForCart(userId);
-
     const url = new URL(req.url);
     const productId = url.searchParams.get("productId");
     const variantId = url.searchParams.get("variantId");
     const cartItemId = url.searchParams.get("cartItemId"); // Alternative: delete by cart item ID
+
+    // Reject a malformed request before the auth/DB lookups it can never use
+    // (react-best-practices 1.1).
+    if (!cartItemId && !productId) {
+      return errorResponse("Product ID or Cart Item ID is required", undefined, undefined, 400);
+    }
+
+    const { userId } = await getServerAuth();
+    const userIdToUse = await getUserIdForCart(userId);
 
     // Support deletion by cartItemId (more precise) or by productId+variantId
     if (cartItemId) {

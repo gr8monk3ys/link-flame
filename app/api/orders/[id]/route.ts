@@ -14,6 +14,7 @@ import { checkRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { validateCsrfToken } from "@/lib/csrf";
 import { sendShippingNotificationEmail } from "@/lib/email";
 import { logger } from "@/lib/logger";
+import { after } from 'next/server';
 
 export const dynamic = 'force-dynamic'
 
@@ -257,28 +258,33 @@ export async function PATCH(
       existingOrder.shippingStatus !== 'shipped' &&
       existingOrder.customerEmail
     ) {
-      const emailResult = await sendShippingNotificationEmail(
-        existingOrder.customerEmail,
-        {
-          orderId: id,
-          customerName: existingOrder.customerName || 'Customer',
-          trackingNumber: trackingNumber || updatedOrder.trackingNumber,
-          shippingCarrier: shippingCarrier || updatedOrder.shippingCarrier,
-          estimatedDelivery: estimatedDelivery || (
-            updatedOrder.estimatedDelivery
-              ? updatedOrder.estimatedDelivery.toISOString().split('T')[0]
-              : null
-          ),
-        }
-      );
+      // The order update already succeeded; send the email after the
+      // response instead of making the admin wait on it (react-best-practices 3.10).
+      const customerEmail = existingOrder.customerEmail
+      after(async () => {
+        const emailResult = await sendShippingNotificationEmail(
+          customerEmail,
+          {
+            orderId: id,
+            customerName: existingOrder.customerName || 'Customer',
+            trackingNumber: trackingNumber || updatedOrder.trackingNumber,
+            shippingCarrier: shippingCarrier || updatedOrder.shippingCarrier,
+            estimatedDelivery: estimatedDelivery || (
+              updatedOrder.estimatedDelivery
+                ? updatedOrder.estimatedDelivery.toISOString().split('T')[0]
+                : null
+            ),
+          }
+        );
 
-      if (!emailResult.success) {
-        logger.warn("Failed to send shipping notification email", {
-          orderId: id,
-          error: emailResult.error,
-        });
-        // Do not fail the request - the order update succeeded
-      }
+        if (!emailResult.success) {
+          logger.warn("Failed to send shipping notification email", {
+            orderId: id,
+            error: emailResult.error,
+          });
+          // Do not fail the request - the order update succeeded
+        }
+      })
     }
 
     return successResponse(updatedOrder);

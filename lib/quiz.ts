@@ -8,6 +8,9 @@
 import { prisma } from '@/lib/prisma';
 import { nanoid } from 'nanoid';
 
+// Hoisted so it is not rebuilt for every scored product (react-best-practices 7.10).
+const MULTI_PACK_PATTERN = /\d+[- ]?(pack|pcs|pieces)/;
+
 // Quiz question types
 export type QuestionType = 'SINGLE_CHOICE' | 'MULTIPLE_CHOICE';
 
@@ -197,7 +200,7 @@ export async function getProductRecommendations(
     // Bonus for multi-packs if larger household
     const multiplier = householdSize ? HOUSEHOLD_MULTIPLIERS[householdSize] || 1 : 1;
     if (multiplier > 1) {
-      if (fullText.includes('pack') || fullText.includes('set') || /\d+[- ]?(pack|pcs|pieces)/.test(fullText)) {
+      if (fullText.includes('pack') || fullText.includes('set') || MULTI_PACK_PATTERN.test(fullText)) {
         score += 5 * multiplier;
       }
     }
@@ -286,9 +289,13 @@ export async function getQuizResponseByVisibleId(visibleId: string) {
   });
 
   // Sort products to match the original recommendation order
+  // Index once instead of a find() per recommended id (react-best-practices 7.2).
+  const productById = new Map(products.map(p => [p.id, p]));
   const orderedProducts = recommendedProductIds
-    .map(id => products.find(p => p.id === id))
-    .filter((p): p is NonNullable<typeof p> => p !== undefined)
+    .flatMap(id => {
+      const product = productById.get(id);
+      return product ? [product] : [];
+    })
     .map(p => ({
       ...p,
       price: Number(p.price),
