@@ -191,7 +191,7 @@ export function BlogSearch({ categories = [], tags = [] }: BlogSearchProps) {
       {hasActiveFilters && (
         <div className="space-y-4">
           {isSearching ? (
-            <p className="py-8 text-center text-muted-foreground">Searching…</p>
+            <p className="py-8 text-center text-muted-foreground" role="status">Searching…</p>
           ) : results.length > 0 ? (
             <>
               <h2 className="text-lg font-semibold">

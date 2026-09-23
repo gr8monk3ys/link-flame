@@ -86,7 +86,7 @@ export function CreateWishlistModal({ onSubmit, trigger }: CreateWishlistModalPr
               }}
               maxLength={100}
             />
-            {error && <p className="mt-1 text-sm text-destructive">{error}</p>}
+            {error && <p id="wishlist-name-error" className="mt-1 text-sm text-destructive" role="alert">{error}</p>}
           </div>
 
           <div>

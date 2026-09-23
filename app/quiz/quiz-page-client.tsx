@@ -241,7 +241,7 @@ export function QuizPageClient() {
             </div>
 
             {error && (
-              <p className="mt-4 text-sm text-destructive">{error}</p>
+              <p className="mt-4 text-sm text-destructive" role="alert">{error}</p>
             )}
           </div>
         )}
@@ -265,7 +265,7 @@ export function QuizPageClient() {
             </div>
 
             {error && (
-              <p className="text-center text-sm text-destructive">{error}</p>
+              <p className="text-center text-sm text-destructive" role="alert">{error}</p>
             )}
 
             <div className="flex items-center justify-between">
@@ -312,7 +312,7 @@ export function QuizPageClient() {
         {/* Loading Screen */}
         {state === 'loading' && (
           <div className="py-16 text-center duration-300 animate-in fade-in-0">
-            <span className="mx-auto mb-6 flex w-fit shrink-0 animate-spin"><Loader2 className="size-16 text-primary" /></span>
+            <span role="status"><span className="mx-auto mb-6 flex w-fit shrink-0 animate-spin"><Loader2 className="size-16 text-primary" /></span><span className="sr-only">Loading…</span></span>
             <h2 className="mb-2 text-2xl font-semibold">
               Finding Your Perfect Products
             </h2>

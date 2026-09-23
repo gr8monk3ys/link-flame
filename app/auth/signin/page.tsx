@@ -80,7 +80,7 @@ function SignInForm() {
               />
             </div>
             {error && (
-              <div className="rounded bg-red-50 p-3 text-sm text-red-600 dark:bg-red-950/40 dark:text-red-400">
+              <div className="rounded bg-red-50 p-3 text-sm text-red-600 dark:bg-red-950/40 dark:text-red-400" role="alert">
                 {error}
               </div>
             )}
@@ -107,7 +107,7 @@ function SignInForm() {
 
 export default function SignInPage() {
   return (
-    <Suspense fallback={<div className="container flex min-h-[calc(100vh-200px)] items-center justify-center">Loading…</div>}>
+    <Suspense fallback={<div className="container flex min-h-[calc(100vh-200px)] items-center justify-center" role="status">Loading…</div>}>
       <SignInForm />
     </Suspense>
   );

@@ -1,6 +1,7 @@
 export default function Loading() {
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" role="status" aria-busy="true">
+      <span className="sr-only">Loading…</span>
       <div className="flex flex-col gap-8 py-8 lg:flex-row">
         <div className="w-full lg:w-64">
           <div className="space-y-4">

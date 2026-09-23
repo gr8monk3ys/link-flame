@@ -193,7 +193,7 @@ export function RedeemPointsModal({
 
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="size-8 animate-spin rounded-full border-4 border-muted border-t-primary" />
+            <div className="size-8 animate-spin rounded-full border-4 border-muted border-t-primary" role="status" aria-label="Loading" />
           </div>
         ) : !preview ? (
           <div className="py-8 text-center">
@@ -295,7 +295,7 @@ export function RedeemPointsModal({
 
             {/* Error message */}
             {error && (
-              <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400">
+              <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400" role="alert">
                 {error}
               </div>
             )}
@@ -456,7 +456,7 @@ export function InlineRedeemWidget({
 
   if (sessionStatus === 'loading' || loading) {
     return (
-      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+      <div className="flex items-center gap-2 text-sm text-muted-foreground" role="status">
         <div className="size-4 animate-spin rounded-full border-2 border-muted border-t-primary" />
         Loading rewards…
       </div>
@@ -557,7 +557,7 @@ export function InlineRedeemWidget({
       )}
 
       {error && (
-        <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+        <p className="text-sm text-red-600 dark:text-red-400" role="alert">{error}</p>
       )}
     </div>
   )

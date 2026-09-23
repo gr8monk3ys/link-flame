@@ -1,12 +1,13 @@
 export default function ImperfectLoading() {
   return (
-    <div className="min-h-screen bg-muted">
+    <div className="min-h-screen bg-muted" role="status" aria-busy="true">
+      <span className="sr-only">Loading…</span>
       {/* Hero skeleton */}
       <div className="bg-gradient-to-br from-amber-100 via-orange-50 to-yellow-100 py-16 dark:from-amber-900/30 dark:via-orange-950/40 dark:to-yellow-900/30 lg:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="animate-pulse text-center">
             <div className="mx-auto mb-6 h-10 w-48 rounded-full bg-card/60" />
-            <div className="mx-auto mb-4 h-12 w-96 rounded-lg bg-card/60" />
+            <div className="mx-auto mb-4 h-12 w-96 max-w-full rounded-lg bg-card/60" />
             <div className="mx-auto mb-10 h-6 w-[600px] max-w-full rounded-lg bg-card/60" />
             <div className="flex justify-center gap-4">
               <div className="h-14 w-48 rounded-xl bg-card/60" />

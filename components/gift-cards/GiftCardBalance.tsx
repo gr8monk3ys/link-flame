@@ -244,7 +244,7 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
 
       {/* Gift Card Info Display */}
       {giftCardInfo && (
-        <div className="mt-6 space-y-4 border-t pt-6">
+        <div className="mt-6 space-y-4 border-t pt-6" role="status">
           <div className="flex items-center justify-between">
             <span className="font-mono text-sm text-muted-foreground">{giftCardInfo.code}</span>
             {getStatusBadge(giftCardInfo.status, giftCardInfo.isValid)}

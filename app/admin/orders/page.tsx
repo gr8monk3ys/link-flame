@@ -243,7 +243,7 @@ export default function AdminOrdersPage() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="text-muted-foreground">Loading orders…</div>
+        <div className="text-muted-foreground" role="status">Loading orders…</div>
       </div>
     );
   }

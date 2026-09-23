@@ -185,13 +185,13 @@ export function BundleSummary({
       <CardFooter className="flex-col gap-3">
         {/* Status Messages */}
         {!meetsMinimum && totalItems > 0 && (
-          <p className="w-full text-center text-sm text-muted-foreground">
+          <p className="w-full text-center text-sm text-muted-foreground" role="status">
             Add {min - totalItems} more item{min - totalItems !== 1 ? "s" : ""} to complete your bundle
           </p>
         )}
 
         {exceedsMaximum && (
-          <p className="w-full text-center text-sm text-destructive">
+          <p className="w-full text-center text-sm text-destructive" role="alert">
             Remove {totalItems - (maxItems || 0)} item{(totalItems - (maxItems || 0)) !== 1 ? "s" : ""} - maximum is {maxItems}
           </p>
         )}

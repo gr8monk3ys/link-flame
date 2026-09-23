@@ -203,7 +203,7 @@ export default function ImperfectPage() {
 
         {/* Error State */}
         {error && (
-          <div className="mb-8 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200">
+          <div className="mb-8 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200" role="alert">
             <p>{error}</p>
             <button
               onClick={() => window.location.reload()}

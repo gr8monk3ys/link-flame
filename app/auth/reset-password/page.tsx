@@ -154,7 +154,7 @@ function ResetPasswordForm() {
               />
             </div>
             {error && (
-              <div className="rounded bg-red-50 p-3 text-sm text-red-600 dark:bg-red-950/40 dark:text-red-400">
+              <div className="rounded bg-red-50 p-3 text-sm text-red-600 dark:bg-red-950/40 dark:text-red-400" role="alert">
                 {error}
               </div>
             )}
@@ -176,7 +176,7 @@ function ResetPasswordForm() {
 export default function ResetPasswordPage() {
   return (
     <Suspense fallback={
-      <div className="container flex min-h-[calc(100vh-200px)] items-center justify-center">
+      <div className="container flex min-h-[calc(100vh-200px)] items-center justify-center" role="status">
         Loading…
       </div>
     }>

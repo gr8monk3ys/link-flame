@@ -155,7 +155,7 @@ export function TransportCalculator() {
       </Button>
 
       {showResults && (
-        <Card className="mt-4 p-4">
+        <Card className="mt-4 p-4" role="status" aria-live="polite">
           <h3 className="mb-2 font-semibold">Yearly Impact</h3>
           <ul className="space-y-2 text-sm">
             <li>Total Distance: {impact.distance} km</li>

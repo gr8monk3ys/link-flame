@@ -131,7 +131,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="text-muted-foreground">Loading blog post…</div>
+        <div className="text-muted-foreground" role="status">Loading blog post…</div>
       </div>
     );
   }

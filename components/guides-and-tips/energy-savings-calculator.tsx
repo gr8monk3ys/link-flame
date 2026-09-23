@@ -196,7 +196,7 @@ export function EnergySavingsCalculator() {
 
       {/* Results Section */}
       {selectedUpgrades.length > 0 && (
-        <Card className="p-6">
+        <Card className="p-6" role="status" aria-live="polite">
           <h3 className="mb-4 text-lg font-semibold">Potential Savings</h3>
           <div className="space-y-4">
             <div>

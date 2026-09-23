@@ -32,7 +32,7 @@ export function BundleProgress({
     <div className={cn("space-y-3", className)}>
       {/* Progress Header */}
       <div className="flex items-center justify-between">
-        <div className="text-sm font-medium">
+        <div className="text-sm font-medium" role="status">
           {isComplete ? (
             <span className="text-green-700 dark:text-green-400">Bundle complete!</span>
           ) : (

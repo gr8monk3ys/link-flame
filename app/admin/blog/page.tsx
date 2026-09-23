@@ -121,7 +121,7 @@ export default function AdminBlogPage() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="text-muted-foreground">Loading blog posts…</div>
+        <div className="text-muted-foreground" role="status">Loading blog posts…</div>
       </div>
     );
   }

@@ -115,7 +115,7 @@ export function SubscriptionDashboard() {
   if (authStatus === 'loading') {
     return (
       <div className="flex items-center justify-center py-12">
-        <span className="inline-flex shrink-0 animate-spin"><RefreshCw className="size-8 text-muted-foreground" /></span>
+        <span role="status"><span className="inline-flex shrink-0 animate-spin"><RefreshCw className="size-8 text-muted-foreground" /></span><span className="sr-only">Loading…</span></span>
       </div>
     );
   }
@@ -223,7 +223,7 @@ export function SubscriptionDashboard() {
       {/* Subscriptions list */}
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
-          <span className="inline-flex shrink-0 animate-spin"><RefreshCw className="size-8 text-muted-foreground" /></span>
+          <span role="status"><span className="inline-flex shrink-0 animate-spin"><RefreshCw className="size-8 text-muted-foreground" /></span><span className="sr-only">Loading…</span></span>
         </div>
       ) : filteredSubscriptions.length > 0 ? (
         <div className="space-y-4">

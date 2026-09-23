@@ -124,7 +124,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
 
   if (loading) {
     return (
-      <div className="py-8 text-center text-muted-foreground">
+      <div className="py-8 text-center text-muted-foreground" role="status">
         Loading reviews…
       </div>
     )

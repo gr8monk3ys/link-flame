@@ -268,7 +268,7 @@ export function QuizModal({
             </div>
 
             {error && (
-              <p className="mt-4 text-center text-sm text-destructive">{error}</p>
+              <p className="mt-4 text-center text-sm text-destructive" role="alert">{error}</p>
             )}
           </>
         )}
@@ -294,7 +294,7 @@ export function QuizModal({
             </div>
 
             {error && (
-              <p className="mb-4 text-center text-sm text-destructive">{error}</p>
+              <p className="mb-4 text-center text-sm text-destructive" role="alert">{error}</p>
             )}
 
             <div className="flex items-center justify-between border-t pt-4">
@@ -334,7 +334,7 @@ export function QuizModal({
         {/* Loading Screen */}
         {state === 'loading' && (
           <div className="py-12 text-center">
-            <span className="mx-auto mb-4 flex w-fit shrink-0 animate-spin"><Loader2 className="size-12 text-primary" /></span>
+            <span role="status"><span className="mx-auto mb-4 flex w-fit shrink-0 animate-spin"><Loader2 className="size-12 text-primary" /></span><span className="sr-only">Loading…</span></span>
             <h3 className="mb-2 text-xl font-semibold">
               Finding Your Perfect Products
             </h3>

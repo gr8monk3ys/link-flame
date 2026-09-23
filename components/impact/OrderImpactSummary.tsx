@@ -86,7 +86,7 @@ export function OrderImpactSummary({
     return (
       <Card className={cn("", className)}>
         <CardContent className="flex items-center justify-center py-8">
-          <span className="inline-flex shrink-0 animate-spin"><Loader2 className="size-6 text-muted-foreground" /></span>
+          <span role="status"><span className="inline-flex shrink-0 animate-spin"><Loader2 className="size-6 text-muted-foreground" /></span><span className="sr-only">Loading…</span></span>
         </CardContent>
       </Card>
     );

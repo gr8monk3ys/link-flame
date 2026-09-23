@@ -83,7 +83,7 @@ export function SearchSuggestions({
 
         {/* Error State */}
         {error && (
-          <div className="p-4 text-center">
+          <div className="p-4 text-center" role="alert">
             <p className="text-sm text-destructive">{error}</p>
             <p className="mt-1 text-xs text-muted-foreground">
               Please try again later

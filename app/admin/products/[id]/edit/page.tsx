@@ -195,7 +195,7 @@ export default function AdminProductEditPage() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="flex items-center gap-2 text-muted-foreground">
+        <div className="flex items-center gap-2 text-muted-foreground" role="status">
           <span className="inline-flex shrink-0 animate-spin"><Loader2 className="size-5" /></span>
           Loading product…
         </div>
@@ -242,7 +242,7 @@ export default function AdminProductEditPage() {
 
       {/* Error Message */}
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300" role="alert">
           {error}
         </div>
       )}

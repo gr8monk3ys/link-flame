@@ -305,7 +305,7 @@ export function CarbonFootprintCalculator() {
       </Card>
 
       {/* Results Section */}
-      <Card className="p-6">
+      <Card className="p-6" role="status" aria-live="polite">
         <h3 className="mb-4 text-lg font-semibold">Your Carbon Footprint</h3>
         <div className="space-y-4">
           <div>

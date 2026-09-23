@@ -188,7 +188,7 @@ export function SustainabilityCalculator() {
       </Card>
 
       {results && (
-        <Card>
+        <Card role="status" aria-live="polite">
           <CardHeader>
             <CardTitle>Your Results</CardTitle>
           </CardHeader>

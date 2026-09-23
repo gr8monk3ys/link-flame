@@ -79,7 +79,7 @@ export default function AdminProductsPage() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="text-muted-foreground">Loading products…</div>
+        <div className="text-muted-foreground" role="status">Loading products…</div>
       </div>
     );
   }

@@ -105,7 +105,7 @@ export default function OrdersPage() {
   }, [isLoaded, isSignedIn, fetchOrders]);
 
   if (!isLoaded) {
-    return <div className="container py-10">Loading…</div>;
+    return <div className="container py-10" role="status">Loading…</div>;
   }
 
   if (!isSignedIn) {
@@ -124,7 +124,7 @@ export default function OrdersPage() {
   }
 
   if (loading) {
-    return <div className="container py-10">Loading orders…</div>;
+    return <div className="container py-10" role="status">Loading orders…</div>;
   }
 
   if (error) {
