@@ -89,7 +89,7 @@ export function ZeroWasteCalculator() {
       <div className="space-y-2">
         <Label htmlFor="zero-select-item">Select Item</Label>
         <select name="name" id="zero-select-item"
-          className="w-full rounded-md border p-2"
+          className="w-full rounded-md border bg-background p-2 text-foreground"
           value={selectedItem.name}
           onChange={(e) => {
             const item = commonItems.find(i => i.name === e.target.value)

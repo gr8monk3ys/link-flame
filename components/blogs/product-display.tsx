@@ -54,7 +54,7 @@ export function ProductDisplay({
     <Card className={`relative ${className}`}>
       <CardHeader>
         <div className="relative mb-4 h-48 w-full">
-          <Image
+          <Image sizes="(max-width: 768px) 100vw, 50vw"
             src={product.image}
             alt={product.title}
             fill

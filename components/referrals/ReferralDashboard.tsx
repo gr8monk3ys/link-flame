@@ -239,8 +239,8 @@ export function ReferralDashboard() {
                         {referral.refereeName?.charAt(0).toUpperCase() || "?"}
                       </span>
                     </div>
-                    <div>
-                      <p className="font-medium">{referral.refereeName}</p>
+                    <div className="min-w-0">
+                      <p className="truncate font-medium">{referral.refereeName}</p>
                       <p className="text-sm text-muted-foreground">
                         {formatDate(referral.createdAt)}
                       </p>

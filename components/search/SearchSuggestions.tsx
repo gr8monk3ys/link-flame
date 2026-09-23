@@ -60,7 +60,7 @@ export function SearchSuggestions({
       role="listbox"
       aria-label="Search suggestions"
     >
-      <div className="max-h-[400px] overflow-y-auto p-2">
+      <div className="max-h-[400px] overflow-y-auto overscroll-contain p-2">
         {/* Loading State */}
         {isLoading && (
           <div className="space-y-2 p-2">

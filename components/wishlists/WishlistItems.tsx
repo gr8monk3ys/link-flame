@@ -177,7 +177,7 @@ export function WishlistItems({
               </div>
 
               {item.note && (
-                <p className="mt-2 text-sm italic text-muted-foreground">
+                <p className="mt-2 break-words text-sm italic text-muted-foreground">
                   &ldquo;{item.note}&rdquo;
                 </p>
               )}

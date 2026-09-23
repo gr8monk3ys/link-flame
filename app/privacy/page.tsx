@@ -18,7 +18,7 @@ export default function PrivacyPage() {
         Last updated: February 2026
       </p>
 
-      <div className="prose prose-lg max-w-none">
+      <div className="prose prose-lg max-w-none dark:prose-invert">
         <p className="text-muted-foreground">
           At Link Flame, we take your privacy seriously. This Privacy Policy
           explains how we collect, use, share, and protect your personal

@@ -108,15 +108,15 @@ export default function CheckoutPage() {
                       data-testid="checkout-item"
                     >
                       <div className="relative size-16 overflow-hidden rounded-md">
-                        <Image
+                        <Image sizes="64px"
                           src={item.image}
                           alt={item.title}
                           fill
                           className="object-cover"
                         />
                       </div>
-                      <div className="flex-1">
-                        <h4 className="font-medium">{item.title}</h4>
+                      <div className="min-w-0 flex-1">
+                        <h3 className="break-words font-medium">{item.title}</h3>
                         <p className="text-sm text-muted-foreground">
                           Qty: {item.quantity}
                         </p>

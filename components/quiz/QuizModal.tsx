@@ -202,7 +202,7 @@ export function QuizModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
         className={cn(
-          'max-h-[90vh] overflow-y-auto sm:max-w-2xl',
+          'max-h-[90vh] overflow-y-auto overscroll-contain sm:max-w-2xl',
           state === 'results' && 'sm:max-w-4xl'
         )}
       >

@@ -325,7 +325,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
           </div>
 
           {preview ? (
-            <div className="prose prose-green min-h-[400px] w-full max-w-none rounded-lg border border-border bg-muted px-4 py-3">
+            <div className="prose prose-green min-h-[400px] w-full max-w-none rounded-lg border border-border bg-muted px-4 py-3 dark:prose-invert">
               <div
                 dangerouslySetInnerHTML={{
                   __html: renderPostBody(formData.content),

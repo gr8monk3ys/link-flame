@@ -329,7 +329,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
 
         {/* Expanded content */}
         {isExpanded && (
-          <div className="mt-4 border-t border-border pt-4">
+          <div className="mt-4 border-t border-border pt-4 tabular-nums">
             {/* Items list */}
             <h4 className="mb-2 text-sm font-medium text-foreground">Items</h4>
             <ul className="divide-y divide-border">
@@ -375,7 +375,7 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
             </ul>
 
             {/* Summary */}
-            <div className="mt-4 border-t border-border pt-4">
+            <div className="mt-4 border-t border-border pt-4 tabular-nums">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Subtotal</span>
                 <span className="text-foreground">{formatPrice(totals.subtotal)}</span>

@@ -259,7 +259,7 @@ export function DiscountSection({
         )}
       </div>
 
-      <div className="space-y-1 border-t pt-4 text-sm">
+      <div className="space-y-1 border-t pt-4 text-sm tabular-nums">
         <div className="flex items-center justify-between">
           <span>Loyalty discount</span>
           <span>-{formatPrice(loyaltyDiscountAmount)}</span>

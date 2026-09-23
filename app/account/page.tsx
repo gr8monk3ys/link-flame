@@ -110,11 +110,11 @@ export default function AccountPage() {
                 <User className="size-8 text-primary" />
               )}
             </div>
-            <div>
-              <CardTitle as="h1" className="text-2xl">
+            <div className="min-w-0">
+              <CardTitle as="h1" className="break-words text-2xl">
                 Welcome, {session.user?.name || "User"}
               </CardTitle>
-              <CardDescription className="text-base">
+              <CardDescription className="break-all text-base">
                 {session.user?.email}
               </CardDescription>
             </div>

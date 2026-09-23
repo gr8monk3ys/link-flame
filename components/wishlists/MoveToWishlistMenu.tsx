@@ -84,7 +84,7 @@ export function MoveToWishlistMenu({
             </DialogDescription>
           </DialogHeader>
 
-          <div className="max-h-64 space-y-2 overflow-y-auto">
+          <div className="max-h-64 space-y-2 overflow-y-auto overscroll-contain">
             {otherWishlists.length === 0 ? (
               <p className="py-4 text-center text-muted-foreground">
                 No other wishlists available
@@ -109,8 +109,8 @@ export function MoveToWishlistMenu({
                           : 'text-muted-foreground'
                       )}
                     />
-                    <div className="text-left">
-                      <p className="font-medium">{wishlist.name}</p>
+                    <div className="min-w-0 text-left">
+                      <p className="truncate font-medium">{wishlist.name}</p>
                       <p className="text-sm text-muted-foreground">
                         {wishlist.itemCount} {wishlist.itemCount === 1 ? 'item' : 'items'}
                       </p>

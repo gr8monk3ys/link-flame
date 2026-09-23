@@ -112,7 +112,7 @@ export function BlogSearch({ categories = [], tags = [] }: BlogSearchProps) {
               <select name="selectedCategory" id="blog-category"
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 <option value="">All Categories</option>
                 {categories.map((cat) => (
@@ -131,7 +131,7 @@ export function BlogSearch({ categories = [], tags = [] }: BlogSearchProps) {
               <select name="selectedTag" id="blog-tag"
                 value={selectedTag}
                 onChange={(e) => setSelectedTag(e.target.value)}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 <option value="">All Tags</option>
                 {tags.map((tag) => (
@@ -150,8 +150,8 @@ export function BlogSearch({ categories = [], tags = [] }: BlogSearchProps) {
         <div className="flex flex-wrap gap-2 text-sm">
           <span className="text-muted-foreground">Active filters:</span>
           {query.trim() && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1">
-              Query: &ldquo;{query}&rdquo;
+            <span className="inline-flex max-w-64 items-center gap-1 rounded-full bg-primary/10 px-3 py-1" title={query}>
+              <span className="truncate">Query: &ldquo;{query}&rdquo;</span>
               <button aria-label="Remove search filter"
                 onClick={() => setQuery("")}
                 className="hover:text-destructive"

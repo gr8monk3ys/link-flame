@@ -159,7 +159,7 @@ export default function AdminBlogPage() {
           <select aria-label="Filter by status" name="filter"
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="rounded-lg border border-border px-4 py-2 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
+            className="rounded-lg border border-border bg-background px-4 py-2 text-foreground focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
           >
             <option value="all">All Posts</option>
             <option value="published">Published</option>
@@ -170,8 +170,8 @@ export default function AdminBlogPage() {
       </div>
 
       {/* Posts Table */}
-      <div className="overflow-hidden rounded-lg bg-card shadow">
-        <table className="min-w-full divide-y divide-border">
+      <div className="overflow-x-auto rounded-lg bg-card shadow">
+        <table className="min-w-full divide-y divide-border tabular-nums">
           <thead className="bg-muted">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">

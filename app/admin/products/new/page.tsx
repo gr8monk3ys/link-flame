@@ -270,7 +270,7 @@ export default function AdminProductNewPage() {
                 id="category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus-visible:border-green-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-green-500"
+                className="mt-1 block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground shadow-sm focus-visible:border-green-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-green-500"
               >
                 {CATEGORIES.map((cat) => (
                   <option key={cat} value={cat}>

@@ -155,7 +155,7 @@ export default function OrdersPage() {
           <select aria-label="Filter orders by status" name="statusFilter"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="rounded-md border px-3 py-1.5 text-sm"
+            className="rounded-md border bg-background px-3 py-1.5 text-sm text-foreground"
           >
             <option value="all">All Orders</option>
             <option value="processing">Processing</option>
@@ -208,7 +208,7 @@ export default function OrdersPage() {
                     {/* Order thumbnail */}
                     {order.thumbnail && (
                       <div className="relative size-16 shrink-0 overflow-hidden rounded-md">
-                        <Image
+                        <Image sizes="64px"
                           src={order.thumbnail}
                           alt="Order item"
                           fill

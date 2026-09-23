@@ -273,7 +273,7 @@ export default function AdminOrdersPage() {
             <select aria-label="Filter by payment status" name="statusFilter"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="flex-1 rounded-lg border border-border px-4 py-2 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
+              className="flex-1 rounded-lg border border-border bg-background px-4 py-2 text-foreground focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
             >
               <option value="all">All Payment Statuses</option>
               <option value="pending">Pending</option>
@@ -284,7 +284,7 @@ export default function AdminOrdersPage() {
             <select aria-label="Filter by shipping status" name="shippingFilter"
               value={shippingFilter}
               onChange={(e) => setShippingFilter(e.target.value)}
-              className="flex-1 rounded-lg border border-border px-4 py-2 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
+              className="flex-1 rounded-lg border border-border bg-background px-4 py-2 text-foreground focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
             >
               <option value="all">All Shipping Statuses</option>
               <option value="pending">Pending</option>
@@ -300,8 +300,8 @@ export default function AdminOrdersPage() {
       </div>
 
       {/* Orders Table */}
-      <div className="overflow-hidden rounded-lg bg-card shadow">
-        <table className="min-w-full divide-y divide-border">
+      <div className="overflow-x-auto rounded-lg bg-card shadow">
+        <table className="min-w-full divide-y divide-border tabular-nums">
           <thead className="bg-muted">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -373,7 +373,7 @@ export default function AdminOrdersPage() {
                       onChange={(e) =>
                         updateShippingStatus(order.id, e.target.value)
                       }
-                      className="rounded border border-border px-2 py-1 text-sm focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
+                      className="rounded border border-border bg-background px-2 py-1 text-sm text-foreground focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
                     >
                       <option value="pending">Pending</option>
                       <option value="processing">Processing</option>
@@ -398,7 +398,7 @@ export default function AdminOrdersPage() {
                               e.target.value
                             )
                           }
-                          className="w-28 rounded border border-border p-1 text-xs focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
+                          className="w-28 rounded border border-border bg-background p-1 text-xs text-foreground focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
                         >
                           {CARRIER_OPTIONS.map((opt) => (
                             <option key={opt.value} value={opt.value}>

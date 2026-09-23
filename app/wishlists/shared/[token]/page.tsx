@@ -25,7 +25,7 @@ export default async function SharedWishlistPage({ params }: SharedWishlistPageP
       <div className="mb-8 text-center">
         <div className="mb-2 flex items-center justify-center gap-2">
           <Heart className="size-6 fill-red-500 text-red-500" />
-          <h1 className="text-3xl font-bold">{wishlist.name}</h1>
+          <h1 className="min-w-0 break-words text-3xl font-bold">{wishlist.name}</h1>
         </div>
         <p className="text-muted-foreground">
           {wishlist.items.length} {wishlist.items.length === 1 ? 'item' : 'items'}

@@ -71,8 +71,8 @@ const CartItemRow = memo(({
           sizes="96px"
         />
       </div>
-      <div className="flex-1 space-y-1">
-        <h3 className="font-medium">{item.title}</h3>
+      <div className="min-w-0 flex-1 space-y-1">
+        <h2 className="break-words font-medium">{item.title}</h2>
         <div className="flex items-center space-x-2">
           <label htmlFor={`quantity-${item.id}`} className="text-sm font-medium">
             Quantity:

@@ -350,7 +350,7 @@ export default function OrderDetailPage() {
           <div className="grid gap-6 md:grid-cols-2">
             <div>
               <h3 className="mb-2 font-semibold">Customer Information</h3>
-              <div className="space-y-1 text-sm text-muted-foreground">
+              <div className="space-y-1 break-words text-sm text-muted-foreground">
                 {order.customerName && <div>{order.customerName}</div>}
                 {order.customerEmail && <div>{order.customerEmail}</div>}
               </div>
@@ -358,7 +358,7 @@ export default function OrderDetailPage() {
             {order.shippingAddress && (
               <div>
                 <h3 className="mb-2 font-semibold">Shipping Address</h3>
-                <div className="text-sm text-muted-foreground">
+                <div className="break-words text-sm text-muted-foreground">
                   {order.shippingAddress}
                 </div>
               </div>
@@ -390,15 +390,15 @@ export default function OrderDetailPage() {
                   className="flex gap-4 rounded-lg border p-4"
                 >
                   <div className="relative size-20 shrink-0">
-                    <Image
+                    <Image sizes="80px"
                       src={displayImage}
                       alt={item.title}
                       fill
                       className="rounded object-cover"
                     />
                   </div>
-                  <div className="flex-1">
-                    <h4 className="font-medium">{item.title}</h4>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="break-words font-medium">{item.title}</h3>
                     {variantDetails.length > 0 && (
                       <p className="mt-1 text-sm text-muted-foreground">
                         {variantDetails.join(' / ')}

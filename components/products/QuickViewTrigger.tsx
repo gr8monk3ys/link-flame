@@ -230,6 +230,7 @@ export function QuickViewTrigger({
           showOnHover && [
             "pointer-events-none translate-y-1 opacity-0",
             "group-hover/card:pointer-events-auto group-hover/card:translate-y-0 group-hover/card:opacity-100",
+            "focus-visible:pointer-events-auto focus-visible:translate-y-0 focus-visible:opacity-100",
           ],
           // Size
           sizeClasses[size],

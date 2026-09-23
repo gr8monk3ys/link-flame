@@ -82,7 +82,7 @@ export function WishlistSelector({
             </DialogDescription>
           </DialogHeader>
 
-          <div className="max-h-64 space-y-2 overflow-y-auto">
+          <div className="max-h-64 space-y-2 overflow-y-auto overscroll-contain">
             {wishlists.map((wishlist) => (
               <button type="button" aria-pressed={selectedWishlistId === wishlist.id}
                 key={wishlist.id}

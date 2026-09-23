@@ -54,7 +54,7 @@ export default function SavedItems() {
         {savedItems.map(item => (
           <div key={item.id} className="flex items-center space-x-4 rounded-lg border p-3">
             <div className="relative size-16 overflow-hidden rounded-md">
-              <Image
+              <Image sizes="64px"
                 src={item.image}
                 alt={item.title}
                 fill

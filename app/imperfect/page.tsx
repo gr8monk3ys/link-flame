@@ -155,7 +155,7 @@ export default function ImperfectPage() {
               <select name="category"
                 value={filters.category}
                 onChange={(e) => handleFilterChange({ category: e.target.value })}
-                className="rounded-lg border border-border px-4 py-2 text-sm focus-visible:border-amber-500 focus-visible:ring-amber-500"
+                className="rounded-lg border border-border bg-background px-4 py-2 text-sm text-foreground focus-visible:border-amber-500 focus-visible:ring-amber-500"
                 aria-label="Filter by category"
               >
                 <option value="">All Categories</option>
@@ -175,7 +175,7 @@ export default function ImperfectPage() {
                   minDiscount: e.target.value ? Number(e.target.value) : null,
                 })
               }
-              className="rounded-lg border border-border px-4 py-2 text-sm focus-visible:border-amber-500 focus-visible:ring-amber-500"
+              className="rounded-lg border border-border bg-background px-4 py-2 text-sm text-foreground focus-visible:border-amber-500 focus-visible:ring-amber-500"
               aria-label="Filter by discount"
             >
               {DISCOUNT_OPTIONS.map((opt) => (
@@ -189,7 +189,7 @@ export default function ImperfectPage() {
             <select name="sortBy"
               value={filters.sortBy}
               onChange={(e) => handleFilterChange({ sortBy: e.target.value })}
-              className="rounded-lg border border-border px-4 py-2 text-sm focus-visible:border-amber-500 focus-visible:ring-amber-500"
+              className="rounded-lg border border-border bg-background px-4 py-2 text-sm text-foreground focus-visible:border-amber-500 focus-visible:ring-amber-500"
               aria-label="Sort products"
             >
               {SORT_OPTIONS.map((opt) => (

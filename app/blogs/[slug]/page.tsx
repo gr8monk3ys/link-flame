@@ -193,7 +193,7 @@ export default async function BlogPost({ params }: PageProps<{ slug: string }>) 
       />
 
       {/* Article Content */}
-      <article className="prose mx-auto px-4 py-8 lg:prose-xl">
+      <article className="prose mx-auto px-4 py-8 dark:prose-invert lg:prose-xl">
         <header className="mb-8">
           <h1>{post.title}</h1>
           <div className="not-prose flex items-center gap-4 text-muted-foreground">

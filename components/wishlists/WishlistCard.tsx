@@ -150,7 +150,7 @@ export function WishlistCard({
         {/* Card Footer */}
         <div className="p-4">
           <div className="flex items-start justify-between gap-2">
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <h3 className="line-clamp-1 font-semibold">{wishlist.name}</h3>
                 {wishlist.isDefault && (

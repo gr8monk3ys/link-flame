@@ -139,7 +139,7 @@ function ProductCard({
     <div key={product.id} className="group relative" data-testid="product-card">
       <Link
         href={`/products/${product.id}`}
-        className="absolute right-4 top-4 z-10 rounded-full bg-card p-2 opacity-0 shadow-md transition-opacity group-hover:opacity-100"
+        className="absolute right-4 top-4 z-10 rounded-full bg-card p-2 opacity-0 shadow-md transition-opacity focus-visible:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100"
         aria-label={`View details for ${product.title}`}
       >
         <svg className="size-5 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -150,7 +150,7 @@ function ProductCard({
 
       <button
         data-testid="add-to-cart-button"
-        className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white opacity-0 shadow-md transition-opacity hover:bg-primary/90 group-hover:opacity-100"
+        className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white opacity-0 shadow-md transition-opacity hover:bg-primary/90 focus-visible:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100"
         aria-label={`Add ${product.title} to cart`}
         onClick={() => onAddToCart(product)}
       >
@@ -178,7 +178,7 @@ function ProductCard({
       </div>
 
       <button
-        className="absolute right-4 top-16 z-10 rounded-full bg-card p-2 opacity-0 shadow-md transition-opacity group-hover:opacity-100"
+        className="absolute right-4 top-16 z-10 rounded-full bg-card p-2 opacity-0 shadow-md transition-opacity focus-visible:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100"
         aria-label={`${isSaved ? 'Remove' : 'Add'} ${product.title} ${isSaved ? 'from' : 'to'} wishlist`}
         aria-pressed={isSaved}
         onClick={(event) => {
@@ -210,12 +210,12 @@ function ProductCard({
         />
       </div>
       <div className="mt-4 space-y-2">
-        <div className="flex justify-between">
-          <h3 className="text-sm text-foreground">
-            <a href={`/products/${product.id}`}>
+        <div className="flex justify-between gap-2">
+          <h3 className="min-w-0 break-words text-sm text-foreground">
+            <Link href={`/products/${product.id}`}>
               <span aria-hidden="true" className="absolute inset-0" />
               {product.title}
-            </a>
+            </Link>
           </h3>
           <div className="text-sm font-medium">
             {product.isImperfect && product.imperfectPrice ? (
@@ -307,7 +307,7 @@ function ProductPagination({
             id="products-per-page"
             value={pageSize}
             onChange={(e) => onPageSizeChange(Number(e.target.value))}
-            className="rounded-md border border-border py-2 pl-3 pr-10 text-sm"
+            className="rounded-md border border-border bg-background py-2 pl-3 pr-10 text-sm text-foreground"
           >
             {[12, 24, 36, 48].map((size) => (
               <option key={size} value={size}>

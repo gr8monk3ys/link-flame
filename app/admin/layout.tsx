@@ -54,7 +54,7 @@ export default async function AdminLayout({
               </Link>
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-sm text-foreground">
+              <span className="max-w-48 truncate text-sm text-foreground">
                 {user?.name || user?.email}
               </span>
               <Link

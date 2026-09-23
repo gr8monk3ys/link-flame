@@ -72,7 +72,7 @@ export default function ProductRecommendations() {
           <div key={product.id} className="group rounded-lg border p-3 transition-shadow hover:shadow-md">
             <Link href={`/products/${product.id}`} className="block">
               <div className="relative mb-3 aspect-square overflow-hidden rounded-md">
-                <Image
+                <Image sizes="(max-width: 640px) 50vw, 25vw"
                   src={product.image}
                   alt={product.title}
                   fill

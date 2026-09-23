@@ -19,7 +19,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   return (
     <div className="container py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">
+        <h1 className="break-words text-3xl font-bold tracking-tight">
           {query ? `Search results for "${query}"` : 'Search'}
         </h1>
         {query && (

@@ -60,7 +60,7 @@ export function BlogPost({
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <div className="relative size-10">
-                <Image
+                <Image sizes="48px"
                   src={author.image}
                   alt={author.name}
                   fill
@@ -104,7 +104,7 @@ export function BlogPost({
 
       {/* Cover Image */}
       <div className="relative mb-8 aspect-video">
-        <Image
+        <Image sizes="(max-width: 1024px) 100vw, 768px"
           src={coverImage}
           alt={title}
           fill
@@ -139,7 +139,7 @@ export function BlogPost({
       <Card className="mt-8 p-6">
         <div className="flex items-start gap-4">
           <div className="relative size-16">
-            <Image
+            <Image sizes="48px"
               src={author.image}
               alt={author.name}
               fill

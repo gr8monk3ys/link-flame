@@ -450,7 +450,7 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
           </DialogPrimitive.Close>
 
           {/* Scrollable content */}
-          <div className="max-h-[calc(95vh-2rem)] overflow-y-auto p-4 sm:max-h-[calc(90vh-2rem)] sm:p-6">
+          <div className="max-h-[calc(95vh-2rem)] overflow-y-auto overscroll-contain p-4 sm:max-h-[calc(90vh-2rem)] sm:p-6">
             {/* Screen reader announcement */}
             <div className="sr-only" role="status" aria-live="polite">
               Quick view for {product.title}

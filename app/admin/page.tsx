@@ -146,7 +146,7 @@ export default async function AdminDashboard() {
           <h2 className="text-lg font-semibold text-foreground">Recent Orders</h2>
         </div>
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-border">
+          <table className="min-w-full divide-y divide-border tabular-nums">
             <thead className="bg-muted">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">

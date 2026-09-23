@@ -184,7 +184,7 @@ export function BundleProductSelector({
                   {/* Product Info */}
                   <div className="flex flex-1 flex-col">
                     <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1">
+                      <div className="min-w-0 flex-1">
                         <h4 className="line-clamp-1 text-sm font-medium">
                           {product.title}
                         </h4>
@@ -192,7 +192,7 @@ export function BundleProductSelector({
                           <span className="text-sm font-semibold">
                             {formatPrice(effectivePrice)}
                           </span>
-                          {product.salePrice && (
+                          {product.salePrice != null && (
                             <span className="text-xs text-muted-foreground line-through">
                               {formatPrice(product.price)}
                             </span>

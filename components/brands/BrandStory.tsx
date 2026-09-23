@@ -48,7 +48,7 @@ export function BrandStory({ story, certifications, values, className }: BrandSt
               </div>
               <h2 className="text-2xl font-bold">Our Story</h2>
             </div>
-            <div className="prose prose-green max-w-none">
+            <div className="prose prose-green max-w-none dark:prose-invert">
               {story.split('\n\n').map((paragraph, index) => (
                 <p key={index} className="leading-relaxed text-muted-foreground">
                   {paragraph}

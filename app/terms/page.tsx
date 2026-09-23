@@ -18,7 +18,7 @@ export default function TermsPage() {
         Last updated: February 2026
       </p>
 
-      <div className="prose prose-lg max-w-none">
+      <div className="prose prose-lg max-w-none dark:prose-invert">
         <p className="text-muted-foreground">
           Welcome to Link Flame. By accessing or using our website at
           linkflame.com, creating an account, or making a purchase, you agree to

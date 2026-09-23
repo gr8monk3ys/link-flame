@@ -150,7 +150,7 @@ export function BundleSummary({
           <>
             <Separator />
 
-            <div className="space-y-2">
+            <div className="space-y-2 tabular-nums">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Subtotal</span>
                 <span>{formatPrice(subtotal)}</span>
