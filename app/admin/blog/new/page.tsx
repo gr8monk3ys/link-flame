@@ -100,7 +100,7 @@ export default function NewBlogPostPage() {
             required
             value={formData.title}
             onChange={(e) => handleTitleChange(e.target.value)}
-            className="w-full rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
+            className="w-full rounded-lg border border-border px-4 py-2 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
             placeholder="Enter post title…"
           />
         </div>
@@ -119,7 +119,7 @@ export default function NewBlogPostPage() {
             required
             value={formData.slug}
             onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-            className="w-full rounded-lg border border-border px-4 py-2 font-mono text-sm focus:border-transparent focus:ring-2 focus:ring-ring"
+            className="w-full rounded-lg border border-border px-4 py-2 font-mono text-sm focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
             placeholder="post-url-slug"
           />
           <p className="mt-1 text-sm text-muted-foreground">
@@ -143,7 +143,7 @@ export default function NewBlogPostPage() {
             onChange={(e) =>
               setFormData({ ...formData, description: e.target.value })
             }
-            className="w-full rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
+            className="w-full rounded-lg border border-border px-4 py-2 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
             placeholder="Brief description for search engines…"
           />
         </div>
@@ -165,7 +165,7 @@ export default function NewBlogPostPage() {
               onChange={(e) =>
                 setFormData({ ...formData, category: e.target.value })
               }
-              className="w-full rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
+              className="w-full rounded-lg border border-border px-4 py-2 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
               placeholder="e.g., Sustainability"
             />
           </div>
@@ -183,7 +183,7 @@ export default function NewBlogPostPage() {
               onChange={(e) =>
                 setFormData({ ...formData, tags: e.target.value })
               }
-              className="w-full rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
+              className="w-full rounded-lg border border-border px-4 py-2 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
               placeholder="eco-friendly, green-living"
             />
           </div>
@@ -205,7 +205,7 @@ export default function NewBlogPostPage() {
             onChange={(e) =>
               setFormData({ ...formData, coverImage: e.target.value })
             }
-            className="w-full rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
+            className="w-full rounded-lg border border-border px-4 py-2 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
             placeholder="https://images.unsplash.com/..."
           />
           {formData.coverImage && (
@@ -258,7 +258,7 @@ export default function NewBlogPostPage() {
               onChange={(e) =>
                 setFormData({ ...formData, content: e.target.value })
               }
-              className="w-full rounded-lg border border-border px-4 py-3 font-mono text-sm focus:border-transparent focus:ring-2 focus:ring-ring"
+              className="w-full rounded-lg border border-border px-4 py-3 font-mono text-sm focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
               placeholder="# Your Blog Post Content
 
 Write your content in Markdown/MDX format…
@@ -287,7 +287,7 @@ const example = 'value';
               onChange={(e) =>
                 setFormData({ ...formData, featured: e.target.checked })
               }
-              className="size-4 rounded border-border text-green-700 focus:ring-ring dark:text-green-400"
+              className="size-4 rounded border-border text-green-700 focus-visible:ring-ring dark:text-green-400"
             />
             <span className="text-sm font-medium text-foreground">
               Featured Post

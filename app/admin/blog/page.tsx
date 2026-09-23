@@ -153,13 +153,13 @@ export default function AdminBlogPage() {
               placeholder="Search posts…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-lg border border-border py-2 pl-10 pr-4 focus:border-transparent focus:ring-2 focus:ring-ring"
+              className="w-full rounded-lg border border-border py-2 pl-10 pr-4 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
             />
           </div>
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
+            className="rounded-lg border border-border px-4 py-2 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
           >
             <option value="all">All Posts</option>
             <option value="published">Published</option>

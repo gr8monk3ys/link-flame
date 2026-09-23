@@ -266,14 +266,14 @@ export default function AdminOrdersPage() {
               placeholder="Search by customer name, email, or order ID…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-lg border border-border py-2 pl-10 pr-4 focus:border-transparent focus:ring-2 focus:ring-ring"
+              className="w-full rounded-lg border border-border py-2 pl-10 pr-4 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
             />
           </div>
           <div className="flex gap-4">
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="flex-1 rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
+              className="flex-1 rounded-lg border border-border px-4 py-2 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
             >
               <option value="all">All Payment Statuses</option>
               <option value="pending">Pending</option>
@@ -284,7 +284,7 @@ export default function AdminOrdersPage() {
             <select
               value={shippingFilter}
               onChange={(e) => setShippingFilter(e.target.value)}
-              className="flex-1 rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
+              className="flex-1 rounded-lg border border-border px-4 py-2 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
             >
               <option value="all">All Shipping Statuses</option>
               <option value="pending">Pending</option>
@@ -373,7 +373,7 @@ export default function AdminOrdersPage() {
                       onChange={(e) =>
                         updateShippingStatus(order.id, e.target.value)
                       }
-                      className="rounded border border-border px-2 py-1 text-sm focus:border-transparent focus:ring-2 focus:ring-ring"
+                      className="rounded border border-border px-2 py-1 text-sm focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
                     >
                       <option value="pending">Pending</option>
                       <option value="processing">Processing</option>
@@ -398,7 +398,7 @@ export default function AdminOrdersPage() {
                               e.target.value
                             )
                           }
-                          className="w-28 rounded border border-border p-1 text-xs focus:border-transparent focus:ring-2 focus:ring-ring"
+                          className="w-28 rounded border border-border p-1 text-xs focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
                         >
                           {CARRIER_OPTIONS.map((opt) => (
                             <option key={opt.value} value={opt.value}>
@@ -435,7 +435,7 @@ export default function AdminOrdersPage() {
                               );
                             }
                           }}
-                          className="w-36 rounded border border-border px-2 py-1 text-xs focus:border-transparent focus:ring-2 focus:ring-ring"
+                          className="w-36 rounded border border-border px-2 py-1 text-xs focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
                         />
                       </div>
                     ) : (

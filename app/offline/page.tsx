@@ -31,7 +31,7 @@ export default function OfflinePage() {
         <div className="space-y-4">
           <button
             onClick={() => window.location.reload()}
-            className="inline-flex items-center rounded-md border border-transparent bg-green-700 px-6 py-3 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            className="inline-flex items-center rounded-md border border-transparent bg-green-700 px-6 py-3 text-base font-medium text-white hover:bg-green-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             Try Again
           </button>
