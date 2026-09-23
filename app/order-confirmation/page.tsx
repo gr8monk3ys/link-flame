@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/providers/CartProvider";
 import { Gift, Check } from "lucide-react";
+import { formatDate } from "@/lib/utils";
 
 interface OrderDetails {
   id: string;
@@ -60,13 +61,14 @@ function OrderConfirmationContent() {
   }, [clearCart, fetchOrderDetails]);
 
   // Format dates for display
-  const orderDate = orderDetails?.createdAt
-    ? new Date(orderDetails.createdAt).toLocaleDateString()
-    : new Date().toLocaleDateString();
+  // Fallbacks are computed from the current clock, which differs between the
+  // server render and hydration; the spans that show them suppress that one
+  // expected mismatch.
+  const orderDate = formatDate(orderDetails?.createdAt ?? new Date());
 
-  const estimatedDelivery = orderDetails?.estimatedDelivery
-    ? new Date(orderDetails.estimatedDelivery).toLocaleDateString()
-    : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString();
+  const estimatedDelivery = formatDate(
+    orderDetails?.estimatedDelivery ?? Date.now() + 7 * 24 * 60 * 60 * 1000
+  );
 
   const orderId = orderDetails?.id
     ? `#${orderDetails.id.slice(0, 8)}`
@@ -108,11 +110,11 @@ function OrderConfirmationContent() {
             </div>
             <div className="flex justify-between border-b pb-2">
               <span className="font-medium">Order Date:</span>
-              <span>{orderDate}</span>
+              <span suppressHydrationWarning>{orderDate}</span>
             </div>
             <div className="flex justify-between">
               <span className="font-medium">Estimated Delivery:</span>
-              <span>{estimatedDelivery}</span>
+              <span suppressHydrationWarning>{estimatedDelivery}</span>
             </div>
           </div>
 
