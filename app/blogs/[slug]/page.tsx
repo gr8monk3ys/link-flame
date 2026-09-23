@@ -3,10 +3,10 @@ import Image from 'next/image'
 import { PageProps } from '@/types/next'
 import { getAllPosts, getPost } from '@/lib/blog'
 import { notFound } from 'next/navigation'
-import { format, parseISO } from 'date-fns'
+import { parseISO } from 'date-fns'
 import { renderPostBody } from '@/lib/markdown'
 import { getBaseUrl } from '@/lib/url'
-import { slugify } from "@/lib/utils"
+import { slugify, formatDate } from "@/lib/utils"
 
 // Render at request time — DB not available during Vercel build
 export const dynamic = 'force-dynamic';
@@ -214,7 +214,7 @@ export default async function BlogPost({ params }: PageProps<{ slug: string }>) 
             </div>
             <span>·</span>
             <time dateTime={publishedAt}>
-              {format(typeof post.publishedAt === 'string' ? parseISO(post.publishedAt) : post.publishedAt, 'MMMM d, yyyy')}
+              {formatDate(typeof post.publishedAt === 'string' ? parseISO(post.publishedAt) : post.publishedAt, 'long')}
             </time>
             {post.readingTime && (
               <>
@@ -269,7 +269,7 @@ export default async function BlogPost({ params }: PageProps<{ slug: string }>) 
         {/* Article Footer */}
         <footer className="not-prose mt-12 border-t pt-8">
           <p className="text-sm text-muted-foreground">
-            Last updated: {format(typeof updatedAt === 'string' ? parseISO(updatedAt) : new Date(updatedAt), 'MMMM d, yyyy')}
+            Last updated: {formatDate(typeof updatedAt === 'string' ? parseISO(updatedAt) : updatedAt, 'long')}
           </p>
         </footer>
       </article>

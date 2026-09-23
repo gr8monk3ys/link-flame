@@ -13,7 +13,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, formatDate } from '@/lib/utils';
 import { cn } from '@/lib/utils';
 
 export interface WishlistItem {
@@ -183,7 +183,7 @@ export function WishlistItems({
               )}
 
               <p className="mt-1 text-xs text-muted-foreground">
-                Added {new Date(item.addedAt).toLocaleDateString()}
+                Added {formatDate(item.addedAt)}
               </p>
             </div>
 

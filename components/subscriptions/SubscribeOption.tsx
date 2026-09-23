@@ -10,7 +10,7 @@ import {
   calculateSavings,
   getDiscountForFrequency,
 } from '@/lib/subscriptions';
-import { cn } from '@/lib/utils';
+import { cn, formatPrice } from '@/lib/utils';
 
 interface SubscribeOptionProps {
   originalPrice: number;
@@ -103,7 +103,7 @@ export function SubscribeOption({
             <span className="text-sm font-medium text-foreground">One-time purchase</span>
           </div>
           <span className="text-sm font-semibold text-foreground">
-            ${originalPrice.toFixed(2)}
+            {formatPrice(originalPrice)}
           </span>
         </button>
 
@@ -130,10 +130,10 @@ export function SubscribeOption({
             </div>
             <div className="text-right">
               <span className="text-sm font-semibold text-green-700 dark:text-green-400">
-                ${discountedPrice.toFixed(2)}
+                {formatPrice(discountedPrice)}
               </span>
               <span className="ml-1 text-xs text-muted-foreground line-through">
-                ${originalPrice.toFixed(2)}
+                {formatPrice(originalPrice)}
               </span>
             </div>
           </div>
@@ -141,7 +141,7 @@ export function SubscribeOption({
             <div className="mt-1 flex items-center text-xs text-green-700 dark:text-green-300">
               <CalendarDays className="mr-1 size-4" />
               <span>
-                You save ${savings.toFixed(2)} per delivery
+                You save {formatPrice(savings)} per delivery
               </span>
             </div>
           )}

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
-import { cn } from '@/lib/utils'
+import { cn, formatPrice, formatNumber } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -183,7 +183,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
             </div>
             <div className="text-right">
               <p className="text-4xl font-bold">
-                {summary.availablePoints.toLocaleString()}
+                {formatNumber(summary.availablePoints)}
               </p>
               <p className="text-sm text-muted-foreground">Available Points</p>
             </div>
@@ -209,7 +209,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
                 />
               </div>
               <p className="mt-2 text-center text-sm text-muted-foreground">
-                {summary.pointsToNextTier.toLocaleString()} points to{' '}
+                {formatNumber(summary.pointsToNextTier)} points to{' '}
                 {TIER_CONFIG[summary.nextTier]?.label || 'next tier'}
               </p>
             </div>
@@ -220,7 +220,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="text-center">
               <p className="text-2xl font-semibold">
-                {summary.lifetimePoints.toLocaleString()}
+                {formatNumber(summary.lifetimePoints)}
               </p>
               <p className="text-sm text-muted-foreground">Lifetime Points</p>
             </div>
@@ -232,7 +232,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
             </div>
             <div className="text-center">
               <p className="text-2xl font-semibold">
-                ${summary.maxDiscount.toFixed(2)}
+                {formatPrice(summary.maxDiscount)}
               </p>
               <p className="text-sm text-muted-foreground">Available Discount</p>
             </div>
@@ -447,7 +447,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
                     )}
                   >
                     {transaction.type === 'earned' ? '+' : ''}
-                    {transaction.points.toLocaleString()} pts
+                    {formatNumber(transaction.points)} pts
                   </p>
                 </div>
               ))}

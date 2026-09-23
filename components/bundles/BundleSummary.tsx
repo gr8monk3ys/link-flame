@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
-import { cn } from "@/lib/utils"
+import { cn, formatPrice } from "@/lib/utils"
 import { ShoppingCart, Loader2, Check, Tag } from "lucide-react"
 
 interface SelectedItem {
@@ -127,11 +127,11 @@ export function BundleSummary({
                     {item.product.title}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Qty: {item.quantity} x ${item.effectivePrice.toFixed(2)}
+                    Qty: {item.quantity} x {formatPrice(item.effectivePrice)}
                   </p>
                 </div>
                 <span className="text-sm font-medium">
-                  ${item.lineTotal.toFixed(2)}
+                  {formatPrice(item.lineTotal)}
                 </span>
               </div>
             ))}
@@ -153,7 +153,7 @@ export function BundleSummary({
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>{formatPrice(subtotal)}</span>
               </div>
 
               <div className="flex justify-between text-sm text-green-700 dark:text-green-400">
@@ -161,20 +161,20 @@ export function BundleSummary({
                   <Tag className="mr-1 size-3" />
                   Bundle Discount ({discountPercent}%)
                 </span>
-                <span>-${discountAmount.toFixed(2)}</span>
+                <span>-{formatPrice(discountAmount)}</span>
               </div>
 
               <Separator />
 
               <div className="flex justify-between text-lg font-semibold">
                 <span>Total</span>
-                <span>${total.toFixed(2)}</span>
+                <span>{formatPrice(total)}</span>
               </div>
 
               {/* Savings Callout */}
               <div className="rounded-lg bg-green-50 p-3 text-center dark:bg-green-950">
                 <p className="text-sm font-medium text-green-700 dark:text-green-300">
-                  You save ${discountAmount.toFixed(2)} with this bundle!
+                  You save {formatPrice(discountAmount)} with this bundle!
                 </p>
               </div>
             </div>
@@ -211,7 +211,7 @@ export function BundleSummary({
           ) : meetsMinimum ? (
             <>
               <ShoppingCart className="mr-2 size-4" />
-              Add Bundle to Cart - ${total.toFixed(2)}
+              Add Bundle to Cart - {formatPrice(total)}
             </>
           ) : (
             <>

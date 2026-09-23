@@ -7,6 +7,7 @@ import { Star, ThumbsUp, ThumbsDown, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
+import { formatNumber, formatDate } from "@/lib/utils"
 
 interface Review {
   id: string
@@ -140,7 +141,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
       {/* Rating Summary */}
       <div className="flex flex-col gap-8 md:flex-row">
         <div className="flex flex-col items-center md:items-start">
-          <div className="text-5xl font-bold">{averageRating.toFixed(1)}</div>
+          <div className="text-5xl font-bold">{formatNumber(averageRating, 1)}</div>
           <div className="my-2 flex items-center gap-1">
             {[1, 2, 3, 4, 5].map((star) => (
               <Star
@@ -304,7 +305,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
                         {review.user.name || 'Anonymous'}
                       </span>
                       <span className="text-sm text-muted-foreground">
-                        {new Date(review.createdAt).toLocaleDateString()}
+                        {formatDate(review.createdAt)}
                       </span>
                     </div>
 

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
+import { cn, formatPrice } from '@/lib/utils'
 
 // Preset amounts for quick selection
 const PRESET_AMOUNTS = [25, 50, 100, 150, 200] as const
@@ -205,7 +205,7 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
             <div>
               <p className="text-xs uppercase tracking-wide text-muted-foreground">Amount</p>
               <p className="mt-1 text-2xl font-bold text-green-700 dark:text-green-400">
-                ${purchasedCard.amount.toFixed(2)}
+                {formatPrice(purchasedCard.amount)}
               </p>
             </div>
             {purchasedCard.expiresAt && (
@@ -376,7 +376,7 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
             <>
               Purchase Gift Card
               {getEffectiveAmount() && (
-                <span className="ml-2">- ${getEffectiveAmount()?.toFixed(2)}</span>
+                <span className="ml-2">- {formatPrice(getEffectiveAmount() ?? 0)}</span>
               )}
             </>
           )}

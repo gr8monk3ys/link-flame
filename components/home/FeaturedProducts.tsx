@@ -5,6 +5,7 @@ import { ArrowRight, ShoppingBag } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { formatPrice } from "@/lib/utils"
 
 async function getFeaturedProducts() {
   try {
@@ -115,11 +116,11 @@ export async function FeaturedProducts() {
                     </h3>
                     <div className="mb-2 flex items-baseline gap-2">
                       <span className="text-lg font-bold text-foreground">
-                        ${displayPrice.toFixed(2)}
+                        {formatPrice(displayPrice)}
                       </span>
                       {hasDiscount && (
                         <span className="text-sm text-muted-foreground line-through">
-                          ${product.price.toFixed(2)}
+                          {formatPrice(product.price)}
                         </span>
                       )}
                     </div>

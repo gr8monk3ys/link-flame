@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, formatNumber } from "@/lib/utils";
 import { toast } from "sonner";
 
 export interface CheckoutDiscountState {
@@ -176,7 +176,7 @@ export function DiscountSection({
         <div className="flex items-center justify-between">
           <Label htmlFor="loyalty-points-slider">Loyalty points</Label>
           <span className="text-xs text-muted-foreground">
-            {availablePoints.toLocaleString()} available
+            {formatNumber(availablePoints)} available
           </span>
         </div>
         <Slider
@@ -191,7 +191,7 @@ export function DiscountSection({
           }}
         />
         <p className="text-sm text-muted-foreground">
-          Redeem {loyaltyPointsToRedeem.toLocaleString()} points ={" "}
+          Redeem {formatNumber(loyaltyPointsToRedeem)} points ={" "}
           {formatPrice(loyaltyDiscountAmount)} off
         </p>
       </div>

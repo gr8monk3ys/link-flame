@@ -12,6 +12,7 @@ import { SubscriptionFrequency } from '@/lib/subscriptions';
 import { ImperfectBadge, ImperfectReasonTooltip, ImperfectSavingsBadge } from '@/components/imperfect';
 import { EcoImpactCard, CertificationBadgesFull, CarbonNeutralBadge, type Certification } from '@/components/sustainability';
 import { ValueBadgeList } from '@/components/filters/ValueBadge';
+import { formatPrice } from "@/lib/utils";
 
 interface ProductValue {
   id: string;
@@ -156,10 +157,10 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
                 <div className="space-y-2">
                   <div className="flex items-baseline gap-3">
                     <p className="text-3xl font-bold tracking-tight text-amber-600 dark:text-amber-400">
-                      {'$' + (displayPrice * (1 - product.imperfectDiscount / 100)).toFixed(2)}
+                      {formatPrice(displayPrice * (1 - product.imperfectDiscount / 100))}
                     </p>
                     <p className="text-xl text-muted-foreground line-through">
-                      {'$' + Number(displayPrice).toFixed(2)}
+                      {formatPrice(displayPrice)}
                     </p>
                   </div>
                   <ImperfectSavingsBadge
@@ -171,12 +172,12 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
               ) : (
                 <>
                   <p className="text-3xl tracking-tight text-foreground">
-                    {'$' + Number(displayPrice).toFixed(2)}
+                    {formatPrice(displayPrice)}
                   </p>
                   {/* Show original price if on sale */}
                   {selectedVariant?.salePrice && selectedVariant.price && selectedVariant.price > selectedVariant.salePrice && (
                     <p className="text-lg text-muted-foreground line-through">
-                      {'$' + Number(selectedVariant.price).toFixed(2)}
+                      {formatPrice(selectedVariant.price)}
                     </p>
                   )}
                 </>

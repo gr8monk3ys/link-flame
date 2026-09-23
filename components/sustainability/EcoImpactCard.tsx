@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 
 interface EcoImpactCardProps {
@@ -65,7 +65,7 @@ const CO2Icon = ({ className }: { className?: string }) => (
 function formatCarbonFootprint(grams: number): { value: string; unit: string; comparison: string } {
   if (grams >= 1000) {
     return {
-      value: (grams / 1000).toFixed(1),
+      value: formatNumber(grams / 1000, 1),
       unit: "kg CO2e",
       comparison: getComparison(grams),
     };

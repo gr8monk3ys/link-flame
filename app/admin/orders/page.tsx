@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Search, ExternalLink, Eye, Gift, RefreshCw } from 'lucide-react';
+import { formatPrice, formatDate } from "@/lib/utils";
 
 interface Order {
   id: string;
@@ -156,7 +157,7 @@ export default function AdminOrdersPage() {
     if (!order) return;
 
     const confirmed = window.confirm(
-      `Are you sure you want to refund order #${orderId}?\n\nAmount: $${Number(order.amount).toFixed(2)}\nCustomer: ${order.customerName || order.user?.name || 'Unknown'}\n\nThis action cannot be undone.`
+      `Are you sure you want to refund order #${orderId}?\n\nAmount: ${formatPrice(order.amount)}\nCustomer: ${order.customerName || order.user?.name || 'Unknown'}\n\nThis action cannot be undone.`
     );
 
     if (!confirmed) return;
@@ -357,7 +358,7 @@ export default function AdminOrdersPage() {
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-sm text-foreground">
-                    ${Number(order.amount).toFixed(2)}
+                    {formatPrice(order.amount)}
                   </td>
                   <td className="whitespace-nowrap px-6 py-4">
                     <span
@@ -476,7 +477,7 @@ export default function AdminOrdersPage() {
                     )}
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground">
-                    {new Date(order.createdAt).toLocaleDateString()}
+                    {formatDate(order.createdAt)}
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                     <div className="flex items-center justify-end gap-2">

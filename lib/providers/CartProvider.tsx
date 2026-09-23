@@ -15,6 +15,7 @@ import { CartItem } from '@/types/cart'
 import { cartReducer } from './cartReducer'
 import { toast } from 'sonner'
 import { useDebouncedCallback } from 'use-debounce'
+import { formatPrice } from "@/lib/utils"
 
 // Helper to fetch CSRF token
 async function getCsrfToken(): Promise<string> {
@@ -461,10 +462,7 @@ function useCartProviderValue(): CartContext {
     }, 0) || 0
 
     return {
-      formatted: rawTotal.toLocaleString('en-US', {
-        style: 'currency',
-        currency: 'USD',
-      }),
+      formatted: formatPrice(rawTotal),
       raw: rawTotal,
     }
   }, [cart.items])
@@ -474,14 +472,8 @@ function useCartProviderValue(): CartContext {
     cart.items.map(item => ({
       ...item,
       totalPrice: item.price * item.quantity,
-      formattedPrice: (item.price).toLocaleString('en-US', {
-        style: 'currency',
-        currency: 'USD',
-      }),
-      formattedTotalPrice: (item.price * item.quantity).toLocaleString('en-US', {
-        style: 'currency',
-        currency: 'USD',
-      }),
+      formattedPrice: formatPrice(item.price),
+      formattedTotalPrice: formatPrice(item.price * item.quantity),
     })),
     [cart.items]
   )

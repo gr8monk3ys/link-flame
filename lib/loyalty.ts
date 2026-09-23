@@ -23,6 +23,7 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { logger } from "@/lib/logger";
+import { formatPrice } from "@/lib/utils";
 
 /**
  * Loyalty tier definitions
@@ -378,7 +379,7 @@ export async function awardPurchasePoints(userId: string, orderId: string, order
     points,
     source: POINT_SOURCES.PURCHASE,
     orderId,
-    description: `Purchase reward - $${orderTotal.toFixed(2)} order`,
+    description: `Purchase reward - ${formatPrice(orderTotal)} order`,
   });
 
   return { success: result.success, pointsAwarded: result.pointsAwarded };
@@ -707,7 +708,7 @@ export async function getUserPointHistory(
       type: "redeemed" as const,
       points: -r.pointsUsed,
       source: undefined as string | undefined,
-      description: `Redeemed for $${r.discountAmount.toFixed(2)} discount`,
+      description: `Redeemed for ${formatPrice(Number(r.discountAmount))} discount`,
       orderId: r.orderId,
       date: r.redeemedAt,
     })),

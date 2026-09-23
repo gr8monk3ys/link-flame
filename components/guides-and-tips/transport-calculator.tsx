@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Card } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Link from "next/link"
+import { formatNumber, formatPrice } from "@/lib/utils"
 
 interface TransportMode {
   name: string
@@ -79,12 +80,12 @@ export function TransportCalculator() {
     const yearlyCost = yearlyDistance * mode.costPerKm
 
     return {
-      distance: yearlyDistance.toFixed(0),
-      co2: yearlyCO2.toFixed(1),
-      cost: yearlyCost.toFixed(2),
+      distance: formatNumber(yearlyDistance, 0),
+      co2: formatNumber(yearlyCO2, 1),
+      cost: formatPrice(yearlyCost),
       alternatives: mode.alternativeProducts?.map(alt => ({
         ...alt,
-        co2Saved: ((yearlyCO2 * alt.co2Savings) / 100).toFixed(1)
+        co2Saved: formatNumber((yearlyCO2 * alt.co2Savings) / 100, 1)
       }))
     }
   }
@@ -159,7 +160,7 @@ export function TransportCalculator() {
           <ul className="space-y-2 text-sm">
             <li>Total Distance: {impact.distance} km</li>
             <li>CO2 Emissions: {impact.co2} kg</li>
-            <li>Total Cost: ${impact.cost}</li>
+            <li>Total Cost: {impact.cost}</li>
             {impact.alternatives && (
               <li className="mt-4">
                 <p className="font-semibold">Greener Alternatives:</p>

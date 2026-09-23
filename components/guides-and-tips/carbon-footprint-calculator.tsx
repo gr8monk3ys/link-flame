@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
 import Link from "next/link"
+import { formatNumber } from "@/lib/utils"
 
 interface FootprintFactors {
   homeEnergy: {
@@ -308,7 +309,7 @@ export function CarbonFootprintCalculator() {
         <h3 className="mb-4 text-lg font-semibold">Your Carbon Footprint</h3>
         <div className="space-y-4">
           <div>
-            <p className="text-2xl font-bold">{impact.total.toFixed(1)} metric tons CO₂e/year</p>
+            <p className="text-2xl font-bold">{formatNumber(impact.total, 1)} metric tons CO₂e/year</p>
             <p className="text-sm text-muted-foreground">
               The average American footprint is 16 metric tons CO₂e/year
             </p>
@@ -316,9 +317,9 @@ export function CarbonFootprintCalculator() {
           <div className="space-y-2">
             <p>Breakdown:</p>
             <ul className="list-inside list-disc space-y-1 text-sm">
-              <li>Home Energy: {impact.breakdown.home.toFixed(1)} tons CO₂e</li>
-              <li>Transportation: {impact.breakdown.transport.toFixed(1)} tons CO₂e</li>
-              <li>Lifestyle: {impact.breakdown.lifestyle.toFixed(1)} tons CO₂e</li>
+              <li>Home Energy: {formatNumber(impact.breakdown.home, 1)} tons CO₂e</li>
+              <li>Transportation: {formatNumber(impact.breakdown.transport, 1)} tons CO₂e</li>
+              <li>Lifestyle: {formatNumber(impact.breakdown.lifestyle, 1)} tons CO₂e</li>
             </ul>
           </div>
           <div className="space-y-2">

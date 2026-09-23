@@ -10,7 +10,7 @@ import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { useCart } from '@/lib/providers/CartProvider';
 import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
+import { cn, formatPrice } from '@/lib/utils';
 import { Share2, Leaf, ShoppingCart, Sparkles, RefreshCw } from 'lucide-react';
 
 interface Product {
@@ -248,11 +248,11 @@ export function QuizResults({
                 )}
                 <div className="mt-3 flex items-baseline gap-2">
                   <span className="text-lg font-bold">
-                    ${(product.salePrice || product.price).toFixed(2)}
+                    {formatPrice(product.salePrice || product.price)}
                   </span>
                   {isOnSale && (
                     <span className="text-sm text-muted-foreground line-through">
-                      ${product.price.toFixed(2)}
+                      {formatPrice(product.price)}
                     </span>
                   )}
                 </div>

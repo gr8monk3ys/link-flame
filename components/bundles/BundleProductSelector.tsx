@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-import { cn } from "@/lib/utils"
+import { cn, formatPrice } from "@/lib/utils"
 import { Minus, Plus, Lock } from "lucide-react"
 
 interface Product {
@@ -190,11 +190,11 @@ export function BundleProductSelector({
                         </h4>
                         <div className="flex items-baseline gap-2">
                           <span className="text-sm font-semibold">
-                            ${effectivePrice.toFixed(2)}
+                            {formatPrice(effectivePrice)}
                           </span>
                           {product.salePrice && (
                             <span className="text-xs text-muted-foreground line-through">
-                              ${product.price.toFixed(2)}
+                              {formatPrice(product.price)}
                             </span>
                           )}
                         </div>

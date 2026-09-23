@@ -8,6 +8,7 @@ import { BundleProgress } from "./BundleProgress"
 import { BundleProductSelector } from "./BundleProductSelector"
 import { BundleSummary } from "./BundleSummary"
 import { toast } from "sonner"
+import { formatPrice } from "@/lib/utils"
 
 interface Product {
   id: string
@@ -196,13 +197,13 @@ export function BundleBuilder({ bundle }: BundleBuilderProps) {
             <div className="rounded-lg bg-muted p-4">
               <div className="flex items-baseline gap-3">
                 <span className="text-3xl font-bold">
-                  ${bundle.pricing.discountedPrice.toFixed(2)}
+                  {formatPrice(bundle.pricing.discountedPrice)}
                 </span>
                 <span className="text-lg text-muted-foreground line-through">
-                  ${bundle.pricing.basePrice.toFixed(2)}
+                  {formatPrice(bundle.pricing.basePrice)}
                 </span>
                 <span className="text-lg font-medium text-green-700 dark:text-green-400">
-                  Save ${bundle.pricing.savings.toFixed(2)}
+                  Save {formatPrice(bundle.pricing.savings)}
                 </span>
               </div>
               <p className="mt-1 text-sm text-muted-foreground">

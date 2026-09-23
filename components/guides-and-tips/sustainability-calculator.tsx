@@ -18,6 +18,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { formatNumber } from "@/lib/utils"
 
 interface CalculatorInputs {
   energyUsage: number
@@ -198,7 +199,7 @@ export function SustainabilityCalculator() {
                   Annual Carbon Footprint:
                 </h3>
                 <p className="text-3xl font-bold text-primary">
-                  {results.carbonFootprint.toFixed(2)} metric tons CO₂e
+                  {formatNumber(results.carbonFootprint, 2)} metric tons CO₂e
                 </p>
               </div>
 

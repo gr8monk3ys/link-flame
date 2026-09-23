@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
 import {
   Droplet,
   Leaf,
@@ -76,15 +76,15 @@ export function CommunityImpact({
 
   const formatValue = (val: number): string => {
     if (val >= 1000000) {
-      return `${(val / 1000000).toFixed(1)}M`;
+      return `${formatNumber(val / 1000000, 1)}M`;
     }
     if (val >= 1000) {
-      return `${(val / 1000).toFixed(1)}k`;
+      return `${formatNumber(val / 1000, 1)}k`;
     }
     if (val >= 1) {
       return Math.round(val).toString();
     }
-    return val.toFixed(1);
+    return formatNumber(val, 1);
   };
 
   const totalContributors = Math.max(
@@ -127,7 +127,7 @@ export function CommunityImpact({
             <div className="mt-4 flex items-center justify-center gap-2 text-green-700 dark:text-green-400">
               <Users className="size-5" />
               <span className="font-medium">
-                {totalContributors.toLocaleString()} eco-conscious shoppers
+                {formatNumber(totalContributors)} eco-conscious shoppers
               </span>
             </div>
           )}

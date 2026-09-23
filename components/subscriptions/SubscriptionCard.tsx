@@ -11,7 +11,7 @@ import {
   FREQUENCY_LABELS,
   calculateSubscriptionTotal,
 } from '@/lib/subscriptions';
-import { cn } from '@/lib/utils';
+import { cn, formatPrice } from '@/lib/utils';
 
 interface SubscriptionItem {
   id: string;
@@ -273,10 +273,10 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
           </div>
           <div className="text-right">
             <p className="text-sm font-semibold text-foreground">
-              ${totals.total.toFixed(2)}
+              {formatPrice(totals.total)}
             </p>
             <p className="text-xs text-green-700 dark:text-green-400">
-              Save ${totals.totalDiscount.toFixed(2)}
+              Save {formatPrice(totals.totalDiscount)}
             </p>
           </div>
         </div>
@@ -358,10 +358,10 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
                     </div>
                     <div className="text-right">
                       <p className="text-sm text-foreground">
-                        {item.quantity} x ${discountedPrice.toFixed(2)}
+                        {item.quantity} x {formatPrice(discountedPrice)}
                       </p>
                       <p className="text-xs text-muted-foreground line-through">
-                        ${item.priceAtSubscription.toFixed(2)}
+                        {formatPrice(item.priceAtSubscription)}
                       </p>
                     </div>
                   </li>
@@ -373,15 +373,15 @@ export function SubscriptionCard({ subscription, onUpdate }: SubscriptionCardPro
             <div className="mt-4 border-t border-border pt-4">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span className="text-foreground">${totals.subtotal.toFixed(2)}</span>
+                <span className="text-foreground">{formatPrice(totals.subtotal)}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-green-700 dark:text-green-400">Subscribe & Save discount</span>
-                <span className="text-green-700 dark:text-green-400">-${totals.totalDiscount.toFixed(2)}</span>
+                <span className="text-green-700 dark:text-green-400">-{formatPrice(totals.totalDiscount)}</span>
               </div>
               <div className="mt-2 flex justify-between border-t border-border pt-2 text-sm font-semibold">
                 <span className="text-foreground">Total per delivery</span>
-                <span className="text-foreground">${totals.total.toFixed(2)}</span>
+                <span className="text-foreground">{formatPrice(totals.total)}</span>
               </div>
             </div>
           </div>

@@ -5,6 +5,7 @@ import Image from "next/image"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { buttonVariants } from "@/components/ui/button"
 import { Star, Info } from "lucide-react"
+import { formatNumber } from "@/lib/utils"
 
 interface Product {
   id: number
@@ -44,7 +45,7 @@ export function ProductDisplay({
             }`}
           />
         ))}
-        <span className="ml-2 text-sm text-muted-foreground">{rating.toFixed(1)}</span>
+        <span className="ml-2 text-sm text-muted-foreground">{formatNumber(rating, 1)}</span>
       </div>
     )
   }

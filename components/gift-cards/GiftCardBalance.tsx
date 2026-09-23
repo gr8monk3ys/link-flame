@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
+import { cn, formatPrice, formatDate } from '@/lib/utils'
 
 interface GiftCardInfo {
   code: string
@@ -265,7 +265,7 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
                 'mt-1 text-2xl font-bold',
                 giftCardInfo.balance > 0 ? 'text-green-700 dark:text-green-400' : 'text-muted-foreground'
               )}>
-                ${giftCardInfo.balance.toFixed(2)}
+                {formatPrice(giftCardInfo.balance)}
               </p>
             </div>
             <div className="rounded-lg bg-muted p-4">
@@ -273,7 +273,7 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
                 Original Amount
               </p>
               <p className="mt-1 text-2xl font-bold text-foreground">
-                ${giftCardInfo.initialBalance.toFixed(2)}
+                {formatPrice(giftCardInfo.initialBalance)}
               </p>
             </div>
           </div>
@@ -320,10 +320,10 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
                           tx.amount > 0 ? 'text-green-700 dark:text-green-400' : 'text-foreground'
                         )}
                       >
-                        {tx.amount > 0 ? '+' : ''}${Math.abs(tx.amount).toFixed(2)}
+                        {tx.amount > 0 ? '+' : ''}{formatPrice(Math.abs(tx.amount))}
                       </span>
                       <p className="text-xs text-muted-foreground">
-                        {new Date(tx.date).toLocaleDateString()}
+                        {formatDate(tx.date)}
                       </p>
                     </div>
                   </li>

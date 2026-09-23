@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { memo, useMemo, useCallback } from 'react';
-import { cn } from '@/lib/utils';
+import { cn, formatPrice, formatNumber } from '@/lib/utils';
 import { ImperfectBadge, ImperfectSavingsBadge } from './ImperfectBadge';
 import { ImperfectReasonBadge } from './ImperfectReasonTooltip';
 import { useCart } from '@/lib/providers/CartProvider';
@@ -154,10 +154,10 @@ export const ImperfectProductCard = memo(function ImperfectProductCard({
         {/* Price display - emphasize savings */}
         <div className="flex items-baseline gap-2">
           <span className="text-lg font-bold text-amber-600 dark:text-amber-400">
-            ${product.imperfectPrice.toFixed(2)}
+            {formatPrice(product.imperfectPrice)}
           </span>
           <span className="text-sm text-muted-foreground line-through">
-            ${product.originalPrice.toFixed(2)}
+            {formatPrice(product.originalPrice)}
           </span>
         </div>
 
@@ -183,7 +183,7 @@ export const ImperfectProductCard = memo(function ImperfectProductCard({
           <div className="flex items-center space-x-2">
             <div className="flex items-center">
               <span className="text-sm font-medium text-foreground">
-                {product.averageRating.toFixed(1)}
+                {formatNumber(product.averageRating, 1)}
               </span>
               <span className="ml-1 text-yellow-400">&#9733;</span>
             </div>

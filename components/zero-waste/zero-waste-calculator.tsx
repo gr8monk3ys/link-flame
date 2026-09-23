@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card } from "@/components/ui/card"
 import Link from "next/link"
+import { formatNumber, formatPrice } from "@/lib/utils"
 
 interface WasteItem {
   name: string
@@ -71,9 +72,9 @@ export function ZeroWasteCalculator() {
     const yearlySavings = yearlyCost - reusableCostPerYear
 
     return {
-      wasteReduction: yearlyWaste.toFixed(1),
-      costSavings: yearlySavings.toFixed(2),
-      reusableCost: selectedItem.reusableAlternative.cost.toFixed(2)
+      wasteReduction: formatNumber(yearlyWaste, 1),
+      costSavings: formatPrice(yearlySavings),
+      reusableCost: formatPrice(selectedItem.reusableAlternative.cost)
     }
   }
 
@@ -129,9 +130,9 @@ export function ZeroWasteCalculator() {
           <h3 className="mb-2 font-semibold">Your Impact</h3>
           <ul className="space-y-2 text-sm">
             <li>Waste Reduction: {impact.wasteReduction} kg/year</li>
-            <li>Cost Savings: ${impact.costSavings}/year</li>
+            <li>Cost Savings: {impact.costSavings}/year</li>
             <li>
-              Recommended Alternative: {selectedItem.reusableAlternative.name} (${impact.reusableCost})
+              Recommended Alternative: {selectedItem.reusableAlternative.name} ({impact.reusableCost})
               <Button asChild variant="link" className="ml-2 p-0">
                 <Link href={selectedItem.reusableAlternative.link}>View Product</Link>
               </Button>

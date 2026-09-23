@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { ImperfectBadge } from '@/components/imperfect';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { formatNumber, formatPrice } from "@/lib/utils";
 
 interface Product {
   id: string;
@@ -45,17 +46,13 @@ interface ProductGridProps {
 const getAverageRating = (reviews: { rating: number }[]) => {
   if (reviews.length === 0) return null;
   const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
-  return (sum / reviews.length).toFixed(1);
+  return formatNumber(sum / reviews.length, 1);
 };
 
 const isNewProduct = (date: Date) => {
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
   return new Date(date) > thirtyDaysAgo;
-};
-
-const formatPrice = (price: number) => {
-  return price.toFixed(2);
 };
 
 function ProductGridLoading() {
@@ -223,16 +220,16 @@ function ProductCard({
           <div className="text-sm font-medium">
             {product.isImperfect && product.imperfectPrice ? (
               <div className="flex flex-col items-end">
-                <span className="font-bold text-amber-600 dark:text-amber-400">${formatPrice(product.imperfectPrice)}</span>
-                <span className="text-xs text-muted-foreground line-through">${formatPrice(product.price)}</span>
+                <span className="font-bold text-amber-600 dark:text-amber-400">{formatPrice(product.imperfectPrice)}</span>
+                <span className="text-xs text-muted-foreground line-through">{formatPrice(product.price)}</span>
               </div>
             ) : product.salePrice ? (
               <div className="flex flex-col items-end">
-                <span className="text-red-600 dark:text-red-400">${formatPrice(product.salePrice)}</span>
-                <span className="text-muted-foreground line-through">${formatPrice(product.price)}</span>
+                <span className="text-red-600 dark:text-red-400">{formatPrice(product.salePrice)}</span>
+                <span className="text-muted-foreground line-through">{formatPrice(product.price)}</span>
               </div>
             ) : (
-              <span className="text-foreground">${formatPrice(product.price)}</span>
+              <span className="text-foreground">{formatPrice(product.price)}</span>
             )}
           </div>
         </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
 import {
   Droplet,
   Leaf,
@@ -90,7 +90,7 @@ export function CartImpactPreview({
     if (val >= 1) {
       return Math.round(val).toString();
     }
-    return val.toFixed(1);
+    return formatNumber(val, 1);
   };
 
   // Get top 3 impacts to show

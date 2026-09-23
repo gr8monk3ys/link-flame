@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
-import { cn } from '@/lib/utils'
+import { cn, formatNumber } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 
 // Tier colors and icons
@@ -166,7 +166,7 @@ export function LoyaltyBadge({ className, showPoints = true, compact = false }: 
         <>
           <span className="h-3 w-px bg-current opacity-30" />
           <span className="font-semibold">
-            {loyaltyData.availablePoints.toLocaleString()} pts
+            {formatNumber(loyaltyData.availablePoints)} pts
           </span>
         </>
       )}

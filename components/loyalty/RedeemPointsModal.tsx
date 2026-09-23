@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
-import { cn } from '@/lib/utils'
+import { cn, formatPrice, formatNumber } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -230,10 +230,10 @@ export function RedeemPointsModal({
             <div className="rounded-lg bg-muted p-4 text-center">
               <p className="text-sm text-muted-foreground">Available Points</p>
               <p className="text-3xl font-bold">
-                {preview.availablePoints.toLocaleString()}
+                {formatNumber(preview.availablePoints)}
               </p>
               <p className="text-sm text-muted-foreground">
-                Worth up to ${preview.maxDiscount.toFixed(2)} in discounts
+                Worth up to {formatPrice(preview.maxDiscount)} in discounts
               </p>
             </div>
 
@@ -242,7 +242,7 @@ export function RedeemPointsModal({
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium">Points to Redeem</label>
                 <span className="text-lg font-semibold">
-                  {pointsToRedeem.toLocaleString()}
+                  {formatNumber(pointsToRedeem)}
                 </span>
               </div>
 
@@ -257,7 +257,7 @@ export function RedeemPointsModal({
 
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span>0</span>
-                <span>{maxPoints.toLocaleString()} max</span>
+                <span>{formatNumber(maxPoints)} max</span>
               </div>
             </div>
 
@@ -283,12 +283,12 @@ export function RedeemPointsModal({
               <div className="flex items-center justify-between">
                 <span className="font-medium text-green-800 dark:text-green-200">Your Discount</span>
                 <span className="text-2xl font-bold text-green-700 dark:text-green-400">
-                  ${discount.toFixed(2)}
+                  {formatPrice(discount)}
                 </span>
               </div>
               {maxOrderTotal !== undefined && discount > maxOrderTotal && (
                 <p className="mt-2 text-sm text-amber-600 dark:text-amber-400">
-                  Note: Discount will be capped at your order total (${maxOrderTotal.toFixed(2)})
+                  Note: Discount will be capped at your order total ({formatPrice(maxOrderTotal)})
                 </p>
               )}
             </div>
@@ -317,7 +317,7 @@ export function RedeemPointsModal({
                 Redeeming…
               </>
             ) : (
-              <>Apply ${discount.toFixed(2)} Discount</>
+              <>Apply {formatPrice(discount)} Discount</>
             )}
           </Button>
         </DialogFooter>
@@ -490,7 +490,7 @@ export function InlineRedeemWidget({
       <div className="flex items-center justify-between rounded-lg border border-green-200 bg-green-50 p-3 dark:border-green-900/50 dark:bg-green-950/40">
         <div>
           <span className="font-medium text-green-800 dark:text-green-200">
-            ${appliedDiscount.toFixed(2)} discount applied
+            {formatPrice(appliedDiscount)} discount applied
           </span>
           <span className="ml-2 text-sm text-green-700 dark:text-green-400">
             ({pointsToRedeem} points)
@@ -512,10 +512,10 @@ export function InlineRedeemWidget({
     <div className="space-y-3">
       <div className="flex items-center justify-between text-sm">
         <span className="text-muted-foreground">
-          Available: {preview.availablePoints.toLocaleString()} points
+          Available: {formatNumber(preview.availablePoints)} points
         </span>
         <span className="font-medium">
-          Worth up to ${preview.maxDiscount.toFixed(2)}
+          Worth up to {formatPrice(preview.maxDiscount)}
         </span>
       </div>
 
@@ -531,7 +531,7 @@ export function InlineRedeemWidget({
           />
           <div className="mt-1 flex justify-between text-xs text-muted-foreground">
             <span>0</span>
-            <span>{maxPoints.toLocaleString()} max</span>
+            <span>{formatNumber(maxPoints)} max</span>
           </div>
         </div>
       </div>
@@ -539,8 +539,8 @@ export function InlineRedeemWidget({
       {pointsToRedeem > 0 && (
         <div className="flex items-center justify-between">
           <span className="text-sm">
-            Use {pointsToRedeem.toLocaleString()} points for{' '}
-            <span className="font-medium text-green-700 dark:text-green-400">${discount.toFixed(2)} off</span>
+            Use {formatNumber(pointsToRedeem)} points for{' '}
+            <span className="font-medium text-green-700 dark:text-green-400">{formatPrice(discount)} off</span>
           </span>
           <Button
             size="sm"

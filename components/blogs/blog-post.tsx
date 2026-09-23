@@ -2,12 +2,11 @@
 
 import { useState } from "react"
 import Image from "next/image"
-import { format } from "date-fns"
 import { Share2, Heart, MessageSquare, Bookmark } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { buttonVariants } from "@/components/ui/button"
 import { renderPostBody } from "@/lib/markdown"
-import { slugify } from "@/lib/utils"
+import { slugify, formatDate } from "@/lib/utils"
 
 interface Author {
   name: string
@@ -71,7 +70,7 @@ export function BlogPost({
               <div>
                 <div className="font-medium">{author.name}</div>
                 <div className="text-sm text-muted-foreground">
-                  {format(publishedAt, "MMMM d, yyyy")} · {readingTime}
+                  {formatDate(publishedAt, "long")} · {readingTime}
                 </div>
               </div>
             </div>

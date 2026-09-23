@@ -6,7 +6,7 @@ import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
+import { cn, formatPrice } from "@/lib/utils"
 
 interface BundleProduct {
   id: string
@@ -126,13 +126,13 @@ export const BundleCard = memo(function BundleCard({ bundle, className }: Bundle
           {pricing && (
             <div className="flex items-baseline gap-2">
               <span className="text-xl font-bold text-foreground">
-                ${pricing.discountedPrice.toFixed(2)}
+                {formatPrice(pricing.discountedPrice)}
               </span>
               <span className="text-sm text-muted-foreground line-through">
-                ${pricing.basePrice.toFixed(2)}
+                {formatPrice(pricing.basePrice)}
               </span>
               <span className="text-sm font-medium text-green-700 dark:text-green-400">
-                Save ${pricing.savings.toFixed(2)}
+                Save {formatPrice(pricing.savings)}
               </span>
             </div>
           )}

@@ -7,6 +7,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
+import { formatNumber } from "@/lib/utils";
 
 /**
  * Impact metric definitions with comparison calculations
@@ -328,12 +329,12 @@ export async function getCartImpactPreview(
  */
 export function formatImpactValue(value: number, unit: string): string {
   if (value >= 1000) {
-    return `${(value / 1000).toFixed(1)}k ${unit}`;
+    return `${formatNumber(value / 1000, 1)}k ${unit}`;
   }
   if (value >= 1) {
     return `${Math.round(value)} ${unit}`;
   }
-  return `${value.toFixed(1)} ${unit}`;
+  return `${formatNumber(value, 1)} ${unit}`;
 }
 
 /**

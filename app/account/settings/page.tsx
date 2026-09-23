@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useSession, signOut } from "next-auth/react";
-import { format } from "date-fns";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { User, Lock, AlertTriangle, Loader2, Check, ArrowLeft } from "lucide-react";
+import { formatDate } from "@/lib/utils";
 
 interface UserProfile {
   id: string;
@@ -345,7 +345,7 @@ export default function AccountSettingsPage() {
                           <div>
                             <span className="text-muted-foreground">Account created:</span>
                             <p className="font-medium">
-                              {format(new Date(profile.createdAt), "MMMM d, yyyy")}
+                              {formatDate(profile.createdAt, "long")}
                             </p>
                           </div>
                           <div>

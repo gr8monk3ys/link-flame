@@ -9,7 +9,7 @@ import { X, Minus, Plus, Heart, Eye, ChevronLeft, ChevronRight, Loader2 } from "
 import { useSession } from "next-auth/react"
 import { toast } from "sonner"
 
-import { cn, formatPrice } from "@/lib/utils"
+import { cn, formatPrice, formatNumber } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useCart } from "@/lib/providers/CartProvider"
@@ -211,7 +211,7 @@ function QuantitySelector({
 function StarRatingDisplay({ rating, count }: { rating: number; count: number }) {
   return (
     <div className="flex items-center gap-2">
-      <div className="flex items-center" role="img" aria-label={`Rating: ${rating.toFixed(1)} out of 5 stars`}>
+      <div className="flex items-center" role="img" aria-label={`Rating: ${formatNumber(rating, 1)} out of 5 stars`}>
         {[0, 1, 2, 3, 4].map((star) => (
           <svg
             key={star}

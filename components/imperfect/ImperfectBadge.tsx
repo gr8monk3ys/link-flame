@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@/lib/utils';
+import { cn, formatPrice } from '@/lib/utils';
 
 interface ImperfectBadgeProps {
   discountPercent: number;
@@ -144,9 +144,9 @@ export function ImperfectSavingsBadge({
         sizeClasses[size],
         className
       )}
-      aria-label={`You save $${savings.toFixed(2)}`}
+      aria-label={`You save ${formatPrice(savings)}`}
     >
-      You save ${savings.toFixed(2)}
+      You save {formatPrice(savings)}
     </span>
   );
 }

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
+import { formatPrice } from "@/lib/utils";
 
 interface Product {
   id: string;
@@ -188,14 +189,14 @@ export default function AdminProductsPage() {
                     {product.salePrice ? (
                       <div>
                         <span className="text-muted-foreground line-through">
-                          ${product.price.toFixed(2)}
+                          {formatPrice(product.price)}
                         </span>
                         <span className="ml-2 text-red-600 dark:text-red-400">
-                          ${product.salePrice.toFixed(2)}
+                          {formatPrice(product.salePrice)}
                         </span>
                       </div>
                     ) : (
-                      `$${product.price.toFixed(2)}`
+                      formatPrice(product.price)
                     )}
                   </td>
                   <td className="whitespace-nowrap px-6 py-4">

@@ -11,6 +11,7 @@ import {
   TrendingUp,
   Package
 } from 'lucide-react';
+import { formatPrice, formatDate } from "@/lib/utils";
 
 interface StatCardProps {
   title: string;
@@ -101,7 +102,7 @@ export default async function AdminDashboard() {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Total Revenue"
-          value={`$${revenue.toFixed(2)}`}
+          value={formatPrice(revenue)}
           icon={<DollarSign className="size-6" />}
         />
         <StatCard
@@ -128,7 +129,7 @@ export default async function AdminDashboard() {
             Average Order Value
           </h2>
           <p className="text-3xl font-bold text-green-700 dark:text-green-400">
-            ${avgOrderValue.toFixed(2)}
+            {formatPrice(avgOrderValue)}
           </p>
         </div>
         <div className="rounded-lg bg-card p-6 shadow">
@@ -182,7 +183,7 @@ export default async function AdminDashboard() {
                       {order.customerName || 'Unknown'}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-foreground">
-                      ${order.amount.toFixed(2)}
+                      {formatPrice(order.amount)}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4">
                       <span
@@ -196,7 +197,7 @@ export default async function AdminDashboard() {
                       </span>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground">
-                      {new Date(order.createdAt).toLocaleDateString()}
+                      {formatDate(order.createdAt)}
                     </td>
                   </tr>
                 ))

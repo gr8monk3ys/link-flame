@@ -2,12 +2,12 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { format } from "date-fns";
 import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Package, Truck, CheckCircle, Clock, XCircle, Gift } from "lucide-react";
+import { formatPrice, formatDate } from "@/lib/utils";
 
 interface OrderWithTracking {
   id: string;
@@ -226,7 +226,7 @@ export default function OrdersPage() {
                     <div>
                       <CardTitle className="text-lg">Order #{order.id.slice(0, 8)}</CardTitle>
                       <CardDescription>
-                        Placed on {format(new Date(order.createdAt), "MMMM d, yyyy")}
+                        Placed on {formatDate(order.createdAt, "long")}
                       </CardDescription>
                       <div className="mt-2 flex flex-wrap items-center gap-2">
                         {/* Payment status */}
@@ -258,7 +258,7 @@ export default function OrdersPage() {
                   </div>
                   <div className="text-right">
                     <div className="text-2xl font-bold">
-                      ${order.amount.toFixed(2)}
+                      {formatPrice(order.amount)}
                     </div>
                     <div className="text-sm text-muted-foreground">
                       {order.itemCount} {order.itemCount === 1 ? "item" : "items"}

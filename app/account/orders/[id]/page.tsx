@@ -3,13 +3,13 @@
 import { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
-import { format } from "date-fns";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { Check, Package, Truck, Home, CheckCircle, XCircle, ExternalLink, Gift } from "lucide-react";
+import { formatPrice, formatDate } from "@/lib/utils";
 
 interface ShippingStep {
   key: string;
@@ -171,7 +171,7 @@ export default function OrderDetailPage() {
                 Order ID: {order.id}
               </CardDescription>
               <CardDescription>
-                Placed on {format(new Date(order.createdAt), "MMMM d, yyyy 'at' h:mm a")}
+                Placed on {formatDate(order.createdAt, "longWithTime")}
               </CardDescription>
             </div>
             <div className="flex flex-col gap-2">
@@ -198,12 +198,12 @@ export default function OrderDetailPage() {
             <CardTitle>Shipping Progress</CardTitle>
             {order.estimatedDelivery && !order.isDelivered && (
               <CardDescription>
-                Estimated delivery: {format(new Date(order.estimatedDelivery), "MMMM d, yyyy")}
+                Estimated delivery: {formatDate(order.estimatedDelivery, "long")}
               </CardDescription>
             )}
             {order.deliveredAt && (
               <CardDescription className="text-green-700 dark:text-green-400">
-                Delivered on {format(new Date(order.deliveredAt), "MMMM d, yyyy 'at' h:mm a")}
+                Delivered on {formatDate(order.deliveredAt, "longWithTime")}
               </CardDescription>
             )}
           </CardHeader>
@@ -274,7 +274,7 @@ export default function OrderDetailPage() {
             {/* Shipped date */}
             {order.shippedAt && (
               <div className="mt-4 text-sm text-muted-foreground">
-                Shipped on {format(new Date(order.shippedAt), "MMMM d, yyyy")}
+                Shipped on {formatDate(order.shippedAt, "long")}
               </div>
             )}
           </CardContent>
@@ -410,12 +410,12 @@ export default function OrderDetailPage() {
                       </p>
                     )}
                     <div className="mt-2 text-sm text-muted-foreground">
-                      Quantity: {item.quantity} × ${item.price.toFixed(2)}
+                      Quantity: {item.quantity} × {formatPrice(item.price)}
                     </div>
                   </div>
                   <div className="text-right">
                     <div className="font-semibold">
-                      ${(item.price * item.quantity).toFixed(2)}
+                      {formatPrice(item.price * item.quantity)}
                     </div>
                     <Link
                       href={`/products/${item.product.id}`}
@@ -433,7 +433,7 @@ export default function OrderDetailPage() {
           <div className="mt-6 border-t pt-6">
             <div className="flex items-center justify-between text-lg font-bold">
               <span>Total</span>
-              <span>${order.amount.toFixed(2)}</span>
+              <span>{formatPrice(order.amount)}</span>
             </div>
           </div>
         </CardContent>

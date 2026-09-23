@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { formatNumber } from "@/lib/utils";
 
 interface CountUpProps {
   value: number;
@@ -10,7 +11,7 @@ interface CountUpProps {
 }
 
 function format(n: number): string {
-  return Math.round(n).toLocaleString("en-US");
+  return formatNumber(Math.round(n));
 }
 
 /**

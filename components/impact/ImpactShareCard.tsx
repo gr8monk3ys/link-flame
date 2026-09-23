@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { cn } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
 import {
   Droplet,
   Leaf,
@@ -49,12 +49,12 @@ export function ImpactShareCard({ metrics, onClose }: ImpactShareCardProps) {
 
   const formatValue = (val: number): string => {
     if (val >= 1000) {
-      return `${(val / 1000).toFixed(1)}k`;
+      return `${formatNumber(val / 1000, 1)}k`;
     }
     if (val >= 1) {
       return Math.round(val).toString();
     }
-    return val.toFixed(1);
+    return formatNumber(val, 1);
   };
 
   // Generate share text

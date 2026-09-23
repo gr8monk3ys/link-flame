@@ -16,6 +16,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import Link from "next/link";
+import { formatDate } from "@/lib/utils";
 
 interface ReferralStats {
   referralCode: string | null;
@@ -241,7 +242,7 @@ export function ReferralDashboard() {
                     <div>
                       <p className="font-medium">{referral.refereeName}</p>
                       <p className="text-sm text-muted-foreground">
-                        {new Date(referral.createdAt).toLocaleDateString()}
+                        {formatDate(referral.createdAt)}
                       </p>
                     </div>
                   </div>

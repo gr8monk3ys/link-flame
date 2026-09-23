@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Plus, Edit, Trash2, Search, Eye } from 'lucide-react';
+import { formatDate } from "@/lib/utils";
 
 interface BlogPost {
   id: number;
@@ -242,7 +243,7 @@ export default function AdminBlogPage() {
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground">
                     {post.publishedAt
-                      ? new Date(post.publishedAt).toLocaleDateString()
+                      ? formatDate(post.publishedAt)
                       : '-'}
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">

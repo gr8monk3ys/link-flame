@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
+import { cn, formatPrice } from '@/lib/utils'
 
 interface AppliedGiftCard {
   code: string
@@ -107,7 +107,7 @@ export function GiftCardCheckout({
 
       setAppliedCard(result)
       onGiftCardApplied?.(result.amountApplied, result)
-      toast.success(`Gift card applied! $${result.amountApplied.toFixed(2)} discount`)
+      toast.success(`Gift card applied! ${formatPrice(result.amountApplied)} discount`)
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
         console.error('Gift card apply error:', error)
@@ -151,11 +151,11 @@ export function GiftCardCheckout({
               <p className="font-medium text-green-800 dark:text-green-200">Gift Card Applied</p>
               <p className="font-mono text-sm text-green-700 dark:text-green-300">{appliedCard.code}</p>
               <p className="mt-1 text-sm text-green-700 dark:text-green-400">
-                ${appliedCard.amountApplied.toFixed(2)} discount applied
+                {formatPrice(appliedCard.amountApplied)} discount applied
                 {appliedCard.remainingBalance > 0 && (
                   <span className="text-green-500">
                     {' '}
-                    (${appliedCard.remainingBalance.toFixed(2)} remaining)
+                    ({formatPrice(appliedCard.remainingBalance)} remaining)
                   </span>
                 )}
               </p>
