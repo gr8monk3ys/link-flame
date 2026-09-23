@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { LoyaltyDashboard } from "@/components/loyalty";
+import { LoyaltyDashboard } from "@/components/loyalty/LoyaltyDashboard";
 import { ChevronLeft, Loader2 } from "lucide-react";
 
 export default function LoyaltyPage() {

@@ -1,11 +1,9 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import {
-  TerraCycleHero,
-  RecyclingSteps,
-  AcceptedItems,
-  TerraCycleFAQ,
-} from "@/components/terracycle";
+import { TerraCycleHero } from "@/components/terracycle/TerraCycleHero";
+import { RecyclingSteps } from "@/components/terracycle/RecyclingSteps";
+import { AcceptedItems } from "@/components/terracycle/AcceptedItems";
+import { TerraCycleFAQ } from "@/components/terracycle/TerraCycleFAQ";
 
 export const metadata: Metadata = {
   title: "TerraCycle Recycling Program",

@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ImpactDashboard } from "@/components/impact";
+import { ImpactDashboard } from "@/components/impact/ImpactDashboard";
 import { ArrowLeft, Loader2 } from "lucide-react";
 
 export default function AccountImpactPage() {

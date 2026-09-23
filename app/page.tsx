@@ -3,8 +3,8 @@ import CTASection from "@/components/home/CTASection";
 import { ImpactBand } from "@/components/home/ImpactBand";
 import { FeaturedBrands } from "@/components/home/FeaturedBrands";
 import { FeaturedProducts } from "@/components/home/FeaturedProducts";
-import { QuizCTA } from "@/components/quiz";
-import { SustainabilityCommitment } from "@/components/sustainability";
+import { QuizCTA } from "@/components/quiz/QuizCTA";
+import { SustainabilityCommitment } from "@/components/sustainability/SustainabilityCommitment";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 

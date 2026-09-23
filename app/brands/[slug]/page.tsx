@@ -1,7 +1,9 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
-import { BrandHero, BrandStory, BrandProducts, type BrandProduct } from '@/components/brands'
+import { BrandHero } from '@/components/brands/BrandHero'
+import { BrandStory } from '@/components/brands/BrandStory'
+import { BrandProducts, type BrandProduct } from '@/components/brands/BrandProducts'
 import Link from 'next/link'
 import { ChevronLeft } from 'lucide-react'
 

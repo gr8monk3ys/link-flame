@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { BrandCard } from '@/components/brands'
+import { BrandCard } from '@/components/brands/BrandCard'
 import Link from 'next/link'
 import { ArrowRight, Building2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'

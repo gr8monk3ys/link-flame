@@ -7,10 +7,13 @@ import { useCart } from "@/lib/providers/CartProvider";
 import { toast } from 'sonner';
 import { ProductReviews } from '@/components/products/product-reviews';
 import { VariantSelector, ProductVariant } from '@/components/products/variant-selector';
-import { SubscribeOption } from '@/components/subscriptions';
+import { SubscribeOption } from '@/components/subscriptions/SubscribeOption';
 import { SubscriptionFrequency } from '@/lib/subscriptions';
-import { ImperfectBadge, ImperfectReasonTooltip, ImperfectSavingsBadge } from '@/components/imperfect';
-import { EcoImpactCard, CertificationBadgesFull, CarbonNeutralBadge, type Certification } from '@/components/sustainability';
+import { ImperfectBadge, ImperfectSavingsBadge } from '@/components/imperfect/ImperfectBadge';
+import { ImperfectReasonTooltip } from '@/components/imperfect/ImperfectReasonTooltip';
+import { EcoImpactCard } from '@/components/sustainability/EcoImpactCard';
+import { CertificationBadgesFull, type Certification } from '@/components/sustainability/CertificationBadges';
+import { CarbonNeutralBadge } from '@/components/sustainability/CarbonNeutralBanner';
 import { ValueBadgeList } from '@/components/filters/ValueBadge';
 import { formatPrice } from "@/lib/utils";
 

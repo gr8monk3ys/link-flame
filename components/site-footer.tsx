@@ -3,7 +3,7 @@ import { Icons } from "@/components/shared/icons"
 import { siteConfig } from "@/config/site"
 import { NewsletterSignup } from "@/components/shared/newsletter-signup"
 import { cn } from "@/lib/utils"
-import { SustainabilityCommitment } from "@/components/sustainability"
+import { SustainabilityCommitment } from "@/components/sustainability/SustainabilityCommitment"
 
 interface SiteFooterProps {
   className?: string

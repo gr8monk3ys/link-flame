@@ -2,11 +2,9 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useDebounce } from '@/lib/hooks/useDebounce';
-import {
-  ImperfectBanner,
-  ImperfectProductGrid,
-  ImperfectExplainer,
-} from '@/components/imperfect';
+import { ImperfectBanner } from '@/components/imperfect/ImperfectBanner';
+import { ImperfectProductGrid } from '@/components/imperfect/ImperfectProductCard';
+import { ImperfectExplainer } from '@/components/imperfect/ImperfectExplainer';
 
 interface ImperfectProduct {
   id: string;

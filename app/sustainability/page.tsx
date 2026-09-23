@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { CarbonNeutralBanner, SustainabilityCommitment } from "@/components/sustainability";
+import { CarbonNeutralBanner } from "@/components/sustainability/CarbonNeutralBanner";
+import { SustainabilityCommitment } from "@/components/sustainability/SustainabilityCommitment";
 
 export const metadata: Metadata = {
   title: "Our Sustainability Commitment",

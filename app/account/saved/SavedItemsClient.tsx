@@ -9,7 +9,7 @@ import { WishlistManager } from '@/components/wishlists/WishlistManager';
 import { useWishlists } from '@/hooks/useWishlists';
 import { useCart } from '@/lib/providers/CartProvider';
 import { toast } from 'sonner';
-import type { WishlistItem } from '@/components/wishlists';
+import type { WishlistItem } from '@/components/wishlists/WishlistCard';
 
 export default function SavedItemsClient() {
   const { data: session, status } = useSession();

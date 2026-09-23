@@ -1,7 +1,8 @@
 import { Metadata } from 'next'
 import { Suspense } from 'react'
 import { prisma } from '@/lib/prisma'
-import { BrandGrid, BrandFilters } from '@/components/brands'
+import { BrandGrid } from '@/components/brands/BrandGrid'
+import { BrandFilters } from '@/components/brands/BrandFilters'
 import { Building2 } from 'lucide-react'
 
 // Render at request time — DB not available during Vercel build

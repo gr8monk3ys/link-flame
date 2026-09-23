@@ -11,7 +11,7 @@ import type { CartItem } from "@/types/cart";
 import CheckoutForm from "@/components/checkout/checkout-form";
 import ErrorBoundary from "@/components/layout/error-boundary";
 import { LoadingShimmer } from "@/components/ui/loading-shimmer";
-import { CarbonNeutralBanner, CarbonNeutralShippingLine } from "@/components/sustainability";
+import { CarbonNeutralBanner, CarbonNeutralShippingLine } from "@/components/sustainability/CarbonNeutralBanner";
 import {
   DEFAULT_CHECKOUT_DISCOUNT_STATE,
   type CheckoutDiscountState,

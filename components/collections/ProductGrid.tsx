@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useCart } from '@/lib/providers/CartProvider';
 import { useSavedItems } from '@/hooks/useSavedItems';
 import { toast } from 'sonner';
-import { ImperfectBadge } from '@/components/imperfect';
+import { ImperfectBadge } from '@/components/imperfect/ImperfectBadge';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 import { formatNumber, formatPrice } from "@/lib/utils";

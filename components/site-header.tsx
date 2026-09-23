@@ -1,7 +1,7 @@
 import { siteConfig } from "@/config/site"
 import { MainNav } from "@/components/main-nav"
 import { CartLink } from "@/components/cart-link"
-import { LoyaltyBadge } from "@/components/loyalty"
+import { LoyaltyBadge } from "@/components/loyalty/LoyaltyBadge"
 import { cn } from "@/lib/utils"
 import { HeaderSearch } from "@/components/search/HeaderSearch"
 import { AnnouncementBar } from "@/components/announcement-bar"

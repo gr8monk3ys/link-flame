@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { useCart } from "@/lib/providers/CartProvider";
 import { LoadingShimmer } from "@/components/ui/loading-shimmer";
 import { toast } from "sonner";
-import { CarbonNeutralBanner } from "@/components/sustainability";
+import { CarbonNeutralBanner } from "@/components/sustainability/CarbonNeutralBanner";
 import { ExpressCheckout } from "./ExpressCheckout";
 import { GiftOptions, GiftOptionsData } from "./GiftOptions";
 import {

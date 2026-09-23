@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
-import { GiftCardPurchase, GiftCardBalance } from '@/components/gift-cards'
+import { GiftCardPurchase } from '@/components/gift-cards/GiftCardPurchase'
+import { GiftCardBalance } from '@/components/gift-cards/GiftCardBalance'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
