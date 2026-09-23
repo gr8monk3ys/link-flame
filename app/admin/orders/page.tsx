@@ -496,7 +496,7 @@ export default function AdminOrdersPage() {
                         >
                           {refundingOrderId === order.id ? (
                             <>
-                              <RefreshCw className="size-3 animate-spin" />
+                              <span className="inline-flex shrink-0 animate-spin"><RefreshCw className="size-3" /></span>
                               Refunding…
                             </>
                           ) : (

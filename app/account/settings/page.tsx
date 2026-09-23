@@ -238,7 +238,7 @@ export default function AccountSettingsPage() {
   if (!isLoaded) {
     return (
       <div className="container flex items-center justify-center py-10">
-        <Loader2 className="size-8 animate-spin" />
+        <span className="inline-flex shrink-0 animate-spin"><Loader2 className="size-8" /></span>
       </div>
     );
   }
@@ -310,7 +310,7 @@ export default function AccountSettingsPage() {
             <CardContent>
               {loadingProfile ? (
                 <div className="flex items-center justify-center py-8">
-                  <Loader2 className="size-6 animate-spin" />
+                  <span className="inline-flex shrink-0 animate-spin"><Loader2 className="size-6" /></span>
                 </div>
               ) : (
                 <form onSubmit={handleUpdateProfile} className="space-y-6">
@@ -360,7 +360,7 @@ export default function AccountSettingsPage() {
                   <Button type="submit" disabled={savingProfile}>
                     {savingProfile ? (
                       <>
-                        <Loader2 className="mr-2 size-4 animate-spin" />
+                        <span className="mr-2 inline-flex shrink-0 animate-spin"><Loader2 className="size-4" /></span>
                         Saving…
                       </>
                     ) : (
@@ -428,7 +428,7 @@ export default function AccountSettingsPage() {
                 <Button type="submit" disabled={changingPassword}>
                   {changingPassword ? (
                     <>
-                      <Loader2 className="mr-2 size-4 animate-spin" />
+                      <span className="mr-2 inline-flex shrink-0 animate-spin"><Loader2 className="size-4" /></span>
                       Changing Password…
                     </>
                   ) : (
@@ -498,7 +498,7 @@ export default function AccountSettingsPage() {
                 >
                   {deletingAccount ? (
                     <>
-                      <Loader2 className="mr-2 size-4 animate-spin" />
+                      <span className="mr-2 inline-flex shrink-0 animate-spin"><Loader2 className="size-4" /></span>
                       Deleting Account…
                     </>
                   ) : (

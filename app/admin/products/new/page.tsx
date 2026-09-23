@@ -310,7 +310,7 @@ export default function AdminProductNewPage() {
               disabled={loading}
               className="flex items-center gap-2 rounded-lg bg-green-700 px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {loading && <Loader2 className="size-4 animate-spin" />}
+              {loading && <span className="inline-flex shrink-0 animate-spin"><Loader2 className="size-4" /></span>}
               {loading ? 'Creating…' : 'Create Product'}
             </button>
           </div>

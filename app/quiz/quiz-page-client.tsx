@@ -225,7 +225,7 @@ export function QuizPageClient() {
               >
                 {isLoadingQuestions ? (
                   <>
-                    <Loader2 className="size-5 animate-spin" />
+                    <span className="inline-flex shrink-0 animate-spin"><Loader2 className="size-5" /></span>
                     Loading…
                   </>
                 ) : (
@@ -285,7 +285,7 @@ export function QuizPageClient() {
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="mr-2 size-4 animate-spin" />
+                      <span className="mr-2 inline-flex shrink-0 animate-spin"><Loader2 className="size-4" /></span>
                       Getting Results…
                     </>
                   ) : (
@@ -312,7 +312,7 @@ export function QuizPageClient() {
         {/* Loading Screen */}
         {state === 'loading' && (
           <div className="py-16 text-center duration-300 animate-in fade-in-0">
-            <Loader2 className="mx-auto mb-6 size-16 animate-spin text-primary" />
+            <span className="mx-auto mb-6 flex w-fit shrink-0 animate-spin"><Loader2 className="size-16 text-primary" /></span>
             <h2 className="mb-2 text-2xl font-semibold">
               Finding Your Perfect Products
             </h2>

@@ -14,7 +14,7 @@ export default function LoyaltyPage() {
   if (!isLoaded) {
     return (
       <div className="container flex items-center justify-center py-10">
-        <Loader2 className="size-8 animate-spin" />
+        <span className="inline-flex shrink-0 animate-spin"><Loader2 className="size-8" /></span>
       </div>
     );
   }

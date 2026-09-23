@@ -196,7 +196,7 @@ export default function AdminProductEditPage() {
     return (
       <div className="flex h-64 items-center justify-center">
         <div className="flex items-center gap-2 text-muted-foreground">
-          <Loader2 className="size-5 animate-spin" />
+          <span className="inline-flex shrink-0 animate-spin"><Loader2 className="size-5" /></span>
           Loading product…
         </div>
       </div>
@@ -454,7 +454,7 @@ export default function AdminProductEditPage() {
               disabled={saving}
               className="flex items-center gap-2 rounded-lg bg-green-700 px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {saving && <Loader2 className="size-4 animate-spin" />}
+              {saving && <span className="inline-flex shrink-0 animate-spin"><Loader2 className="size-4" /></span>}
               {saving ? 'Saving…' : 'Save Changes'}
             </button>
           </div>
