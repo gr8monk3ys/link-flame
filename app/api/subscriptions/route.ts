@@ -110,45 +110,45 @@ export async function GET(request: NextRequest) {
       where.status = status;
     }
 
-    // Get total count for pagination metadata
-    const total = await prisma.subscription.count({ where });
-
-    // Fetch paginated subscriptions with items and product details
-    const subscriptions = await prisma.subscription.findMany({
-      where,
-      include: {
-        items: {
-          include: {
-            product: {
-              select: {
-                id: true,
-                title: true,
-                image: true,
-                price: true,
-                salePrice: true,
-                isSubscribable: true,
+    // Count and fetch the page in parallel
+    const [total, subscriptions] = await Promise.all([
+      prisma.subscription.count({ where }),
+      prisma.subscription.findMany({
+        where,
+        include: {
+          items: {
+            include: {
+              product: {
+                select: {
+                  id: true,
+                  title: true,
+                  image: true,
+                  price: true,
+                  salePrice: true,
+                  isSubscribable: true,
+                },
               },
-            },
-            variant: {
-              select: {
-                id: true,
-                sku: true,
-                size: true,
-                color: true,
-                colorCode: true,
-                material: true,
-                price: true,
-                salePrice: true,
-                image: true,
+              variant: {
+                select: {
+                  id: true,
+                  sku: true,
+                  size: true,
+                  color: true,
+                  colorCode: true,
+                  material: true,
+                  price: true,
+                  salePrice: true,
+                  image: true,
+                },
               },
             },
           },
         },
-      },
-      orderBy: { createdAt: 'desc' },
-      skip,
-      take: limit,
-    });
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+    ]);
 
     const totalPages = Math.ceil(total / limit);
 

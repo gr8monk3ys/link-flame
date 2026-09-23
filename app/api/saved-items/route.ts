@@ -96,27 +96,27 @@ export async function GET(req: NextRequest) {
     // Ensure default wishlist exists
     await getOrCreateDefaultWishlist(userIdToUse);
 
-    // Get total count of saved items
-    const total = await prisma.savedItem.count({
-      where: { userId: userIdToUse },
-    });
-
-    // Get paginated saved items across all wishlists
-    const savedItems = await prisma.savedItem.findMany({
-      where: { userId: userIdToUse },
-      include: {
-        product: true,
-        wishlist: {
-          select: {
-            id: true,
-            name: true,
+    // Count and fetch the page in parallel
+    const [total, savedItems] = await Promise.all([
+      prisma.savedItem.count({
+        where: { userId: userIdToUse },
+      }),
+      prisma.savedItem.findMany({
+        where: { userId: userIdToUse },
+        include: {
+          product: true,
+          wishlist: {
+            select: {
+              id: true,
+              name: true,
+            },
           },
         },
-      },
-      orderBy: { addedAt: "desc" },
-      skip,
-      take: limit,
-    });
+        orderBy: { addedAt: "desc" },
+        skip,
+        take: limit,
+      }),
+    ]);
 
     // Transform the data to match the original SavedItem interface
     const formattedItems = savedItems.map((item) => ({

@@ -105,42 +105,42 @@ export async function GET(request: NextRequest) {
         orderBy = { imperfectDiscount: "desc" };
     }
 
-    // Get total count for pagination
-    const total = await prisma.product.count({ where });
-
-    // Get imperfect products with pagination
-    const products = await prisma.product.findMany({
-      where,
-      include: {
-        reviews: {
-          select: {
-            rating: true,
+    // Count and fetch the page in parallel
+    const [total, products] = await Promise.all([
+      prisma.product.count({ where }),
+      prisma.product.findMany({
+        where,
+        include: {
+          reviews: {
+            select: {
+              rating: true,
+            },
+          },
+          variants: {
+            select: {
+              id: true,
+              sku: true,
+              size: true,
+              color: true,
+              colorCode: true,
+              material: true,
+              price: true,
+              salePrice: true,
+              image: true,
+              inventory: true,
+              isDefault: true,
+              sortOrder: true,
+              isImperfect: true,
+              imperfectReason: true,
+              imperfectDiscount: true,
+            },
           },
         },
-        variants: {
-          select: {
-            id: true,
-            sku: true,
-            size: true,
-            color: true,
-            colorCode: true,
-            material: true,
-            price: true,
-            salePrice: true,
-            image: true,
-            inventory: true,
-            isDefault: true,
-            sortOrder: true,
-            isImperfect: true,
-            imperfectReason: true,
-            imperfectDiscount: true,
-          },
-        },
-      },
-      orderBy,
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-    });
+        orderBy,
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+    ]);
 
     // Transform products with calculated savings and imperfect details
     const imperfectProducts = products.map((product) => {
