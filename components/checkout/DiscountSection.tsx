@@ -181,6 +181,7 @@ export function DiscountSection({
         </div>
         <Slider
           id="loyalty-points-slider"
+          thumbLabel="Loyalty points to redeem"
           disabled={disabled || maxRedeemablePoints <= 0}
           min={0}
           max={maxRedeemablePoints}
@@ -199,9 +200,9 @@ export function DiscountSection({
       <div className="space-y-3 border-t pt-4">
         <Label htmlFor="gift-card-code">Gift card</Label>
         <div className="flex gap-2">
-          <Input
+          <Input name="giftCardCodeInput" autoComplete="off" spellCheck={false}
             id="gift-card-code"
-            placeholder="Enter gift card code"
+            placeholder="XXXX-XXXX-XXXX-XXXX"
             value={giftCardCodeInput}
             disabled={disabled}
             onChange={(event) => setGiftCardCodeInput(event.target.value)}
@@ -232,7 +233,7 @@ export function DiscountSection({
             </p>
             <div className="space-y-1">
               <Label htmlFor="gift-card-amount">Amount to use</Label>
-              <Input
+              <Input inputMode="decimal" name="giftCardAmount" autoComplete="off"
                 id="gift-card-amount"
                 type="number"
                 min={0}

@@ -225,7 +225,7 @@ export function GiftCardCheckout({
               Gift Card Code
             </Label>
             <div className="flex gap-2">
-              <Input
+              <Input name="code" autoComplete="off" spellCheck={false}
                 id="checkoutGiftCardCode"
                 type="text"
                 placeholder="XXXX-XXXX-XXXX-XXXX"

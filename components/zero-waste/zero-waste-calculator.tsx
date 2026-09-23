@@ -87,8 +87,8 @@ export function ZeroWasteCalculator() {
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Label>Select Item</Label>
-        <select
+        <Label htmlFor="zero-select-item">Select Item</Label>
+        <select name="name" id="zero-select-item"
           className="w-full rounded-md border p-2"
           value={selectedItem.name}
           onChange={(e) => {
@@ -109,8 +109,8 @@ export function ZeroWasteCalculator() {
       </div>
 
       <div className="space-y-2">
-        <Label>Usage Frequency (per year)</Label>
-        <Input
+        <Label htmlFor="zero-usage-frequency">Usage Frequency (per year)</Label>
+        <Input inputMode="numeric" name="frequency" autoComplete="off" id="zero-usage-frequency"
           type="number"
           value={frequency}
           onChange={(e) => {

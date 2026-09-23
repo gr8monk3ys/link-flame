@@ -136,8 +136,8 @@ export function EnergySavingsCalculator() {
         <h3 className="mb-4 text-lg font-semibold">Current Energy Usage</h3>
         <div className="space-y-4">
           <div>
-            <Label>Average Monthly Electricity Bill ($)</Label>
-            <Input
+            <Label htmlFor="energy-average-monthly-electricity-bill">Average Monthly Electricity Bill ($)</Label>
+            <Input inputMode="decimal" name="monthlyBill" autoComplete="off" id="energy-average-monthly-electricity-bill"
               type="number"
               value={monthlyBill}
               onChange={(e) => setMonthlyBill(Number(e.target.value))}
@@ -145,8 +145,8 @@ export function EnergySavingsCalculator() {
             />
           </div>
           <div>
-            <Label>Electricity Rate ($ per kWh)</Label>
-            <Input
+            <Label htmlFor="energy-electricity-rate">Electricity Rate ($ per kWh)</Label>
+            <Input inputMode="decimal" name="electricityRate" autoComplete="off" id="energy-electricity-rate"
               type="number"
               value={electricityRate}
               onChange={(e) => setElectricityRate(Number(e.target.value))}
@@ -165,7 +165,7 @@ export function EnergySavingsCalculator() {
             <div key={category} className="space-y-2">
               <h4 className="font-medium capitalize">{category}</h4>
               {options.map((option) => (
-                <div key={option.id} className="flex items-start space-x-2">
+                <label key={option.id} className="flex cursor-pointer items-start space-x-2">
                   <input
                     type="checkbox"
                     checked={selectedUpgrades.includes(option.id)}
@@ -179,7 +179,7 @@ export function EnergySavingsCalculator() {
                     className="mt-1 size-4 rounded border-border"
                   />
                   <div>
-                    <Label>{option.name}</Label>
+                    <span className="text-sm font-medium leading-none">{option.name}</span>
                     <p className="text-sm text-muted-foreground">{option.description}</p>
                     <p className="text-sm">
                       Cost: ${formatNumber(option.typicalCost)} | 
@@ -187,7 +187,7 @@ export function EnergySavingsCalculator() {
                       Lifespan: {option.lifespan} years
                     </p>
                   </div>
-                </div>
+                </label>
               ))}
             </div>
           ))}

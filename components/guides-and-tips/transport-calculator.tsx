@@ -99,7 +99,7 @@ export function TransportCalculator() {
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Label>Transport Mode</Label>
+        <Label htmlFor="transport-mode">Transport Mode</Label>
         <Select
           value={mode.name}
           onValueChange={(value) => {
@@ -110,7 +110,7 @@ export function TransportCalculator() {
             }
           }}
         >
-          <SelectTrigger>
+          <SelectTrigger id="transport-mode">
             <SelectValue>{mode.name}</SelectValue>
           </SelectTrigger>
           <SelectContent>
@@ -124,8 +124,8 @@ export function TransportCalculator() {
       </div>
 
       <div className="space-y-2">
-        <Label>Daily Distance (km)</Label>
-        <Input
+        <Label htmlFor="transport-daily-distance">Daily Distance (km)</Label>
+        <Input inputMode="decimal" name="distance" autoComplete="off" id="transport-daily-distance"
           type="number"
           value={distance}
           onChange={(e) => {
@@ -137,8 +137,8 @@ export function TransportCalculator() {
       </div>
 
       <div className="space-y-2">
-        <Label>Days per Week</Label>
-        <Input
+        <Label htmlFor="transport-days-per-week">Days per Week</Label>
+        <Input inputMode="numeric" name="daysPerWeek" autoComplete="off" id="transport-days-per-week"
           type="number"
           value={daysPerWeek}
           onChange={(e) => {

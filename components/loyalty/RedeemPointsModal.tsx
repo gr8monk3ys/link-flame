@@ -247,6 +247,7 @@ export function RedeemPointsModal({
               </div>
 
               <Slider
+                thumbLabel="Points to redeem"
                 value={[pointsToRedeem]}
                 onValueChange={([value]) => setPointsToRedeem(value)}
                 min={0}
@@ -522,6 +523,7 @@ export function InlineRedeemWidget({
       <div className="flex gap-2">
         <div className="flex-1">
           <Slider
+            thumbLabel="Points to redeem"
             value={[pointsToRedeem]}
             onValueChange={([value]) => setPointsToRedeem(value)}
             min={0}

@@ -68,7 +68,7 @@ export function GiftOptions({
     <div className={cn("rounded-lg border p-4", className)}>
       {/* Header with toggle */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center">
           <Checkbox
             id="isGift"
             checked={value.isGift}
@@ -76,15 +76,13 @@ export function GiftOptions({
             disabled={disabled}
             aria-describedby="gift-description"
           />
-          <div className="flex items-center space-x-2">
+          <Label
+            htmlFor="isGift"
+            className="flex cursor-pointer items-center gap-2 pl-3 text-sm font-medium"
+          >
             <Gift className="size-5 text-muted-foreground" aria-hidden="true" />
-            <Label
-              htmlFor="isGift"
-              className="cursor-pointer text-sm font-medium"
-            >
-              This order is a gift
-            </Label>
-          </div>
+            This order is a gift
+          </Label>
         </div>
         {value.isGift && (
           <button
@@ -121,10 +119,10 @@ export function GiftOptions({
             <Label htmlFor="giftRecipientName" className="text-sm">
               Recipient Name
             </Label>
-            <Input
+            <Input name="giftRecipientName" autoComplete="off"
               id="giftRecipientName"
               type="text"
-              placeholder="Who is this gift for?"
+              placeholder="e.g. Jane Doe"
               value={value.giftRecipientName}
               onChange={(e) =>
                 handleFieldChange("giftRecipientName", e.target.value)
@@ -155,7 +153,7 @@ export function GiftOptions({
                 {messageLength}/{MAX_MESSAGE_LENGTH}
               </span>
             </div>
-            <Textarea
+            <Textarea name="giftMessage" autoComplete="off"
               id="giftMessage"
               placeholder="Write a personal message to include with this gift…"
               value={value.giftMessage}
@@ -186,7 +184,7 @@ export function GiftOptions({
                 (optional)
               </span>
             </Label>
-            <Input
+            <Input name="giftRecipientEmail" autoComplete="off" spellCheck={false}
               id="giftRecipientEmail"
               type="email"
               placeholder="recipient@example.com"
@@ -207,7 +205,7 @@ export function GiftOptions({
           </div>
 
           {/* Hide Price Option */}
-          <div className="flex items-start space-x-3 pt-2">
+          <div className="flex items-start pt-2">
             <Checkbox
               id="hidePrice"
               checked={value.hidePrice}
@@ -217,7 +215,7 @@ export function GiftOptions({
               disabled={disabled}
               className="mt-0.5"
             />
-            <div className="space-y-1">
+            <div className="space-y-1 pl-3">
               <Label
                 htmlFor="hidePrice"
                 className="cursor-pointer text-sm font-medium"

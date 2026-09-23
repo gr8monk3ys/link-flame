@@ -288,7 +288,7 @@ export function WishlistItems({
               Add a personal note for &ldquo;{noteDialogItem?.product.title}&rdquo;
             </DialogDescription>
           </DialogHeader>
-          <textarea
+          <textarea aria-label="Note" name="noteText" autoComplete="off"
             value={noteText}
             onChange={(e) => setNoteText(e.target.value)}
             placeholder="e.g., Gift for mom’s birthday"

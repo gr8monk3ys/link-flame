@@ -30,7 +30,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             <Label className="sr-only" htmlFor="email">
               Email
             </Label>
-            <Input
+            <Input name="email" spellCheck={false}
               id="email"
               placeholder="name@example.com"
               type="email"

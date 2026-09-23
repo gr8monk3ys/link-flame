@@ -261,7 +261,7 @@ export default function AdminOrdersPage() {
         <div className="flex flex-col gap-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
-            <input
+            <input aria-label="Search orders" name="search" autoComplete="off"
               type="text"
               placeholder="Search by customer name, email, or order ID…"
               value={search}
@@ -270,7 +270,7 @@ export default function AdminOrdersPage() {
             />
           </div>
           <div className="flex gap-4">
-            <select
+            <select aria-label="Filter by payment status" name="statusFilter"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
               className="flex-1 rounded-lg border border-border px-4 py-2 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
@@ -281,7 +281,7 @@ export default function AdminOrdersPage() {
               <option value="failed">Failed</option>
               <option value="refunded">Refunded</option>
             </select>
-            <select
+            <select aria-label="Filter by shipping status" name="shippingFilter"
               value={shippingFilter}
               onChange={(e) => setShippingFilter(e.target.value)}
               className="flex-1 rounded-lg border border-border px-4 py-2 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
@@ -368,7 +368,7 @@ export default function AdminOrdersPage() {
                     </span>
                   </td>
                   <td className="whitespace-nowrap px-6 py-4">
-                    <select
+                    <select aria-label={`Shipping status for order ${order.id}`} name="shippingStatus"
                       value={order.shippingStatus || 'pending'}
                       onChange={(e) =>
                         updateShippingStatus(order.id, e.target.value)
@@ -387,7 +387,7 @@ export default function AdminOrdersPage() {
                   <td className="px-6 py-4">
                     {shouldShowTracking(order.shippingStatus) ? (
                       <div className="flex flex-col gap-1">
-                        <select
+                        <select name="shippingCarrier" aria-label={`Shipping carrier for order ${order.id}`}
                           value={
                             trackingInputs[order.id]?.shippingCarrier || ''
                           }
@@ -406,9 +406,9 @@ export default function AdminOrdersPage() {
                             </option>
                           ))}
                         </select>
-                        <input
+                        <input name="trackingNumber" spellCheck={false} aria-label={`Tracking number for order ${order.id}`} autoComplete="off"
                           type="text"
-                          placeholder="Tracking #"
+                          placeholder="e.g. 1Z999AA10123456784"
                           value={
                             trackingInputs[order.id]?.trackingNumber || ''
                           }

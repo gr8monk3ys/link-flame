@@ -60,7 +60,7 @@ export function FrequencySelector({
         <label htmlFor="frequency-select" className="sr-only">
           Delivery frequency
         </label>
-        <select
+        <select name="selectedFrequency"
           id="frequency-select"
           value={selectedFrequency}
           onChange={(e) => onFrequencyChange(e.target.value as SubscriptionFrequency)}

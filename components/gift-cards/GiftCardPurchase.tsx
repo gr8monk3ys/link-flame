@@ -269,11 +269,11 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
             </Label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-              <Input
+              <Input name="customAmount" autoComplete="off"
                 id="customAmount"
                 type="text"
                 inputMode="decimal"
-                placeholder="Custom amount"
+                placeholder="e.g. 75"
                 value={customAmount}
                 onChange={handleCustomAmountChange}
                 onFocus={handleCustomAmountFocus}
@@ -297,10 +297,10 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
 
           <div className="space-y-2">
             <Label htmlFor="recipientName">Recipient Name</Label>
-            <Input
+            <Input name="recipientName" autoComplete="off"
               id="recipientName"
               type="text"
-              placeholder="Enter recipient’s name"
+              placeholder="e.g. Jane Doe"
               value={recipientName}
               onChange={(e) => setRecipientName(e.target.value)}
               maxLength={100}
@@ -310,7 +310,7 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
 
           <div className="space-y-2">
             <Label htmlFor="recipientEmail">Recipient Email</Label>
-            <Input
+            <Input name="recipientEmail" autoComplete="off" spellCheck={false}
               id="recipientEmail"
               type="email"
               placeholder="recipient@example.com"
@@ -326,7 +326,7 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
 
           <div className="space-y-2">
             <Label htmlFor="message">Personal Message</Label>
-            <textarea
+            <textarea name="message" autoComplete="off"
               id="message"
               placeholder="Write a message for the recipient…"
               value={message}

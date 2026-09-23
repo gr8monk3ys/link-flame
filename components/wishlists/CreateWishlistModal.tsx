@@ -70,7 +70,7 @@ export function CreateWishlistModal({ onSubmit, trigger }: CreateWishlistModalPr
             <label htmlFor="name" className="mb-2 block text-sm font-medium">
               Wishlist Name
             </label>
-            <input
+            <input name="name" autoComplete="off"
               id="name"
               type="text"
               value={name}

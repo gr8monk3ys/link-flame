@@ -113,8 +113,8 @@ export function CarbonFootprintCalculator() {
         <h3 className="mb-4 text-lg font-semibold">Home Energy</h3>
         <div className="space-y-4">
           <div>
-            <Label>Monthly Electricity Usage (kWh)</Label>
-            <Input
+            <Label htmlFor="carbon-monthly-electricity-usage">Monthly Electricity Usage (kWh)</Label>
+            <Input inputMode="decimal" name="electricity" autoComplete="off" id="carbon-monthly-electricity-usage"
               type="number"
               value={factors.homeEnergy.electricity}
               onChange={(e) => 
@@ -129,8 +129,8 @@ export function CarbonFootprintCalculator() {
             />
           </div>
           <div>
-            <Label>Monthly Natural Gas Usage (therms)</Label>
-            <Input
+            <Label htmlFor="carbon-monthly-natural-gas-usage">Monthly Natural Gas Usage (therms)</Label>
+            <Input inputMode="decimal" name="gas" autoComplete="off" id="carbon-monthly-natural-gas-usage"
               type="number"
               value={factors.homeEnergy.gas}
               onChange={(e) => 
@@ -147,6 +147,7 @@ export function CarbonFootprintCalculator() {
           <div>
             <Label>Renewable Energy Percentage</Label>
             <Slider
+              thumbLabel="Renewable energy percentage"
               value={[factors.homeEnergy.renewable]}
               onValueChange={(value) => 
                 setFactors({
@@ -170,8 +171,8 @@ export function CarbonFootprintCalculator() {
         <h3 className="mb-4 text-lg font-semibold">Transportation</h3>
         <div className="space-y-4">
           <div>
-            <Label>Annual Car Miles</Label>
-            <Input
+            <Label htmlFor="carbon-annual-car-miles">Annual Car Miles</Label>
+            <Input inputMode="decimal" name="carMiles" autoComplete="off" id="carbon-annual-car-miles"
               type="number"
               value={factors.transportation.carMiles}
               onChange={(e) => 
@@ -186,8 +187,8 @@ export function CarbonFootprintCalculator() {
             />
           </div>
           <div>
-            <Label>Car Fuel Efficiency (MPG)</Label>
-            <Input
+            <Label htmlFor="carbon-car-fuel-efficiency">Car Fuel Efficiency (MPG)</Label>
+            <Input inputMode="decimal" name="carEfficiency" autoComplete="off" id="carbon-car-fuel-efficiency"
               type="number"
               value={factors.transportation.carEfficiency}
               onChange={(e) => 
@@ -202,8 +203,8 @@ export function CarbonFootprintCalculator() {
             />
           </div>
           <div>
-            <Label>Annual Public Transit Miles</Label>
-            <Input
+            <Label htmlFor="carbon-annual-public-transit-miles">Annual Public Transit Miles</Label>
+            <Input inputMode="decimal" name="publicTransit" autoComplete="off" id="carbon-annual-public-transit-miles"
               type="number"
               value={factors.transportation.publicTransit}
               onChange={(e) => 
@@ -218,8 +219,8 @@ export function CarbonFootprintCalculator() {
             />
           </div>
           <div>
-            <Label>Flights per Year</Label>
-            <Input
+            <Label htmlFor="carbon-flights-per-year">Flights per Year</Label>
+            <Input inputMode="numeric" name="flights" autoComplete="off" id="carbon-flights-per-year"
               type="number"
               value={factors.transportation.flights}
               onChange={(e) => 
@@ -241,7 +242,7 @@ export function CarbonFootprintCalculator() {
         <h3 className="mb-4 text-lg font-semibold">Lifestyle</h3>
         <div className="space-y-4">
           <div>
-            <Label>Diet Type</Label>
+            <Label htmlFor="carbon-diet-type">Diet Type</Label>
             <Select
               value={factors.lifestyle.dietType}
               onValueChange={(value: "meat-heavy" | "average" | "vegetarian" | "vegan") =>
@@ -254,7 +255,7 @@ export function CarbonFootprintCalculator() {
                 })
               }
             >
-              <SelectTrigger>
+              <SelectTrigger id="carbon-diet-type">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -266,7 +267,7 @@ export function CarbonFootprintCalculator() {
             </Select>
           </div>
           <div className="space-y-2">
-            <div className="flex items-center space-x-2">
+            <label className="flex cursor-pointer items-center space-x-2">
               <input
                 type="checkbox"
                 checked={factors.lifestyle.recycling}
@@ -281,9 +282,9 @@ export function CarbonFootprintCalculator() {
                 }
                 className="size-4 rounded border-border"
               />
-              <Label>Regular Recycling</Label>
-            </div>
-            <div className="flex items-center space-x-2">
+              <span className="text-sm font-medium leading-none">Regular Recycling</span>
+            </label>
+            <label className="flex cursor-pointer items-center space-x-2">
               <input
                 type="checkbox"
                 checked={factors.lifestyle.composting}
@@ -298,8 +299,8 @@ export function CarbonFootprintCalculator() {
                 }
                 className="size-4 rounded border-border"
               />
-              <Label>Home Composting</Label>
-            </div>
+              <span className="text-sm font-medium leading-none">Home Composting</span>
+            </label>
           </div>
         </div>
       </Card>

@@ -239,7 +239,7 @@ export function PredictiveSearch({
           <path d="m21 21-4.3-4.3" />
         </svg>
 
-        <Input
+        <Input name="query"
           ref={inputRef}
           type="search"
           value={query}

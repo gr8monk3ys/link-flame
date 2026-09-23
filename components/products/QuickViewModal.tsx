@@ -177,7 +177,7 @@ function QuantitySelector({
       >
         <Minus className="size-4" />
       </Button>
-      <input
+      <input inputMode="numeric" name="quantity" autoComplete="off"
         type="number"
         min={1}
         max={max}

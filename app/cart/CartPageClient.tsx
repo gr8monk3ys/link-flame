@@ -81,7 +81,7 @@ const CartItemRow = memo(({
               ...
             </div>
           ) : (
-            <input
+            <input inputMode="numeric" name="quantity" autoComplete="off"
               type="number"
               id={`quantity-${item.id}`}
               min="1"

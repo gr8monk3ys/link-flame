@@ -71,7 +71,7 @@ export default function ContactPage() {
               <label htmlFor="name" className="mb-1 block text-sm font-medium">
                 Name
               </label>
-              <input
+              <input autoComplete="name"
                 type="text"
                 id="name"
                 name="name"
@@ -85,7 +85,7 @@ export default function ContactPage() {
               <label htmlFor="email" className="mb-1 block text-sm font-medium">
                 Email
               </label>
-              <input
+              <input autoComplete="email" spellCheck={false}
                 type="email"
                 id="email"
                 name="email"
@@ -99,7 +99,7 @@ export default function ContactPage() {
               <label htmlFor="subject" className="mb-1 block text-sm font-medium">
                 Subject
               </label>
-              <input
+              <input autoComplete="off"
                 type="text"
                 id="subject"
                 name="subject"
@@ -113,7 +113,7 @@ export default function ContactPage() {
               <label htmlFor="message" className="mb-1 block text-sm font-medium">
                 Message
               </label>
-              <textarea
+              <textarea autoComplete="off"
                 id="message"
                 name="message"
                 value={formData.message}

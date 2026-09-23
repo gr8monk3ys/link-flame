@@ -303,7 +303,7 @@ function ProductPagination({
           <label htmlFor="products-per-page" className="text-sm text-muted-foreground">
             Per page
           </label>
-          <select
+          <select name="pageSize"
             id="products-per-page"
             value={pageSize}
             onChange={(e) => onPageSizeChange(Number(e.target.value))}

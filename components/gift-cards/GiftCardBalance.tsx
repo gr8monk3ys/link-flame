@@ -187,7 +187,7 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="giftCardCode">Gift Card Code</Label>
-          <Input
+          <Input name="code" autoComplete="off" spellCheck={false}
             id="giftCardCode"
             type="text"
             placeholder="XXXX-XXXX-XXXX-XXXX"

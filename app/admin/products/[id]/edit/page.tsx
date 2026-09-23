@@ -255,7 +255,7 @@ export default function AdminProductEditPage() {
             <label htmlFor="title" className="block text-sm font-medium text-foreground">
               Title <span className="text-red-500">*</span>
             </label>
-            <input
+            <input name="title" autoComplete="off"
               id="title"
               type="text"
               value={title}
@@ -272,7 +272,7 @@ export default function AdminProductEditPage() {
             <label htmlFor="subtitle" className="block text-sm font-medium text-foreground">
               Subtitle
             </label>
-            <input
+            <input name="subtitle" autoComplete="off"
               id="subtitle"
               type="text"
               value={subtitle}
@@ -288,7 +288,7 @@ export default function AdminProductEditPage() {
             <label htmlFor="description" className="block text-sm font-medium text-foreground">
               Description
             </label>
-            <textarea
+            <textarea name="description" autoComplete="off"
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -305,7 +305,7 @@ export default function AdminProductEditPage() {
               <label htmlFor="price" className="block text-sm font-medium text-foreground">
                 Price ($) <span className="text-red-500">*</span>
               </label>
-              <input
+              <input inputMode="decimal" name="price" autoComplete="off"
                 id="price"
                 type="number"
                 value={price}
@@ -322,7 +322,7 @@ export default function AdminProductEditPage() {
               <label htmlFor="salePrice" className="block text-sm font-medium text-foreground">
                 Sale Price ($)
               </label>
-              <input
+              <input inputMode="decimal" name="salePrice" autoComplete="off"
                 id="salePrice"
                 type="number"
                 value={salePrice}
@@ -340,7 +340,7 @@ export default function AdminProductEditPage() {
             <label htmlFor="image" className="block text-sm font-medium text-foreground">
               Image URL <span className="text-red-500">*</span>
             </label>
-            <input
+            <input name="image" autoComplete="off"
               id="image"
               type="url"
               value={image}
@@ -357,7 +357,7 @@ export default function AdminProductEditPage() {
               <label htmlFor="category" className="block text-sm font-medium text-foreground">
                 Category
               </label>
-              <select
+              <select name="category"
                 id="category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
@@ -375,7 +375,7 @@ export default function AdminProductEditPage() {
               <label htmlFor="inventory" className="block text-sm font-medium text-foreground">
                 Inventory
               </label>
-              <input
+              <input inputMode="numeric" name="inventory" autoComplete="off"
                 id="inventory"
                 type="number"
                 value={inventory}
@@ -391,7 +391,7 @@ export default function AdminProductEditPage() {
           {/* Imperfect / Subscribable toggles */}
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div className="space-y-4">
-              <div className="flex items-center gap-3">
+              <label htmlFor="isImperfect" className="flex cursor-pointer items-center gap-3">
                 <input
                   id="isImperfect"
                   type="checkbox"
@@ -399,10 +399,10 @@ export default function AdminProductEditPage() {
                   onChange={(e) => setIsImperfect(e.target.checked)}
                   className="size-4 rounded border-border text-green-700 focus-visible:ring-green-500 dark:text-green-400"
                 />
-                <label htmlFor="isImperfect" className="text-sm font-medium text-foreground">
+                <span className="text-sm font-medium text-foreground">
                   Imperfect / Seconds Item
-                </label>
-              </div>
+                </span>
+              </label>
 
               {isImperfect && (
                 <div>
@@ -412,7 +412,7 @@ export default function AdminProductEditPage() {
                   >
                     Imperfect Discount (%)
                   </label>
-                  <input
+                  <input inputMode="decimal" name="imperfectDiscount" autoComplete="off"
                     id="imperfectDiscount"
                     type="number"
                     value={imperfectDiscount}
@@ -427,7 +427,7 @@ export default function AdminProductEditPage() {
               )}
             </div>
 
-            <div className="flex items-center gap-3">
+            <label htmlFor="isSubscribable" className="flex cursor-pointer items-center gap-3">
               <input
                 id="isSubscribable"
                 type="checkbox"
@@ -435,10 +435,10 @@ export default function AdminProductEditPage() {
                 onChange={(e) => setIsSubscribable(e.target.checked)}
                 className="size-4 rounded border-border text-green-700 focus-visible:ring-green-500 dark:text-green-400"
               />
-              <label htmlFor="isSubscribable" className="text-sm font-medium text-foreground">
+              <span className="text-sm font-medium text-foreground">
                 Subscribe & Save Eligible
-              </label>
-            </div>
+              </span>
+            </label>
           </div>
 
           {/* Actions */}

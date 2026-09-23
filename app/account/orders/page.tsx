@@ -152,7 +152,7 @@ export default function OrdersPage() {
         {/* Status filter */}
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">Filter:</span>
-          <select
+          <select aria-label="Filter orders by status" name="statusFilter"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="rounded-md border px-3 py-1.5 text-sm"

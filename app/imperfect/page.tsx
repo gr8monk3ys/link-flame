@@ -152,7 +152,7 @@ export default function ImperfectPage() {
           <div className="flex flex-wrap gap-4">
             {/* Category Filter */}
             {categories.length > 0 && (
-              <select
+              <select name="category"
                 value={filters.category}
                 onChange={(e) => handleFilterChange({ category: e.target.value })}
                 className="rounded-lg border border-border px-4 py-2 text-sm focus-visible:border-amber-500 focus-visible:ring-amber-500"
@@ -168,7 +168,7 @@ export default function ImperfectPage() {
             )}
 
             {/* Discount Filter */}
-            <select
+            <select name="minDiscount"
               value={filters.minDiscount ?? ''}
               onChange={(e) =>
                 handleFilterChange({
@@ -186,7 +186,7 @@ export default function ImperfectPage() {
             </select>
 
             {/* Sort */}
-            <select
+            <select name="sortBy"
               value={filters.sortBy}
               onChange={(e) => handleFilterChange({ sortBy: e.target.value })}
               className="rounded-lg border border-border px-4 py-2 text-sm focus-visible:border-amber-500 focus-visible:ring-amber-500"

@@ -117,7 +117,7 @@ export default function SignUpPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
-              <Input
+              <Input name="name" autoComplete="name"
                 id="name"
                 type="text"
                 placeholder="John Doe"
@@ -129,7 +129,7 @@ export default function SignUpPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input
+              <Input name="email" autoComplete="email" spellCheck={false}
                 id="email"
                 type="email"
                 placeholder="you@example.com"
@@ -141,7 +141,7 @@ export default function SignUpPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input
+              <Input name="password" autoComplete="new-password"
                 id="password"
                 type="password"
                 placeholder="••••••••"
@@ -154,7 +154,7 @@ export default function SignUpPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input
+              <Input name="confirmPassword" autoComplete="new-password"
                 id="confirmPassword"
                 type="password"
                 placeholder="••••••••"

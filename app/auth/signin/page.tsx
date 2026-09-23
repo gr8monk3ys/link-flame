@@ -57,7 +57,7 @@ function SignInForm() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input
+              <Input name="email" autoComplete="email" spellCheck={false}
                 id="email"
                 type="email"
                 placeholder="you@example.com"
@@ -69,7 +69,7 @@ function SignInForm() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input
+              <Input name="password" autoComplete="current-password"
                 id="password"
                 type="password"
                 placeholder="••••••••"

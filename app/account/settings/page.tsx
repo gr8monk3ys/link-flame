@@ -317,7 +317,7 @@ export default function AccountSettingsPage() {
                   <div className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="name">Name</Label>
-                      <Input
+                      <Input name="profileName" autoComplete="name"
                         id="name"
                         value={profileName}
                         onChange={(e) => setProfileName(e.target.value)}
@@ -327,7 +327,7 @@ export default function AccountSettingsPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="email">Email</Label>
-                      <Input
+                      <Input name="profileEmail" autoComplete="email" spellCheck={false}
                         id="email"
                         type="email"
                         value={profileEmail}
@@ -390,7 +390,7 @@ export default function AccountSettingsPage() {
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="currentPassword">Current Password</Label>
-                    <Input
+                    <Input name="currentPassword" autoComplete="current-password"
                       id="currentPassword"
                       type="password"
                       value={currentPassword}
@@ -401,7 +401,7 @@ export default function AccountSettingsPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="newPassword">New Password</Label>
-                    <Input
+                    <Input name="newPassword" autoComplete="new-password"
                       id="newPassword"
                       type="password"
                       value={newPassword}
@@ -415,7 +415,7 @@ export default function AccountSettingsPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                    <Input
+                    <Input name="confirmPassword" autoComplete="new-password"
                       id="confirmPassword"
                       type="password"
                       value={confirmPassword}
@@ -469,7 +469,7 @@ export default function AccountSettingsPage() {
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="deletePassword">Password</Label>
-                    <Input
+                    <Input name="deletePassword" autoComplete="current-password"
                       id="deletePassword"
                       type="password"
                       value={deletePassword}
@@ -482,7 +482,7 @@ export default function AccountSettingsPage() {
                     <Label htmlFor="deleteConfirmation">
                       Type <span className="font-mono font-bold">DELETE MY ACCOUNT</span> to confirm
                     </Label>
-                    <Input
+                    <Input name="deleteConfirmation" autoComplete="off"
                       id="deleteConfirmation"
                       value={deleteConfirmation}
                       onChange={(e) => setDeleteConfirmation(e.target.value)}

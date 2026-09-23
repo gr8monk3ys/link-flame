@@ -256,12 +256,12 @@ export function WishlistCard({
               Enter a new name for your wishlist
             </DialogDescription>
           </DialogHeader>
-          <input
+          <input aria-label="Wishlist name" name="newName" autoComplete="off"
             type="text"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             className="w-full rounded-md border px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            placeholder="Wishlist name"
+            placeholder="e.g. Kitchen Upgrades"
             autoFocus
             onKeyDown={(e) => {
               if (e.key === 'Enter') handleRename();

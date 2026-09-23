@@ -129,7 +129,7 @@ function ResetPasswordForm() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="password">New Password</Label>
-              <Input
+              <Input name="password" autoComplete="new-password"
                 id="password"
                 type="password"
                 placeholder="At least 8 characters"
@@ -142,7 +142,7 @@ function ResetPasswordForm() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input
+              <Input name="confirmPassword" autoComplete="new-password"
                 id="confirmPassword"
                 type="password"
                 placeholder="Confirm your new password"

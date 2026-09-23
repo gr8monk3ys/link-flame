@@ -86,7 +86,7 @@ function SearchSection({
         <label htmlFor="search" className="sr-only">
           Search products
         </label>
-        <input
+        <input autoComplete="off"
           type="text"
           id="search"
           name="search"
@@ -225,11 +225,11 @@ function PriceRangeSection({
           <label htmlFor="minPrice" className="sr-only">
             Minimum Price
           </label>
-          <input
+          <input inputMode="decimal" autoComplete="off"
             type="number"
             id="minPrice"
             name="minPrice"
-            placeholder="Min"
+            placeholder="e.g. 10"
             value={filters.priceRange.min ?? ''}
             onChange={(e) =>
               onFilterChange({
@@ -246,11 +246,11 @@ function PriceRangeSection({
           <label htmlFor="maxPrice" className="sr-only">
             Maximum Price
           </label>
-          <input
+          <input inputMode="decimal" autoComplete="off"
             type="number"
             id="maxPrice"
             name="maxPrice"
-            placeholder="Max"
+            placeholder="e.g. 50"
             value={filters.priceRange.max ?? ''}
             onChange={(e) =>
               onFilterChange({
@@ -285,7 +285,7 @@ function DateRangeSection({
           >
             From
           </label>
-          <input
+          <input autoComplete="off"
             type="date"
             id="start-date"
             name="startDate"
@@ -310,7 +310,7 @@ function DateRangeSection({
           >
             To
           </label>
-          <input
+          <input autoComplete="off"
             type="date"
             id="end-date"
             name="endDate"

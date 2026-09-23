@@ -197,7 +197,7 @@ export function ImpactShareCard({ metrics, onClose }: ImpactShareCardProps) {
 
           {/* Copy Text */}
           <div className="relative">
-            <textarea
+            <textarea aria-label="Share text" name="shareText" autoComplete="off"
               readOnly
               value={shareText}
               className="w-full resize-none rounded-lg bg-muted p-3 pr-12 text-sm"

@@ -94,7 +94,7 @@ export default function NewBlogPostPage() {
           >
             Title *
           </label>
-          <input
+          <input name="title" autoComplete="off"
             type="text"
             id="title"
             required
@@ -113,7 +113,7 @@ export default function NewBlogPostPage() {
           >
             Slug * <span className="text-muted-foreground">(auto-generated)</span>
           </label>
-          <input
+          <input name="slug" autoComplete="off" spellCheck={false}
             type="text"
             id="slug"
             required
@@ -135,7 +135,7 @@ export default function NewBlogPostPage() {
           >
             Description * (SEO meta description)
           </label>
-          <textarea
+          <textarea name="description" autoComplete="off"
             id="description"
             required
             rows={3}
@@ -157,7 +157,7 @@ export default function NewBlogPostPage() {
             >
               Category *
             </label>
-            <input
+            <input name="category" autoComplete="off"
               type="text"
               id="category"
               required
@@ -176,7 +176,7 @@ export default function NewBlogPostPage() {
             >
               Tags (comma-separated)
             </label>
-            <input
+            <input name="tags" autoComplete="off"
               type="text"
               id="tags"
               value={formData.tags}
@@ -197,7 +197,7 @@ export default function NewBlogPostPage() {
           >
             Cover Image URL *
           </label>
-          <input
+          <input name="coverImage" autoComplete="off"
             type="url"
             id="coverImage"
             required
@@ -206,7 +206,7 @@ export default function NewBlogPostPage() {
               setFormData({ ...formData, coverImage: e.target.value })
             }
             className="w-full rounded-lg border border-border px-4 py-2 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
-            placeholder="https://images.unsplash.com/..."
+            placeholder="https://images.unsplash.com/photo-…"
           />
           {formData.coverImage && (
             <div className="relative mt-3 h-48 w-full max-w-md overflow-hidden rounded-lg">
@@ -250,7 +250,7 @@ export default function NewBlogPostPage() {
               />
             </div>
           ) : (
-            <textarea
+            <textarea name="content" autoComplete="off"
               id="content"
               required
               rows={20}

@@ -134,7 +134,7 @@ export function ReferralCodeInput({
       </Label>
       <div className="flex gap-2">
         <div className="relative flex-1">
-          <Input
+          <Input name="code" autoComplete="off" spellCheck={false}
             id="referral-code"
             type="text"
             value={code}

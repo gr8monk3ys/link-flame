@@ -217,7 +217,7 @@ export default function CheckoutForm({ onDiscountChange }: CheckoutFormProps) {
 
         <div className="space-y-2">
           <Label htmlFor="email" id="email-label">Email</Label>
-        <Input
+        <Input name="email" autoComplete="email" spellCheck={false}
           type="email"
           id="email"
           value={formData.email}
@@ -238,7 +238,7 @@ export default function CheckoutForm({ onDiscountChange }: CheckoutFormProps) {
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="firstName" id="firstName-label">First name</Label>
-          <Input
+          <Input name="firstName" autoComplete="given-name"
             type="text"
             id="firstName"
             value={formData.firstName}
@@ -257,7 +257,7 @@ export default function CheckoutForm({ onDiscountChange }: CheckoutFormProps) {
         </div>
         <div className="space-y-2">
           <Label htmlFor="lastName" id="lastName-label">Last name</Label>
-          <Input
+          <Input name="lastName" autoComplete="family-name"
             type="text"
             id="lastName"
             value={formData.lastName}
@@ -278,7 +278,7 @@ export default function CheckoutForm({ onDiscountChange }: CheckoutFormProps) {
       
       <div className="space-y-2">
         <Label htmlFor="address" id="address-label">Address</Label>
-        <Input
+        <Input name="address" autoComplete="street-address"
           type="text"
           id="address"
           value={formData.address}
@@ -299,7 +299,7 @@ export default function CheckoutForm({ onDiscountChange }: CheckoutFormProps) {
       <div className="grid grid-cols-3 gap-4">
         <div className="space-y-2">
           <Label htmlFor="city" id="city-label">City</Label>
-          <Input
+          <Input name="city" autoComplete="address-level2"
             type="text"
             id="city"
             value={formData.city}
@@ -318,7 +318,7 @@ export default function CheckoutForm({ onDiscountChange }: CheckoutFormProps) {
         </div>
         <div className="space-y-2">
           <Label htmlFor="state" id="state-label">State</Label>
-          <Input
+          <Input name="state" autoComplete="address-level1"
             type="text"
             id="state"
             value={formData.state}
@@ -337,7 +337,7 @@ export default function CheckoutForm({ onDiscountChange }: CheckoutFormProps) {
         </div>
         <div className="space-y-2">
           <Label htmlFor="zipCode" id="zipCode-label">ZIP code</Label>
-          <Input
+          <Input name="zipCode" autoComplete="postal-code" spellCheck={false}
             type="text"
             id="zipCode"
             value={formData.zipCode}

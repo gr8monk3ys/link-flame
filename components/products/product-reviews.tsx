@@ -223,10 +223,10 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
 
               {/* Comment */}
               <div>
-                <label className="mb-2 block text-sm font-medium">
+                <label className="mb-2 block text-sm font-medium" htmlFor="product-comment">
                   Comment (optional)
                 </label>
-                <Textarea
+                <Textarea name="comment" autoComplete="off" id="product-comment"
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                   placeholder="Share your experience with this product…"

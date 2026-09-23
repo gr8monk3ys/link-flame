@@ -107,7 +107,7 @@ export function SustainabilityCalculator() {
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="energy">Monthly Energy Usage (kWh)</Label>
-            <Input
+            <Input inputMode="decimal" name="energyUsage" autoComplete="off"
               id="energy"
               type="number"
               value={inputs.energyUsage}
@@ -125,7 +125,7 @@ export function SustainabilityCalculator() {
                 setInputs({ ...inputs, transportationType: value })
               }
             >
-              <SelectTrigger>
+              <SelectTrigger id="transportation">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -145,7 +145,7 @@ export function SustainabilityCalculator() {
                 setInputs({ ...inputs, dietType: value })
               }
             >
-              <SelectTrigger>
+              <SelectTrigger id="diet">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -159,7 +159,7 @@ export function SustainabilityCalculator() {
 
           <div className="space-y-2">
             <Label htmlFor="waste">Weekly Waste Production (kg)</Label>
-            <Input
+            <Input inputMode="decimal" name="wasteProduction" autoComplete="off"
               id="waste"
               type="number"
               value={inputs.wasteProduction}
@@ -171,7 +171,7 @@ export function SustainabilityCalculator() {
 
           <div className="space-y-2">
             <Label htmlFor="household">Household Size</Label>
-            <Input
+            <Input inputMode="numeric" name="householdSize" autoComplete="off"
               id="household"
               type="number"
               value={inputs.householdSize}

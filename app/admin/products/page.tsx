@@ -108,7 +108,7 @@ export default function AdminProductsPage() {
         <div className="flex flex-col gap-4 sm:flex-row">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
-            <input
+            <input aria-label="Search products" name="search" autoComplete="off"
               type="text"
               placeholder="Search products…"
               value={search}
@@ -116,7 +116,7 @@ export default function AdminProductsPage() {
               className="w-full rounded-lg border border-border py-2 pl-10 pr-4 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
             />
           </div>
-          <select
+          <select aria-label="Filter by stock" name="filter"
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
             className="rounded-lg border border-border px-4 py-2 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"

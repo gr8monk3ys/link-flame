@@ -78,7 +78,7 @@ export function ShareWishlistButton({
 
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <input
+              <input aria-label="Share link" translate="no" name="shareUrl" autoComplete="off" spellCheck={false}
                 type="text"
                 value={shareUrl}
                 readOnly
