@@ -118,13 +118,13 @@ export function CarbonFootprintCalculator() {
               type="number"
               value={factors.homeEnergy.electricity}
               onChange={(e) => 
-                setFactors({
-                  ...factors,
+                setFactors((prev) => ({
+                  ...prev,
                   homeEnergy: {
-                    ...factors.homeEnergy,
+                    ...prev.homeEnergy,
                     electricity: Number(e.target.value)
                   }
-                })
+                }))
               }
             />
           </div>
@@ -134,13 +134,13 @@ export function CarbonFootprintCalculator() {
               type="number"
               value={factors.homeEnergy.gas}
               onChange={(e) => 
-                setFactors({
-                  ...factors,
+                setFactors((prev) => ({
+                  ...prev,
                   homeEnergy: {
-                    ...factors.homeEnergy,
+                    ...prev.homeEnergy,
                     gas: Number(e.target.value)
                   }
-                })
+                }))
               }
             />
           </div>
@@ -150,13 +150,13 @@ export function CarbonFootprintCalculator() {
               thumbLabel="Renewable energy percentage"
               value={[factors.homeEnergy.renewable]}
               onValueChange={(value) => 
-                setFactors({
-                  ...factors,
+                setFactors((prev) => ({
+                  ...prev,
                   homeEnergy: {
-                    ...factors.homeEnergy,
+                    ...prev.homeEnergy,
                     renewable: value[0]
                   }
-                })
+                }))
               }
               max={100}
               step={1}
@@ -176,13 +176,13 @@ export function CarbonFootprintCalculator() {
               type="number"
               value={factors.transportation.carMiles}
               onChange={(e) => 
-                setFactors({
-                  ...factors,
+                setFactors((prev) => ({
+                  ...prev,
                   transportation: {
-                    ...factors.transportation,
+                    ...prev.transportation,
                     carMiles: Number(e.target.value)
                   }
-                })
+                }))
               }
             />
           </div>
@@ -192,13 +192,13 @@ export function CarbonFootprintCalculator() {
               type="number"
               value={factors.transportation.carEfficiency}
               onChange={(e) => 
-                setFactors({
-                  ...factors,
+                setFactors((prev) => ({
+                  ...prev,
                   transportation: {
-                    ...factors.transportation,
+                    ...prev.transportation,
                     carEfficiency: Number(e.target.value)
                   }
-                })
+                }))
               }
             />
           </div>
@@ -208,13 +208,13 @@ export function CarbonFootprintCalculator() {
               type="number"
               value={factors.transportation.publicTransit}
               onChange={(e) => 
-                setFactors({
-                  ...factors,
+                setFactors((prev) => ({
+                  ...prev,
                   transportation: {
-                    ...factors.transportation,
+                    ...prev.transportation,
                     publicTransit: Number(e.target.value)
                   }
-                })
+                }))
               }
             />
           </div>
@@ -224,13 +224,13 @@ export function CarbonFootprintCalculator() {
               type="number"
               value={factors.transportation.flights}
               onChange={(e) => 
-                setFactors({
-                  ...factors,
+                setFactors((prev) => ({
+                  ...prev,
                   transportation: {
-                    ...factors.transportation,
+                    ...prev.transportation,
                     flights: Number(e.target.value)
                   }
-                })
+                }))
               }
             />
           </div>
@@ -246,13 +246,13 @@ export function CarbonFootprintCalculator() {
             <Select
               value={factors.lifestyle.dietType}
               onValueChange={(value: "meat-heavy" | "average" | "vegetarian" | "vegan") =>
-                setFactors({
-                  ...factors,
+                setFactors((prev) => ({
+                  ...prev,
                   lifestyle: {
-                    ...factors.lifestyle,
+                    ...prev.lifestyle,
                     dietType: value
                   }
-                })
+                }))
               }
             >
               <SelectTrigger id="carbon-diet-type">
@@ -272,13 +272,13 @@ export function CarbonFootprintCalculator() {
                 type="checkbox"
                 checked={factors.lifestyle.recycling}
                 onChange={(e) => 
-                  setFactors({
-                    ...factors,
+                  setFactors((prev) => ({
+                    ...prev,
                     lifestyle: {
-                      ...factors.lifestyle,
+                      ...prev.lifestyle,
                       recycling: e.target.checked
                     }
-                  })
+                  }))
                 }
                 className="size-4 rounded border-border"
               />
@@ -289,13 +289,13 @@ export function CarbonFootprintCalculator() {
                 type="checkbox"
                 checked={factors.lifestyle.composting}
                 onChange={(e) => 
-                  setFactors({
-                    ...factors,
+                  setFactors((prev) => ({
+                    ...prev,
                     lifestyle: {
-                      ...factors.lifestyle,
+                      ...prev.lifestyle,
                       composting: e.target.checked
                     }
-                  })
+                  }))
                 }
                 className="size-4 rounded border-border"
               />

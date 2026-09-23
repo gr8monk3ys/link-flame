@@ -180,7 +180,8 @@ export function GiftCardCheckout({
     <div className={cn('rounded-lg border p-4', className)}>
       <button
         type="button"
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={() => setIsExpanded((v) => !v)}
+            aria-expanded={isExpanded}
         disabled={disabled}
         className="flex w-full items-center justify-between text-left"
       >

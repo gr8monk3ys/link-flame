@@ -87,7 +87,7 @@ export function GiftOptions({
         {value.isGift && (
           <button
             type="button"
-            onClick={() => setIsExpanded(!isExpanded)}
+            onClick={() => setIsExpanded((v) => !v)}
             className="p-1 text-muted-foreground transition-colors hover:text-foreground"
             aria-expanded={isExpanded}
             aria-controls="gift-options-panel"

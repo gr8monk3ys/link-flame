@@ -2,6 +2,9 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
 import type { CartItem } from '@/types/cart';
+import { storageGet, storageSet } from '@/lib/storage';
+
+const SAVED_ITEMS_KEY = 'savedItems:v1';
 
 export interface SavedItem extends CartItem {
   savedAt: string;
@@ -50,11 +53,11 @@ export function useSavedItems() {
             : [];
         setSavedItems(items);
         // Also update localStorage as cache
-        localStorage.setItem('savedItems', JSON.stringify(items));
+        storageSet(SAVED_ITEMS_KEY, JSON.stringify(items));
       } else {
         console.error('Failed to fetch saved items');
         // Fallback to localStorage if API fails
-        const localItems = localStorage.getItem('savedItems');
+        const localItems = storageGet(SAVED_ITEMS_KEY, 'savedItems');
         if (localItems) {
           setSavedItems(JSON.parse(localItems));
         }
@@ -63,7 +66,7 @@ export function useSavedItems() {
       console.error('Error fetching saved items:', error);
       // Fallback to localStorage on error
       try {
-        const localItems = localStorage.getItem('savedItems');
+        const localItems = storageGet(SAVED_ITEMS_KEY, 'savedItems');
         if (localItems) {
           setSavedItems(JSON.parse(localItems));
         }
@@ -82,7 +85,7 @@ export function useSavedItems() {
 
       // First, load from localStorage for immediate display
       try {
-        const localItems = localStorage.getItem('savedItems');
+        const localItems = storageGet(SAVED_ITEMS_KEY, 'savedItems');
         if (localItems) {
           setSavedItems(JSON.parse(localItems));
         }
@@ -148,7 +151,7 @@ export function useSavedItems() {
   // Save items to localStorage whenever they change (as cache)
   useEffect(() => {
     if (hasInitialized.current && !isLoading) {
-      localStorage.setItem('savedItems', JSON.stringify(savedItems));
+      storageSet(SAVED_ITEMS_KEY, JSON.stringify(savedItems));
     }
   }, [savedItems, isLoading]);
 

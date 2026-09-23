@@ -5,8 +5,10 @@ import {
   SearchSuggestionsResponse,
   RecentSearch,
   RECENT_SEARCHES_KEY,
+  LEGACY_RECENT_SEARCHES_KEY,
   MAX_RECENT_SEARCHES,
 } from '@/lib/types/search'
+import { storageGet, storageSet, storageRemove } from '@/lib/storage'
 
 interface UseSearchOptions {
   debounceMs?: number
@@ -53,7 +55,7 @@ export function useSearch(options: UseSearchOptions = {}): UseSearchReturn {
     if (typeof window === 'undefined') return
 
     try {
-      const stored = localStorage.getItem(RECENT_SEARCHES_KEY)
+      const stored = storageGet(RECENT_SEARCHES_KEY, LEGACY_RECENT_SEARCHES_KEY)
       if (stored) {
         const searches: RecentSearch[] = JSON.parse(stored)
         // Sort by timestamp descending and extract queries
@@ -77,7 +79,7 @@ export function useSearch(options: UseSearchOptions = {}): UseSearchReturn {
         query: q,
         timestamp: Date.now() - index, // Preserve order
       }))
-      localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(recentSearchData))
+      storageSet(RECENT_SEARCHES_KEY, JSON.stringify(recentSearchData))
     } catch {
       // Ignore localStorage errors
     }
@@ -120,7 +122,7 @@ export function useSearch(options: UseSearchOptions = {}): UseSearchReturn {
   const clearRecentSearches = useCallback(() => {
     setRecentSearches([])
     if (typeof window !== 'undefined') {
-      localStorage.removeItem(RECENT_SEARCHES_KEY)
+      storageRemove(RECENT_SEARCHES_KEY)
     }
   }, [])
 
@@ -136,7 +138,7 @@ export function useSearch(options: UseSearchOptions = {}): UseSearchReturn {
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}))
           throw new Error(
-            errorData?.error?.message || `Search failed (${response.status})`
+            errorData?.error?.message || `Search is unavailable right now (${response.status}). Try again in a moment.`
           )
         }
 
@@ -155,7 +157,9 @@ export function useSearch(options: UseSearchOptions = {}): UseSearchReturn {
         setError(err instanceof Error ? err.message : 'Search failed')
         setSuggestions(null)
       } finally {
-        setIsLoading(false)
+        // An aborted request was superseded by a newer one that is still in
+        // flight; clearing the flag here made the spinner blink off.
+        if (!signal.aborted) setIsLoading(false)
       }
     },
     []

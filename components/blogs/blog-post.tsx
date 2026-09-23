@@ -76,7 +76,7 @@ export function BlogPost({
             </div>
             <div className="ml-auto flex items-center gap-2">
               <button
-                onClick={() => setIsLiked(!isLiked)}
+                onClick={() => setIsLiked((v) => !v)}
                 className={buttonVariants({ variant: "ghost", size: "sm" })}
               >
                 <Heart
@@ -87,7 +87,7 @@ export function BlogPost({
                 <MessageSquare className="size-4" />
               </button>
               <button
-                onClick={() => setIsSaved(!isSaved)}
+                onClick={() => setIsSaved((v) => !v)}
                 className={buttonVariants({ variant: "ghost", size: "sm" })}
               >
                 <Bookmark

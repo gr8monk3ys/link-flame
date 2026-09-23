@@ -31,11 +31,11 @@ export default function NewBlogPostPage() {
   }
 
   function handleTitleChange(title: string) {
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       title,
       slug: generateSlug(title),
-    });
+    }));
   }
 
   async function handleSubmit(e: React.FormEvent, publish: boolean) {
@@ -118,7 +118,7 @@ export default function NewBlogPostPage() {
             id="slug"
             required
             value={formData.slug}
-            onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+            onChange={(e) => setFormData((prev) => ({ ...prev, slug: e.target.value }))}
             className="w-full rounded-lg border border-border px-4 py-2 font-mono text-sm focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
             placeholder="post-url-slug"
           />
@@ -141,7 +141,7 @@ export default function NewBlogPostPage() {
             rows={3}
             value={formData.description}
             onChange={(e) =>
-              setFormData({ ...formData, description: e.target.value })
+              setFormData((prev) => ({ ...prev, description: e.target.value }))
             }
             className="w-full rounded-lg border border-border px-4 py-2 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
             placeholder="Brief description for search engines…"
@@ -163,7 +163,7 @@ export default function NewBlogPostPage() {
               required
               value={formData.category}
               onChange={(e) =>
-                setFormData({ ...formData, category: e.target.value })
+                setFormData((prev) => ({ ...prev, category: e.target.value }))
               }
               className="w-full rounded-lg border border-border px-4 py-2 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
               placeholder="e.g., Sustainability"
@@ -181,7 +181,7 @@ export default function NewBlogPostPage() {
               id="tags"
               value={formData.tags}
               onChange={(e) =>
-                setFormData({ ...formData, tags: e.target.value })
+                setFormData((prev) => ({ ...prev, tags: e.target.value }))
               }
               className="w-full rounded-lg border border-border px-4 py-2 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
               placeholder="eco-friendly, green-living"
@@ -203,7 +203,7 @@ export default function NewBlogPostPage() {
             required
             value={formData.coverImage}
             onChange={(e) =>
-              setFormData({ ...formData, coverImage: e.target.value })
+              setFormData((prev) => ({ ...prev, coverImage: e.target.value }))
             }
             className="w-full rounded-lg border border-border px-4 py-2 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
             placeholder="https://images.unsplash.com/photo-…"
@@ -233,7 +233,7 @@ export default function NewBlogPostPage() {
             </label>
             <button
               type="button"
-              onClick={() => setPreview(!preview)}
+              onClick={() => setPreview((v) => !v)}
               className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400"
             >
               <Eye className="size-4" />
@@ -256,7 +256,7 @@ export default function NewBlogPostPage() {
               rows={20}
               value={formData.content}
               onChange={(e) =>
-                setFormData({ ...formData, content: e.target.value })
+                setFormData((prev) => ({ ...prev, content: e.target.value }))
               }
               className="w-full rounded-lg border border-border px-4 py-3 font-mono text-sm focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
               placeholder="# Your Blog Post Content
@@ -285,7 +285,7 @@ const example = 'value';
               type="checkbox"
               checked={formData.featured}
               onChange={(e) =>
-                setFormData({ ...formData, featured: e.target.checked })
+                setFormData((prev) => ({ ...prev, featured: e.target.checked }))
               }
               className="size-4 rounded border-border text-green-700 focus-visible:ring-ring dark:text-green-400"
             />

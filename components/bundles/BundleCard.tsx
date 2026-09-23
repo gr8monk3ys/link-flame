@@ -1,6 +1,3 @@
-"use client"
-
-import { memo } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
@@ -44,7 +41,7 @@ interface BundleCardProps {
   className?: string
 }
 
-export const BundleCard = memo(function BundleCard({ bundle, className }: BundleCardProps) {
+export function BundleCard({ bundle, className }: BundleCardProps) {
   const pricing = bundle.calculatedPricing
   const productCount = bundle.products.length
   const previewImages = bundle.products.slice(0, 4).map((bp) => bp.product.image)
@@ -148,6 +145,6 @@ export const BundleCard = memo(function BundleCard({ bundle, className }: Bundle
       </CardFooter>
     </Card>
   )
-})
+}
 
 BundleCard.displayName = 'BundleCard'

@@ -73,7 +73,8 @@ export function ProductDisplay({
         {detailed && (
           <>
             <button
-              onClick={() => setShowDetails(!showDetails)}
+              onClick={() => setShowDetails((v) => !v)}
+              aria-expanded={showDetails}
               className={buttonVariants({ variant: "outline" })}
             >
               <Info className="mr-2 size-4" />

@@ -36,7 +36,7 @@ export interface ProductDetailsProps {
     hasVariants: boolean;
     isSubscribable?: boolean;
     variants: ProductVariant[];
-    reviews: { rating: number }[];
+    reviewCount: number;
     // Imperfect product fields
     isImperfect?: boolean;
     imperfectReason?: string | null;
@@ -235,9 +235,9 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
                     ))}
                   </div>
                   <p className="sr-only">{averageRating} out of 5 stars</p>
-                  <div className="ml-3 text-sm font-medium text-primary hover:text-primary/80">
-                    {product.reviews.length} reviews
-                  </div>
+                  <a href="#reviews" className="ml-3 text-sm font-medium text-primary hover:text-primary/80">
+                    {product.reviewCount} {product.reviewCount === 1 ? 'review' : 'reviews'}
+                  </a>
                 </div>
               </div>
             )}
@@ -326,7 +326,7 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
         </div>
 
         {/* Reviews Section */}
-        <div className="mt-16 border-t pt-16">
+        <div id="reviews" className="mt-16 scroll-mt-40 border-t pt-16">
           <ProductReviews productId={product.id} />
         </div>
       </div>

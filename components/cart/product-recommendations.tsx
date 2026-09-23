@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useProducts } from '@/hooks/useProducts';
@@ -11,22 +11,12 @@ import { LoadingShimmer } from '@/components/ui/loading-shimmer';
 import type { Product } from '@/types/product';
 
 export default function ProductRecommendations() {
-  const { cart, addItemToCart, isProductInCart } = useCart();
-  const [categories, setCategories] = useState<string[]>([]);
+  const { addItemToCart, isProductInCart } = useCart();
   const { products, isLoading } = useProducts({ 
     featured: true,
     limit: 4
   });
   const [isAdding, setIsAdding] = useState<Record<string, boolean>>({});
-
-  // Extract categories from cart items to find related products
-  useEffect(() => {
-    if (cart.items.length > 0) {
-      // This would be better if we had access to product categories from cart items
-      // For now, we're just using featured products
-      setCategories(['featured']);
-    }
-  }, [cart.items]);
 
   const handleAddToCart = async (product: Product) => {
     setIsAdding(prev => ({ ...prev, [product.id]: true }));

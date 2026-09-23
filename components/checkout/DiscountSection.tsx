@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -72,10 +72,9 @@ export function DiscountSection({
     };
   }, []);
 
-  const maxRedeemablePoints = useMemo(() => {
-    const maxByTotal = Math.floor(cartTotal * 100);
-    return Math.max(0, Math.min(availablePoints, maxByTotal));
-  }, [availablePoints, cartTotal]);
+  // A couple of Math calls on primitives: cheaper than useMemo's dependency
+  // bookkeeping (react-best-practices 5.3).
+  const maxRedeemablePoints = Math.max(0, Math.min(availablePoints, Math.floor(cartTotal * 100)));
 
   useEffect(() => {
     if (loyaltyPointsToRedeem > maxRedeemablePoints) {

@@ -171,9 +171,9 @@ export function EnergySavingsCalculator() {
                     checked={selectedUpgrades.includes(option.id)}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        setSelectedUpgrades([...selectedUpgrades, option.id])
+                        setSelectedUpgrades((prev) => [...prev, option.id])
                       } else {
-                        setSelectedUpgrades(selectedUpgrades.filter(id => id !== option.id))
+                        setSelectedUpgrades((prev) => prev.filter(id => id !== option.id))
                       }
                     }}
                     className="mt-1 size-4 rounded border-border"

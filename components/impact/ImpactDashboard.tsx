@@ -13,6 +13,14 @@ const ImpactShareCard = dynamic(
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
+
+// Start fetching the share card's chunk when the user shows intent (hover or
+// focus on Share), so the modal opens without a network wait
+// (react-best-practices 2.6).
+const preloadShareCard = () => {
+  void import("./ImpactShareCard");
+};
+
 interface ImpactMetric {
   id: string;
   metricId: string;
@@ -134,6 +142,8 @@ export function ImpactDashboard({ className }: ImpactDashboardProps) {
                 variant="outline"
                 size="sm"
                 onClick={() => setShowShareCard(true)}
+                onMouseEnter={preloadShareCard}
+                onFocus={preloadShareCard}
               >
                 <Share2 className="mr-2 size-4" />
                 Share

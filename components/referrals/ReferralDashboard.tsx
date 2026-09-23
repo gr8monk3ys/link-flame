@@ -85,7 +85,9 @@ export function ReferralDashboard() {
     }
   }
 
-  if (sessionStatus === "loading" || loading) {
+  // `loading` only clears after an authenticated fetch; without the status
+  // check a signed-out visitor never reached the sign-in card below.
+  if (sessionStatus === "loading" || (sessionStatus === "authenticated" && loading)) {
     return (
       <div className="flex items-center justify-center py-12">
         <span role="status"><span className="inline-flex shrink-0 animate-spin"><Loader2 className="size-8 text-primary" /></span><span className="sr-only">Loading…</span></span>

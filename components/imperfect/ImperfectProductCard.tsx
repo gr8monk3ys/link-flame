@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { memo, useMemo, useCallback } from 'react';
+import { memo, useCallback } from 'react';
 import { cn, formatPrice, formatNumber } from '@/lib/utils';
 import { ImperfectBadge, ImperfectSavingsBadge } from './ImperfectBadge';
 import { ImperfectReasonBadge } from './ImperfectReasonTooltip';
@@ -55,7 +55,7 @@ export const ImperfectProductCard = memo(function ImperfectProductCard({
   const { addItemToCart } = useCart();
   const { isItemSaved, toggleSaveItem } = useSavedItems();
 
-  const isWishlisted = useMemo(() => isItemSaved(product.id), [isItemSaved, product.id]);
+  const isWishlisted = isItemSaved(product.id);
 
   const handleAddToCart = useCallback(async () => {
     try {

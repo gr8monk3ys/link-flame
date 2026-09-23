@@ -147,42 +147,63 @@ class ErrorBoundaryClass extends Component<Props, State> {
   }
 }
 
+// Global error logging is attached once per page, however many ErrorBoundary
+// instances are mounted (the root layout, checkout and the cart each render
+// one). Previously every instance added its own window listeners, so one error
+// was logged up to five times (react-best-practices 4.1).
+let globalListenerUsers = 0;
+let detachGlobalListeners: (() => void) | null = null;
+
+function attachGlobalErrorLogging(): () => void {
+  const isBrowserExtensionError = (filename?: string) => {
+    if (!filename) return false;
+    return (
+      filename.startsWith('chrome-extension://') ||
+      filename.startsWith('moz-extension://') ||
+      filename.startsWith('safari-extension://')
+    );
+  };
+
+  // Log global errors for monitoring, but do not render a full-page fallback.
+  // Global errors can originate from browser extensions or unrelated scripts and
+  // should not take down the whole React tree.
+  const errorHandler = (event: ErrorEvent) => {
+    if (isBrowserExtensionError(event.filename)) return;
+
+    logger.error('Global uncaught error', event.error ?? event.message, {
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+    });
+    // Do not call preventDefault() so Next.js/devtools can surface the error.
+  };
+
+  const rejectionHandler = (event: PromiseRejectionEvent) => {
+    logger.error('Unhandled promise rejection', event.reason);
+  };
+
+  window.addEventListener('error', errorHandler);
+  window.addEventListener('unhandledrejection', rejectionHandler);
+
+  return () => {
+    window.removeEventListener('error', errorHandler);
+    window.removeEventListener('unhandledrejection', rejectionHandler);
+  };
+}
+
 // Functional component wrapper for global error handling
 const ErrorBoundary = (props: Props) => {
   useEffect(() => {
-    const isBrowserExtensionError = (filename?: string) => {
-      if (!filename) return false;
-      return (
-        filename.startsWith('chrome-extension://') ||
-        filename.startsWith('moz-extension://') ||
-        filename.startsWith('safari-extension://')
-      );
-    };
-
-    // Log global errors for monitoring, but do not render a full-page fallback.
-    // Global errors can originate from browser extensions or unrelated scripts and
-    // should not take down the whole React tree.
-    const errorHandler = (event: ErrorEvent) => {
-      if (isBrowserExtensionError(event.filename)) return;
-
-      logger.error('Global uncaught error', event.error ?? event.message, {
-        filename: event.filename,
-        lineno: event.lineno,
-        colno: event.colno,
-      });
-      // Do not call preventDefault() so Next.js/devtools can surface the error.
-    };
-
-    const rejectionHandler = (event: PromiseRejectionEvent) => {
-      logger.error('Unhandled promise rejection', event.reason);
-    };
-
-    window.addEventListener('error', errorHandler);
-    window.addEventListener('unhandledrejection', rejectionHandler);
-
+    globalListenerUsers += 1;
+    if (globalListenerUsers === 1) {
+      detachGlobalListeners = attachGlobalErrorLogging();
+    }
     return () => {
-      window.removeEventListener('error', errorHandler);
-      window.removeEventListener('unhandledrejection', rejectionHandler);
+      globalListenerUsers -= 1;
+      if (globalListenerUsers === 0) {
+        detachGlobalListeners?.();
+        detachGlobalListeners = null;
+      }
     };
   }, []);
 

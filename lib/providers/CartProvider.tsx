@@ -16,6 +16,9 @@ import { cartReducer } from './cartReducer'
 import { toast } from 'sonner'
 import { useDebouncedCallback } from 'use-debounce'
 import { formatPrice } from "@/lib/utils"
+import { storageGet, storageSet } from '@/lib/storage'
+
+const CART_STORAGE_KEY = 'cart:v1'
 
 // Helper to fetch CSRF token
 async function getCsrfToken(): Promise<string> {
@@ -73,7 +76,7 @@ function useCartProviderValue(): CartContext {
   const syncCartFromLocalStorage = useCallback(async () => {
     setIsLoading(true)
     try {
-      const localCart = localStorage.getItem('cart')
+      const localCart = storageGet(CART_STORAGE_KEY, 'cart')
       const parsedCart = JSON.parse(localCart || '{}')
 
       if (parsedCart?.items && parsedCart?.items?.length > 0) {
@@ -232,7 +235,7 @@ function useCartProviderValue(): CartContext {
         })) || [],
       }
 
-      localStorage.setItem('cart', JSON.stringify(minimalCart))
+      storageSet(CART_STORAGE_KEY, JSON.stringify(minimalCart))
       setHasInitialized(true)
       return true
     } catch (error) {

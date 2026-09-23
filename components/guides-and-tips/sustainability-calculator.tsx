@@ -112,7 +112,7 @@ export function SustainabilityCalculator() {
               type="number"
               value={inputs.energyUsage}
               onChange={(e) =>
-                setInputs({ ...inputs, energyUsage: Number(e.target.value) })
+                setInputs((prev) => ({ ...prev, energyUsage: Number(e.target.value) }))
               }
             />
           </div>
@@ -122,7 +122,7 @@ export function SustainabilityCalculator() {
             <Select
               value={inputs.transportationType}
               onValueChange={(value) =>
-                setInputs({ ...inputs, transportationType: value })
+                setInputs((prev) => ({ ...prev, transportationType: value }))
               }
             >
               <SelectTrigger id="transportation">
@@ -142,7 +142,7 @@ export function SustainabilityCalculator() {
             <Select
               value={inputs.dietType}
               onValueChange={(value) =>
-                setInputs({ ...inputs, dietType: value })
+                setInputs((prev) => ({ ...prev, dietType: value }))
               }
             >
               <SelectTrigger id="diet">
@@ -164,7 +164,7 @@ export function SustainabilityCalculator() {
               type="number"
               value={inputs.wasteProduction}
               onChange={(e) =>
-                setInputs({ ...inputs, wasteProduction: Number(e.target.value) })
+                setInputs((prev) => ({ ...prev, wasteProduction: Number(e.target.value) }))
               }
             />
           </div>
@@ -176,7 +176,7 @@ export function SustainabilityCalculator() {
               type="number"
               value={inputs.householdSize}
               onChange={(e) =>
-                setInputs({ ...inputs, householdSize: Number(e.target.value) })
+                setInputs((prev) => ({ ...prev, householdSize: Number(e.target.value) }))
               }
             />
           </div>

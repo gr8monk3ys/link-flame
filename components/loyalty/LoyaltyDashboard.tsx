@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { cn, formatPrice, formatNumber } from '@/lib/utils'
@@ -125,7 +126,9 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
     fetchData()
   }, [status])
 
-  if (status === 'loading' || loading) {
+  // `loading` only clears after an authenticated fetch, so a signed-out
+  // visitor used to see the skeleton forever instead of the sign-in prompt.
+  if (status === 'loading' || (status === 'authenticated' && loading)) {
     return <LoyaltyDashboardSkeleton className={className} />
   }
 
@@ -134,7 +137,10 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
       <Card className={cn('text-center', className)}>
         <CardContent className="py-12">
           <p className="text-muted-foreground">
-            Please sign in to view your rewards dashboard.
+            <Link href="/auth/signin?callbackUrl=/account/loyalty" className="font-medium text-primary underline-offset-4 hover:underline">
+              Sign in
+            </Link>{' '}
+            to view your rewards dashboard.
           </p>
         </CardContent>
       </Card>
