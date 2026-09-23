@@ -102,7 +102,7 @@ export default function OrderDetailPage() {
         notFound();
       }
       if (!response.ok) {
-        throw new Error("Failed to fetch order");
+        throw new Error("Couldn’t load this order. Refresh the page, or go back to your orders.");
       }
       const data = await response.json();
       setOrder(data.data);

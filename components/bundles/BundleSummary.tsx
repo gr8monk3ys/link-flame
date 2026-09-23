@@ -96,7 +96,7 @@ export function BundleSummary({
   const canAddToCart = meetsMinimum && !exceedsMaximum && !isLoading
 
   return (
-    <Card className={cn("sticky top-4", className)}>
+    <Card className={cn("sticky top-36", className)}>
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span>Your Bundle</span>

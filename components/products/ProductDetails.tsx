@@ -108,7 +108,7 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
                 {[displayImage].map((image) => (
                   <div
                     key={image}
-                    className="relative flex h-24 cursor-pointer items-center justify-center rounded-md bg-background text-sm font-medium uppercase hover:bg-muted"
+                    className="relative flex h-24 items-center justify-center rounded-md bg-background text-sm font-medium uppercase"
                   >
                     <span className="absolute inset-0 overflow-hidden rounded-md">
                       <Image

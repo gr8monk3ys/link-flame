@@ -367,7 +367,7 @@ function useCartProviderValue(): CartContext {
   const updateQuantity = useCallback((productId: string, quantity: number, variantId?: string | null) => {
     // Validate quantity
     if (quantity < 1 || quantity > 99) {
-      toast.error('Quantity must be between 1 and 99')
+      toast.error('Enter a quantity between 1 and 99.')
       return
     }
 

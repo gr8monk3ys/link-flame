@@ -219,7 +219,7 @@ export default function ImperfectPage() {
 
         {/* Pagination */}
         {!isLoading && totalPages > 1 && (
-          <div className="mt-12 flex items-center justify-center gap-2">
+          <nav aria-label="Pagination" className="mt-12 flex items-center justify-center gap-2">
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
@@ -235,6 +235,8 @@ export default function ImperfectPage() {
                 return (
                   <button
                     key={page}
+                    type="button"
+                    aria-current={page === currentPage ? 'page' : undefined}
                     onClick={() => handlePageChange(page)}
                     className={`rounded-lg px-4 py-2 text-sm font-medium ${
                       page === currentPage
@@ -255,7 +257,7 @@ export default function ImperfectPage() {
             >
               Next
             </button>
-          </div>
+          </nav>
         )}
 
         {/* How it works / Explainer section */}

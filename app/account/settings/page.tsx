@@ -79,7 +79,7 @@ export default function AccountSettingsPage() {
       setProfileName(data.data.name || "");
       setProfileEmail(data.data.email || "");
     } catch (error) {
-      toast.error("Failed to load profile");
+      toast.error("Couldn’t load your profile. Refresh the page to try again.");
     } finally {
       setLoadingProfile(false);
     }
@@ -147,12 +147,12 @@ export default function AccountSettingsPage() {
     }
 
     if (newPassword !== confirmPassword) {
-      toast.error("New passwords do not match");
+      toast.error("New passwords do not match. Re-enter the confirmation.");
       return;
     }
 
     if (newPassword.length < 8) {
-      toast.error("New password must be at least 8 characters");
+      toast.error("Use at least 8 characters for the new password.");
       return;
     }
 

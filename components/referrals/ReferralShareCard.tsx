@@ -34,7 +34,7 @@ export function ReferralShareCard({
       toast.success(`${type === "code" ? "Code" : "Link"} copied to clipboard!`);
       setTimeout(() => setCopied(null), 2000);
     } catch (err) {
-      toast.error("Failed to copy to clipboard");
+      toast.error("Couldn’t copy to the clipboard. Select the text and copy it manually.");
     }
   }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { cn } from '@/lib/utils';
 
 // Common imperfect reasons with detailed explanations
@@ -67,6 +67,8 @@ export function ImperfectReasonTooltip({
   position = 'top',
 }: ImperfectReasonTooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
+  // Unique per instance: several tooltips can render on one page.
+  const tooltipId = useId();
 
   // Find matching reason details or use provided values
   const reasonKey = reason.toLowerCase().replace(/\s+/g, '_');
@@ -99,12 +101,15 @@ export function ImperfectReasonTooltip({
       onMouseLeave={() => setIsVisible(false)}
       onFocus={() => setIsVisible(true)}
       onBlur={() => setIsVisible(false)}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') setIsVisible(false)
+      }}
     >
       {/* Trigger */}
       <button
         type="button"
         className="inline-flex cursor-help items-center gap-1.5 text-sm text-amber-700 transition-colors hover:text-amber-800 dark:text-amber-300"
-        aria-describedby="imperfect-reason-tooltip"
+        aria-describedby={isVisible ? tooltipId : undefined}
       >
         <InfoIcon className="size-4" />
         <span>{displayLabel}</span>
@@ -113,7 +118,7 @@ export function ImperfectReasonTooltip({
       {/* Tooltip */}
       {isVisible && (
         <div
-          id="imperfect-reason-tooltip"
+          id={tooltipId}
           role="tooltip"
           className={cn(
             'absolute z-50 w-64 rounded-lg bg-gray-900 p-4 text-white shadow-xl',

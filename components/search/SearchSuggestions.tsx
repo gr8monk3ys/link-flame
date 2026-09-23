@@ -57,7 +57,7 @@ export function SearchSuggestions({
         'absolute left-0 top-full z-50 mt-2 w-full overflow-hidden rounded-lg border bg-popover shadow-lg',
         className
       )}
-      role="listbox"
+      role="region"
       aria-label="Search suggestions"
     >
       <div className="max-h-[400px] overflow-y-auto overscroll-contain p-2">

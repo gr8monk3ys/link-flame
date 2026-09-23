@@ -133,7 +133,7 @@ export function EcoImpactCard({
   variant = "default",
   className,
 }: EcoImpactCardProps) {
-  const hasAnyData = carbonFootprintGrams !== null || isPlasticFree || isVegan || isCrueltyFree || isOrganicCertified;
+  const hasAnyData = carbonFootprintGrams != null || isPlasticFree || isVegan || isCrueltyFree || isOrganicCertified;
 
   if (!hasAnyData) {
     return null;

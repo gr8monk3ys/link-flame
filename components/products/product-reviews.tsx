@@ -63,7 +63,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
       if (process.env.NODE_ENV === 'development') {
         console.error('Error fetching reviews:', error)
       }
-      toast.error('Failed to load reviews')
+      toast.error('Couldn’t load reviews. Refresh the page to try again.')
     } finally {
       setLoading(false)
     }

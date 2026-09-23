@@ -127,7 +127,7 @@ export function CertificationBadges({
               {cert.iconUrl ? (
                 <Image
                   src={cert.iconUrl}
-                  alt={cert.name}
+                  alt=""
                   width={24}
                   height={24}
                   className="size-full object-contain"

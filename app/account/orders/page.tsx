@@ -87,7 +87,7 @@ export default function OrdersPage() {
       }
       const response = await fetch(`/api/orders?${params.toString()}`);
       if (!response.ok) {
-        throw new Error("Failed to fetch orders");
+        throw new Error("Couldn’t load your orders. Refresh the page to try again.");
       }
       const data = await response.json();
       setOrders(data.data || []);

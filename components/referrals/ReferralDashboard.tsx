@@ -65,7 +65,7 @@ export function ReferralDashboard() {
       ]);
 
       if (!statsRes.ok || !referralsRes.ok) {
-        throw new Error("Failed to fetch referral data");
+        throw new Error("Couldn’t load your referrals. Refresh the page to try again.");
       }
 
       const [statsData, referralsData] = await Promise.all([

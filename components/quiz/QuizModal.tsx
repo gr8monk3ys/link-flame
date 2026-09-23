@@ -206,6 +206,12 @@ export function QuizModal({
           state === 'results' && 'sm:max-w-4xl'
         )}
       >
+        {/* Every dialog state needs an accessible name; only the intro shows a
+            visible title. */}
+        {state !== 'intro' && (
+          <DialogTitle className="sr-only">Sustainability Quiz</DialogTitle>
+        )}
+
         {/* Intro Screen */}
         {state === 'intro' && (
           <>
@@ -347,14 +353,8 @@ export function QuizModal({
         {/* Results Screen */}
         {state === 'results' && results && (
           <>
-            <button
-              onClick={onClose}
-              className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            >
-              <X className="size-4" />
-              <span className="sr-only">Close</span>
-            </button>
-
+            {/* DialogContent already renders the close button; a second one
+                stacked on top of it here. */}
             <div className="pt-6">
               <QuizResults
                 visibleId={results.visibleId}

@@ -72,7 +72,7 @@ export function QuizResults({
       await navigator.clipboard.writeText(text);
       toast.success('Link copied to clipboard!');
     } catch {
-      toast.error('Failed to copy link');
+      toast.error('Couldn’t copy the link. Select it and copy it manually.');
     }
   }, []);
 
@@ -100,7 +100,7 @@ export function QuizResults({
       });
       toast.success(`${product.title} added to cart`);
     } catch {
-      toast.error('Failed to add item to cart');
+      toast.error('Couldn’t add the item to your cart. Please try again.');
     } finally {
       setLoadingIds((prev) => {
         const next = new Set(prev);

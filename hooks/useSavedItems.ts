@@ -238,7 +238,7 @@ export function useSavedItems() {
       toast.success('Item removed from saved items');
     } catch (error) {
       console.error('Error removing saved item:', error);
-      toast.error('Failed to remove item');
+      toast.error('Couldn’t remove the item. Check your connection and try again.');
       // Revert optimistic update
       setSavedItems(previousItems);
     }

@@ -104,7 +104,7 @@ export function RedeemPointsModal({
           setCsrfToken(csrfData.token)
         }
       } catch (err) {
-        setError('Failed to load redemption data')
+        setError('Couldn’t load your points. Close this and try again.')
         if (process.env.NODE_ENV === 'development') {
           console.error('Error fetching redemption data:', err)
         }
@@ -400,7 +400,7 @@ export function InlineRedeemWidget({
           setCsrfToken(csrfData.token)
         }
       } catch (err) {
-        setError('Failed to load points')
+        setError('Couldn’t load your points. Refresh the page to try again.')
         if (process.env.NODE_ENV === 'development') {
           console.error('Error fetching redemption data:', err)
         }
@@ -439,7 +439,7 @@ export function InlineRedeemWidget({
         setError(data.error?.message || 'Failed to apply discount')
       }
     } catch (err) {
-      setError('Failed to apply discount')
+      setError('Couldn’t apply the discount. Please try again.')
       if (process.env.NODE_ENV === 'development') {
         console.error('Error applying discount:', err)
       }

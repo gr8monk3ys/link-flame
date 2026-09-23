@@ -37,7 +37,7 @@ export function ShareWishlistButton({
       toast.success('Link copied to clipboard');
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
-      toast.error('Failed to copy link');
+      toast.error('Couldn’t copy the link. Select it and copy it manually.');
     }
   };
 
