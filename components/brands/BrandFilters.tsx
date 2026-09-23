@@ -141,7 +141,7 @@ export function BrandFilters({ className }: BrandFiltersProps) {
                     )}
                   >
                     {isActive && (
-                      <svg
+                      <svg aria-hidden="true"
                         className="size-3 text-white"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -204,7 +204,7 @@ export function BrandFilters({ className }: BrandFiltersProps) {
                     )}
                   >
                     {isActive && (
-                      <svg
+                      <svg aria-hidden="true"
                         className="size-3 text-white"
                         fill="none"
                         viewBox="0 0 24 24"

@@ -419,7 +419,7 @@ function ImperfectSection({
         className="inline-flex items-center gap-1 text-sm font-medium text-amber-700 hover:text-amber-800 dark:text-amber-300"
       >
         View all imperfect items
-        <svg
+        <svg aria-hidden="true"
           className="size-4"
           viewBox="0 0 24 24"
           fill="none"

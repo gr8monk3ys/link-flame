@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 // Leaf icon
 const LeafIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg aria-hidden="true" className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
     <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
   </svg>
@@ -22,7 +22,7 @@ const LeafIcon = ({ className }: { className?: string }) => (
 
 // Check icon
 const CheckIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg aria-hidden="true" className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="20 6 9 17 4 12" />
   </svg>
 );
@@ -53,7 +53,7 @@ const sustainabilityPillars = [
     title: "Carbon-Neutral Shipping",
     description: "Every order ships carbon-neutral. We calculate the carbon footprint of each shipment and purchase verified carbon credits to offset emissions completely.",
     icon: (
-      <svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg aria-hidden="true" className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2" />
         <path d="M15 18H9" />
         <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14" />
@@ -67,7 +67,7 @@ const sustainabilityPillars = [
     title: "Plastic-Free Packaging",
     description: "We've eliminated single-use plastic from our supply chain. All packaging is made from recycled, recyclable, or compostable materials.",
     icon: (
-      <svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg aria-hidden="true" className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5" />
         <path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12" />
         <path d="m14 16-3 3 3 3" />
@@ -79,7 +79,7 @@ const sustainabilityPillars = [
     title: "Ethical Sourcing",
     description: "We partner only with suppliers who share our commitment to fair labor practices, sustainable manufacturing, and environmental responsibility.",
     icon: (
-      <svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg aria-hidden="true" className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M12 2a10 10 0 1 0 10 10H12V2Z" />
         <path d="M12 12 8 8" />
         <path d="M12 2v10h10" />
@@ -91,7 +91,7 @@ const sustainabilityPillars = [
     title: "Product Lifecycle",
     description: "We prioritize products that are durable, repairable, and recyclable. Our goal is to extend product lifespans and reduce waste.",
     icon: (
-      <svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg aria-hidden="true" className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <circle cx="12" cy="12" r="10" />
         <polyline points="12 6 12 12 16 14" />
       </svg>
@@ -197,7 +197,7 @@ export default function SustainabilityPage() {
                   className="inline-flex items-center gap-2 font-medium text-green-700 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300"
                 >
                   View our impact report
-                  <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg aria-hidden="true" className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
                 </Link>
@@ -216,7 +216,7 @@ export default function SustainabilityPage() {
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <div>
               <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-2 text-sm font-medium text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300">
-                <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg aria-hidden="true" className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5" />
                   <path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12" />
                   <path d="m14 16-3 3 3 3" />
@@ -250,7 +250,7 @@ export default function SustainabilityPage() {
                   className="inline-flex items-center gap-2 rounded-lg bg-emerald-700 px-6 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-emerald-800"
                 >
                   Learn About TerraCycle
-                  <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg aria-hidden="true" className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
                 </Link>
@@ -315,7 +315,7 @@ export default function SustainabilityPage() {
                   className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-green-700 hover:text-green-800 dark:text-green-400"
                 >
                   Learn more
-                  <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg aria-hidden="true" className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
                     <polyline points="15 3 21 3 21 9" />
                     <line x1="10" y1="14" x2="21" y2="3" />

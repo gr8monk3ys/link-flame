@@ -267,7 +267,7 @@ export function QuizResults({
                 >
                   {isLoading ? (
                     <span className="flex items-center">
-                      <span className="-ml-1 mr-2 inline-flex shrink-0 animate-spin" aria-hidden="true"><svg
+                      <span className="-ml-1 mr-2 inline-flex shrink-0 animate-spin" aria-hidden="true"><svg aria-hidden="true"
                         className="size-4"
                         fill="none"
                         viewBox="0 0 24 24"

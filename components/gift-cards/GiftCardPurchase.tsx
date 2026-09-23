@@ -176,7 +176,7 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
       <div className={cn('rounded-lg border bg-card p-6', className)}>
         <div className="space-y-4 text-center">
           <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
-            <svg
+            <svg aria-hidden="true"
               className="size-8 text-green-700 dark:text-green-400"
               fill="none"
               stroke="currentColor"

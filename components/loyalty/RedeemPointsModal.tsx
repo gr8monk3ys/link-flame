@@ -204,7 +204,7 @@ export function RedeemPointsModal({
         ) : preview.availablePoints < preview.minimumRedemption ? (
           <div className="py-8 text-center">
             <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
-              <svg
+              <svg aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"

@@ -142,7 +142,7 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
       case 'PURCHASE':
         return (
           <span className="inline-flex size-6 items-center justify-center rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
-            <svg className="size-3" fill="currentColor" viewBox="0 0 20 20">
+            <svg aria-hidden="true" className="size-3" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fillRule="evenodd"
                 d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
@@ -154,7 +154,7 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
       case 'REDEMPTION':
         return (
           <span className="inline-flex size-6 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
-            <svg className="size-3" fill="currentColor" viewBox="0 0 20 20">
+            <svg aria-hidden="true" className="size-3" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fillRule="evenodd"
                 d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z"
@@ -166,7 +166,7 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
       case 'REFUND':
         return (
           <span className="inline-flex size-6 items-center justify-center rounded-full bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400">
-            <svg className="size-3" fill="currentColor" viewBox="0 0 20 20">
+            <svg aria-hidden="true" className="size-3" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fillRule="evenodd"
                 d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"

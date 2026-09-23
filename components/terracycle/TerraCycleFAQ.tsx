@@ -14,7 +14,7 @@ interface TerraCycleFAQProps {
 
 // Question mark icon
 const QuestionIcon = ({ className }: { className?: string }) => (
-  <svg
+  <svg aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"
@@ -131,7 +131,7 @@ export function TerraCycleFAQ({ className }: TerraCycleFAQProps) {
             className="inline-flex items-center gap-2 font-medium text-emerald-700 hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300"
           >
             Contact our support team
-            <svg
+            <svg aria-hidden="true"
               className="size-4"
               viewBox="0 0 24 24"
               fill="none"

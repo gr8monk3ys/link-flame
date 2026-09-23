@@ -43,7 +43,7 @@ export function ProductResult({
           />
         ) : (
           <div className="flex size-full items-center justify-center text-muted-foreground">
-            <svg
+            <svg aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
@@ -105,7 +105,7 @@ export function CategoryResult({
       )}
     >
       <div className="flex items-center gap-2">
-        <svg
+        <svg aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           width="16"
           height="16"
@@ -162,7 +162,7 @@ export function BlogPostResult({
           />
         ) : (
           <div className="flex size-full items-center justify-center text-muted-foreground">
-            <svg
+            <svg aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
@@ -189,7 +189,7 @@ export function BlogPostResult({
         )}
       </div>
       <div className="shrink-0">
-        <svg
+        <svg aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           width="16"
           height="16"
@@ -238,7 +238,7 @@ export function RecentSearchResult({
       )}
     >
       <div className="flex items-center gap-2">
-        <svg
+        <svg aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           width="16"
           height="16"
@@ -262,7 +262,7 @@ export function RecentSearchResult({
           className="rounded p-1 text-muted-foreground hover:bg-background hover:text-foreground"
           aria-label={`Remove "${query}" from recent searches`}
         >
-          <svg
+          <svg aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             width="14"
             height="14"

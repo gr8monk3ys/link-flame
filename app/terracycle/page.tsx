@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
 // Recycle icon
 const RecycleIcon = ({ className }: { className?: string }) => (
-  <svg
+  <svg aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"
@@ -38,7 +38,7 @@ const RecycleIcon = ({ className }: { className?: string }) => (
 
 // Leaf icon
 const LeafIcon = ({ className }: { className?: string }) => (
-  <svg
+  <svg aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"
@@ -54,7 +54,7 @@ const LeafIcon = ({ className }: { className?: string }) => (
 
 // Globe icon
 const GlobeIcon = ({ className }: { className?: string }) => (
-  <svg
+  <svg aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"
@@ -71,7 +71,7 @@ const GlobeIcon = ({ className }: { className?: string }) => (
 
 // Truck icon
 const TruckIcon = ({ className }: { className?: string }) => (
-  <svg
+  <svg aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"
@@ -254,7 +254,7 @@ export default function TerraCyclePage() {
               className="inline-flex items-center gap-2 rounded-lg border border-white px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-white/10"
             >
               Visit TerraCycle
-              <svg
+              <svg aria-hidden="true"
                 className="size-4"
                 viewBox="0 0 24 24"
                 fill="none"
@@ -342,7 +342,7 @@ export default function TerraCyclePage() {
                 </p>
                 <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-emerald-700 dark:text-emerald-400">
                   Learn more
-                  <svg
+                  <svg aria-hidden="true"
                     className="size-4 transition-transform group-hover:translate-x-1"
                     viewBox="0 0 24 24"
                     fill="none"

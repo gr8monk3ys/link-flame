@@ -8,7 +8,7 @@ interface RecyclingStepsProps {
 
 // Package/Box icon
 const PackageIcon = ({ className }: { className?: string }) => (
-  <svg
+  <svg aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"
@@ -26,7 +26,7 @@ const PackageIcon = ({ className }: { className?: string }) => (
 
 // Truck/Shipping icon
 const TruckIcon = ({ className }: { className?: string }) => (
-  <svg
+  <svg aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"
@@ -45,7 +45,7 @@ const TruckIcon = ({ className }: { className?: string }) => (
 
 // Recycle icon
 const RecycleIcon = ({ className }: { className?: string }) => (
-  <svg
+  <svg aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"
@@ -65,7 +65,7 @@ const RecycleIcon = ({ className }: { className?: string }) => (
 
 // Gift/Reward icon
 const GiftIcon = ({ className }: { className?: string }) => (
-  <svg
+  <svg aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"

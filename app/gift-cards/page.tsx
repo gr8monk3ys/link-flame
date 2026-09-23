@@ -21,7 +21,7 @@ export default function GiftCardsPage() {
       {/* Hero Section */}
       <div className="mb-12 text-center">
         <div className="mb-6 inline-flex items-center justify-center rounded-full bg-green-100 p-4 dark:bg-green-900/30">
-          <svg
+          <svg aria-hidden="true"
             className="size-12 text-green-700 dark:text-green-400"
             fill="none"
             stroke="currentColor"
@@ -73,7 +73,7 @@ export default function GiftCardsPage() {
         <div className="grid gap-6 md:grid-cols-4">
           <div className="text-center">
             <div className="mb-4 inline-flex size-12 items-center justify-center rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
-              <svg
+              <svg aria-hidden="true"
                 className="size-6"
                 fill="none"
                 stroke="currentColor"
@@ -94,7 +94,7 @@ export default function GiftCardsPage() {
           </div>
           <div className="text-center">
             <div className="mb-4 inline-flex size-12 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
-              <svg
+              <svg aria-hidden="true"
                 className="size-6"
                 fill="none"
                 stroke="currentColor"
@@ -115,7 +115,7 @@ export default function GiftCardsPage() {
           </div>
           <div className="text-center">
             <div className="mb-4 inline-flex size-12 items-center justify-center rounded-full bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400">
-              <svg
+              <svg aria-hidden="true"
                 className="size-6"
                 fill="none"
                 stroke="currentColor"
@@ -136,7 +136,7 @@ export default function GiftCardsPage() {
           </div>
           <div className="text-center">
             <div className="mb-4 inline-flex size-12 items-center justify-center rounded-full bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400">
-              <svg
+              <svg aria-hidden="true"
                 className="size-6"
                 fill="none"
                 stroke="currentColor"
@@ -213,7 +213,7 @@ export default function GiftCardsPage() {
           className="inline-flex items-center rounded-full bg-card px-6 py-3 font-semibold text-green-700 transition-colors hover:bg-green-50 dark:text-green-400"
         >
           Purchase a Gift Card
-          <svg
+          <svg aria-hidden="true"
             className="ml-2 size-4"
             fill="none"
             stroke="currentColor"

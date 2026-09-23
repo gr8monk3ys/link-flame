@@ -8,7 +8,7 @@ interface AcceptedItemsProps {
 
 // Check Circle icon
 const CheckCircleIcon = ({ className }: { className?: string }) => (
-  <svg
+  <svg aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"
@@ -24,7 +24,7 @@ const CheckCircleIcon = ({ className }: { className?: string }) => (
 
 // X Circle icon
 const XCircleIcon = ({ className }: { className?: string }) => (
-  <svg
+  <svg aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"
@@ -43,7 +43,7 @@ const acceptedCategories = [
   {
     name: "Personal Care",
     icon: (
-      <svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg aria-hidden="true" className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M9 12h.01" />
         <path d="M15 12h.01" />
         <path d="M10 16c.5.3 1.5.5 2 .5s1.5-.2 2-.5" />
@@ -63,7 +63,7 @@ const acceptedCategories = [
   {
     name: "Skincare",
     icon: (
-      <svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg aria-hidden="true" className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M2 12h20" />
         <path d="M10 16v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4" />
         <path d="M10 8V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v4" />
@@ -84,7 +84,7 @@ const acceptedCategories = [
   {
     name: "Cleaning Products",
     icon: (
-      <svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg aria-hidden="true" className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="m9 11-6 6v3h9l3-3" />
         <path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4" />
       </svg>
@@ -102,7 +102,7 @@ const acceptedCategories = [
   {
     name: "Kitchen & Food",
     icon: (
-      <svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg aria-hidden="true" className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z" />
         <line x1="6" x2="18" y1="17" y2="17" />
       </svg>
@@ -120,7 +120,7 @@ const acceptedCategories = [
   {
     name: "Beauty & Makeup",
     icon: (
-      <svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg aria-hidden="true" className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="m9.06 11.9 8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08" />
         <path d="M7.07 14.94c-1.66 0-3 1.35-3 3.02 0 1.33-2.5 1.52-2 2.02 1.08 1.1 2.49 2.02 4 2.02 2.2 0 4-1.8 4-4.04a3.01 3.01 0 0 0-3-3.02z" />
       </svg>
@@ -138,7 +138,7 @@ const acceptedCategories = [
   {
     name: "Home & Garden",
     icon: (
-      <svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg aria-hidden="true" className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
         <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
       </svg>

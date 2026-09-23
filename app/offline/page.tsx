@@ -7,7 +7,7 @@ export default function OfflinePage() {
     <div className="flex min-h-screen items-center justify-center bg-muted px-4">
       <div className="text-center">
         <div className="mb-8">
-          <svg
+          <svg aria-hidden="true"
             className="mx-auto size-24 text-muted-foreground"
             fill="none"
             viewBox="0 0 24 24"

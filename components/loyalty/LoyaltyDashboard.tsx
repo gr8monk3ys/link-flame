@@ -252,7 +252,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="flex items-start gap-3 rounded-lg border p-4">
               <div className="flex size-10 items-center justify-center rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                <svg
+                <svg aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
@@ -273,7 +273,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
 
             <div className="flex items-start gap-3 rounded-lg border p-4">
               <div className="flex size-10 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
-                <svg
+                <svg aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
@@ -296,7 +296,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
 
             <div className="flex items-start gap-3 rounded-lg border p-4">
               <div className="flex size-10 items-center justify-center rounded-full bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400">
-                <svg
+                <svg aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
@@ -315,7 +315,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
 
             <div className="flex items-start gap-3 rounded-lg border p-4">
               <div className="flex size-10 items-center justify-center rounded-full bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400">
-                <svg
+                <svg aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
@@ -351,7 +351,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
           <ul className="space-y-2">
             {summary.tierInfo.benefits.map((benefit, index) => (
               <li key={index} className="flex items-center gap-2">
-                <svg
+                <svg aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
                   fill="currentColor"
@@ -398,7 +398,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
                       )}
                     >
                       {transaction.type === 'earned' ? (
-                        <svg
+                        <svg aria-hidden="true"
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 20 20"
                           fill="currentColor"
@@ -411,7 +411,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
                           />
                         </svg>
                       ) : (
-                        <svg
+                        <svg aria-hidden="true"
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 20 20"
                           fill="currentColor"

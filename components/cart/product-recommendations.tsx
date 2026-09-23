@@ -96,7 +96,7 @@ export default function ProductRecommendations() {
                 >
                   {isAdding[product.id] ? (
                     <span className="flex items-center justify-center">
-                      <span className="mr-2 inline-flex shrink-0 animate-spin" aria-hidden="true"><svg className="size-4" viewBox="0 0 24 24">
+                      <span className="mr-2 inline-flex shrink-0 animate-spin" aria-hidden="true"><svg aria-hidden="true" className="size-4" viewBox="0 0 24 24">
                         <circle
                           className="opacity-25"
                           cx="12"

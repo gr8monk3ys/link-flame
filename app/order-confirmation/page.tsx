@@ -78,7 +78,7 @@ function OrderConfirmationContent() {
         <div className="rounded-lg border bg-card p-8 shadow-sm">
           <div className="mb-6 flex flex-col items-center space-y-4 text-center">
             <div className="rounded-full bg-green-100 p-3 text-green-700 dark:bg-green-900/30 dark:text-green-400">
-              <svg
+              <svg aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"

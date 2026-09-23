@@ -69,7 +69,7 @@ class ErrorBoundaryClass extends Component<Props, State> {
           <div className="rounded-md border border-red-200 bg-red-50 p-4 dark:border-red-900/50 dark:bg-red-950/40">
             <div className="flex">
               <div className="shrink-0">
-                <svg className="size-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                <svg aria-hidden="true" className="size-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                 </svg>
               </div>
@@ -96,7 +96,7 @@ class ErrorBoundaryClass extends Component<Props, State> {
       return (
         <div className="flex h-[70vh] w-full flex-col items-center justify-center p-4 text-center">
           <div className="mb-4 rounded-full bg-red-100 p-3 text-red-600 dark:bg-red-900/30 dark:text-red-400">
-            <svg
+            <svg aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"

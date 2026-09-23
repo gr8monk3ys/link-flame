@@ -11,7 +11,7 @@ const TIER_CONFIG = {
   SEEDLING: {
     color: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-900/50',
     icon: (
-      <svg
+      <svg aria-hidden="true"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         fill="currentColor"
@@ -25,7 +25,7 @@ const TIER_CONFIG = {
   SPROUT: {
     color: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 border-green-200 dark:border-green-900/50',
     icon: (
-      <svg
+      <svg aria-hidden="true"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         fill="currentColor"
@@ -39,7 +39,7 @@ const TIER_CONFIG = {
   BLOOM: {
     color: 'bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-200 border-pink-200 dark:border-pink-900/50',
     icon: (
-      <svg
+      <svg aria-hidden="true"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         fill="currentColor"
@@ -53,7 +53,7 @@ const TIER_CONFIG = {
   FLOURISH: {
     color: 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 border-amber-200 dark:border-amber-900/50',
     icon: (
-      <svg
+      <svg aria-hidden="true"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         fill="currentColor"

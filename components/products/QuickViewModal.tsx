@@ -213,7 +213,7 @@ function StarRatingDisplay({ rating, count }: { rating: number; count: number })
     <div className="flex items-center gap-2">
       <div className="flex items-center" role="img" aria-label={`Rating: ${formatNumber(rating, 1)} out of 5 stars`}>
         {[0, 1, 2, 3, 4].map((star) => (
-          <svg
+          <svg aria-hidden="true"
             key={star}
             className={cn(
               "size-4",

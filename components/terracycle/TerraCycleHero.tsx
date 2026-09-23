@@ -9,7 +9,7 @@ interface TerraCycleHeroProps {
 
 // Recycle icon
 const RecycleIcon = ({ className }: { className?: string }) => (
-  <svg
+  <svg aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"
@@ -29,7 +29,7 @@ const RecycleIcon = ({ className }: { className?: string }) => (
 
 // Leaf icon
 const LeafIcon = ({ className }: { className?: string }) => (
-  <svg
+  <svg aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"
@@ -45,7 +45,7 @@ const LeafIcon = ({ className }: { className?: string }) => (
 
 // Check icon
 const CheckIcon = ({ className }: { className?: string }) => (
-  <svg
+  <svg aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"

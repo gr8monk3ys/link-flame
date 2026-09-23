@@ -145,7 +145,7 @@ export function ValueFilterSidebar({
             </button>
           )}
           {collapsible && (
-            <svg
+            <svg aria-hidden="true"
               className={cn(
                 'size-4 text-muted-foreground transition-transform',
                 expanded && 'rotate-180'

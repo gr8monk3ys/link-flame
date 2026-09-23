@@ -77,7 +77,7 @@ export default function SavedItems() {
               >
                 {movingToCart[item.id] ? (
                   <span className="flex items-center justify-center">
-                    <span className="mr-1 inline-flex shrink-0 animate-spin" aria-hidden="true"><svg className="size-3" viewBox="0 0 24 24">
+                    <span className="mr-1 inline-flex shrink-0 animate-spin" aria-hidden="true"><svg aria-hidden="true" className="size-3" viewBox="0 0 24 24">
                       <circle
                         className="opacity-25"
                         cx="12"
@@ -105,7 +105,7 @@ export default function SavedItems() {
                 onClick={() => removeSavedItem(item.id)}
                 aria-label="Remove saved item"
               >
-                <svg
+                <svg aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
                   height="16"

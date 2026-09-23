@@ -66,7 +66,7 @@ export function PointsEarnedToast({
       {/* Celebration header */}
       <div className="bg-gradient-to-r from-green-700 to-emerald-700 px-4 py-2 text-white">
         <div className="flex items-center gap-2">
-          <svg
+          <svg aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
@@ -104,7 +104,7 @@ export function PointsEarnedToast({
           className="absolute right-2 top-2 rounded-full p-1 text-white/70 hover:bg-white/10 hover:text-white"
           aria-label="Close notification"
         >
-          <svg
+          <svg aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
@@ -251,7 +251,7 @@ export function PointsEarnedToastWithStyle({
     >
       <div className="bg-gradient-to-r from-green-700 to-emerald-700 px-4 py-2 text-white">
         <div className="flex items-center gap-2">
-          <svg
+          <svg aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
@@ -287,7 +287,7 @@ export function PointsEarnedToastWithStyle({
           className="absolute right-2 top-2 rounded-full p-1 text-white/70 hover:bg-white/10 hover:text-white"
           aria-label="Close notification"
         >
-          <svg
+          <svg aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"

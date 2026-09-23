@@ -133,7 +133,7 @@ export function GiftCardCheckout({
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-3">
             <div className="flex size-8 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
-              <svg
+              <svg aria-hidden="true"
                 className="size-4 text-green-700 dark:text-green-400"
                 fill="none"
                 stroke="currentColor"
@@ -185,7 +185,7 @@ export function GiftCardCheckout({
         className="flex w-full items-center justify-between text-left"
       >
         <div className="flex items-center gap-2">
-          <svg
+          <svg aria-hidden="true"
             className="size-5 text-muted-foreground"
             fill="none"
             stroke="currentColor"
@@ -200,7 +200,7 @@ export function GiftCardCheckout({
           </svg>
           <span className="font-medium text-foreground">Have a gift card?</span>
         </div>
-        <svg
+        <svg aria-hidden="true"
           className={cn(
             'size-5 text-muted-foreground transition-transform',
             isExpanded && 'rotate-180'

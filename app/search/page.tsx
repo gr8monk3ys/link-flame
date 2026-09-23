@@ -35,7 +35,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         </Suspense>
       ) : (
         <div className="rounded-lg border p-8 text-center">
-          <svg
+          <svg aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             width="48"
             height="48"

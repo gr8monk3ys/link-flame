@@ -113,7 +113,7 @@ const CartItemRow = memo(({
           aria-label="Remove item"
           className="h-8 px-2"
         >
-          <svg
+          <svg aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             width="24"
             height="24"
@@ -141,7 +141,7 @@ const CartItemRow = memo(({
         >
           {isSaving ? (
             <span className="flex items-center justify-center">
-              <span className="mr-1 inline-flex shrink-0 animate-spin" aria-hidden="true"><svg className="size-3" viewBox="0 0 24 24">
+              <span className="mr-1 inline-flex shrink-0 animate-spin" aria-hidden="true"><svg aria-hidden="true" className="size-3" viewBox="0 0 24 24">
                 <circle
                   className="opacity-25"
                   cx="12"
@@ -161,7 +161,7 @@ const CartItemRow = memo(({
             </span>
           ) : (
             <>
-              <svg
+              <svg aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 height="16"

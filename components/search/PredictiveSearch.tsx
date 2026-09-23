@@ -223,7 +223,7 @@ export function PredictiveSearch({
     <div ref={containerRef} className={cn('relative w-full', className)}>
       <div className="relative">
         {/* Search Icon */}
-        <svg
+        <svg aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           width="18"
           height="18"
@@ -263,7 +263,7 @@ export function PredictiveSearch({
         {/* Loading Spinner */}
         {isLoading && (
           <div className="absolute right-12 top-1/2 -translate-y-1/2">
-            <span className="inline-flex shrink-0 animate-spin" aria-hidden="true"><svg
+            <span className="inline-flex shrink-0 animate-spin" aria-hidden="true"><svg aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               width="18"
               height="18"
@@ -290,7 +290,7 @@ export function PredictiveSearch({
             className="absolute right-12 top-1/2 size-8 -translate-y-1/2"
             aria-label="Clear search"
           >
-            <svg
+            <svg aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               width="16"
               height="16"
@@ -317,7 +317,7 @@ export function PredictiveSearch({
           className="absolute right-2 top-1/2 size-8 -translate-y-1/2"
           aria-label="Submit search"
         >
-          <svg
+          <svg aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             width="18"
             height="18"

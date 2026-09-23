@@ -204,11 +204,11 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
                 <div className="mt-3">
                   <span className={'inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ' + stockStatus.color}>
                     {stockStatus.isAvailable ? (
-                      <svg className="mr-1.5 size-2 text-current" fill="currentColor" viewBox="0 0 8 8">
+                      <svg aria-hidden="true" className="mr-1.5 size-2 text-current" fill="currentColor" viewBox="0 0 8 8">
                         <circle cx={4} cy={4} r={3} />
                       </svg>
                     ) : (
-                      <svg className="mr-1.5 size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg aria-hidden="true" className="mr-1.5 size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                       </svg>
                     )}

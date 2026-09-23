@@ -215,7 +215,7 @@ export function SearchSuggestions({
                   className="flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-primary transition-colors hover:bg-accent"
                 >
                   See all results for &ldquo;{trimmedQuery}&rdquo;
-                  <svg
+                  <svg aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
                     height="16"
