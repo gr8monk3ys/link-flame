@@ -61,7 +61,7 @@ export default async function ImpactPage() {
               Our environmental impact
             </h1>
             <p className="mt-4 text-lg leading-8 text-muted-foreground">
-              We don&apos;t publish numbers we can&apos;t stand behind. Every
+              We don&rsquo;t publish numbers we can&rsquo;t stand behind. Every
               figure on this page is either measured per product or summed from
               real orders — and where the honest number is still zero, we say
               so.
@@ -141,7 +141,7 @@ export default async function ImpactPage() {
               <p className="mt-2 text-sm text-muted-foreground">
                 Community totals are summed from real orders, so this section
                 stays empty until the first swap ships. Most impact pages start
-                with an impressive number; we&apos;d rather start with a
+                with an impressive number; we&rsquo;d rather start with a
                 truthful one.
               </p>
             </div>
@@ -169,7 +169,7 @@ export default async function ImpactPage() {
                   of CO&#8322;e the swap avoids.
                 </p>
                 <p>
-                  When an order ships, the products&apos; per-unit values are
+                  When an order ships, the products&rsquo; per-unit values are
                   added to your personal impact and to the community totals
                   above. Nothing is projected, annualized from a pilot, or
                   borrowed from an industry average.

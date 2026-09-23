@@ -300,7 +300,7 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
             <Input
               id="recipientName"
               type="text"
-              placeholder="Enter recipient's name"
+              placeholder="Enter recipient’s name"
               value={recipientName}
               onChange={(e) => setRecipientName(e.target.value)}
               maxLength={100}

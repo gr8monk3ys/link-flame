@@ -101,7 +101,7 @@ export function OrderImpactSummary({
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 text-green-800 dark:text-green-200">
           <Sparkles className="size-5" />
-          Your Order&apos;s Impact
+          Your Order&rsquo;s Impact
         </CardTitle>
         <CardDescription className="text-green-700 dark:text-green-400">
           Thank you for making an eco-friendly choice!

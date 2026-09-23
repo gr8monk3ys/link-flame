@@ -158,7 +158,7 @@ export default function TermsPage() {
         </p>
         <ul className="text-muted-foreground">
           <li>Contain false, misleading, or defamatory statements</li>
-          <li>Infringe on any third party&apos;s intellectual property rights</li>
+          <li>Infringe on any third party&rsquo;s intellectual property rights</li>
           <li>Contain unlawful, threatening, abusive, or harassing material</li>
           <li>Include personal information of other individuals without their consent</li>
           <li>Contain spam, advertisements, or solicitations</li>
@@ -185,8 +185,8 @@ export default function TermsPage() {
 
         <h2>9. Disclaimer of Warranties</h2>
         <p className="text-muted-foreground">
-          Our website and products are provided on an &quot;as is&quot; and &quot;as
-          available&quot; basis. Link Flame makes no warranties, expressed or
+          Our website and products are provided on an &ldquo;as is&rdquo; and &ldquo;as
+          available&rdquo; basis. Link Flame makes no warranties, expressed or
           implied, including but not limited to implied warranties of
           merchantability, fitness for a particular purpose, or
           non-infringement. We do not warrant that:
@@ -223,8 +223,8 @@ export default function TermsPage() {
           You agree to indemnify, defend, and hold harmless Link Flame and its
           officers, directors, employees, and affiliates from and against any
           claims, damages, losses, liabilities, costs, and expenses (including
-          reasonable attorneys&apos; fees) arising from your use of our website,
-          violation of these terms, or infringement of any third party&apos;s rights.
+          reasonable attorneys&rsquo; fees) arising from your use of our website,
+          violation of these terms, or infringement of any third party&rsquo;s rights.
         </p>
 
         <h2>12. Dispute Resolution</h2>
@@ -244,7 +244,7 @@ export default function TermsPage() {
           that it shall be settled by <strong>binding arbitration</strong> in
           accordance with the rules of the American Arbitration Association
           (AAA). The arbitration shall take place in the State of California,
-          and the arbitrator&apos;s decision shall be final and binding.
+          and the arbitrator&rsquo;s decision shall be final and binding.
         </p>
         <p className="text-muted-foreground">
           You agree to waive any right to participate in a class action lawsuit
@@ -270,7 +270,7 @@ export default function TermsPage() {
         <h2>15. Changes to Terms</h2>
         <p className="text-muted-foreground">
           Link Flame may revise these Terms of Service at any time. When we make
-          material changes, we will update the &quot;Last updated&quot; date at the top
+          material changes, we will update the &ldquo;Last updated&rdquo; date at the top
           of this page. We may also notify you by email or through a notice on
           our website. Your continued use of the website after changes are
           posted constitutes acceptance of the revised terms.

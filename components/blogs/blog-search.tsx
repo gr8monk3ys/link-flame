@@ -150,7 +150,7 @@ export function BlogSearch({ categories = [], tags = [] }: BlogSearchProps) {
           <span className="text-muted-foreground">Active filters:</span>
           {query.trim() && (
             <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1">
-              Query: &quot;{query}&quot;
+              Query: &ldquo;{query}&rdquo;
               <button
                 onClick={() => setQuery("")}
                 className="hover:text-destructive"

@@ -218,7 +218,7 @@ export function QuizModal({
               </DialogTitle>
               <DialogDescription className="mt-2 text-base">
                 Answer a few quick questions about your lifestyle and preferences,
-                and we&apos;ll recommend eco-friendly products tailored just for you.
+                and we&rsquo;ll recommend eco-friendly products tailored just for you.
               </DialogDescription>
             </DialogHeader>
 

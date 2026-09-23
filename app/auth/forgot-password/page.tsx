@@ -51,13 +51,13 @@ export default function ForgotPasswordPage() {
           <CardHeader>
             <CardTitle>Check Your Email</CardTitle>
             <CardDescription>
-              If an account exists for {email}, we&apos;ve sent a password reset link. Check your inbox and spam folder.
+              If an account exists for {email}, we&rsquo;ve sent a password reset link. Check your inbox and spam folder.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                The link will expire in 1 hour. If you don&apos;t receive an email, you can try again.
+                The link will expire in 1 hour. If you don&rsquo;t receive an email, you can try again.
               </p>
               <div className="flex flex-col gap-2">
                 <Button variant="outline" onClick={() => setSubmitted(false)}>
@@ -83,7 +83,7 @@ export default function ForgotPasswordPage() {
         <CardHeader>
           <CardTitle>Forgot Password</CardTitle>
           <CardDescription>
-            Enter your email address and we&apos;ll send you a link to reset your password.
+            Enter your email address and we&rsquo;ll send you a link to reset your password.
           </CardDescription>
         </CardHeader>
         <CardContent>

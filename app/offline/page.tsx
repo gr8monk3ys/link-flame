@@ -22,10 +22,10 @@ export default function OfflinePage() {
           </svg>
         </div>
         <h1 className="mb-4 text-3xl font-bold text-foreground">
-          You&apos;re Offline
+          You&rsquo;re Offline
         </h1>
         <p className="mx-auto mb-8 max-w-md text-muted-foreground">
-          It looks like you&apos;ve lost your internet connection. Please check your
+          It looks like you&rsquo;ve lost your internet connection. Please check your
           network settings and try again.
         </p>
         <div className="space-y-4">

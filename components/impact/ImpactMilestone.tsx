@@ -116,7 +116,7 @@ export function ImpactMilestone({
         </h2>
 
         <p className="mb-6 text-center text-green-700 dark:text-green-300">
-          You&apos;ve reached an amazing goal!
+          You&rsquo;ve reached an amazing goal!
         </p>
 
         {/* Metric display */}

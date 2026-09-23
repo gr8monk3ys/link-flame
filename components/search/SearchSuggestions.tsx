@@ -120,7 +120,7 @@ export function SearchSuggestions({
         {showNoResults && (
           <div className="p-4 text-center">
             <p className="text-sm text-muted-foreground">
-              No results found for &quot;{trimmedQuery}&quot;
+              No results found for &ldquo;{trimmedQuery}&rdquo;
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
               Try different keywords or browse our{' '}
@@ -214,7 +214,7 @@ export function SearchSuggestions({
                   onClick={onResultSelect}
                   className="flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-primary transition-colors hover:bg-accent"
                 >
-                  See all results for &quot;{trimmedQuery}&quot;
+                  See all results for &ldquo;{trimmedQuery}&rdquo;
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"

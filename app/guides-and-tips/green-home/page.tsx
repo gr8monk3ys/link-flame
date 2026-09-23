@@ -140,7 +140,7 @@ export default function GreenHomePage() {
               <CardHeader className="p-0">
                 <CardTitle>Calculate Your Carbon Footprint</CardTitle>
                 <CardDescription>
-                  Understand your household&apos;s environmental impact and get personalized recommendations.
+                  Understand your household&rsquo;s environmental impact and get personalized recommendations.
                 </CardDescription>
               </CardHeader>
               <CardContent className="mt-6 p-0">

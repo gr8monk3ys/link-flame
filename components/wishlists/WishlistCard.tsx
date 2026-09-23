@@ -287,7 +287,7 @@ export function WishlistCard({
           <DialogHeader>
             <DialogTitle>Delete Wishlist</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete &quot;{wishlist.name}&quot;? All items will be
+              Are you sure you want to delete &ldquo;{wishlist.name}&rdquo;? All items will be
               moved to your Favorites list.
             </DialogDescription>
           </DialogHeader>

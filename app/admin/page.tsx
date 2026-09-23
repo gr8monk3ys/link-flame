@@ -94,7 +94,7 @@ export default async function AdminDashboard() {
       <div>
         <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
         <p className="mt-2 text-muted-foreground">
-          Welcome back! Here&apos;s what&apos;s happening with your store.
+          Welcome back! Here&rsquo;s what&rsquo;s happening with your store.
         </p>
       </div>
 

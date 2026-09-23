@@ -137,7 +137,7 @@ export function QuizResults({
         <Leaf className="mx-auto mb-4 size-16 text-muted-foreground" />
         <h3 className="mb-2 text-xl font-semibold">No recommendations yet</h3>
         <p className="mb-6 text-muted-foreground">
-          We couldn&apos;t find products matching your preferences. Try adjusting your answers!
+          We couldn&rsquo;t find products matching your preferences. Try adjusting your answers!
         </p>
         {onRetakeQuiz && (
           <Button onClick={onRetakeQuiz} variant="outline">
@@ -160,7 +160,7 @@ export function QuizResults({
           Your Personalized Recommendations
         </h2>
         <p className="mx-auto max-w-lg text-muted-foreground">
-          Based on your answers, we&apos;ve selected {products.length} eco-friendly products
+          Based on your answers, we&rsquo;ve selected {products.length} eco-friendly products
           that match your lifestyle and values.
         </p>
 

@@ -115,7 +115,7 @@ class ErrorBoundaryClass extends Component<Props, State> {
           </div>
           <h2 className="mb-2 text-2xl font-bold">Something went wrong</h2>
           <p className="mb-4 max-w-md text-muted-foreground">
-            We&apos;re sorry, but there was an error loading this page. Please try again or contact support if the problem persists.
+            We&rsquo;re sorry, but there was an error loading this page. Please try again or contact support if the problem persists.
           </p>
           <div className="space-x-2">
             <Button onClick={this.handleReset}>Try Again</Button>

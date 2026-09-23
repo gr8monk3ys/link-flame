@@ -53,8 +53,8 @@ export default function ContactPage() {
           Contact Us
         </h1>
         <p className="max-w-[700px] text-lg text-muted-foreground">
-          Have questions, suggestions, or want to collaborate? We&apos;d love to hear from you!
-          Fill out the form below and we&apos;ll get back to you as soon as possible.
+          Have questions, suggestions, or want to collaborate? We&rsquo;d love to hear from you!
+          Fill out the form below and we&rsquo;ll get back to you as soon as possible.
         </p>
       </div>
 
@@ -133,7 +133,7 @@ export default function ContactPage() {
 
             {status === "success" && (
               <p className="mt-2 text-sm text-green-700 dark:text-green-400">
-                Thank you for your message! We&apos;ll get back to you soon.
+                Thank you for your message! We&rsquo;ll get back to you soon.
               </p>
             )}
             {status === "error" && (

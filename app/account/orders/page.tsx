@@ -176,7 +176,7 @@ export default function OrdersPage() {
             </CardTitle>
             <CardDescription>
               {statusFilter === "all"
-                ? "You haven't placed any orders yet. Start shopping to see your orders here!"
+                ? "You haven’t placed any orders yet. Start shopping to see your orders here!"
                 : `No orders with status "${statusFilter}" found.`}
             </CardDescription>
           </CardHeader>

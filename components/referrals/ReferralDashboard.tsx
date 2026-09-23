@@ -214,7 +214,7 @@ export function ReferralDashboard() {
         <CardHeader>
           <CardTitle className="text-lg">Your Referrals</CardTitle>
           <CardDescription>
-            Track the status of people you&apos;ve referred
+            Track the status of people you&rsquo;ve referred
           </CardDescription>
         </CardHeader>
         <CardContent>

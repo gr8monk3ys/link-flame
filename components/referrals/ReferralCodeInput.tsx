@@ -169,7 +169,7 @@ export function ReferralCodeInput({
         </p>
       )}
       <p className="text-xs text-muted-foreground">
-        Apply a friend&apos;s referral code to get a discount on your first order.
+        Apply a friend&rsquo;s referral code to get a discount on your first order.
       </p>
     </div>
   );

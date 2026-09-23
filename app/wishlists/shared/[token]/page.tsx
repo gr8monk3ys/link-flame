@@ -92,7 +92,7 @@ export default async function SharedWishlistPage({ params }: SharedWishlistPageP
 
                 {item.note && (
                   <p className="mt-2 line-clamp-2 text-sm italic text-muted-foreground">
-                    &quot;{item.note}&quot;
+                    &ldquo;{item.note}&rdquo;
                   </p>
                 )}
 

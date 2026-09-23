@@ -76,7 +76,7 @@ export function ImperfectReasonTooltip({
   const displayDescription =
     reasonDescription ||
     details?.description ||
-    "This item has minor imperfections that don't affect its quality or performance.";
+    "This item has minor imperfections that don’t affect its quality or performance.";
 
   const positionClasses = {
     top: 'bottom-full left-1/2 -translate-x-1/2 mb-2',

@@ -178,7 +178,7 @@ export function WishlistItems({
 
               {item.note && (
                 <p className="mt-2 text-sm italic text-muted-foreground">
-                  &quot;{item.note}&quot;
+                  &ldquo;{item.note}&rdquo;
                 </p>
               )}
 
@@ -261,7 +261,7 @@ export function WishlistItems({
           <DialogHeader>
             <DialogTitle>Move to Wishlist</DialogTitle>
             <DialogDescription>
-              Select a wishlist to move &quot;{moveDialogItem?.product.title}&quot; to
+              Select a wishlist to move &ldquo;{moveDialogItem?.product.title}&rdquo; to
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
@@ -285,13 +285,13 @@ export function WishlistItems({
           <DialogHeader>
             <DialogTitle>Add Note</DialogTitle>
             <DialogDescription>
-              Add a personal note for &quot;{noteDialogItem?.product.title}&quot;
+              Add a personal note for &ldquo;{noteDialogItem?.product.title}&rdquo;
             </DialogDescription>
           </DialogHeader>
           <textarea
             value={noteText}
             onChange={(e) => setNoteText(e.target.value)}
-            placeholder="e.g., Gift for mom's birthday"
+            placeholder="e.g., Gift for mom’s birthday"
             className="min-h-[100px] w-full resize-none rounded-md border px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             maxLength={500}
           />

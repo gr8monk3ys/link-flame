@@ -180,7 +180,7 @@ export function QuizPageClient() {
               </h1>
               <p className="mx-auto max-w-lg text-lg text-muted-foreground sm:text-xl">
                 Answer a few quick questions about your lifestyle and preferences,
-                and we&apos;ll recommend sustainable products tailored just for you.
+                and we&rsquo;ll recommend sustainable products tailored just for you.
               </p>
             </div>
 

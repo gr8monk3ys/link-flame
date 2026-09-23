@@ -98,7 +98,7 @@ export async function SearchResults({ query }: SearchResultsProps) {
         </svg>
         <h2 className="text-xl font-semibold">No results found</h2>
         <p className="mt-2 text-muted-foreground">
-          We could not find anything matching &quot;{query}&quot;. Try different keywords or browse our{' '}
+          We could not find anything matching &ldquo;{query}&rdquo;. Try different keywords or browse our{' '}
           <Link href="/collections" className="text-primary hover:underline">
             collections
           </Link>

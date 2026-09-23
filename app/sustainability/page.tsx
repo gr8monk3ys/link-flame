@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: "Learn about Link Flame's commitment to environmental sustainability, carbon-neutral shipping, and ethical sourcing practices.",
   openGraph: {
     title: "Our Sustainability Commitment",
-    description: "Discover how we're working to protect our planet through sustainable practices and eco-friendly products.",
+    description: "Discover how we’re working to protect our planet through sustainable practices and eco-friendly products.",
   },
 };
 
@@ -175,7 +175,7 @@ export default function SustainabilityPage() {
                 Carbon-Neutral From Day One
               </h2>
               <p className="mt-4 text-lg text-muted-foreground">
-                Climate change is the defining challenge of our time. That&apos;s why we&apos;ve committed
+                Climate change is the defining challenge of our time. That&rsquo;s why we&rsquo;ve committed
                 to carbon-neutral operations since our founding.
               </p>
               <ul className="mt-8 space-y-4">

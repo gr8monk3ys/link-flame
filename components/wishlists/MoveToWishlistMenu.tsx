@@ -80,7 +80,7 @@ export function MoveToWishlistMenu({
           <DialogHeader>
             <DialogTitle>Move to Wishlist</DialogTitle>
             <DialogDescription className="line-clamp-1">
-              Move &quot;{productTitle}&quot; to another wishlist
+              Move &ldquo;{productTitle}&rdquo; to another wishlist
             </DialogDescription>
           </DialogHeader>
 
