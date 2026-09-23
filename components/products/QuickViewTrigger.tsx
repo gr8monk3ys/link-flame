@@ -223,7 +223,7 @@ export function QuickViewTrigger({
           "transition-all duration-200 ease-in-out",
           // Hover/Focus states
           "hover:scale-105 hover:bg-card hover:shadow-lg",
-          "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
           // Active state
           "active:scale-95",
           // Visibility transition

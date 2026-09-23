@@ -257,7 +257,7 @@
 
 /* New: Focus Ring */
 .focus-ring {
-  @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
   focus-visible:ring-offset-background transition-shadow duration-300;
 }
 
@@ -276,8 +276,8 @@
 
 /* New: Input Focus Effect */
 .input-focus-effect {
-  @apply transition-all duration-300 border-border focus:border-primary focus:ring-2 
-  focus:ring-primary/20 focus:outline-none;
+  @apply transition-all duration-300 border-border focus-visible:border-primary focus-visible:ring-2 
+  focus-visible:ring-primary/20 focus-visible:outline-none;
 }
 
 /* New: Tag Cloud */
@@ -342,7 +342,7 @@
    browser's default chrome. */
 .date-field {
   @apply h-10 w-full rounded-md border border-border bg-background px-3 text-sm shadow-sm
-  transition-colors focus:border-primary focus:outline-none focus:ring-1 focus:ring-ring;
+  transition-colors focus-visible:border-primary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring;
   color-scheme: light;
 }
 
@@ -355,6 +355,6 @@
 }
 
 .date-field:hover::-webkit-calendar-picker-indicator,
-.date-field:focus::-webkit-calendar-picker-indicator {
+.date-field:focus-visible::-webkit-calendar-picker-indicator {
   @apply opacity-90;
 }

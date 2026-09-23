@@ -292,7 +292,7 @@ export function WishlistItems({
             value={noteText}
             onChange={(e) => setNoteText(e.target.value)}
             placeholder="e.g., Gift for mom's birthday"
-            className="min-h-[100px] w-full resize-none rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+            className="min-h-[100px] w-full resize-none rounded-md border px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             maxLength={500}
           />
           <DialogFooter>

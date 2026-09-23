@@ -185,7 +185,7 @@ export function ValueFilterSidebar({
                   disabled={!hasProducts}
                   className={cn(
                     'size-4 rounded border-border',
-                    'focus:ring-ring focus:ring-offset-0',
+                    'focus-visible:ring-ring focus-visible:ring-offset-0',
                     'text-primary',
                     !hasProducts && 'cursor-not-allowed'
                   )}

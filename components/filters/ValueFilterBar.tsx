@@ -241,7 +241,7 @@ export function ValueFilterBar({ className, initialValues }: ValueFilterBarProps
               className={cn(
                 'inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all',
                 'shrink-0 whitespace-nowrap border',
-                'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
                 isSelected
                   ? 'border-primary bg-primary text-white hover:bg-primary/90'
                   : 'border-border bg-card text-foreground hover:border-primary/40 hover:bg-primary/10'

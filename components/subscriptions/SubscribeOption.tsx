@@ -69,7 +69,7 @@ export function SubscribeOption({
           onChange={handleSubscriptionToggle}
           className={cn(
             isSubscription ? 'bg-green-700' : 'bg-muted',
-            'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2'
+            'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
           )}
         >
           <span className="sr-only">Enable subscription</span>
@@ -93,7 +93,7 @@ export function SubscribeOption({
             !isSubscription
               ? 'border-green-600 bg-card ring-2 ring-green-600'
               : 'border-border bg-card hover:border-border',
-            'relative flex w-full cursor-pointer items-center justify-between rounded-lg border p-3 focus:outline-none'
+            'relative flex w-full cursor-pointer items-center justify-between rounded-lg border p-3 focus-visible:outline-none'
           )}
         >
           <div className="flex items-center">
@@ -115,7 +115,7 @@ export function SubscribeOption({
             isSubscription
               ? 'border-green-600 bg-green-50 ring-2 ring-green-600 dark:bg-green-950/40'
               : 'border-border bg-card hover:border-border',
-            'relative flex w-full cursor-pointer flex-col rounded-lg border p-3 focus:outline-none'
+            'relative flex w-full cursor-pointer flex-col rounded-lg border p-3 focus-visible:outline-none'
           )}
         >
           <div className="flex w-full items-center justify-between">

@@ -28,7 +28,7 @@ export function ProductResult({
       onClick={onSelect}
       className={cn(
         'flex items-center gap-3 rounded-md px-3 py-2 transition-colors',
-        'hover:bg-accent focus:bg-accent focus:outline-none',
+        'hover:bg-accent focus:bg-accent focus-visible:outline-none',
         isHighlighted && 'bg-accent'
       )}
     >
@@ -100,7 +100,7 @@ export function CategoryResult({
       onClick={onSelect}
       className={cn(
         'flex items-center justify-between rounded-md px-3 py-2 transition-colors',
-        'hover:bg-accent focus:bg-accent focus:outline-none',
+        'hover:bg-accent focus:bg-accent focus-visible:outline-none',
         isHighlighted && 'bg-accent'
       )}
     >
@@ -147,7 +147,7 @@ export function BlogPostResult({
       onClick={onSelect}
       className={cn(
         'flex items-center gap-3 rounded-md px-3 py-2 transition-colors',
-        'hover:bg-accent focus:bg-accent focus:outline-none',
+        'hover:bg-accent focus:bg-accent focus-visible:outline-none',
         isHighlighted && 'bg-accent'
       )}
     >
@@ -233,7 +233,7 @@ export function RecentSearchResult({
       onClick={onSelect}
       className={cn(
         'flex w-full items-center justify-between rounded-md px-3 py-2 text-left transition-colors',
-        'hover:bg-accent focus:bg-accent focus:outline-none',
+        'hover:bg-accent focus:bg-accent focus-visible:outline-none',
         isHighlighted && 'bg-accent'
       )}
     >
