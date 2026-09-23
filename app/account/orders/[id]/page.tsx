@@ -120,7 +120,7 @@ export default function OrderDetailPage() {
   }, [isLoaded, isSignedIn, orderId, fetchOrder]);
 
   if (!isLoaded || loading) {
-    return <div className="container py-10">Loading order details...</div>;
+    return <div className="container py-10">Loading order details…</div>;
   }
 
   if (!isSignedIn) {

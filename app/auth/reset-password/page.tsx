@@ -159,7 +159,7 @@ function ResetPasswordForm() {
               </div>
             )}
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Resetting..." : "Reset Password"}
+              {loading ? "Resetting…" : "Reset Password"}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
@@ -177,7 +177,7 @@ export default function ResetPasswordPage() {
   return (
     <Suspense fallback={
       <div className="container flex min-h-[calc(100vh-200px)] items-center justify-center">
-        Loading...
+        Loading…
       </div>
     }>
       <ResetPasswordForm />

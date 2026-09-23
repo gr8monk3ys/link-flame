@@ -79,7 +79,7 @@ export default function AdminProductsPage() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="text-muted-foreground">Loading products...</div>
+        <div className="text-muted-foreground">Loading products…</div>
       </div>
     );
   }
@@ -110,7 +110,7 @@ export default function AdminProductsPage() {
             <Search className="absolute left-3 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Search products..."
+              placeholder="Search products…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full rounded-lg border border-border py-2 pl-10 pr-4 focus:border-transparent focus:ring-2 focus:ring-ring"

@@ -361,7 +361,7 @@ export default function AccountSettingsPage() {
                     {savingProfile ? (
                       <>
                         <Loader2 className="mr-2 size-4 animate-spin" />
-                        Saving...
+                        Saving…
                       </>
                     ) : (
                       <>
@@ -429,7 +429,7 @@ export default function AccountSettingsPage() {
                   {changingPassword ? (
                     <>
                       <Loader2 className="mr-2 size-4 animate-spin" />
-                      Changing Password...
+                      Changing Password…
                     </>
                   ) : (
                     "Change Password"
@@ -499,7 +499,7 @@ export default function AccountSettingsPage() {
                   {deletingAccount ? (
                     <>
                       <Loader2 className="mr-2 size-4 animate-spin" />
-                      Deleting Account...
+                      Deleting Account…
                     </>
                   ) : (
                     "Delete My Account"

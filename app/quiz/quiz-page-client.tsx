@@ -226,7 +226,7 @@ export function QuizPageClient() {
                 {isLoadingQuestions ? (
                   <>
                     <Loader2 className="size-5 animate-spin" />
-                    Loading...
+                    Loading…
                   </>
                 ) : (
                   <>
@@ -286,7 +286,7 @@ export function QuizPageClient() {
                   {isSubmitting ? (
                     <>
                       <Loader2 className="mr-2 size-4 animate-spin" />
-                      Getting Results...
+                      Getting Results…
                     </>
                   ) : (
                     <>
@@ -317,7 +317,7 @@ export function QuizPageClient() {
               Finding Your Perfect Products
             </h2>
             <p className="text-muted-foreground">
-              Analyzing your preferences to curate personalized recommendations...
+              Analyzing your preferences to curate personalized recommendations…
             </p>
           </div>
         )}

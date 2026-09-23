@@ -101,7 +101,7 @@ export default function NewBlogPostPage() {
             value={formData.title}
             onChange={(e) => handleTitleChange(e.target.value)}
             className="w-full rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
-            placeholder="Enter post title..."
+            placeholder="Enter post title…"
           />
         </div>
 
@@ -144,7 +144,7 @@ export default function NewBlogPostPage() {
               setFormData({ ...formData, description: e.target.value })
             }
             className="w-full rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
-            placeholder="Brief description for search engines..."
+            placeholder="Brief description for search engines…"
           />
         </div>
 
@@ -261,7 +261,7 @@ export default function NewBlogPostPage() {
               className="w-full rounded-lg border border-border px-4 py-3 font-mono text-sm focus:border-transparent focus:ring-2 focus:ring-ring"
               placeholder="# Your Blog Post Content
 
-Write your content in Markdown/MDX format...
+Write your content in Markdown/MDX format…
 
 ## Subheading
 
@@ -303,7 +303,7 @@ const example = 'value';
             disabled={loading}
             className="flex-1 rounded-lg border border-border px-6 py-3 text-foreground transition-colors hover:bg-muted disabled:opacity-50"
           >
-            {loading ? 'Saving...' : 'Save as Draft'}
+            {loading ? 'Saving…' : 'Save as Draft'}
           </button>
           <button
             type="button"
@@ -312,7 +312,7 @@ const example = 'value';
             className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-700 px-6 py-3 text-white transition-colors hover:bg-green-700 disabled:opacity-50"
           >
             <Save className="size-5" />
-            {loading ? 'Publishing...' : 'Publish'}
+            {loading ? 'Publishing…' : 'Publish'}
           </button>
         </div>
       </form>

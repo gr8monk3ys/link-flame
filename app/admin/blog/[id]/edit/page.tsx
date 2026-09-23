@@ -131,7 +131,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="text-muted-foreground">Loading blog post...</div>
+        <div className="text-muted-foreground">Loading blog post…</div>
       </div>
     );
   }
@@ -184,7 +184,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
             value={formData.title}
             onChange={(e) => handleTitleChange(e.target.value)}
             className="w-full rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
-            placeholder="Enter post title..."
+            placeholder="Enter post title…"
           />
         </div>
 
@@ -227,7 +227,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
               setFormData({ ...formData, description: e.target.value })
             }
             className="w-full rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
-            placeholder="Brief description for search engines..."
+            placeholder="Brief description for search engines…"
           />
         </div>
 
@@ -342,7 +342,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
                 setFormData({ ...formData, content: e.target.value })
               }
               className="w-full rounded-lg border border-border px-4 py-3 font-mono text-sm focus:border-transparent focus:ring-2 focus:ring-ring"
-              placeholder="# Your Blog Post Content..."
+              placeholder="# Your Blog Post Content…"
             />
           )}
           <p className="mt-2 text-sm text-muted-foreground">
@@ -378,7 +378,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
                 className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-700 px-6 py-3 text-white transition-colors hover:bg-green-700 disabled:opacity-50"
               >
                 <Save className="size-5" />
-                {saving ? 'Saving...' : 'Save Changes'}
+                {saving ? 'Saving…' : 'Save Changes'}
               </button>
               <button
                 type="button"
@@ -397,7 +397,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
                 disabled={saving}
                 className="flex-1 rounded-lg border border-border px-6 py-3 text-foreground transition-colors hover:bg-muted disabled:opacity-50"
               >
-                {saving ? 'Saving...' : 'Save as Draft'}
+                {saving ? 'Saving…' : 'Save as Draft'}
               </button>
               <button
                 type="button"
@@ -406,7 +406,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
                 className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-700 px-6 py-3 text-white transition-colors hover:bg-green-700 disabled:opacity-50"
               >
                 <Save className="size-5" />
-                {saving ? 'Publishing...' : 'Publish'}
+                {saving ? 'Publishing…' : 'Publish'}
               </button>
             </>
           )}

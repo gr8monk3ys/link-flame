@@ -204,7 +204,7 @@ export default function AdminProductNewPage() {
               rows={4}
               maxLength={2000}
               className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
-              placeholder="Describe the product..."
+              placeholder="Describe the product…"
             />
           </div>
 
@@ -311,7 +311,7 @@ export default function AdminProductNewPage() {
               className="flex items-center gap-2 rounded-lg bg-green-700 px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading && <Loader2 className="size-4 animate-spin" />}
-              {loading ? 'Creating...' : 'Create Product'}
+              {loading ? 'Creating…' : 'Create Product'}
             </button>
           </div>
         </div>

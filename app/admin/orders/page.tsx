@@ -243,7 +243,7 @@ export default function AdminOrdersPage() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="text-muted-foreground">Loading orders...</div>
+        <div className="text-muted-foreground">Loading orders…</div>
       </div>
     );
   }
@@ -263,7 +263,7 @@ export default function AdminOrdersPage() {
             <Search className="absolute left-3 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Search by customer name, email, or order ID..."
+              placeholder="Search by customer name, email, or order ID…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full rounded-lg border border-border py-2 pl-10 pr-4 focus:border-transparent focus:ring-2 focus:ring-ring"
@@ -497,7 +497,7 @@ export default function AdminOrdersPage() {
                           {refundingOrderId === order.id ? (
                             <>
                               <RefreshCw className="size-3 animate-spin" />
-                              Refunding...
+                              Refunding…
                             </>
                           ) : (
                             'Refund'

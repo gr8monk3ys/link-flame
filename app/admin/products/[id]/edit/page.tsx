@@ -197,7 +197,7 @@ export default function AdminProductEditPage() {
       <div className="flex h-64 items-center justify-center">
         <div className="flex items-center gap-2 text-muted-foreground">
           <Loader2 className="size-5 animate-spin" />
-          Loading product...
+          Loading product…
         </div>
       </div>
     )
@@ -295,7 +295,7 @@ export default function AdminProductEditPage() {
               rows={4}
               maxLength={2000}
               className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
-              placeholder="Describe the product..."
+              placeholder="Describe the product…"
             />
           </div>
 
@@ -455,7 +455,7 @@ export default function AdminProductEditPage() {
               className="flex items-center gap-2 rounded-lg bg-green-700 px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {saving && <Loader2 className="size-4 animate-spin" />}
-              {saving ? 'Saving...' : 'Save Changes'}
+              {saving ? 'Saving…' : 'Save Changes'}
             </button>
           </div>
         </div>

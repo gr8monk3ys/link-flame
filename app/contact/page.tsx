@@ -128,7 +128,7 @@ export default function ContactPage() {
               className={buttonVariants()}
               disabled={status === "loading"}
             >
-              {status === "loading" ? "Sending..." : "Send Message"}
+              {status === "loading" ? "Sending…" : "Send Message"}
             </button>
 
             {status === "success" && (

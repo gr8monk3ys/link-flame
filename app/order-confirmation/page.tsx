@@ -176,7 +176,7 @@ function OrderConfirmationContent() {
 
 export default function OrderConfirmationPage() {
   return (
-    <Suspense fallback={<div className="container py-12 text-center">Loading order details...</div>}>
+    <Suspense fallback={<div className="container py-12 text-center">Loading order details…</div>}>
       <OrderConfirmationContent />
     </Suspense>
   );

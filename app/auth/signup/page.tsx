@@ -171,7 +171,7 @@ export default function SignUpPage() {
               </div>
             )}
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Creating account..." : "Create Account"}
+              {loading ? "Creating account…" : "Create Account"}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
