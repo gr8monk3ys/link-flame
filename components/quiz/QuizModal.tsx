@@ -14,7 +14,7 @@ import { QuizProgress } from './QuizProgress';
 import { QuizQuestion } from './QuizQuestion';
 import { QuizResults } from './QuizResults';
 import { cn } from '@/lib/utils';
-import { ArrowLeft, ArrowRight, Loader2, Leaf, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Loader2, Leaf } from 'lucide-react';
 
 interface QuizOption {
   value: string;
