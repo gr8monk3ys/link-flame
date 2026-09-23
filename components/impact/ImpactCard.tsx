@@ -111,7 +111,7 @@ export function ImpactCard({
         <h3 className={cn("mb-2 font-medium", classes.title)}>{name}</h3>
 
         {/* Progress bar toward next milestone */}
-        {progress !== undefined && nextMilestone && (
+        {progress !== undefined && nextMilestone != null && nextMilestone > 0 && (
           <div className="mt-2 w-full">
             <div className="mb-1 flex justify-between text-xs text-muted-foreground">
               <span>Progress</span>

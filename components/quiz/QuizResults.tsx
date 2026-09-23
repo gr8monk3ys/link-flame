@@ -186,7 +186,7 @@ export function QuizResults({
         {products.map((product, index) => {
           const isLoading = loadingIds.has(product.id);
           const isOutOfStock = product.inventory <= 0;
-          const isOnSale = product.salePrice && product.salePrice < product.price;
+          const isOnSale = product.salePrice != null && product.salePrice < product.price;
           const isAnimated = animatedCards.has(index);
 
           return (
@@ -203,7 +203,7 @@ export function QuizResults({
               <CardHeader className="relative p-0">
                 <Link href={`/products/${product.id}`}>
                   <AspectRatio ratio={1}>
-                    <Image
+                    <Image sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       src={product.image}
                       alt={product.title}
                       fill

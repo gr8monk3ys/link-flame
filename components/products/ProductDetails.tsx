@@ -248,7 +248,7 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
             </div>
 
             {/* Sustainability Section */}
-            {(product.isPlasticFree || product.isVegan || product.isCrueltyFree || product.isOrganicCertified || product.carbonFootprintGrams) && (
+            {(product.isPlasticFree || product.isVegan || product.isCrueltyFree || product.isOrganicCertified || (product.carbonFootprintGrams ?? 0) > 0) && (
               <div className="mt-6">
                 <EcoImpactCard
                   carbonFootprintGrams={product.carbonFootprintGrams}

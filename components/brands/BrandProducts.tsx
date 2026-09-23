@@ -32,7 +32,7 @@ export interface BrandProductsProps {
 }
 
 function ProductCard({ product }: { product: BrandProduct }) {
-  const isOnSale = product.salePrice && product.salePrice < product.price
+  const isOnSale = product.salePrice != null && product.salePrice < product.price
   const displayPrice = product.salePrice || product.price
   const isOutOfStock = product.inventory <= 0
 
@@ -98,7 +98,7 @@ function ProductCard({ product }: { product: BrandProduct }) {
         </h3>
 
         {/* Rating */}
-        {product.averageRating && (
+        {product.averageRating != null && product.averageRating > 0 && (
           <div className="mt-2 flex items-center gap-1">
             <div className="flex items-center">
               {[0, 1, 2, 3, 4].map((star) => (

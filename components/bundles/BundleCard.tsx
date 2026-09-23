@@ -109,7 +109,7 @@ export const BundleCard = memo(function BundleCard({ bundle, className }: Bundle
           <div className="mb-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
             {bundle.isCustomizable ? (
               <>
-                {bundle.minItems && (
+                {bundle.minItems != null && bundle.minItems > 0 && (
                   <span className="rounded-full bg-muted px-2 py-1">
                     Pick {bundle.minItems}{bundle.maxItems && bundle.maxItems !== bundle.minItems ? `-${bundle.maxItems}` : ""} items
                   </span>

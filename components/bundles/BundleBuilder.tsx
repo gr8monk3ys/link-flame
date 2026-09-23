@@ -172,7 +172,7 @@ export function BundleBuilder({ bundle }: BundleBuilderProps) {
               {bundle.category && (
                 <Badge variant="outline">{bundle.category}</Badge>
               )}
-              {bundle.minItems && (
+              {bundle.minItems != null && bundle.minItems > 0 && (
                 <Badge variant="outline">
                   Pick {bundle.minItems}
                   {bundle.maxItems && bundle.maxItems !== bundle.minItems

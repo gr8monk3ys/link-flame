@@ -52,7 +52,7 @@ export function BundleProgress({
           <span className="text-muted-foreground">
             {" / "}
             {min}
-            {maxItems && maxItems !== min && ` - ${maxItems}`}
+            {maxItems != null && maxItems > 0 && maxItems !== min && ` - ${maxItems}`}
           </span>
         </div>
       </div>
