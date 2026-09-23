@@ -12,7 +12,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
 
   return (
     <div className="flex min-h-[50vh] flex-col items-center justify-center px-4">
-      <h2 className="mb-2 text-xl font-semibold">Something went wrong</h2>
+      <h1 className="mb-2 text-xl font-semibold">Something went wrong</h1>
       <p className="mb-6 text-muted-foreground">An unexpected error occurred. Please try again.</p>
       <div className="flex gap-3">
         <button onClick={() => reset()} className="rounded-md bg-green-700 px-4 py-2 text-sm text-white hover:bg-green-800">Try again</button>

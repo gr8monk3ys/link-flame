@@ -49,7 +49,7 @@ export default function ForgotPasswordPage() {
       <div className="container flex min-h-[calc(100vh-200px)] items-center justify-center">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle>Check Your Email</CardTitle>
+            <CardTitle as="h1">Check Your Email</CardTitle>
             <CardDescription>
               If an account exists for {email}, we&rsquo;ve sent a password reset link. Check your inbox and spam folder.
             </CardDescription>
@@ -81,7 +81,7 @@ export default function ForgotPasswordPage() {
     <div className="container flex min-h-[calc(100vh-200px)] items-center justify-center">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Forgot Password</CardTitle>
+          <CardTitle as="h1">Forgot Password</CardTitle>
           <CardDescription>
             Enter your email address and we&rsquo;ll send you a link to reset your password.
           </CardDescription>

@@ -48,7 +48,7 @@ function SignInForm() {
     <div className="container flex min-h-[calc(100vh-200px)] items-center justify-center">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Sign In</CardTitle>
+          <CardTitle as="h1">Sign In</CardTitle>
           <CardDescription>
             Enter your credentials to access your account
           </CardDescription>

@@ -23,7 +23,7 @@ export default function WriteForUsPage() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>What we publish</CardTitle>
+            <CardTitle as="h2">What we publish</CardTitle>
             <CardDescription>Topics that perform well with our readers.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2 text-sm text-muted-foreground">
@@ -36,7 +36,7 @@ export default function WriteForUsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Submission guidelines</CardTitle>
+            <CardTitle as="h2">Submission guidelines</CardTitle>
             <CardDescription>Keep it tight and useful.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2 text-sm text-muted-foreground">

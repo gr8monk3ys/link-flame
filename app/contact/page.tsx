@@ -60,7 +60,7 @@ export default function ContactPage() {
 
       <Card className="max-w-[600px]">
         <CardHeader>
-          <CardTitle>Send us a Message</CardTitle>
+          <CardTitle as="h2">Send us a Message</CardTitle>
           <CardDescription>
             We typically respond within 1-2 business days.
           </CardDescription>
@@ -149,7 +149,7 @@ export default function ContactPage() {
       <div className="grid max-w-[980px] gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Business Inquiries</CardTitle>
+            <CardTitle as="h2">Business Inquiries</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
@@ -166,7 +166,7 @@ export default function ContactPage() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Press & Media</CardTitle>
+            <CardTitle as="h2">Press & Media</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">

@@ -248,7 +248,7 @@ export default function AccountSettingsPage() {
       <div className="container py-10">
         <Card>
           <CardHeader>
-            <CardTitle>Sign In Required</CardTitle>
+            <CardTitle as="h1">Sign In Required</CardTitle>
             <CardDescription>
               Please sign in to access your account settings.
             </CardDescription>
@@ -302,7 +302,7 @@ export default function AccountSettingsPage() {
         <TabsContent value="profile">
           <Card>
             <CardHeader>
-              <CardTitle>Profile Information</CardTitle>
+              <CardTitle as="h2">Profile Information</CardTitle>
               <CardDescription>
                 Update your personal details and account information
               </CardDescription>
@@ -380,7 +380,7 @@ export default function AccountSettingsPage() {
         <TabsContent value="security">
           <Card>
             <CardHeader>
-              <CardTitle>Change Password</CardTitle>
+              <CardTitle as="h2">Change Password</CardTitle>
               <CardDescription>
                 Update your password to keep your account secure
               </CardDescription>
@@ -444,7 +444,7 @@ export default function AccountSettingsPage() {
         <TabsContent value="danger">
           <Card className="border-destructive">
             <CardHeader>
-              <CardTitle className="text-destructive">Delete Account</CardTitle>
+              <CardTitle as="h2" className="text-destructive">Delete Account</CardTitle>
               <CardDescription>
                 Permanently delete your account and all associated data. This action cannot be undone.
               </CardDescription>

@@ -98,17 +98,17 @@ export function ShareWishlistButton({
                 <Copy className="mr-2 size-4" />
                 Copy Link
               </Button>
-              <a
+              <Button variant="outline" className="w-full" asChild>
+                <a
                 href={shareUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1"
               >
-                <Button variant="outline" className="w-full">
                   <ExternalLink className="mr-2 size-4" />
                   Preview
-                </Button>
-              </a>
+                </a>
+              </Button>
             </div>
           </div>
         </DialogContent>

@@ -23,7 +23,7 @@ export default async function BlogLayout({
     <div className="container">
       <div className="flex flex-col gap-10 lg:flex-row">
         {/* Main Content */}
-        <main className="flex-1">{children}</main>
+        <div className="flex-1">{children}</div>
 
         {/* Sidebar */}
         <aside className="w-full space-y-6 lg:w-[300px]">

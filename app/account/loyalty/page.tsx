@@ -24,7 +24,7 @@ export default function LoyaltyPage() {
       <div className="container max-w-4xl py-10">
         <Card>
           <CardHeader>
-            <CardTitle>Sign In Required</CardTitle>
+            <CardTitle as="h1">Sign In Required</CardTitle>
             <CardDescription>
               Please sign in to access your loyalty rewards.
             </CardDescription>

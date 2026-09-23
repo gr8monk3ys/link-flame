@@ -121,30 +121,17 @@ export function ValueFilterSidebar({
 
   return (
     <div className={cn('', className)}>
-      {/* Header with optional collapse */}
-      <div
-        className={cn(
-          'mb-4 flex items-center justify-between',
-          collapsible && 'cursor-pointer'
-        )}
-        onClick={collapsible ? () => setExpanded(!expanded) : undefined}
-        role={collapsible ? 'button' : undefined}
-        aria-expanded={collapsible ? expanded : undefined}
-      >
-        <h3 className="text-sm font-semibold text-foreground">{title}</h3>
-        <div className="flex items-center gap-2">
-          {selectedValues.length > 0 && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                clearAll();
-              }}
-              className="text-xs text-muted-foreground underline hover:text-foreground"
-            >
-              Clear
-            </button>
-          )}
-          {collapsible && (
+      {/* Header with optional collapse. The toggle is its own <button> so
+          the Clear button is not nested inside another interactive control. */}
+      <div className="mb-4 flex items-center justify-between gap-2">
+        {collapsible ? (
+          <button
+            type="button"
+            onClick={() => setExpanded((v) => !v)}
+            aria-expanded={expanded}
+            className="flex flex-1 items-center justify-between gap-2 rounded-sm text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <h3 className="text-sm font-semibold text-foreground">{title}</h3>
             <svg aria-hidden="true"
               className={cn(
                 'size-4 text-muted-foreground transition-transform',
@@ -156,8 +143,19 @@ export function ValueFilterSidebar({
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
-          )}
-        </div>
+          </button>
+        ) : (
+          <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+        )}
+        {selectedValues.length > 0 && (
+          <button
+            type="button"
+            onClick={clearAll}
+            className="text-xs text-muted-foreground underline hover:text-foreground"
+          >
+            Clear
+          </button>
+        )}
       </div>
 
       {/* Value list */}

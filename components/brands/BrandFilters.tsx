@@ -4,7 +4,7 @@ import * as React from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { badgeVariants } from '@/components/ui/badge'
 import { BRAND_CERTIFICATIONS, BRAND_VALUES } from '@/lib/brands/constants'
 import { Filter, X, ChevronDown, ChevronUp } from 'lucide-react'
 
@@ -78,24 +78,26 @@ export function BrandFilters({ className }: BrandFiltersProps) {
           <p className="mb-2 text-sm text-muted-foreground">Active filters:</p>
           <div className="flex flex-wrap gap-2">
             {activeCertification && (
-              <Badge
-                variant="secondary"
-                className="cursor-pointer bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-200"
+              <button
+                type="button"
                 onClick={() => updateFilter('certification', null)}
+                aria-label={`Remove ${BRAND_CERTIFICATIONS.find((c) => c.slug === activeCertification)?.name || activeCertification} filter`}
+                className={cn(badgeVariants({ variant: "secondary" }), "cursor-pointer bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring")}
               >
                 {BRAND_CERTIFICATIONS.find((c) => c.slug === activeCertification)?.name || activeCertification}
                 <X className="ml-1 size-3" />
-              </Badge>
+              </button>
             )}
             {activeValue && (
-              <Badge
-                variant="secondary"
-                className="cursor-pointer border-blue-200 text-blue-700 dark:border-blue-900/50 dark:text-blue-300"
+              <button
+                type="button"
                 onClick={() => updateFilter('value', null)}
+                aria-label={`Remove ${BRAND_VALUES.find((v) => v.slug === activeValue)?.name || activeValue} filter`}
+                className={cn(badgeVariants({ variant: "secondary" }), "cursor-pointer border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-950/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring")}
               >
                 {BRAND_VALUES.find((v) => v.slug === activeValue)?.name || activeValue}
                 <X className="ml-1 size-3" />
-              </Badge>
+              </button>
             )}
           </div>
         </div>

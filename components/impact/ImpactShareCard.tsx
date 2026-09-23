@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { cn, formatNumber } from "@/lib/utils";
 import {
   Droplet,
@@ -45,6 +45,16 @@ interface ImpactShareCardProps {
 
 export function ImpactShareCard({ metrics, onClose }: ImpactShareCardProps) {
   const [copied, setCopied] = useState(false);
+
+  // Keyboard users close the dialog with Escape (the backdrop click is a
+  // pointer-only convenience).
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [onClose]);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const formatValue = (val: number): string => {
@@ -109,12 +119,15 @@ export function ImpactShareCard({ metrics, onClose }: ImpactShareCardProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center overscroll-contain bg-black/50 p-4 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
         className="relative w-full max-w-lg overflow-hidden rounded-2xl bg-background shadow-2xl"
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Share your impact"
       >
         {/* Close button */}
         <button
@@ -208,6 +221,7 @@ export function ImpactShareCard({ metrics, onClose }: ImpactShareCardProps) {
               size="sm"
               className="absolute right-2 top-2"
               onClick={handleCopy}
+              aria-label={copied ? "Copied" : "Copy share text"}
             >
               {copied ? (
                 <Check className="size-4 text-green-700 dark:text-green-400" />

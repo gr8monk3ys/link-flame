@@ -90,7 +90,7 @@ const TruckIcon = ({ className }: { className?: string }) => (
 
 export default function TerraCyclePage() {
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       {/* Hero Section */}
       <TerraCycleHero />
 
@@ -357,6 +357,6 @@ export default function TerraCyclePage() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

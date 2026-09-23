@@ -2,6 +2,7 @@
 
 import { useEffect, useState, memo, Suspense } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useSession } from "next-auth/react";
@@ -237,8 +238,8 @@ export default function CartPageClient() {
         ) : items.length === 0 ? (
           <div className="flex h-[450px] w-full flex-col items-center justify-center space-y-4">
             <h2 className="text-2xl font-bold">Your cart is empty</h2>
-            <Button onClick={() => router.push("/collections")}>
-              Continue Shopping
+            <Button asChild>
+              <Link href="/collections">Continue Shopping</Link>
             </Button>
           </div>
         ) : (

@@ -62,7 +62,7 @@ export function MobileNav({ className, items, onClose }: MobileNavProps) {
           </button>
         </div>
 
-        <div className="overflow-y-auto p-4">
+        <div className="overflow-y-auto overscroll-contain p-4">
           {items ? (
             <div className="flex flex-col space-y-1">
               {items.map((item) =>

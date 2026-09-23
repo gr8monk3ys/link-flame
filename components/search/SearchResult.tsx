@@ -228,16 +228,18 @@ export function RecentSearchResult({
   }
 
   return (
-    <button
-      type="button"
-      onClick={onSelect}
+    <div
       className={cn(
-        'flex w-full items-center justify-between rounded-md px-3 py-2 text-left transition-colors',
-        'hover:bg-accent focus:bg-accent focus-visible:outline-none',
+        'flex w-full items-center justify-between rounded-md transition-colors',
+        'hover:bg-accent focus-within:bg-accent',
         isHighlighted && 'bg-accent'
       )}
     >
-      <div className="flex items-center gap-2">
+      <button
+        type="button"
+        onClick={onSelect}
+        className="flex min-w-0 flex-1 items-center gap-2 px-3 py-2 text-left focus-visible:outline-none"
+      >
         <svg aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           width="16"
@@ -253,13 +255,13 @@ export function RecentSearchResult({
           <circle cx="12" cy="12" r="10" />
           <polyline points="12 6 12 12 16 14" />
         </svg>
-        <span className="text-sm">{query}</span>
-      </div>
+        <span className="truncate text-sm">{query}</span>
+      </button>
       {onRemove && (
         <button
           type="button"
           onClick={handleRemove}
-          className="rounded p-1 text-muted-foreground hover:bg-background hover:text-foreground"
+          className="mr-2 rounded p-1 text-muted-foreground hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           aria-label={`Remove "${query}" from recent searches`}
         >
           <svg aria-hidden="true"
@@ -278,6 +280,6 @@ export function RecentSearchResult({
           </svg>
         </button>
       )}
-    </button>
+    </div>
   )
 }

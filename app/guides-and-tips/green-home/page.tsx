@@ -28,7 +28,7 @@ export default function GreenHomePage() {
       <div className="mb-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="p-6">
           <CardHeader className="p-0">
-            <CardTitle className="text-lg">Energy Efficiency</CardTitle>
+            <CardTitle as="h2" className="text-lg">Energy Efficiency</CardTitle>
           </CardHeader>
           <CardContent className="mt-4 p-0">
             <ul className="space-y-2">
@@ -53,7 +53,7 @@ export default function GreenHomePage() {
 
         <Card className="p-6">
           <CardHeader className="p-0">
-            <CardTitle className="text-lg">Water Conservation</CardTitle>
+            <CardTitle as="h2" className="text-lg">Water Conservation</CardTitle>
           </CardHeader>
           <CardContent className="mt-4 p-0">
             <ul className="space-y-2">
@@ -78,7 +78,7 @@ export default function GreenHomePage() {
 
         <Card className="p-6">
           <CardHeader className="p-0">
-            <CardTitle className="text-lg">Sustainable Garden</CardTitle>
+            <CardTitle as="h2" className="text-lg">Sustainable Garden</CardTitle>
           </CardHeader>
           <CardContent className="mt-4 p-0">
             <ul className="space-y-2">
@@ -103,7 +103,7 @@ export default function GreenHomePage() {
 
         <Card className="p-6">
           <CardHeader className="p-0">
-            <CardTitle className="text-lg">Eco Products</CardTitle>
+            <CardTitle as="h2" className="text-lg">Eco Products</CardTitle>
           </CardHeader>
           <CardContent className="mt-4 p-0">
             <ul className="space-y-2">

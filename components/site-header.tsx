@@ -23,13 +23,7 @@ export function SiteHeader({ className }: SiteHeaderProps) {
             {/* Predictive Search */}
             <Suspense
               fallback={
-                <button
-                  type="button"
-                  aria-label="Search"
-                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground"
-                >
-                  <span className="sr-only">Search</span>
-                </button>
+                <span aria-hidden="true" className="flex items-center gap-2 text-sm font-medium text-muted-foreground" />
               }
             >
               <HeaderSearch />

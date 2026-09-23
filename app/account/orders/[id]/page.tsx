@@ -128,7 +128,7 @@ export default function OrderDetailPage() {
       <div className="container py-10">
         <Card>
           <CardHeader>
-            <CardTitle>Sign In Required</CardTitle>
+            <CardTitle as="h1">Sign In Required</CardTitle>
             <CardDescription>Please sign in to view order details.</CardDescription>
           </CardHeader>
         </Card>
@@ -141,7 +141,7 @@ export default function OrderDetailPage() {
       <div className="container py-10">
         <Card>
           <CardHeader>
-            <CardTitle>Error</CardTitle>
+            <CardTitle as="h1">Error</CardTitle>
             <CardDescription className="text-red-600 dark:text-red-400">{error}</CardDescription>
           </CardHeader>
         </Card>
@@ -166,7 +166,7 @@ export default function OrderDetailPage() {
         <CardHeader>
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
-              <CardTitle className="text-2xl">Order Details</CardTitle>
+              <CardTitle as="h1" className="text-2xl">Order Details</CardTitle>
               <CardDescription className="mt-2">
                 Order ID: {order.id}
               </CardDescription>
@@ -195,7 +195,7 @@ export default function OrderDetailPage() {
       {!order.isCancelled && order.shippingProgress && order.shippingProgress.length > 0 && (
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Shipping Progress</CardTitle>
+            <CardTitle as="h2">Shipping Progress</CardTitle>
             {order.estimatedDelivery && !order.isDelivered && (
               <CardDescription>
                 Estimated delivery: {formatDate(order.estimatedDelivery, "long")}
@@ -304,7 +304,7 @@ export default function OrderDetailPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <Gift className="size-5 text-pink-600 dark:text-pink-400" />
-              <CardTitle className="text-lg text-pink-800 dark:text-pink-200">Gift Order</CardTitle>
+              <CardTitle as="h2" className="text-lg text-pink-800 dark:text-pink-200">Gift Order</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="pt-0">
@@ -370,7 +370,7 @@ export default function OrderDetailPage() {
       {/* Order Items */}
       <Card>
         <CardHeader>
-          <CardTitle>Order Items ({order.itemCount})</CardTitle>
+          <CardTitle as="h2">Order Items ({order.itemCount})</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">

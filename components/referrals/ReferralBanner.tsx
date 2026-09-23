@@ -48,12 +48,12 @@ export function ReferralBanner({
             <p className="text-xs text-muted-foreground">
               Give 10% off, get 200 points
             </p>
-            <Link href={session ? "/account/referrals" : "/auth/signin"}>
-              <Button size="sm" variant="outline" className="h-7 text-xs">
+            <Button size="sm" variant="outline" className="h-7 text-xs" asChild>
+              <Link href={session ? "/account/referrals" : "/auth/signin"}>
                 {session ? "Get Your Code" : "Sign In"}
                 <ChevronRight className="ml-1 size-3" />
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </div>
       </div>
@@ -101,12 +101,12 @@ export function ReferralBanner({
 
         {/* CTA */}
         <div className="flex flex-col items-center gap-2">
-          <Link href={session ? "/account/referrals" : "/auth/signin"}>
-            <Button size="lg" className="min-w-[160px]">
+          <Button size="lg" className="min-w-[160px]" asChild>
+            <Link href={session ? "/account/referrals" : "/auth/signin"}>
               {session ? "Get Your Code" : "Sign Up to Share"}
               <ChevronRight className="ml-2 size-4" />
-            </Button>
-          </Link>
+            </Link>
+          </Button>
           {!session && (
             <p className="text-xs text-muted-foreground">
               Already have an account?{" "}
@@ -142,12 +142,12 @@ export function ReferralInlineCTA({ className = "" }: { className?: string }) {
           - Give 10% off, earn 200 points
         </span>
       </div>
-      <Link href={session ? "/account/referrals" : "/auth/signin"}>
-        <Button variant="ghost" size="sm" className="shrink-0">
+      <Button variant="ghost" size="sm" className="shrink-0" asChild>
+        <Link href={session ? "/account/referrals" : "/auth/signin"}>
           Share
           <ChevronRight className="ml-1 size-4" />
-        </Button>
-      </Link>
+        </Link>
+      </Button>
     </div>
   );
 }

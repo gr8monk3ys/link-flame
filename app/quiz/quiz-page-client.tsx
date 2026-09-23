@@ -190,7 +190,7 @@ export function QuizPageClient() {
                 <div className="flex size-12 items-center justify-center rounded-full bg-secondary text-xl font-semibold">
                   1
                 </div>
-                <h3 className="font-medium">Tell Us About You</h3>
+                <h2 className="font-medium">Tell Us About You</h2>
                 <p className="text-center text-sm text-muted-foreground">
                   Share your sustainability goals and preferences
                 </p>
@@ -199,7 +199,7 @@ export function QuizPageClient() {
                 <div className="flex size-12 items-center justify-center rounded-full bg-secondary text-xl font-semibold">
                   2
                 </div>
-                <h3 className="font-medium">We Analyze</h3>
+                <h2 className="font-medium">We Analyze</h2>
                 <p className="text-center text-sm text-muted-foreground">
                   Our algorithm finds products that match your needs
                 </p>
@@ -208,7 +208,7 @@ export function QuizPageClient() {
                 <div className="flex size-12 items-center justify-center rounded-full bg-secondary text-xl font-semibold">
                   3
                 </div>
-                <h3 className="font-medium">Get Recommendations</h3>
+                <h2 className="font-medium">Get Recommendations</h2>
                 <p className="text-center text-sm text-muted-foreground">
                   Discover personalized eco-friendly products
                 </p>

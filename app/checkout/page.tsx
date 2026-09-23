@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -80,8 +81,8 @@ export default function CheckoutPage() {
         ) : items.length === 0 ? (
           <div className="flex h-[450px] w-full flex-col items-center justify-center space-y-4">
             <h2 className="text-2xl font-bold">Your cart is empty</h2>
-            <Button onClick={() => router.push("/collections")}>
-              Continue Shopping
+            <Button asChild>
+              <Link href="/collections">Continue Shopping</Link>
             </Button>
           </div>
         ) : (
@@ -161,12 +162,8 @@ export default function CheckoutPage() {
                 
                 {/* Edit Cart Link */}
                 <div className="mt-4 text-center">
-                  <Button 
-                    variant="link" 
-                    onClick={() => router.push("/cart")}
-                    className="text-sm"
-                  >
-                    Edit Cart
+                  <Button variant="link" className="text-sm" asChild>
+                    <Link href="/cart">Edit Cart</Link>
                   </Button>
                 </div>
               </div>

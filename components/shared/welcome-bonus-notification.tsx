@@ -88,11 +88,11 @@ export function WelcomeBonusNotification() {
             </p>
 
             <div className="mt-3 flex gap-2">
-              <Link href="/account/loyalty">
-                <Button size="sm" className="bg-green-700 hover:bg-green-800">
+              <Button size="sm" className="bg-green-700 hover:bg-green-800" asChild>
+                <Link href="/account/loyalty">
                   View My Points
-                </Button>
-              </Link>
+                </Link>
+              </Button>
               <Button
                 size="sm"
                 variant="outline"

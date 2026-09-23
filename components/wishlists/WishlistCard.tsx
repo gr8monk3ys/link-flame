@@ -168,12 +168,19 @@ export function WishlistCard({
             </div>
 
             {/* Action Menu */}
-            <div className="relative">
+            <div
+              className="relative"
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') setShowMenu(false);
+              }}
+            >
               <Button
                 variant="ghost"
                 size="icon"
                 className="size-8"
-                onClick={() => setShowMenu(!showMenu)}
+                onClick={() => setShowMenu((v) => !v)}
+                aria-haspopup="menu"
+                aria-expanded={showMenu}
               >
                 <MoreVertical className="size-4" />
                 <span className="sr-only">Actions</span>
@@ -181,9 +188,11 @@ export function WishlistCard({
 
               {showMenu && (
                 <>
+                  {/* Click-away layer for pointer users; Escape closes for keyboard users. */}
                   <div
                     className="fixed inset-0 z-10"
                     onClick={() => setShowMenu(false)}
+                    aria-hidden="true"
                   />
                   <div className="absolute right-0 top-full z-20 mt-1 w-48 rounded-md border bg-popover shadow-md">
                     {!wishlist.isDefault && (

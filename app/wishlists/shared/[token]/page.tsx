@@ -97,12 +97,12 @@ export default async function SharedWishlistPage({ params }: SharedWishlistPageP
                 )}
 
                 <div className="mt-4 flex gap-2">
-                  <Link href={`/products/${item.productId}`} className="flex-1">
-                    <Button variant="outline" className="w-full" size="sm">
+                  <Button variant="outline" className="w-full" size="sm" asChild>
+                    <Link href={`/products/${item.productId}`} className="flex-1">
                       <ExternalLink className="mr-2 size-4" />
                       View Product
-                    </Button>
-                  </Link>
+                    </Link>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -115,12 +115,12 @@ export default async function SharedWishlistPage({ params }: SharedWishlistPageP
         <p className="mb-4 text-muted-foreground">
           Want to create your own wishlist?
         </p>
-        <Link href="/auth/signin">
-          <Button>
+        <Button asChild>
+          <Link href="/auth/signin">
             <Heart className="mr-2 size-4" />
             Sign Up
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       </div>
     </div>
   );

@@ -12,7 +12,7 @@ export default function ProductsError({ error, reset }: { error: Error & { diges
 
   return (
     <div className="flex min-h-[50vh] flex-col items-center justify-center px-4">
-      <h2 className="mb-2 text-xl font-semibold">Could not load products</h2>
+      <h1 className="mb-2 text-xl font-semibold">Could not load products</h1>
       <p className="mb-6 text-muted-foreground">We had trouble loading the product catalog.</p>
       <div className="flex gap-3">
         <button onClick={() => reset()} className="rounded-md bg-green-700 px-4 py-2 text-sm text-white hover:bg-green-800">Try again</button>

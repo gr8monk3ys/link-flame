@@ -41,15 +41,15 @@ function ResetPasswordForm() {
       <div className="container flex min-h-[calc(100vh-200px)] items-center justify-center">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle>Invalid Reset Link</CardTitle>
+            <CardTitle as="h1">Invalid Reset Link</CardTitle>
             <CardDescription>
               This password reset link is invalid or has expired.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Link href="/auth/forgot-password">
-              <Button className="w-full">Request a New Link</Button>
-            </Link>
+            <Button className="w-full" asChild>
+              <Link href="/auth/forgot-password">Request a New Link</Link>
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -61,14 +61,14 @@ function ResetPasswordForm() {
       <div className="container flex min-h-[calc(100vh-200px)] items-center justify-center">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle>Password Reset</CardTitle>
+            <CardTitle as="h1">Password Reset</CardTitle>
             <CardDescription>
               Your password has been reset successfully.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full" onClick={() => router.push("/auth/signin")}>
-              Sign In
+            <Button className="w-full" asChild>
+              <Link href="/auth/signin">Sign In</Link>
             </Button>
           </CardContent>
         </Card>
@@ -120,7 +120,7 @@ function ResetPasswordForm() {
     <div className="container flex min-h-[calc(100vh-200px)] items-center justify-center">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Reset Password</CardTitle>
+          <CardTitle as="h1">Reset Password</CardTitle>
           <CardDescription>
             Enter your new password below.
           </CardDescription>

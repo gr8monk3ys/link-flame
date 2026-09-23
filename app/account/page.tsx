@@ -73,7 +73,7 @@ export default function AccountPage() {
       <div className="container py-10">
         <Card>
           <CardHeader>
-            <CardTitle>Sign In Required</CardTitle>
+            <CardTitle as="h1">Sign In Required</CardTitle>
             <CardDescription>
               Please sign in to access your account.
             </CardDescription>
@@ -111,7 +111,7 @@ export default function AccountPage() {
               )}
             </div>
             <div>
-              <CardTitle className="text-2xl">
+              <CardTitle as="h1" className="text-2xl">
                 Welcome, {session.user?.name || "User"}
               </CardTitle>
               <CardDescription className="text-base">
@@ -135,7 +135,7 @@ export default function AccountPage() {
                       <Icon className="size-6 text-primary" />
                     </div>
                     <div>
-                      <h3 className="font-semibold">{link.title}</h3>
+                      <h2 className="text-base font-semibold">{link.title}</h2>
                       <p className="text-sm text-muted-foreground">
                         {link.description}
                       </p>

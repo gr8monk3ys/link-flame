@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -381,13 +382,14 @@ export default function CheckoutForm({ onDiscountChange }: CheckoutFormProps) {
       </div>
 
       <div className="flex justify-between pt-4">
-        <Button 
-          type="button" 
-          variant="outline" 
-          onClick={() => router.push("/cart")}
-          disabled={isLoading}
-        >
-          Back to cart
+        <Button variant="outline" asChild>
+          <Link
+            href="/cart"
+            aria-disabled={isLoading}
+            className={isLoading ? "pointer-events-none opacity-50" : undefined}
+          >
+            Back to cart
+          </Link>
         </Button>
         <Button 
           type="submit" 

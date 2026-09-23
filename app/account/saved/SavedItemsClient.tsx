@@ -47,7 +47,7 @@ export default function SavedItemsClient() {
       <div className="container py-10">
         <Card>
           <CardHeader>
-            <CardTitle>Sign In Required</CardTitle>
+            <CardTitle as="h1">Sign In Required</CardTitle>
             <CardDescription>
               Please sign in to view your wishlists.
             </CardDescription>

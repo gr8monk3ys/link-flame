@@ -113,7 +113,7 @@ export default function OrdersPage() {
       <div className="container py-10">
         <Card>
           <CardHeader>
-            <CardTitle>Sign In Required</CardTitle>
+            <CardTitle as="h1">Sign In Required</CardTitle>
             <CardDescription>
               Please sign in to view your order history.
             </CardDescription>
@@ -132,7 +132,7 @@ export default function OrdersPage() {
       <div className="container py-10">
         <Card>
           <CardHeader>
-            <CardTitle>Error</CardTitle>
+            <CardTitle as="h1">Error</CardTitle>
             <CardDescription className="text-red-600 dark:text-red-400">{error}</CardDescription>
           </CardHeader>
         </Card>
@@ -171,7 +171,7 @@ export default function OrdersPage() {
       {orders.length === 0 ? (
         <Card>
           <CardHeader>
-            <CardTitle>
+            <CardTitle as="h2">
               {statusFilter === "all" ? "No Orders Yet" : "No Orders Found"}
             </CardTitle>
             <CardDescription>
@@ -224,7 +224,7 @@ export default function OrdersPage() {
                       </div>
                     )}
                     <div>
-                      <CardTitle className="text-lg">Order #{order.id.slice(0, 8)}</CardTitle>
+                      <CardTitle as="h2" className="text-lg">Order #{order.id.slice(0, 8)}</CardTitle>
                       <CardDescription>
                         Placed on {formatDate(order.createdAt, "long")}
                       </CardDescription>

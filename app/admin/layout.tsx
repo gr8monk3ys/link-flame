@@ -97,9 +97,9 @@ export default async function AdminLayout({
           </aside>
 
           {/* Main Content */}
-          <main className="min-w-0 flex-1">
+          <div className="min-w-0 flex-1">
             {children}
-          </main>
+          </div>
         </div>
       </div>
     </div>

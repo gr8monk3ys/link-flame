@@ -121,9 +121,9 @@ export function WishlistItems({
         <p className="mb-4 text-muted-foreground">
           Start adding products to this wishlist
         </p>
-        <Link href="/products">
-          <Button>Browse Products</Button>
-        </Link>
+        <Button asChild>
+          <Link href="/products">Browse Products</Link>
+        </Button>
       </div>
     );
   }

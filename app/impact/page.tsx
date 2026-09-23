@@ -49,7 +49,7 @@ export default async function ImpactPage() {
   const communityWithData = community.filter((m) => m.totalValue > 0);
 
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       {/* Hero */}
       <section className="border-b bg-secondary/40">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
@@ -87,10 +87,7 @@ export default async function ImpactPage() {
             </p>
             <dl className="mt-10 grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4">
               {catalog.slice(0, 4).map((metric) => (
-                <div key={metric.slug} className="border-l-2 border-primary/20 pl-4">
-                  <dd className="font-serif text-4xl tabular-nums tracking-tight text-foreground">
-                    <CountUp value={metric.total} />
-                  </dd>
+                <div key={metric.slug} className="flex flex-col-reverse border-l-2 border-primary/20 pl-4">
                   <dt className="mt-2">
                     <span className="block text-sm font-medium uppercase tracking-wide text-muted-foreground">
                       {metric.unit}
@@ -99,6 +96,9 @@ export default async function ImpactPage() {
                       {metric.name}
                     </span>
                   </dt>
+                  <dd className="font-serif text-4xl tabular-nums tracking-tight text-foreground">
+                    <CountUp value={metric.total} />
+                  </dd>
                 </div>
               ))}
             </dl>
@@ -118,10 +118,7 @@ export default async function ImpactPage() {
           {communityWithData.length > 0 ? (
             <dl className="mt-10 grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4">
               {communityWithData.slice(0, 4).map((metric) => (
-                <div key={metric.slug} className="border-l-2 border-primary/20 pl-4">
-                  <dd className="font-serif text-4xl tabular-nums tracking-tight text-foreground">
-                    <CountUp value={metric.totalValue} />
-                  </dd>
+                <div key={metric.slug} className="flex flex-col-reverse border-l-2 border-primary/20 pl-4">
                   <dt className="mt-2">
                     <span className="block text-sm font-medium uppercase tracking-wide text-muted-foreground">
                       {metric.unit}
@@ -130,6 +127,9 @@ export default async function ImpactPage() {
                       {metric.name}
                     </span>
                   </dt>
+                  <dd className="font-serif text-4xl tabular-nums tracking-tight text-foreground">
+                    <CountUp value={metric.totalValue} />
+                  </dd>
                 </div>
               ))}
             </dl>
@@ -228,6 +228,6 @@ export default async function ImpactPage() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

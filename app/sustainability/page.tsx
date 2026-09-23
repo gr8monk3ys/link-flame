@@ -102,7 +102,7 @@ const sustainabilityPillars = [
 
 export default function SustainabilityPage() {
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       {/* Hero Section */}
       <section className="border-b bg-secondary/40">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
@@ -353,6 +353,6 @@ export default function SustainabilityPage() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

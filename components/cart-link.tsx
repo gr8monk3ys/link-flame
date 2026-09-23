@@ -20,7 +20,7 @@ export function CartLink({ className }: CartLinkProps) {
         'relative flex items-center justify-center rounded-md p-2 text-foreground transition-colors hover:bg-accent',
         className
       )}
-      aria-label="Cart"
+      aria-label={hasInitializedCart && itemCount > 0 ? `Cart, ${itemCount} ${itemCount === 1 ? 'item' : 'items'}` : 'Cart'}
     >
       <svg aria-hidden="true"
         xmlns="http://www.w3.org/2000/svg"
