@@ -472,7 +472,7 @@ function AddToCartButton({
   }
 
   const buttonText = isLoading
-    ? (isSubscription ? 'Creating subscription...' : 'Adding...')
+    ? (isSubscription ? 'Creating subscription…' : 'Adding…')
     : (isSubscription ? 'Subscribe & Save' : 'Add to cart');
 
   return (

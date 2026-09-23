@@ -328,7 +328,7 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
             <Label htmlFor="message">Personal Message</Label>
             <textarea
               id="message"
-              placeholder="Write a message for the recipient..."
+              placeholder="Write a message for the recipient…"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               maxLength={500}
@@ -370,7 +370,7 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 />
               </svg>
-              Processing...
+              Processing…
             </span>
           ) : (
             <>

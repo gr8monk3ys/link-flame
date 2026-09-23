@@ -124,7 +124,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
   if (loading) {
     return (
       <div className="py-8 text-center text-muted-foreground">
-        Loading reviews...
+        Loading reviews…
       </div>
     )
   }
@@ -228,7 +228,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
                 <Textarea
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
-                  placeholder="Share your experience with this product..."
+                  placeholder="Share your experience with this product…"
                   rows={4}
                   maxLength={1000}
                 />
@@ -242,7 +242,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
               {/* Actions */}
               <div className="flex gap-2">
                 <Button type="submit" disabled={submitting}>
-                  {submitting ? 'Submitting...' : 'Submit Review'}
+                  {submitting ? 'Submitting…' : 'Submit Review'}
                 </Button>
                 <Button
                   type="button"

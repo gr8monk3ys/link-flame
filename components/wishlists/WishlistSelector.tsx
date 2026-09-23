@@ -150,7 +150,7 @@ export function WishlistSelector({
                   disabled={!newListName.trim() || isSubmitting}
                   className="flex-1"
                 >
-                  {isSubmitting ? 'Creating...' : 'Create'}
+                  {isSubmitting ? 'Creating…' : 'Create'}
                 </Button>
               </div>
             </div>

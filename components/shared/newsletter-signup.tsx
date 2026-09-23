@@ -77,7 +77,7 @@ export function NewsletterSignup({
               className={`${buttonVariants()} shrink-0`}
               disabled={status === "loading"}
             >
-              {status === "loading" ? "Subscribing..." : "Subscribe"}
+              {status === "loading" ? "Subscribing…" : "Subscribe"}
             </button>
           </div>
           {status === "success" && (

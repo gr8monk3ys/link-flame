@@ -259,7 +259,7 @@ export function QuizModal({
                 {isLoadingQuestions ? (
                   <>
                     <Loader2 className="mr-2 size-4 animate-spin" />
-                    Loading...
+                    Loading…
                   </>
                 ) : (
                   'Start Quiz'
@@ -315,7 +315,7 @@ export function QuizModal({
                   {isSubmitting ? (
                     <>
                       <Loader2 className="mr-2 size-4 animate-spin" />
-                      Getting Results...
+                      Getting Results…
                     </>
                   ) : (
                     'Get My Recommendations'
@@ -339,7 +339,7 @@ export function QuizModal({
               Finding Your Perfect Products
             </h3>
             <p className="text-muted-foreground">
-              Analyzing your preferences...
+              Analyzing your preferences…
             </p>
           </div>
         )}

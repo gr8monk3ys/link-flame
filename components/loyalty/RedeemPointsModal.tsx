@@ -314,7 +314,7 @@ export function RedeemPointsModal({
             {redeeming ? (
               <>
                 <span className="mr-2 size-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                Redeeming...
+                Redeeming…
               </>
             ) : (
               <>Apply ${discount.toFixed(2)} Discount</>
@@ -458,7 +458,7 @@ export function InlineRedeemWidget({
     return (
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <div className="size-4 animate-spin rounded-full border-2 border-muted border-t-primary" />
-        Loading rewards...
+        Loading rewards…
       </div>
     )
   }
@@ -551,7 +551,7 @@ export function InlineRedeemWidget({
               applying && 'opacity-50'
             )}
           >
-            {applying ? 'Applying...' : 'Apply'}
+            {applying ? 'Applying…' : 'Apply'}
           </Button>
         </div>
       )}

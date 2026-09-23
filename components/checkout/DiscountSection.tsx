@@ -212,7 +212,7 @@ export function DiscountSection({
             disabled={disabled || giftCardLoading}
             onClick={applyGiftCard}
           >
-            {giftCardLoading ? "Applying..." : "Apply"}
+            {giftCardLoading ? "Applying…" : "Apply"}
           </Button>
         </div>
 

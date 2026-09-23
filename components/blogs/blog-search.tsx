@@ -73,7 +73,7 @@ export function BlogSearch({ categories = [], tags = [] }: BlogSearchProps) {
           <Search className="absolute left-3 top-3 size-4 text-muted-foreground" />
           <Input
             type="search"
-            placeholder="Search articles..."
+            placeholder="Search articles…"
             className="pl-10"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -191,7 +191,7 @@ export function BlogSearch({ categories = [], tags = [] }: BlogSearchProps) {
       {hasActiveFilters && (
         <div className="space-y-4">
           {isSearching ? (
-            <p className="py-8 text-center text-muted-foreground">Searching...</p>
+            <p className="py-8 text-center text-muted-foreground">Searching…</p>
           ) : results.length > 0 ? (
             <>
               <h2 className="text-lg font-semibold">

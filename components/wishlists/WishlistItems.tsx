@@ -197,7 +197,7 @@ export function WishlistItems({
                 {movingToCart[item.productId] ? (
                   <span className="flex items-center gap-1">
                     <span className="size-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                    Adding...
+                    Adding…
                   </span>
                 ) : (
                   <>

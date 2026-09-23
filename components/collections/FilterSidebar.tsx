@@ -92,7 +92,7 @@ function SearchSection({
           name="search"
           value={filters.search}
           onChange={(e) => onFilterChange({ search: e.target.value })}
-          placeholder="Search products..."
+          placeholder="Search products…"
           className="w-full rounded-md border border-border p-2 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-ring"
         />
       </div>

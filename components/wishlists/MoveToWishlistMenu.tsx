@@ -160,7 +160,7 @@ export function MoveToWishlistMenu({
                       disabled={!newListName.trim() || isSubmitting}
                       className="flex-1"
                     >
-                      {isSubmitting ? 'Creating...' : 'Create & Move'}
+                      {isSubmitting ? 'Creating…' : 'Create & Move'}
                     </Button>
                   </div>
                 </div>

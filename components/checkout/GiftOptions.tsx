@@ -157,7 +157,7 @@ export function GiftOptions({
             </div>
             <Textarea
               id="giftMessage"
-              placeholder="Write a personal message to include with this gift..."
+              placeholder="Write a personal message to include with this gift…"
               value={value.giftMessage}
               onChange={(e) => {
                 // Enforce max length on input

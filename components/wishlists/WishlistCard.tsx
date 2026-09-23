@@ -275,7 +275,7 @@ export function WishlistCard({
               Cancel
             </Button>
             <Button onClick={handleRename} disabled={isSubmitting}>
-              {isSubmitting ? 'Saving...' : 'Save'}
+              {isSubmitting ? 'Saving…' : 'Save'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -303,7 +303,7 @@ export function WishlistCard({
               onClick={handleDelete}
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Deleting...' : 'Delete'}
+              {isSubmitting ? 'Deleting…' : 'Delete'}
             </Button>
           </DialogFooter>
         </DialogContent>

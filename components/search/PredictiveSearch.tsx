@@ -17,7 +17,7 @@ interface PredictiveSearchProps {
 
 export function PredictiveSearch({
   className,
-  placeholder = 'Search products, categories, and blogs...',
+  placeholder = 'Search products, categories, and blogs…',
   autoFocus = false,
   onClose,
 }: PredictiveSearchProps) {
