@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { Prisma } from '@prisma/client';
 import {
   LOYALTY_TIERS,
   LOYALTY_CONFIG,
@@ -933,6 +934,15 @@ describe('Loyalty Program', () => {
   describe('redeemPoints', () => {
     const mockUserId = 'user-123';
 
+    beforeEach(() => {
+      vi.mocked(prisma.$transaction).mockImplementation(async (operations) => {
+        if (typeof operations === 'function') {
+          return operations(prisma as any);
+        }
+        return Promise.all(operations);
+      });
+    });
+
     it('should fail when points to redeem is zero or negative', async () => {
       const result = await redeemPoints({
         userId: mockUserId,
@@ -1022,8 +1032,52 @@ describe('Loyalty Program', () => {
           orderId: 'order-123',
           status: 'applied',
         }),
+        select: { id: true },
       });
       expect(logger.info).toHaveBeenCalled();
+    });
+
+    it('checks the balance and inserts inside one SERIALIZABLE transaction', async () => {
+      vi.mocked(prisma.loyaltyPoints.aggregate).mockResolvedValue({
+        _sum: { points: 1000 },
+      } as any);
+      vi.mocked(prisma.loyaltyRedemption.aggregate).mockResolvedValue({
+        _sum: { pointsUsed: 0 },
+      } as any);
+      vi.mocked(prisma.loyaltyRedemption.create).mockResolvedValue({ id: 'r-1' } as any);
+
+      await redeemPoints({ userId: mockUserId, pointsToRedeem: 500 });
+
+      expect(prisma.$transaction).toHaveBeenCalledWith(
+        expect.any(Function),
+        { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }
+      );
+    });
+
+    it('retries a serialization conflict and then sees the concurrent redemption', async () => {
+      // First attempt: another request commits its 500-point redemption at the
+      // same time, so Postgres aborts this one with P2034. On retry the other
+      // redemption is visible and the balance check fails.
+      vi.mocked(prisma.loyaltyPoints.aggregate).mockResolvedValue({
+        _sum: { points: 500 },
+      } as any);
+      vi.mocked(prisma.loyaltyRedemption.aggregate)
+        .mockResolvedValueOnce({ _sum: { pointsUsed: 0 } } as any)
+        .mockResolvedValueOnce({ _sum: { pointsUsed: 500 } } as any);
+      vi.mocked(prisma.loyaltyRedemption.create).mockRejectedValueOnce(
+        new Prisma.PrismaClientKnownRequestError('write conflict', {
+          code: 'P2034',
+          clientVersion: 'test',
+        })
+      );
+
+      const result = await redeemPoints({ userId: mockUserId, pointsToRedeem: 500 });
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('Insufficient points');
+      expect(result.remainingPoints).toBe(0);
+      expect(prisma.$transaction).toHaveBeenCalledTimes(2);
+      expect(prisma.loyaltyRedemption.create).toHaveBeenCalledTimes(1);
     });
 
     it('should handle database errors gracefully', async () => {
@@ -1143,7 +1197,7 @@ describe('Loyalty Program', () => {
     it('retries when serializable transaction conflicts occur', async () => {
       vi.mocked(prisma.$transaction)
         .mockRejectedValueOnce({ code: 'P2034' })
-        .mockResolvedValueOnce({ id: 'hold-456' } as any);
+        .mockResolvedValueOnce({ redemptionId: 'hold-456', availablePointsBefore: 100 } as any);
 
       const result = await holdPointsForCheckout(mockUserId, 100);
 
