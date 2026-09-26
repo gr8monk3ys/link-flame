@@ -54,7 +54,7 @@ export default async function AdminLayout({
               </Link>
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-sm text-foreground">
+              <span className="max-w-48 truncate text-sm text-foreground">
                 {user?.name || user?.email}
               </span>
               <Link
@@ -86,7 +86,7 @@ export default async function AdminLayout({
                   <Link
                     key={item.name}
                     href={item.href}
-                    className="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted hover:text-foreground"
+                    className="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted hover:text-primary"
                   >
                     <Icon className="size-5" />
                     {item.name}
@@ -97,9 +97,9 @@ export default async function AdminLayout({
           </aside>
 
           {/* Main Content */}
-          <main className="min-w-0 flex-1">
+          <div className="min-w-0 flex-1">
             {children}
-          </main>
+          </div>
         </div>
       </div>
     </div>

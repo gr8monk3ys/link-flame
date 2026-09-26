@@ -94,7 +94,7 @@ export function AnnouncementBar({ className }: { className?: string }) {
           <button
             type="button"
             onClick={onDismiss}
-            className="rounded-md px-2 py-1 text-white/90 hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/50"
+            className="rounded-md px-2 py-1 text-white/90 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
             aria-label="Dismiss announcement"
           >
             <span aria-hidden>×</span>

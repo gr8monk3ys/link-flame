@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, formatNumber } from "@/lib/utils";
 import { toast } from "sonner";
 
 export interface CheckoutDiscountState {
@@ -72,10 +72,9 @@ export function DiscountSection({
     };
   }, []);
 
-  const maxRedeemablePoints = useMemo(() => {
-    const maxByTotal = Math.floor(cartTotal * 100);
-    return Math.max(0, Math.min(availablePoints, maxByTotal));
-  }, [availablePoints, cartTotal]);
+  // A couple of Math calls on primitives: cheaper than useMemo's dependency
+  // bookkeeping (react-best-practices 5.3).
+  const maxRedeemablePoints = Math.max(0, Math.min(availablePoints, Math.floor(cartTotal * 100)));
 
   useEffect(() => {
     if (loyaltyPointsToRedeem > maxRedeemablePoints) {
@@ -176,11 +175,12 @@ export function DiscountSection({
         <div className="flex items-center justify-between">
           <Label htmlFor="loyalty-points-slider">Loyalty points</Label>
           <span className="text-xs text-muted-foreground">
-            {availablePoints.toLocaleString()} available
+            {formatNumber(availablePoints)} available
           </span>
         </div>
         <Slider
           id="loyalty-points-slider"
+          thumbLabel="Loyalty points to redeem"
           disabled={disabled || maxRedeemablePoints <= 0}
           min={0}
           max={maxRedeemablePoints}
@@ -191,7 +191,7 @@ export function DiscountSection({
           }}
         />
         <p className="text-sm text-muted-foreground">
-          Redeem {loyaltyPointsToRedeem.toLocaleString()} points ={" "}
+          Redeem {formatNumber(loyaltyPointsToRedeem)} points ={" "}
           {formatPrice(loyaltyDiscountAmount)} off
         </p>
       </div>
@@ -199,9 +199,9 @@ export function DiscountSection({
       <div className="space-y-3 border-t pt-4">
         <Label htmlFor="gift-card-code">Gift card</Label>
         <div className="flex gap-2">
-          <Input
+          <Input name="giftCardCodeInput" autoComplete="off" spellCheck={false}
             id="gift-card-code"
-            placeholder="Enter gift card code"
+            placeholder="XXXX-XXXX-XXXX-XXXX"
             value={giftCardCodeInput}
             disabled={disabled}
             onChange={(event) => setGiftCardCodeInput(event.target.value)}
@@ -212,7 +212,7 @@ export function DiscountSection({
             disabled={disabled || giftCardLoading}
             onClick={applyGiftCard}
           >
-            {giftCardLoading ? "Applying..." : "Apply"}
+            {giftCardLoading ? "Applying…" : "Apply"}
           </Button>
         </div>
 
@@ -232,7 +232,7 @@ export function DiscountSection({
             </p>
             <div className="space-y-1">
               <Label htmlFor="gift-card-amount">Amount to use</Label>
-              <Input
+              <Input inputMode="decimal" name="giftCardAmount" autoComplete="off"
                 id="gift-card-amount"
                 type="number"
                 min={0}
@@ -258,7 +258,7 @@ export function DiscountSection({
         )}
       </div>
 
-      <div className="space-y-1 border-t pt-4 text-sm">
+      <div className="space-y-1 border-t pt-4 text-sm tabular-nums">
         <div className="flex items-center justify-between">
           <span>Loyalty discount</span>
           <span>-{formatPrice(loyaltyDiscountAmount)}</span>

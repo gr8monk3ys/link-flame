@@ -11,6 +11,7 @@ import {
   errorResponse
 } from "@/lib/api-response"
 import { logger } from "@/lib/logger"
+import { after } from 'next/server';
 
 export const dynamic = 'force-dynamic'
 
@@ -71,8 +72,14 @@ export async function POST(req: Request) {
     })
 
     // Send confirmation email (if configured)
+    // After the response: the subscription is stored; the confirmation
+    // email should not hold the request open (react-best-practices 3.10).
     if (isEmailConfigured()) {
-      await sendNewsletterConfirmation(email);
+      after(() =>
+        sendNewsletterConfirmation(email).catch((err) => {
+          logger.error('Failed to send newsletter confirmation email', err);
+        })
+      );
     } else {
       logger.warn('Email service not configured - skipping confirmation email');
     }

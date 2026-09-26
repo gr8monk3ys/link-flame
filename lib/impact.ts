@@ -7,6 +7,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
+import { formatNumber } from "@/lib/utils";
 
 /**
  * Impact metric definitions with comparison calculations
@@ -90,9 +91,17 @@ export async function calculateOrderImpact(
     include: { metric: true },
   });
 
+  // Group once instead of filtering the whole list per item (react-best-practices 7.2).
+  const impactsByProduct = new Map<string, typeof productImpacts>();
+  for (const pi of productImpacts) {
+    const list = impactsByProduct.get(pi.productId);
+    if (list) list.push(pi);
+    else impactsByProduct.set(pi.productId, [pi]);
+  }
+
   // Calculate total impact for each metric
   for (const item of items) {
-    const impacts = productImpacts.filter((pi) => pi.productId === item.productId);
+    const impacts = impactsByProduct.get(item.productId) ?? [];
     for (const impact of impacts) {
       const currentValue = impactMap.get(impact.metricId) || 0;
       impactMap.set(
@@ -116,13 +125,14 @@ export async function storeOrderImpact(
   orderImpacts: Array<{ metricId: string; value: number }>;
   milestones: Array<{ metricSlug: string; milestone: number }>;
 }> {
-  const impactMap = await calculateOrderImpact(items);
+  // The order's impact and the metric list are independent (react-best-practices 1.5).
+  const [impactMap, metrics] = await Promise.all([
+    calculateOrderImpact(items),
+    prisma.impactMetric.findMany({
+      where: { isActive: true },
+    }),
+  ]);
   const milestones: Array<{ metricSlug: string; milestone: number }> = [];
-
-  // Get all metrics for reference
-  const metrics = await prisma.impactMetric.findMany({
-    where: { isActive: true },
-  });
   const metricById = new Map(metrics.map((m) => [m.id, m]));
 
   // Store order impacts and update user impacts in a transaction
@@ -203,21 +213,23 @@ export async function getPersonalImpact(userId: string) {
     },
   });
 
-  return userImpacts.map((ui) => ({
-    id: ui.id,
-    metricId: ui.metricId,
-    name: ui.metric.name,
-    slug: ui.metric.slug,
-    unit: ui.metric.unit,
-    iconName: ui.metric.iconName,
-    totalValue: ui.totalValue,
-    comparison: IMPACT_COMPARISONS[ui.metric.slug]?.(ui.totalValue) || null,
-    nextMilestone: getNextMilestone(ui.metric.slug, ui.totalValue),
-    progress: getNextMilestone(ui.metric.slug, ui.totalValue)
-      ? (ui.totalValue / getNextMilestone(ui.metric.slug, ui.totalValue)!) * 100
-      : 100,
-    lastUpdatedAt: ui.lastUpdatedAt,
-  }));
+  return userImpacts.map((ui) => {
+    // Computed once per row, not three times (react-best-practices 7.4).
+    const nextMilestone = getNextMilestone(ui.metric.slug, ui.totalValue);
+    return {
+      id: ui.id,
+      metricId: ui.metricId,
+      name: ui.metric.name,
+      slug: ui.metric.slug,
+      unit: ui.metric.unit,
+      iconName: ui.metric.iconName,
+      totalValue: ui.totalValue,
+      comparison: IMPACT_COMPARISONS[ui.metric.slug]?.(ui.totalValue) || null,
+      nextMilestone,
+      progress: nextMilestone ? (ui.totalValue / nextMilestone) * 100 : 100,
+      lastUpdatedAt: ui.lastUpdatedAt,
+    };
+  });
 }
 
 /**
@@ -328,12 +340,12 @@ export async function getCartImpactPreview(
  */
 export function formatImpactValue(value: number, unit: string): string {
   if (value >= 1000) {
-    return `${(value / 1000).toFixed(1)}k ${unit}`;
+    return `${formatNumber(value / 1000, 1)}k ${unit}`;
   }
   if (value >= 1) {
     return `${Math.round(value)} ${unit}`;
   }
-  return `${value.toFixed(1)} ${unit}`;
+  return `${formatNumber(value, 1)} ${unit}`;
 }
 
 /**
@@ -360,14 +372,13 @@ export async function getCatalogImpact() {
     sums.map((s) => [s.metricId, s._sum.valuePerUnit ?? 0])
   );
 
-  return metrics
-    .map((metric) => ({
-      slug: metric.slug,
-      name: metric.name,
-      unit: metric.unit,
-      total: totalByMetric.get(metric.id) ?? 0,
-    }))
-    .filter((metric) => metric.total > 0);
+  // One pass: build and drop empty metrics together (react-best-practices 7.11).
+  return metrics.flatMap((metric) => {
+    const total = totalByMetric.get(metric.id) ?? 0;
+    return total > 0
+      ? [{ slug: metric.slug, name: metric.name, unit: metric.unit, total }]
+      : [];
+  });
 }
 
 /**

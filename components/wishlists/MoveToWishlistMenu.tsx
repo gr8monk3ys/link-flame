@@ -80,11 +80,11 @@ export function MoveToWishlistMenu({
           <DialogHeader>
             <DialogTitle>Move to Wishlist</DialogTitle>
             <DialogDescription className="line-clamp-1">
-              Move &quot;{productTitle}&quot; to another wishlist
+              Move &ldquo;{productTitle}&rdquo; to another wishlist
             </DialogDescription>
           </DialogHeader>
 
-          <div className="max-h-64 space-y-2 overflow-y-auto">
+          <div className="max-h-64 space-y-2 overflow-y-auto overscroll-contain">
             {otherWishlists.length === 0 ? (
               <p className="py-4 text-center text-muted-foreground">
                 No other wishlists available
@@ -109,8 +109,8 @@ export function MoveToWishlistMenu({
                           : 'text-muted-foreground'
                       )}
                     />
-                    <div className="text-left">
-                      <p className="font-medium">{wishlist.name}</p>
+                    <div className="min-w-0 text-left">
+                      <p className="truncate font-medium">{wishlist.name}</p>
                       <p className="text-sm text-muted-foreground">
                         {wishlist.itemCount} {wishlist.itemCount === 1 ? 'item' : 'items'}
                       </p>
@@ -130,12 +130,12 @@ export function MoveToWishlistMenu({
             <>
               {isCreating ? (
                 <div className="space-y-3 border-t pt-2">
-                  <input
+                  <input aria-label="New wishlist name" name="newListName" autoComplete="off"
                     type="text"
                     value={newListName}
                     onChange={(e) => setNewListName(e.target.value)}
-                    placeholder="New wishlist name"
-                    className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="e.g. Gift Ideas"
+                    className="w-full rounded-md border px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                     autoFocus
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') handleCreateAndMove();
@@ -160,7 +160,7 @@ export function MoveToWishlistMenu({
                       disabled={!newListName.trim() || isSubmitting}
                       className="flex-1"
                     >
-                      {isSubmitting ? 'Creating...' : 'Create & Move'}
+                      {isSubmitting ? 'Creating…' : 'Create & Move'}
                     </Button>
                   </div>
                 </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
 import {
   Droplet,
   Leaf,
@@ -49,12 +49,12 @@ export function ImpactCard({
 
   const formatValue = (val: number): string => {
     if (val >= 1000) {
-      return `${(val / 1000).toFixed(1)}k`;
+      return `${formatNumber(val / 1000, 1)}k`;
     }
     if (val >= 1) {
       return Math.round(val).toString();
     }
-    return val.toFixed(1);
+    return formatNumber(val, 1);
   };
 
   const sizeClasses = {
@@ -111,7 +111,7 @@ export function ImpactCard({
         <h3 className={cn("mb-2 font-medium", classes.title)}>{name}</h3>
 
         {/* Progress bar toward next milestone */}
-        {progress !== undefined && nextMilestone && (
+        {progress !== undefined && nextMilestone != null && nextMilestone > 0 && (
           <div className="mt-2 w-full">
             <div className="mb-1 flex justify-between text-xs text-muted-foreground">
               <span>Progress</span>
@@ -121,8 +121,8 @@ export function ImpactCard({
             </div>
             <div className="h-2 overflow-hidden rounded-full bg-muted">
               <div
-                className="h-full bg-green-500 transition-all duration-500"
-                style={{ width: `${Math.min(progress, 100)}%` }}
+                className="size-full origin-left bg-green-500 transition-transform duration-500"
+                style={{ transform: `scaleX(${Math.min(progress, 100) / 100})` }}
               />
             </div>
           </div>

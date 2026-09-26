@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
+import { cn, formatPrice, formatDate } from '@/lib/utils'
 
 interface GiftCardInfo {
   code: string
@@ -142,7 +142,7 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
       case 'PURCHASE':
         return (
           <span className="inline-flex size-6 items-center justify-center rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
-            <svg className="size-3" fill="currentColor" viewBox="0 0 20 20">
+            <svg aria-hidden="true" className="size-3" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fillRule="evenodd"
                 d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
@@ -154,7 +154,7 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
       case 'REDEMPTION':
         return (
           <span className="inline-flex size-6 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
-            <svg className="size-3" fill="currentColor" viewBox="0 0 20 20">
+            <svg aria-hidden="true" className="size-3" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fillRule="evenodd"
                 d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z"
@@ -166,7 +166,7 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
       case 'REFUND':
         return (
           <span className="inline-flex size-6 items-center justify-center rounded-full bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400">
-            <svg className="size-3" fill="currentColor" viewBox="0 0 20 20">
+            <svg aria-hidden="true" className="size-3" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fillRule="evenodd"
                 d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
@@ -187,7 +187,7 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="giftCardCode">Gift Card Code</Label>
-          <Input
+          <Input name="code" autoComplete="off" spellCheck={false}
             id="giftCardCode"
             type="text"
             placeholder="XXXX-XXXX-XXXX-XXXX"
@@ -214,8 +214,8 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
         >
           {isLoading ? (
             <span className="flex items-center">
-              <svg
-                className="mr-2 size-4 animate-spin"
+              <span className="mr-2 inline-flex shrink-0 animate-spin" aria-hidden="true"><svg
+                className="size-4"
                 viewBox="0 0 24 24"
                 aria-hidden="true"
               >
@@ -233,8 +233,8 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
                   fill="currentColor"
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 />
-              </svg>
-              Checking...
+              </svg></span>
+              Checking…
             </span>
           ) : (
             'Check Balance'
@@ -244,9 +244,9 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
 
       {/* Gift Card Info Display */}
       {giftCardInfo && (
-        <div className="mt-6 space-y-4 border-t pt-6">
+        <div className="mt-6 space-y-4 border-t pt-6" role="status">
           <div className="flex items-center justify-between">
-            <span className="font-mono text-sm text-muted-foreground">{giftCardInfo.code}</span>
+            <span className="font-mono text-sm text-muted-foreground" translate="no">{giftCardInfo.code}</span>
             {getStatusBadge(giftCardInfo.status, giftCardInfo.isValid)}
           </div>
 
@@ -265,7 +265,7 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
                 'mt-1 text-2xl font-bold',
                 giftCardInfo.balance > 0 ? 'text-green-700 dark:text-green-400' : 'text-muted-foreground'
               )}>
-                ${giftCardInfo.balance.toFixed(2)}
+                {formatPrice(giftCardInfo.balance)}
               </p>
             </div>
             <div className="rounded-lg bg-muted p-4">
@@ -273,7 +273,7 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
                 Original Amount
               </p>
               <p className="mt-1 text-2xl font-bold text-foreground">
-                ${giftCardInfo.initialBalance.toFixed(2)}
+                {formatPrice(giftCardInfo.initialBalance)}
               </p>
             </div>
           </div>
@@ -320,10 +320,10 @@ export function GiftCardBalance({ className, onBalanceChecked }: GiftCardBalance
                           tx.amount > 0 ? 'text-green-700 dark:text-green-400' : 'text-foreground'
                         )}
                       >
-                        {tx.amount > 0 ? '+' : ''}${Math.abs(tx.amount).toFixed(2)}
+                        {tx.amount > 0 ? '+' : ''}{formatPrice(Math.abs(tx.amount))}
                       </span>
                       <p className="text-xs text-muted-foreground">
-                        {new Date(tx.date).toLocaleDateString()}
+                        {formatDate(tx.date)}
                       </p>
                     </div>
                   </li>

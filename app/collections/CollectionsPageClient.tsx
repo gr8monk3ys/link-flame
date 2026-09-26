@@ -4,7 +4,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import FilterSidebar from '@/components/collections/FilterSidebar';
 import ProductGrid from '@/components/collections/ProductGrid';
-import { ValueFilterBar, ValueFilterSidebar, ActiveFilters } from '@/components/filters';
+import { ValueFilterBar } from '@/components/filters/ValueFilterBar';
+import { ValueFilterSidebar } from '@/components/filters/ValueFilterSidebar';
+import { ActiveFilters } from '@/components/filters/ActiveFilters';
 import type { ProductValueSummary } from '@/lib/products/values';
 import { useDebounce } from '@/lib/hooks/useDebounce';
 

@@ -1,9 +1,12 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
-import { BrandHero, BrandStory, BrandProducts, type BrandProduct } from '@/components/brands'
+import { BrandHero } from '@/components/brands/BrandHero'
+import { BrandStory } from '@/components/brands/BrandStory'
+import { BrandProducts, type BrandProduct } from '@/components/brands/BrandProducts'
 import Link from 'next/link'
 import { ChevronLeft } from 'lucide-react'
+import { cache } from 'react'
 
 // Render at request time — DB not available during Vercel build
 export const dynamic = 'force-dynamic';
@@ -12,7 +15,7 @@ interface BrandPageProps {
   params: Promise<{ slug: string }>
 }
 
-async function getBrand(slug: string) {
+const getBrand = cache(async (slug: string) => {
   const brand = await prisma.brand.findUnique({
     where: {
       slug,
@@ -70,7 +73,7 @@ async function getBrand(slug: string) {
   }
 
   return normalizedBrand
-}
+})
 
 export async function generateMetadata({ params }: BrandPageProps): Promise<Metadata> {
   const { slug } = await params

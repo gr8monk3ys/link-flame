@@ -82,9 +82,9 @@ export function WishlistSelector({
             </DialogDescription>
           </DialogHeader>
 
-          <div className="max-h-64 space-y-2 overflow-y-auto">
+          <div className="max-h-64 space-y-2 overflow-y-auto overscroll-contain">
             {wishlists.map((wishlist) => (
-              <button
+              <button type="button" aria-pressed={selectedWishlistId === wishlist.id}
                 key={wishlist.id}
                 onClick={() => {
                   onSelect(wishlist.id);
@@ -120,12 +120,12 @@ export function WishlistSelector({
 
           {isCreating ? (
             <div className="space-y-3 border-t pt-2">
-              <input
+              <input aria-label="New wishlist name" name="newListName" autoComplete="off"
                 type="text"
                 value={newListName}
                 onChange={(e) => setNewListName(e.target.value)}
-                placeholder="New wishlist name"
-                className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="e.g. Gift Ideas"
+                className="w-full rounded-md border px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 autoFocus
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') handleCreateNew();
@@ -150,7 +150,7 @@ export function WishlistSelector({
                   disabled={!newListName.trim() || isSubmitting}
                   className="flex-1"
                 >
-                  {isSubmitting ? 'Creating...' : 'Create'}
+                  {isSubmitting ? 'Creating…' : 'Create'}
                 </Button>
               </div>
             </div>

@@ -1,4 +1,6 @@
+import Link from "next/link"
 import { getAllPosts, getFeaturedPosts } from "@/lib/blog"
+import { slugify } from "@/lib/utils"
 import { BlogCard } from "@/components/blogs/blog-card"
 import { BlogSearch } from "@/components/blogs/blog-search"
 
@@ -55,12 +57,12 @@ export default async function BlogsPage() {
           <section key={category} className="my-14">
             <div className="mb-6 flex items-center justify-between">
               <h2 className="font-serif text-2xl font-semibold">{category}</h2>
-              <a
-                href={`/blogs/${category.toLowerCase()}`}
+              <Link
+                href={`/blogs/categories/${slugify(category)}`}
                 className="text-sm font-medium text-primary hover:underline"
               >
-                View All
-              </a>
+                View All {category}
+              </Link>
             </div>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {categoryPosts.map((post) => (

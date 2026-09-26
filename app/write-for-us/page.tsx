@@ -23,27 +23,31 @@ export default function WriteForUsPage() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>What we publish</CardTitle>
+            <CardTitle as="h2">What we publish</CardTitle>
             <CardDescription>Topics that perform well with our readers.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-2 text-sm text-muted-foreground">
-            <p>1. Zero-waste swaps that save money</p>
-            <p>2. Clean beauty ingredient explainers</p>
-            <p>3. Sustainable travel checklists</p>
-            <p>4. Home energy efficiency guides</p>
+          <CardContent className="text-sm text-muted-foreground">
+            <ol className="list-decimal space-y-2 pl-5">
+              <li>Zero-waste swaps that save money</li>
+              <li>Clean beauty ingredient explainers</li>
+              <li>Sustainable travel checklists</li>
+              <li>Home energy efficiency guides</li>
+            </ol>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Submission guidelines</CardTitle>
+            <CardTitle as="h2">Submission guidelines</CardTitle>
             <CardDescription>Keep it tight and useful.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-2 text-sm text-muted-foreground">
-            <p>1. Include a clear outline + 3 to 5 takeaways.</p>
-            <p>2. Back claims with reputable sources.</p>
-            <p>3. Avoid affiliate-first content.</p>
-            <p>4. Original work only.</p>
+          <CardContent className="text-sm text-muted-foreground">
+            <ol className="list-decimal space-y-2 pl-5">
+              <li>Include a clear outline + 3 to 5 takeaways.</li>
+              <li>Back claims with reputable sources.</li>
+              <li>Avoid affiliate-first content.</li>
+              <li>Original work only.</li>
+            </ol>
           </CardContent>
         </Card>
       </div>

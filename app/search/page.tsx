@@ -19,7 +19,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   return (
     <div className="container py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">
+        <h1 className="break-words text-3xl font-bold tracking-tight">
           {query ? `Search results for "${query}"` : 'Search'}
         </h1>
         {query && (
@@ -35,7 +35,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         </Suspense>
       ) : (
         <div className="rounded-lg border p-8 text-center">
-          <svg
+          <svg aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             width="48"
             height="48"

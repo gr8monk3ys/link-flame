@@ -59,37 +59,37 @@ export async function GET(request: NextRequest) {
       where.isCustomizable = params.customizable === "true"
     }
 
-    // Get total count
-    const total = await prisma.bundle.count({ where })
-
-    // Get bundles with their products
-    const bundles = await prisma.bundle.findMany({
-      where,
-      include: {
-        products: {
-          include: {
-            product: {
-              select: {
-                id: true,
-                title: true,
-                price: true,
-                salePrice: true,
-                image: true,
-                category: true,
+    // Count and fetch the page in parallel
+    const [total, bundles] = await Promise.all([
+      prisma.bundle.count({ where }),
+      prisma.bundle.findMany({
+        where,
+        include: {
+          products: {
+            include: {
+              product: {
+                select: {
+                  id: true,
+                  title: true,
+                  price: true,
+                  salePrice: true,
+                  image: true,
+                  category: true,
+                },
               },
             },
-          },
-          orderBy: {
-            sortOrder: "asc",
+            orderBy: {
+              sortOrder: "asc",
+            },
           },
         },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-      skip: (params.page - 1) * params.pageSize,
-      take: params.pageSize,
-    })
+        orderBy: {
+          createdAt: "desc",
+        },
+        skip: (params.page - 1) * params.pageSize,
+        take: params.pageSize,
+      }),
+    ])
 
     // Calculate potential savings for each bundle
     const bundlesWithSavings = bundles.map((bundle) => {

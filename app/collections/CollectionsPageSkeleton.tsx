@@ -10,7 +10,8 @@
  */
 export default function CollectionsPageSkeleton() {
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" role="status" aria-busy="true">
+      <span className="sr-only">Loading…</span>
       <div className="pt-8">
         <h1 className="font-serif text-3xl tracking-tight text-foreground sm:text-4xl">
           Shop all products

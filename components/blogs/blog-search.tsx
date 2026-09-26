@@ -71,26 +71,27 @@ export function BlogSearch({ categories = [], tags = [] }: BlogSearchProps) {
       <div className="flex gap-2">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-3 size-4 text-muted-foreground" />
-          <Input
+          <Input aria-label="Search articles" name="query" autoComplete="off"
             type="search"
-            placeholder="Search articles..."
+            placeholder="Search articles…"
             className="pl-10"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
         </div>
         {showFilterOptions && (
-          <Button
+          <Button aria-label="Toggle filters"
             variant={showFilters ? "default" : "outline"}
             size="icon"
-            onClick={() => setShowFilters(!showFilters)}
+            onClick={() => setShowFilters((v) => !v)}
+            aria-expanded={showFilters}
             title="Toggle filters"
           >
             <Filter className="size-4" />
           </Button>
         )}
         {hasActiveFilters && (
-          <Button
+          <Button aria-label="Clear all filters"
             variant="ghost"
             size="icon"
             onClick={clearFilters}
@@ -107,11 +108,11 @@ export function BlogSearch({ categories = [], tags = [] }: BlogSearchProps) {
           {/* Category Filter */}
           {categories.length > 0 && (
             <div className="min-w-[200px] flex-1">
-              <label className="mb-2 block text-sm font-medium">Category</label>
-              <select
+              <label className="mb-2 block text-sm font-medium" htmlFor="blog-category">Category</label>
+              <select name="selectedCategory" id="blog-category"
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 <option value="">All Categories</option>
                 {categories.map((cat) => (
@@ -126,11 +127,11 @@ export function BlogSearch({ categories = [], tags = [] }: BlogSearchProps) {
           {/* Tag Filter */}
           {tags.length > 0 && (
             <div className="min-w-[200px] flex-1">
-              <label className="mb-2 block text-sm font-medium">Tag</label>
-              <select
+              <label className="mb-2 block text-sm font-medium" htmlFor="blog-tag">Tag</label>
+              <select name="selectedTag" id="blog-tag"
                 value={selectedTag}
                 onChange={(e) => setSelectedTag(e.target.value)}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 <option value="">All Tags</option>
                 {tags.map((tag) => (
@@ -149,9 +150,9 @@ export function BlogSearch({ categories = [], tags = [] }: BlogSearchProps) {
         <div className="flex flex-wrap gap-2 text-sm">
           <span className="text-muted-foreground">Active filters:</span>
           {query.trim() && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1">
-              Query: &quot;{query}&quot;
-              <button
+            <span className="inline-flex max-w-64 items-center gap-1 rounded-full bg-primary/10 px-3 py-1" title={query}>
+              <span className="truncate">Query: &ldquo;{query}&rdquo;</span>
+              <button aria-label="Remove search filter"
                 onClick={() => setQuery("")}
                 className="hover:text-destructive"
                 title="Remove filter"
@@ -163,7 +164,7 @@ export function BlogSearch({ categories = [], tags = [] }: BlogSearchProps) {
           {selectedCategory && (
             <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1">
               Category: {selectedCategory}
-              <button
+              <button aria-label="Remove category filter"
                 onClick={() => setSelectedCategory("")}
                 className="hover:text-destructive"
                 title="Remove filter"
@@ -175,7 +176,7 @@ export function BlogSearch({ categories = [], tags = [] }: BlogSearchProps) {
           {selectedTag && (
             <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1">
               Tag: {selectedTag}
-              <button
+              <button aria-label="Remove tag filter"
                 onClick={() => setSelectedTag("")}
                 className="hover:text-destructive"
                 title="Remove filter"
@@ -191,7 +192,7 @@ export function BlogSearch({ categories = [], tags = [] }: BlogSearchProps) {
       {hasActiveFilters && (
         <div className="space-y-4">
           {isSearching ? (
-            <p className="py-8 text-center text-muted-foreground">Searching...</p>
+            <p className="py-8 text-center text-muted-foreground" role="status">Searching…</p>
           ) : results.length > 0 ? (
             <>
               <h2 className="text-lg font-semibold">

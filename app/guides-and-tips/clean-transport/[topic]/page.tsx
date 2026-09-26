@@ -37,15 +37,13 @@ export default async function CleanTransportTopicPage({
   return (
     <div className="container max-w-4xl py-10">
       <div className="mb-8">
-        <p className="text-sm text-muted-foreground">
-          <Link href="/guides-and-tips" className="hover:underline">
-            Guides & Tips
-          </Link>{" "}
-          <span aria-hidden>·</span>{" "}
-          <Link href="/guides-and-tips/clean-transport" className="hover:underline">
-            Clean Transportation
-          </Link>
-        </p>
+        <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground">
+          <ol className="flex flex-wrap items-center gap-1">
+            <li><Link href="/guides-and-tips" className="hover:underline">Guides & Tips</Link></li>
+            <li aria-hidden="true">·</li>
+            <li><Link href="/guides-and-tips/clean-transport" className="hover:underline">Clean Transportation</Link></li>
+          </ol>
+        </nav>
         <h1 className="mt-2 font-serif text-3xl font-semibold md:text-4xl">{topic}</h1>
         <p className="mt-3 max-w-2xl text-muted-foreground">
           This guide is in progress. Here are a few options you can act on today to reduce travel

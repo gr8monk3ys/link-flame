@@ -37,12 +37,13 @@ export function MainNav({ className, items }: MainNavProps) {
         <span className="inline-block font-bold">{siteConfig.name}</span>
       </Link>
       <button
-        className="md:hidden"
-        onClick={() => setShowMobileMenu(!showMobileMenu)}
+        type="button"
+        className="rounded-md p-1 hover:bg-muted md:hidden"
+        onClick={() => setShowMobileMenu((v) => !v)}
         aria-label={showMobileMenu ? "Close menu" : "Open menu"}
         aria-expanded={showMobileMenu}
       >
-        <svg
+        <svg aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"

@@ -14,7 +14,7 @@ import { QuizProgress } from './QuizProgress';
 import { QuizQuestion } from './QuizQuestion';
 import { QuizResults } from './QuizResults';
 import { cn } from '@/lib/utils';
-import { ArrowLeft, ArrowRight, Loader2, Leaf, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Loader2, Leaf } from 'lucide-react';
 
 interface QuizOption {
   value: string;
@@ -202,10 +202,16 @@ export function QuizModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
         className={cn(
-          'max-h-[90vh] overflow-y-auto sm:max-w-2xl',
+          'max-h-[90vh] overflow-y-auto overscroll-contain sm:max-w-2xl',
           state === 'results' && 'sm:max-w-4xl'
         )}
       >
+        {/* Every dialog state needs an accessible name; only the intro shows a
+            visible title. */}
+        {state !== 'intro' && (
+          <DialogTitle className="sr-only">Sustainability Quiz</DialogTitle>
+        )}
+
         {/* Intro Screen */}
         {state === 'intro' && (
           <>
@@ -218,7 +224,7 @@ export function QuizModal({
               </DialogTitle>
               <DialogDescription className="mt-2 text-base">
                 Answer a few quick questions about your lifestyle and preferences,
-                and we&apos;ll recommend eco-friendly products tailored just for you.
+                and we&rsquo;ll recommend eco-friendly products tailored just for you.
               </DialogDescription>
             </DialogHeader>
 
@@ -258,8 +264,8 @@ export function QuizModal({
               >
                 {isLoadingQuestions ? (
                   <>
-                    <Loader2 className="mr-2 size-4 animate-spin" />
-                    Loading...
+                    <span className="mr-2 inline-flex shrink-0 animate-spin"><Loader2 className="size-4" /></span>
+                    Loading…
                   </>
                 ) : (
                   'Start Quiz'
@@ -268,7 +274,7 @@ export function QuizModal({
             </div>
 
             {error && (
-              <p className="mt-4 text-center text-sm text-destructive">{error}</p>
+              <p className="mt-4 text-center text-sm text-destructive" role="alert">{error}</p>
             )}
           </>
         )}
@@ -294,7 +300,7 @@ export function QuizModal({
             </div>
 
             {error && (
-              <p className="mb-4 text-center text-sm text-destructive">{error}</p>
+              <p className="mb-4 text-center text-sm text-destructive" role="alert">{error}</p>
             )}
 
             <div className="flex items-center justify-between border-t pt-4">
@@ -314,8 +320,8 @@ export function QuizModal({
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="mr-2 size-4 animate-spin" />
-                      Getting Results...
+                      <span className="mr-2 inline-flex shrink-0 animate-spin"><Loader2 className="size-4" /></span>
+                      Getting Results…
                     </>
                   ) : (
                     'Get My Recommendations'
@@ -334,12 +340,12 @@ export function QuizModal({
         {/* Loading Screen */}
         {state === 'loading' && (
           <div className="py-12 text-center">
-            <Loader2 className="mx-auto mb-4 size-12 animate-spin text-primary" />
+            <span role="status"><span className="mx-auto mb-4 flex w-fit shrink-0 animate-spin"><Loader2 className="size-12 text-primary" /></span><span className="sr-only">Loading…</span></span>
             <h3 className="mb-2 text-xl font-semibold">
               Finding Your Perfect Products
             </h3>
             <p className="text-muted-foreground">
-              Analyzing your preferences...
+              Analyzing your preferences…
             </p>
           </div>
         )}
@@ -347,14 +353,8 @@ export function QuizModal({
         {/* Results Screen */}
         {state === 'results' && results && (
           <>
-            <button
-              onClick={onClose}
-              className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-            >
-              <X className="size-4" />
-              <span className="sr-only">Close</span>
-            </button>
-
+            {/* DialogContent already renders the close button; a second one
+                stacked on top of it here. */}
             <div className="pt-6">
               <QuizResults
                 visibleId={results.visibleId}

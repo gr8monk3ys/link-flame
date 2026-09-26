@@ -3,13 +3,13 @@
 import { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
-import { format } from "date-fns";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { Check, Package, Truck, Home, CheckCircle, XCircle, ExternalLink, Gift } from "lucide-react";
+import { formatPrice, formatDate } from "@/lib/utils";
 
 interface ShippingStep {
   key: string;
@@ -102,7 +102,7 @@ export default function OrderDetailPage() {
         notFound();
       }
       if (!response.ok) {
-        throw new Error("Failed to fetch order");
+        throw new Error("Couldn’t load this order. Refresh the page, or go back to your orders.");
       }
       const data = await response.json();
       setOrder(data.data);
@@ -120,7 +120,7 @@ export default function OrderDetailPage() {
   }, [isLoaded, isSignedIn, orderId, fetchOrder]);
 
   if (!isLoaded || loading) {
-    return <div className="container py-10">Loading order details...</div>;
+    return <div className="container py-10" role="status">Loading order details…</div>;
   }
 
   if (!isSignedIn) {
@@ -128,7 +128,7 @@ export default function OrderDetailPage() {
       <div className="container py-10">
         <Card>
           <CardHeader>
-            <CardTitle>Sign In Required</CardTitle>
+            <CardTitle as="h1">Sign In Required</CardTitle>
             <CardDescription>Please sign in to view order details.</CardDescription>
           </CardHeader>
         </Card>
@@ -141,7 +141,7 @@ export default function OrderDetailPage() {
       <div className="container py-10">
         <Card>
           <CardHeader>
-            <CardTitle>Error</CardTitle>
+            <CardTitle as="h1">Error</CardTitle>
             <CardDescription className="text-red-600 dark:text-red-400">{error}</CardDescription>
           </CardHeader>
         </Card>
@@ -166,12 +166,12 @@ export default function OrderDetailPage() {
         <CardHeader>
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
-              <CardTitle className="text-2xl">Order Details</CardTitle>
+              <CardTitle as="h1" className="text-2xl">Order Details</CardTitle>
               <CardDescription className="mt-2">
-                Order ID: {order.id}
+                Order ID: <span translate="no">{order.id}</span>
               </CardDescription>
               <CardDescription>
-                Placed on {format(new Date(order.createdAt), "MMMM d, yyyy 'at' h:mm a")}
+                Placed on {formatDate(order.createdAt, "longWithTime")}
               </CardDescription>
             </div>
             <div className="flex flex-col gap-2">
@@ -195,15 +195,15 @@ export default function OrderDetailPage() {
       {!order.isCancelled && order.shippingProgress && order.shippingProgress.length > 0 && (
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Shipping Progress</CardTitle>
+            <CardTitle as="h2">Shipping Progress</CardTitle>
             {order.estimatedDelivery && !order.isDelivered && (
               <CardDescription>
-                Estimated delivery: {format(new Date(order.estimatedDelivery), "MMMM d, yyyy")}
+                Estimated delivery: {formatDate(order.estimatedDelivery, "long")}
               </CardDescription>
             )}
             {order.deliveredAt && (
               <CardDescription className="text-green-700 dark:text-green-400">
-                Delivered on {format(new Date(order.deliveredAt), "MMMM d, yyyy 'at' h:mm a")}
+                Delivered on {formatDate(order.deliveredAt, "longWithTime")}
               </CardDescription>
             )}
           </CardHeader>
@@ -237,9 +237,9 @@ export default function OrderDetailPage() {
               {/* Progress line */}
               <div className="absolute inset-x-0 top-5 -z-0 h-0.5 bg-muted">
                 <div
-                  className="h-full bg-primary transition-all duration-500"
+                  className="size-full origin-left bg-primary transition-transform duration-500"
                   style={{
-                    width: `${(order.shippingProgress.filter(s => s.completed).length / (order.shippingProgress.length - 1)) * 100}%`
+                    transform: `scaleX(${Math.min(1, order.shippingProgress.filter(s => s.completed).length / (order.shippingProgress.length - 1))})`
                   }}
                 />
               </div>
@@ -251,7 +251,7 @@ export default function OrderDetailPage() {
                 <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                   <div>
                     <div className="text-sm text-muted-foreground">Tracking Number</div>
-                    <div className="font-mono font-medium">{order.trackingNumber}</div>
+                    <div className="font-mono font-medium" translate="no">{order.trackingNumber}</div>
                     {order.shippingCarrier && (
                       <div className="text-sm text-muted-foreground">via {order.shippingCarrier}</div>
                     )}
@@ -274,7 +274,7 @@ export default function OrderDetailPage() {
             {/* Shipped date */}
             {order.shippedAt && (
               <div className="mt-4 text-sm text-muted-foreground">
-                Shipped on {format(new Date(order.shippedAt), "MMMM d, yyyy")}
+                Shipped on {formatDate(order.shippedAt, "long")}
               </div>
             )}
           </CardContent>
@@ -304,7 +304,7 @@ export default function OrderDetailPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <Gift className="size-5 text-pink-600 dark:text-pink-400" />
-              <CardTitle className="text-lg text-pink-800 dark:text-pink-200">Gift Order</CardTitle>
+              <CardTitle as="h2" className="text-lg text-pink-800 dark:text-pink-200">Gift Order</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="pt-0">
@@ -350,7 +350,7 @@ export default function OrderDetailPage() {
           <div className="grid gap-6 md:grid-cols-2">
             <div>
               <h3 className="mb-2 font-semibold">Customer Information</h3>
-              <div className="space-y-1 text-sm text-muted-foreground">
+              <div className="space-y-1 break-words text-sm text-muted-foreground">
                 {order.customerName && <div>{order.customerName}</div>}
                 {order.customerEmail && <div>{order.customerEmail}</div>}
               </div>
@@ -358,7 +358,7 @@ export default function OrderDetailPage() {
             {order.shippingAddress && (
               <div>
                 <h3 className="mb-2 font-semibold">Shipping Address</h3>
-                <div className="text-sm text-muted-foreground">
+                <div className="break-words text-sm text-muted-foreground">
                   {order.shippingAddress}
                 </div>
               </div>
@@ -370,7 +370,7 @@ export default function OrderDetailPage() {
       {/* Order Items */}
       <Card>
         <CardHeader>
-          <CardTitle>Order Items ({order.itemCount})</CardTitle>
+          <CardTitle as="h2">Order Items ({order.itemCount})</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -390,15 +390,15 @@ export default function OrderDetailPage() {
                   className="flex gap-4 rounded-lg border p-4"
                 >
                   <div className="relative size-20 shrink-0">
-                    <Image
+                    <Image sizes="80px"
                       src={displayImage}
                       alt={item.title}
                       fill
                       className="rounded object-cover"
                     />
                   </div>
-                  <div className="flex-1">
-                    <h4 className="font-medium">{item.title}</h4>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="break-words font-medium">{item.title}</h3>
                     {variantDetails.length > 0 && (
                       <p className="mt-1 text-sm text-muted-foreground">
                         {variantDetails.join(' / ')}
@@ -410,12 +410,12 @@ export default function OrderDetailPage() {
                       </p>
                     )}
                     <div className="mt-2 text-sm text-muted-foreground">
-                      Quantity: {item.quantity} × ${item.price.toFixed(2)}
+                      Quantity: {item.quantity} × {formatPrice(item.price)}
                     </div>
                   </div>
                   <div className="text-right">
                     <div className="font-semibold">
-                      ${(item.price * item.quantity).toFixed(2)}
+                      {formatPrice(item.price * item.quantity)}
                     </div>
                     <Link
                       href={`/products/${item.product.id}`}
@@ -433,7 +433,7 @@ export default function OrderDetailPage() {
           <div className="mt-6 border-t pt-6">
             <div className="flex items-center justify-between text-lg font-bold">
               <span>Total</span>
-              <span>${order.amount.toFixed(2)}</span>
+              <span>{formatPrice(order.amount)}</span>
             </div>
           </div>
         </CardContent>

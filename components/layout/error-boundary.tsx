@@ -69,7 +69,7 @@ class ErrorBoundaryClass extends Component<Props, State> {
           <div className="rounded-md border border-red-200 bg-red-50 p-4 dark:border-red-900/50 dark:bg-red-950/40">
             <div className="flex">
               <div className="shrink-0">
-                <svg className="size-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                <svg aria-hidden="true" className="size-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                 </svg>
               </div>
@@ -96,7 +96,7 @@ class ErrorBoundaryClass extends Component<Props, State> {
       return (
         <div className="flex h-[70vh] w-full flex-col items-center justify-center p-4 text-center">
           <div className="mb-4 rounded-full bg-red-100 p-3 text-red-600 dark:bg-red-900/30 dark:text-red-400">
-            <svg
+            <svg aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
@@ -115,15 +115,17 @@ class ErrorBoundaryClass extends Component<Props, State> {
           </div>
           <h2 className="mb-2 text-2xl font-bold">Something went wrong</h2>
           <p className="mb-4 max-w-md text-muted-foreground">
-            We&apos;re sorry, but there was an error loading this page. Please try again or contact support if the problem persists.
+            We&rsquo;re sorry, but there was an error loading this page. Please try again or contact support if the problem persists.
           </p>
           <div className="space-x-2">
             <Button onClick={this.handleReset}>Try Again</Button>
             <Button variant="outline" onClick={this.handleReload}>
               Reload Page
             </Button>
-            <Button variant="outline" onClick={() => window.location.href = '/'}>
-              Go to Homepage
+            {/* A plain <a>, not next/link: after a render error a full document
+                load is the point. */}
+            <Button variant="outline" asChild>
+              <a href="/">Go to Homepage</a>
             </Button>
           </div>
           {process.env.NODE_ENV === 'development' && this.state.error && (
@@ -145,42 +147,63 @@ class ErrorBoundaryClass extends Component<Props, State> {
   }
 }
 
+// Global error logging is attached once per page, however many ErrorBoundary
+// instances are mounted (the root layout, checkout and the cart each render
+// one). Previously every instance added its own window listeners, so one error
+// was logged up to five times (react-best-practices 4.1).
+let globalListenerUsers = 0;
+let detachGlobalListeners: (() => void) | null = null;
+
+function attachGlobalErrorLogging(): () => void {
+  const isBrowserExtensionError = (filename?: string) => {
+    if (!filename) return false;
+    return (
+      filename.startsWith('chrome-extension://') ||
+      filename.startsWith('moz-extension://') ||
+      filename.startsWith('safari-extension://')
+    );
+  };
+
+  // Log global errors for monitoring, but do not render a full-page fallback.
+  // Global errors can originate from browser extensions or unrelated scripts and
+  // should not take down the whole React tree.
+  const errorHandler = (event: ErrorEvent) => {
+    if (isBrowserExtensionError(event.filename)) return;
+
+    logger.error('Global uncaught error', event.error ?? event.message, {
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+    });
+    // Do not call preventDefault() so Next.js/devtools can surface the error.
+  };
+
+  const rejectionHandler = (event: PromiseRejectionEvent) => {
+    logger.error('Unhandled promise rejection', event.reason);
+  };
+
+  window.addEventListener('error', errorHandler);
+  window.addEventListener('unhandledrejection', rejectionHandler);
+
+  return () => {
+    window.removeEventListener('error', errorHandler);
+    window.removeEventListener('unhandledrejection', rejectionHandler);
+  };
+}
+
 // Functional component wrapper for global error handling
 const ErrorBoundary = (props: Props) => {
   useEffect(() => {
-    const isBrowserExtensionError = (filename?: string) => {
-      if (!filename) return false;
-      return (
-        filename.startsWith('chrome-extension://') ||
-        filename.startsWith('moz-extension://') ||
-        filename.startsWith('safari-extension://')
-      );
-    };
-
-    // Log global errors for monitoring, but do not render a full-page fallback.
-    // Global errors can originate from browser extensions or unrelated scripts and
-    // should not take down the whole React tree.
-    const errorHandler = (event: ErrorEvent) => {
-      if (isBrowserExtensionError(event.filename)) return;
-
-      logger.error('Global uncaught error', event.error ?? event.message, {
-        filename: event.filename,
-        lineno: event.lineno,
-        colno: event.colno,
-      });
-      // Do not call preventDefault() so Next.js/devtools can surface the error.
-    };
-
-    const rejectionHandler = (event: PromiseRejectionEvent) => {
-      logger.error('Unhandled promise rejection', event.reason);
-    };
-
-    window.addEventListener('error', errorHandler);
-    window.addEventListener('unhandledrejection', rejectionHandler);
-
+    globalListenerUsers += 1;
+    if (globalListenerUsers === 1) {
+      detachGlobalListeners = attachGlobalErrorLogging();
+    }
     return () => {
-      window.removeEventListener('error', errorHandler);
-      window.removeEventListener('unhandledrejection', rejectionHandler);
+      globalListenerUsers -= 1;
+      if (globalListenerUsers === 0) {
+        detachGlobalListeners?.();
+        detachGlobalListeners = null;
+      }
     };
   }, []);
 

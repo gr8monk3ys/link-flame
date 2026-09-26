@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ImpactDashboard } from "@/components/impact";
+import { ImpactDashboard } from "@/components/impact/ImpactDashboard";
 import { ArrowLeft, Loader2 } from "lucide-react";
 
 export default function AccountImpactPage() {
@@ -21,7 +21,7 @@ export default function AccountImpactPage() {
   if (!isLoaded) {
     return (
       <div className="container flex items-center justify-center py-10">
-        <Loader2 className="size-8 animate-spin" />
+        <span role="status"><span className="inline-flex shrink-0 animate-spin"><Loader2 className="size-8" /></span><span className="sr-only">Loading…</span></span>
       </div>
     );
   }
@@ -31,7 +31,7 @@ export default function AccountImpactPage() {
       <div className="container max-w-4xl py-10">
         <Card>
           <CardHeader>
-            <CardTitle>Sign In Required</CardTitle>
+            <CardTitle as="h1">Sign In Required</CardTitle>
             <CardDescription>
               Please sign in to view your environmental impact.
             </CardDescription>
@@ -53,12 +53,12 @@ export default function AccountImpactPage() {
     <div className="container max-w-6xl py-10">
       {/* Back link */}
       <div className="mb-6">
-        <Link href="/account">
-          <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" asChild>
+          <Link href="/account">
             <ArrowLeft className="mr-2 size-4" />
             Back to Account
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       </div>
 
       {/* Impact Dashboard */}

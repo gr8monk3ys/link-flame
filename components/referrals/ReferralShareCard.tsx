@@ -34,7 +34,7 @@ export function ReferralShareCard({
       toast.success(`${type === "code" ? "Code" : "Link"} copied to clipboard!`);
       setTimeout(() => setCopied(null), 2000);
     } catch (err) {
-      toast.error("Failed to copy to clipboard");
+      toast.error("Couldn’t copy to the clipboard. Select the text and copy it manually.");
     }
   }
 
@@ -87,7 +87,7 @@ export function ReferralShareCard({
           <label className="text-sm font-medium">Your Referral Code</label>
           <div className="flex gap-2">
             <div className="relative flex-1">
-              <Input
+              <Input name="referralCode" autoComplete="off" spellCheck={false}
                 value={referralCode}
                 readOnly
                 className="bg-background pr-10 font-mono text-lg font-bold tracking-wider"
@@ -113,7 +113,7 @@ export function ReferralShareCard({
         <div className="space-y-2">
           <label className="text-sm font-medium">Your Referral Link</label>
           <div className="flex gap-2">
-            <Input
+            <Input name="referralLink" autoComplete="off"
               value={referralLink}
               readOnly
               className="bg-background font-mono text-sm"

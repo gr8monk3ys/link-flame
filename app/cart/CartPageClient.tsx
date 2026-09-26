@@ -2,6 +2,7 @@
 
 import { useEffect, useState, memo, Suspense } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useSession } from "next-auth/react";
@@ -13,7 +14,7 @@ import type { CartItem } from "@/types/cart";
 import CheckoutForm from "@/components/checkout/checkout-form";
 import ErrorBoundary from "@/components/layout/error-boundary";
 import { LoadingShimmer } from "@/components/ui/loading-shimmer";
-import { CarbonNeutralBanner, CarbonNeutralShippingLine } from "@/components/sustainability";
+import { CarbonNeutralBanner, CarbonNeutralShippingLine } from "@/components/sustainability/CarbonNeutralBanner";
 
 // Lazy load non-critical components
 const ProductRecommendations = dynamic(
@@ -70,8 +71,8 @@ const CartItemRow = memo(({
           sizes="96px"
         />
       </div>
-      <div className="flex-1 space-y-1">
-        <h3 className="font-medium">{item.title}</h3>
+      <div className="min-w-0 flex-1 space-y-1">
+        <h2 className="break-words font-medium">{item.title}</h2>
         <div className="flex items-center space-x-2">
           <label htmlFor={`quantity-${item.id}`} className="text-sm font-medium">
             Quantity:
@@ -81,7 +82,7 @@ const CartItemRow = memo(({
               ...
             </div>
           ) : (
-            <input
+            <input inputMode="numeric" name="quantity" autoComplete="off"
               type="number"
               id={`quantity-${item.id}`}
               min="1"
@@ -110,10 +111,10 @@ const CartItemRow = memo(({
           variant="ghost"
           size="sm"
           onClick={() => removeItem(item.id, item.variantId ?? null, item.cartItemId)}
-          aria-label="Remove item"
+          aria-label={`Remove ${item.title} from cart`}
           className="h-8 px-2"
         >
-          <svg
+          <svg aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             width="24"
             height="24"
@@ -136,12 +137,12 @@ const CartItemRow = memo(({
           size="sm"
           onClick={handleSaveForLater}
           disabled={isSaving}
-          aria-label="Save for later"
+          aria-label={`Save ${item.title} for later`}
           className="h-8 px-2 text-xs"
         >
           {isSaving ? (
             <span className="flex items-center justify-center">
-              <svg className="mr-1 size-3 animate-spin" viewBox="0 0 24 24">
+              <span className="mr-1 inline-flex shrink-0 animate-spin" aria-hidden="true"><svg aria-hidden="true" className="size-3" viewBox="0 0 24 24">
                 <circle
                   className="opacity-25"
                   cx="12"
@@ -156,12 +157,12 @@ const CartItemRow = memo(({
                   fill="currentColor"
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 />
-              </svg>
-              Saving...
+              </svg></span>
+              Saving…
             </span>
           ) : (
             <>
-              <svg
+              <svg aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 height="16"
@@ -237,8 +238,8 @@ export default function CartPageClient() {
         ) : items.length === 0 ? (
           <div className="flex h-[450px] w-full flex-col items-center justify-center space-y-4">
             <h2 className="text-2xl font-bold">Your cart is empty</h2>
-            <Button onClick={() => router.push("/collections")}>
-              Continue Shopping
+            <Button asChild>
+              <Link href="/collections">Continue Shopping</Link>
             </Button>
           </div>
         ) : (

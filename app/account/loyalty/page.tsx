@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { LoyaltyDashboard } from "@/components/loyalty";
+import { LoyaltyDashboard } from "@/components/loyalty/LoyaltyDashboard";
 import { ChevronLeft, Loader2 } from "lucide-react";
 
 export default function LoyaltyPage() {
@@ -14,7 +14,7 @@ export default function LoyaltyPage() {
   if (!isLoaded) {
     return (
       <div className="container flex items-center justify-center py-10">
-        <Loader2 className="size-8 animate-spin" />
+        <span role="status"><span className="inline-flex shrink-0 animate-spin"><Loader2 className="size-8" /></span><span className="sr-only">Loading…</span></span>
       </div>
     );
   }
@@ -24,7 +24,7 @@ export default function LoyaltyPage() {
       <div className="container max-w-4xl py-10">
         <Card>
           <CardHeader>
-            <CardTitle>Sign In Required</CardTitle>
+            <CardTitle as="h1">Sign In Required</CardTitle>
             <CardDescription>
               Please sign in to access your loyalty rewards.
             </CardDescription>

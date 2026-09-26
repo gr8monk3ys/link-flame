@@ -151,7 +151,7 @@ export default function AdminProductNewPage() {
 
       {/* Error Message */}
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300" role="alert">
           {error}
         </div>
       )}
@@ -164,14 +164,14 @@ export default function AdminProductNewPage() {
             <label htmlFor="title" className="block text-sm font-medium text-foreground">
               Title <span className="text-red-500">*</span>
             </label>
-            <input
+            <input name="title" autoComplete="off"
               id="title"
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
               maxLength={200}
-              className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+              className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus-visible:border-green-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-green-500"
               placeholder="e.g., Bamboo Toothbrush Set"
             />
           </div>
@@ -181,13 +181,13 @@ export default function AdminProductNewPage() {
             <label htmlFor="subtitle" className="block text-sm font-medium text-foreground">
               Subtitle
             </label>
-            <input
+            <input name="subtitle" autoComplete="off"
               id="subtitle"
               type="text"
               value={subtitle}
               onChange={(e) => setSubtitle(e.target.value)}
               maxLength={200}
-              className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+              className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus-visible:border-green-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-green-500"
               placeholder="e.g., Pack of 4 - Soft Bristles"
             />
           </div>
@@ -197,14 +197,14 @@ export default function AdminProductNewPage() {
             <label htmlFor="description" className="block text-sm font-medium text-foreground">
               Description
             </label>
-            <textarea
+            <textarea name="description" autoComplete="off"
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={4}
               maxLength={2000}
-              className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
-              placeholder="Describe the product..."
+              className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus-visible:border-green-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-green-500"
+              placeholder="Describe the product…"
             />
           </div>
 
@@ -214,7 +214,7 @@ export default function AdminProductNewPage() {
               <label htmlFor="price" className="block text-sm font-medium text-foreground">
                 Price ($) <span className="text-red-500">*</span>
               </label>
-              <input
+              <input inputMode="decimal" name="price" autoComplete="off"
                 id="price"
                 type="number"
                 value={price}
@@ -222,7 +222,7 @@ export default function AdminProductNewPage() {
                 required
                 min="0.01"
                 step="0.01"
-                className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+                className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus-visible:border-green-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-green-500"
                 placeholder="0.00"
               />
             </div>
@@ -231,14 +231,14 @@ export default function AdminProductNewPage() {
               <label htmlFor="salePrice" className="block text-sm font-medium text-foreground">
                 Sale Price ($)
               </label>
-              <input
+              <input inputMode="decimal" name="salePrice" autoComplete="off"
                 id="salePrice"
                 type="number"
                 value={salePrice}
                 onChange={(e) => setSalePrice(e.target.value)}
                 min="0.01"
                 step="0.01"
-                className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+                className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus-visible:border-green-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-green-500"
                 placeholder="0.00"
               />
             </div>
@@ -249,13 +249,13 @@ export default function AdminProductNewPage() {
             <label htmlFor="image" className="block text-sm font-medium text-foreground">
               Image URL <span className="text-red-500">*</span>
             </label>
-            <input
+            <input name="image" autoComplete="off"
               id="image"
               type="url"
               value={image}
               onChange={(e) => setImage(e.target.value)}
               required
-              className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+              className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus-visible:border-green-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-green-500"
               placeholder="https://example.com/image.jpg"
             />
           </div>
@@ -266,11 +266,11 @@ export default function AdminProductNewPage() {
               <label htmlFor="category" className="block text-sm font-medium text-foreground">
                 Category
               </label>
-              <select
+              <select name="category"
                 id="category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+                className="mt-1 block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground shadow-sm focus-visible:border-green-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-green-500"
               >
                 {CATEGORIES.map((cat) => (
                   <option key={cat} value={cat}>
@@ -284,14 +284,14 @@ export default function AdminProductNewPage() {
               <label htmlFor="inventory" className="block text-sm font-medium text-foreground">
                 Inventory
               </label>
-              <input
+              <input inputMode="numeric" name="inventory" autoComplete="off"
                 id="inventory"
                 type="number"
                 value={inventory}
                 onChange={(e) => setInventory(e.target.value)}
                 min="0"
                 step="1"
-                className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+                className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus-visible:border-green-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-green-500"
                 placeholder="0"
               />
             </div>
@@ -308,10 +308,10 @@ export default function AdminProductNewPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center gap-2 rounded-lg bg-green-700 px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex items-center gap-2 rounded-lg bg-green-700 px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {loading && <Loader2 className="size-4 animate-spin" />}
-              {loading ? 'Creating...' : 'Create Product'}
+              {loading && <span className="inline-flex shrink-0 animate-spin"><Loader2 className="size-4" /></span>}
+              {loading ? 'Creating…' : 'Create Product'}
             </button>
           </div>
         </div>

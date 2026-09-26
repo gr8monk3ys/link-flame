@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
+import { cn, formatPrice } from '@/lib/utils'
 
 interface AppliedGiftCard {
   code: string
@@ -107,7 +107,7 @@ export function GiftCardCheckout({
 
       setAppliedCard(result)
       onGiftCardApplied?.(result.amountApplied, result)
-      toast.success(`Gift card applied! $${result.amountApplied.toFixed(2)} discount`)
+      toast.success(`Gift card applied! ${formatPrice(result.amountApplied)} discount`)
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
         console.error('Gift card apply error:', error)
@@ -133,7 +133,7 @@ export function GiftCardCheckout({
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-3">
             <div className="flex size-8 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
-              <svg
+              <svg aria-hidden="true"
                 className="size-4 text-green-700 dark:text-green-400"
                 fill="none"
                 stroke="currentColor"
@@ -149,13 +149,13 @@ export function GiftCardCheckout({
             </div>
             <div>
               <p className="font-medium text-green-800 dark:text-green-200">Gift Card Applied</p>
-              <p className="font-mono text-sm text-green-700 dark:text-green-300">{appliedCard.code}</p>
+              <p className="font-mono text-sm text-green-700 dark:text-green-300" translate="no">{appliedCard.code}</p>
               <p className="mt-1 text-sm text-green-700 dark:text-green-400">
-                ${appliedCard.amountApplied.toFixed(2)} discount applied
+                {formatPrice(appliedCard.amountApplied)} discount applied
                 {appliedCard.remainingBalance > 0 && (
                   <span className="text-green-500">
                     {' '}
-                    (${appliedCard.remainingBalance.toFixed(2)} remaining)
+                    ({formatPrice(appliedCard.remainingBalance)} remaining)
                   </span>
                 )}
               </p>
@@ -180,12 +180,13 @@ export function GiftCardCheckout({
     <div className={cn('rounded-lg border p-4', className)}>
       <button
         type="button"
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={() => setIsExpanded((v) => !v)}
+            aria-expanded={isExpanded}
         disabled={disabled}
         className="flex w-full items-center justify-between text-left"
       >
         <div className="flex items-center gap-2">
-          <svg
+          <svg aria-hidden="true"
             className="size-5 text-muted-foreground"
             fill="none"
             stroke="currentColor"
@@ -200,11 +201,7 @@ export function GiftCardCheckout({
           </svg>
           <span className="font-medium text-foreground">Have a gift card?</span>
         </div>
-        <svg
-          className={cn(
-            'size-5 text-muted-foreground transition-transform',
-            isExpanded && 'rotate-180'
-          )}
+        <span className={cn('inline-flex transition-transform', isExpanded && 'rotate-180')}><svg aria-hidden="true" className="size-5 text-muted-foreground"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -215,7 +212,7 @@ export function GiftCardCheckout({
             strokeWidth={2}
             d="M19 9l-7 7-7-7"
           />
-        </svg>
+        </svg></span>
       </button>
 
       {isExpanded && (
@@ -225,7 +222,7 @@ export function GiftCardCheckout({
               Gift Card Code
             </Label>
             <div className="flex gap-2">
-              <Input
+              <Input name="code" autoComplete="off" spellCheck={false}
                 id="checkoutGiftCardCode"
                 type="text"
                 placeholder="XXXX-XXXX-XXXX-XXXX"
@@ -245,8 +242,8 @@ export function GiftCardCheckout({
                 className="shrink-0"
               >
                 {isLoading ? (
-                  <svg
-                    className="size-4 animate-spin"
+                  <span className="inline-flex shrink-0 animate-spin" aria-hidden="true"><svg
+                    className="size-4"
                     viewBox="0 0 24 24"
                     aria-hidden="true"
                   >
@@ -264,7 +261,7 @@ export function GiftCardCheckout({
                       fill="currentColor"
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     />
-                  </svg>
+                  </svg></span>
                 ) : (
                   'Apply'
                 )}

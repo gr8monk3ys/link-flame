@@ -2,12 +2,11 @@
 
 import { useState } from "react"
 import Image from "next/image"
-import { format } from "date-fns"
 import { Share2, Heart, MessageSquare, Bookmark } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { buttonVariants } from "@/components/ui/button"
 import { renderPostBody } from "@/lib/markdown"
-import { slugify } from "@/lib/utils"
+import { slugify, formatDate } from "@/lib/utils"
 
 interface Author {
   name: string
@@ -61,7 +60,7 @@ export function BlogPost({
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <div className="relative size-10">
-                <Image
+                <Image sizes="48px"
                   src={author.image}
                   alt={author.name}
                   fill
@@ -71,13 +70,13 @@ export function BlogPost({
               <div>
                 <div className="font-medium">{author.name}</div>
                 <div className="text-sm text-muted-foreground">
-                  {format(publishedAt, "MMMM d, yyyy")} · {readingTime}
+                  {formatDate(publishedAt, "long")} · {readingTime}
                 </div>
               </div>
             </div>
             <div className="ml-auto flex items-center gap-2">
               <button
-                onClick={() => setIsLiked(!isLiked)}
+                onClick={() => setIsLiked((v) => !v)}
                 className={buttonVariants({ variant: "ghost", size: "sm" })}
               >
                 <Heart
@@ -88,7 +87,7 @@ export function BlogPost({
                 <MessageSquare className="size-4" />
               </button>
               <button
-                onClick={() => setIsSaved(!isSaved)}
+                onClick={() => setIsSaved((v) => !v)}
                 className={buttonVariants({ variant: "ghost", size: "sm" })}
               >
                 <Bookmark
@@ -105,7 +104,7 @@ export function BlogPost({
 
       {/* Cover Image */}
       <div className="relative mb-8 aspect-video">
-        <Image
+        <Image sizes="(max-width: 1024px) 100vw, 768px"
           src={coverImage}
           alt={title}
           fill
@@ -140,7 +139,7 @@ export function BlogPost({
       <Card className="mt-8 p-6">
         <div className="flex items-start gap-4">
           <div className="relative size-16">
-            <Image
+            <Image sizes="48px"
               src={author.image}
               alt={author.name}
               fill

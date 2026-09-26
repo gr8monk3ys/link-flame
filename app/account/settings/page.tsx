@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useSession, signOut } from "next-auth/react";
-import { format } from "date-fns";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { User, Lock, AlertTriangle, Loader2, Check, ArrowLeft } from "lucide-react";
+import { formatDate } from "@/lib/utils";
 
 interface UserProfile {
   id: string;
@@ -79,7 +79,7 @@ export default function AccountSettingsPage() {
       setProfileName(data.data.name || "");
       setProfileEmail(data.data.email || "");
     } catch (error) {
-      toast.error("Failed to load profile");
+      toast.error("Couldn’t load your profile. Refresh the page to try again.");
     } finally {
       setLoadingProfile(false);
     }
@@ -147,12 +147,12 @@ export default function AccountSettingsPage() {
     }
 
     if (newPassword !== confirmPassword) {
-      toast.error("New passwords do not match");
+      toast.error("New passwords do not match. Re-enter the confirmation.");
       return;
     }
 
     if (newPassword.length < 8) {
-      toast.error("New password must be at least 8 characters");
+      toast.error("Use at least 8 characters for the new password.");
       return;
     }
 
@@ -238,7 +238,7 @@ export default function AccountSettingsPage() {
   if (!isLoaded) {
     return (
       <div className="container flex items-center justify-center py-10">
-        <Loader2 className="size-8 animate-spin" />
+        <span role="status"><span className="inline-flex shrink-0 animate-spin"><Loader2 className="size-8" /></span><span className="sr-only">Loading…</span></span>
       </div>
     );
   }
@@ -248,7 +248,7 @@ export default function AccountSettingsPage() {
       <div className="container py-10">
         <Card>
           <CardHeader>
-            <CardTitle>Sign In Required</CardTitle>
+            <CardTitle as="h1">Sign In Required</CardTitle>
             <CardDescription>
               Please sign in to access your account settings.
             </CardDescription>
@@ -302,7 +302,7 @@ export default function AccountSettingsPage() {
         <TabsContent value="profile">
           <Card>
             <CardHeader>
-              <CardTitle>Profile Information</CardTitle>
+              <CardTitle as="h2">Profile Information</CardTitle>
               <CardDescription>
                 Update your personal details and account information
               </CardDescription>
@@ -310,14 +310,14 @@ export default function AccountSettingsPage() {
             <CardContent>
               {loadingProfile ? (
                 <div className="flex items-center justify-center py-8">
-                  <Loader2 className="size-6 animate-spin" />
+                  <span role="status"><span className="inline-flex shrink-0 animate-spin"><Loader2 className="size-6" /></span><span className="sr-only">Loading…</span></span>
                 </div>
               ) : (
                 <form onSubmit={handleUpdateProfile} className="space-y-6">
                   <div className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="name">Name</Label>
-                      <Input
+                      <Input name="profileName" autoComplete="name"
                         id="name"
                         value={profileName}
                         onChange={(e) => setProfileName(e.target.value)}
@@ -327,7 +327,7 @@ export default function AccountSettingsPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="email">Email</Label>
-                      <Input
+                      <Input name="profileEmail" autoComplete="email" spellCheck={false}
                         id="email"
                         type="email"
                         value={profileEmail}
@@ -345,7 +345,7 @@ export default function AccountSettingsPage() {
                           <div>
                             <span className="text-muted-foreground">Account created:</span>
                             <p className="font-medium">
-                              {format(new Date(profile.createdAt), "MMMM d, yyyy")}
+                              {formatDate(profile.createdAt, "long")}
                             </p>
                           </div>
                           <div>
@@ -360,8 +360,8 @@ export default function AccountSettingsPage() {
                   <Button type="submit" disabled={savingProfile}>
                     {savingProfile ? (
                       <>
-                        <Loader2 className="mr-2 size-4 animate-spin" />
-                        Saving...
+                        <span className="mr-2 inline-flex shrink-0 animate-spin"><Loader2 className="size-4" /></span>
+                        Saving…
                       </>
                     ) : (
                       <>
@@ -380,7 +380,7 @@ export default function AccountSettingsPage() {
         <TabsContent value="security">
           <Card>
             <CardHeader>
-              <CardTitle>Change Password</CardTitle>
+              <CardTitle as="h2">Change Password</CardTitle>
               <CardDescription>
                 Update your password to keep your account secure
               </CardDescription>
@@ -390,7 +390,7 @@ export default function AccountSettingsPage() {
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="currentPassword">Current Password</Label>
-                    <Input
+                    <Input name="currentPassword" autoComplete="current-password"
                       id="currentPassword"
                       type="password"
                       value={currentPassword}
@@ -401,7 +401,7 @@ export default function AccountSettingsPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="newPassword">New Password</Label>
-                    <Input
+                    <Input name="newPassword" autoComplete="new-password"
                       id="newPassword"
                       type="password"
                       value={newPassword}
@@ -415,7 +415,7 @@ export default function AccountSettingsPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                    <Input
+                    <Input name="confirmPassword" autoComplete="new-password"
                       id="confirmPassword"
                       type="password"
                       value={confirmPassword}
@@ -428,8 +428,8 @@ export default function AccountSettingsPage() {
                 <Button type="submit" disabled={changingPassword}>
                   {changingPassword ? (
                     <>
-                      <Loader2 className="mr-2 size-4 animate-spin" />
-                      Changing Password...
+                      <span className="mr-2 inline-flex shrink-0 animate-spin"><Loader2 className="size-4" /></span>
+                      Changing Password…
                     </>
                   ) : (
                     "Change Password"
@@ -444,7 +444,7 @@ export default function AccountSettingsPage() {
         <TabsContent value="danger">
           <Card className="border-destructive">
             <CardHeader>
-              <CardTitle className="text-destructive">Delete Account</CardTitle>
+              <CardTitle as="h2" className="text-destructive">Delete Account</CardTitle>
               <CardDescription>
                 Permanently delete your account and all associated data. This action cannot be undone.
               </CardDescription>
@@ -469,7 +469,7 @@ export default function AccountSettingsPage() {
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="deletePassword">Password</Label>
-                    <Input
+                    <Input name="deletePassword" autoComplete="current-password"
                       id="deletePassword"
                       type="password"
                       value={deletePassword}
@@ -482,7 +482,7 @@ export default function AccountSettingsPage() {
                     <Label htmlFor="deleteConfirmation">
                       Type <span className="font-mono font-bold">DELETE MY ACCOUNT</span> to confirm
                     </Label>
-                    <Input
+                    <Input name="deleteConfirmation" autoComplete="off"
                       id="deleteConfirmation"
                       value={deleteConfirmation}
                       onChange={(e) => setDeleteConfirmation(e.target.value)}
@@ -498,8 +498,8 @@ export default function AccountSettingsPage() {
                 >
                   {deletingAccount ? (
                     <>
-                      <Loader2 className="mr-2 size-4 animate-spin" />
-                      Deleting Account...
+                      <span className="mr-2 inline-flex shrink-0 animate-spin"><Loader2 className="size-4" /></span>
+                      Deleting Account…
                     </>
                   ) : (
                     "Delete My Account"

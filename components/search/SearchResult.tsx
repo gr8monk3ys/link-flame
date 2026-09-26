@@ -28,7 +28,7 @@ export function ProductResult({
       onClick={onSelect}
       className={cn(
         'flex items-center gap-3 rounded-md px-3 py-2 transition-colors',
-        'hover:bg-accent focus:bg-accent focus:outline-none',
+        'hover:bg-accent focus:bg-accent focus-visible:outline-none',
         isHighlighted && 'bg-accent'
       )}
     >
@@ -43,7 +43,7 @@ export function ProductResult({
           />
         ) : (
           <div className="flex size-full items-center justify-center text-muted-foreground">
-            <svg
+            <svg aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
@@ -100,12 +100,12 @@ export function CategoryResult({
       onClick={onSelect}
       className={cn(
         'flex items-center justify-between rounded-md px-3 py-2 transition-colors',
-        'hover:bg-accent focus:bg-accent focus:outline-none',
+        'hover:bg-accent focus:bg-accent focus-visible:outline-none',
         isHighlighted && 'bg-accent'
       )}
     >
       <div className="flex items-center gap-2">
-        <svg
+        <svg aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           width="16"
           height="16"
@@ -147,7 +147,7 @@ export function BlogPostResult({
       onClick={onSelect}
       className={cn(
         'flex items-center gap-3 rounded-md px-3 py-2 transition-colors',
-        'hover:bg-accent focus:bg-accent focus:outline-none',
+        'hover:bg-accent focus:bg-accent focus-visible:outline-none',
         isHighlighted && 'bg-accent'
       )}
     >
@@ -162,7 +162,7 @@ export function BlogPostResult({
           />
         ) : (
           <div className="flex size-full items-center justify-center text-muted-foreground">
-            <svg
+            <svg aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
@@ -189,7 +189,7 @@ export function BlogPostResult({
         )}
       </div>
       <div className="shrink-0">
-        <svg
+        <svg aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           width="16"
           height="16"
@@ -228,17 +228,19 @@ export function RecentSearchResult({
   }
 
   return (
-    <button
-      type="button"
-      onClick={onSelect}
+    <div
       className={cn(
-        'flex w-full items-center justify-between rounded-md px-3 py-2 text-left transition-colors',
-        'hover:bg-accent focus:bg-accent focus:outline-none',
+        'flex w-full items-center justify-between rounded-md transition-colors',
+        'focus-within:bg-accent hover:bg-accent',
         isHighlighted && 'bg-accent'
       )}
     >
-      <div className="flex items-center gap-2">
-        <svg
+      <button
+        type="button"
+        onClick={onSelect}
+        className="flex min-w-0 flex-1 items-center gap-2 px-3 py-2 text-left focus-visible:outline-none"
+      >
+        <svg aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           width="16"
           height="16"
@@ -253,16 +255,16 @@ export function RecentSearchResult({
           <circle cx="12" cy="12" r="10" />
           <polyline points="12 6 12 12 16 14" />
         </svg>
-        <span className="text-sm">{query}</span>
-      </div>
+        <span className="truncate text-sm">{query}</span>
+      </button>
       {onRemove && (
         <button
           type="button"
           onClick={handleRemove}
-          className="rounded p-1 text-muted-foreground hover:bg-background hover:text-foreground"
+          className="mr-2 rounded p-1 text-muted-foreground hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           aria-label={`Remove "${query}" from recent searches`}
         >
-          <svg
+          <svg aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             width="14"
             height="14"
@@ -278,6 +280,6 @@ export function RecentSearchResult({
           </svg>
         </button>
       )}
-    </button>
+    </div>
   )
 }

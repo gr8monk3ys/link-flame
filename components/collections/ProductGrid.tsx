@@ -6,9 +6,10 @@ import Link from 'next/link';
 import { useCart } from '@/lib/providers/CartProvider';
 import { useSavedItems } from '@/hooks/useSavedItems';
 import { toast } from 'sonner';
-import { ImperfectBadge } from '@/components/imperfect';
+import { ImperfectBadge } from '@/components/imperfect/ImperfectBadge';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { formatNumber, formatPrice } from "@/lib/utils";
 
 interface Product {
   id: string;
@@ -45,17 +46,13 @@ interface ProductGridProps {
 const getAverageRating = (reviews: { rating: number }[]) => {
   if (reviews.length === 0) return null;
   const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
-  return (sum / reviews.length).toFixed(1);
+  return formatNumber(sum / reviews.length, 1);
 };
 
 const isNewProduct = (date: Date) => {
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
   return new Date(date) > thirtyDaysAgo;
-};
-
-const formatPrice = (price: number) => {
-  return price.toFixed(2);
 };
 
 function ProductGridLoading() {
@@ -142,7 +139,7 @@ function ProductCard({
     <div key={product.id} className="group relative" data-testid="product-card">
       <Link
         href={`/products/${product.id}`}
-        className="absolute right-4 top-4 z-10 rounded-full bg-card p-2 opacity-0 shadow-md transition-opacity group-hover:opacity-100"
+        className="absolute right-4 top-4 z-10 rounded-full bg-card p-2 opacity-0 shadow-md transition-opacity focus-visible:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100"
         aria-label={`View details for ${product.title}`}
       >
         <svg className="size-5 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -153,7 +150,7 @@ function ProductCard({
 
       <button
         data-testid="add-to-cart-button"
-        className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white opacity-0 shadow-md transition-opacity hover:bg-primary group-hover:opacity-100"
+        className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white opacity-0 shadow-md transition-opacity hover:bg-primary/90 focus-visible:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100"
         aria-label={`Add ${product.title} to cart`}
         onClick={() => onAddToCart(product)}
       >
@@ -181,7 +178,7 @@ function ProductCard({
       </div>
 
       <button
-        className="absolute right-4 top-16 z-10 rounded-full bg-card p-2 opacity-0 shadow-md transition-opacity group-hover:opacity-100"
+        className="absolute right-4 top-16 z-10 rounded-full bg-card p-2 opacity-0 shadow-md transition-opacity focus-visible:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100"
         aria-label={`${isSaved ? 'Remove' : 'Add'} ${product.title} ${isSaved ? 'from' : 'to'} wishlist`}
         aria-pressed={isSaved}
         onClick={(event) => {
@@ -213,26 +210,26 @@ function ProductCard({
         />
       </div>
       <div className="mt-4 space-y-2">
-        <div className="flex justify-between">
-          <h3 className="text-sm text-foreground">
-            <a href={`/products/${product.id}`}>
+        <div className="flex justify-between gap-2">
+          <h3 className="min-w-0 break-words text-sm text-foreground">
+            <Link href={`/products/${product.id}`}>
               <span aria-hidden="true" className="absolute inset-0" />
               {product.title}
-            </a>
+            </Link>
           </h3>
           <div className="text-sm font-medium">
             {product.isImperfect && product.imperfectPrice ? (
               <div className="flex flex-col items-end">
-                <span className="font-bold text-amber-600 dark:text-amber-400">${formatPrice(product.imperfectPrice)}</span>
-                <span className="text-xs text-muted-foreground line-through">${formatPrice(product.price)}</span>
+                <span className="font-bold text-amber-600 dark:text-amber-400">{formatPrice(product.imperfectPrice)}</span>
+                <span className="text-xs text-muted-foreground line-through">{formatPrice(product.price)}</span>
               </div>
             ) : product.salePrice ? (
               <div className="flex flex-col items-end">
-                <span className="text-red-600 dark:text-red-400">${formatPrice(product.salePrice)}</span>
-                <span className="text-muted-foreground line-through">${formatPrice(product.price)}</span>
+                <span className="text-red-600 dark:text-red-400">{formatPrice(product.salePrice)}</span>
+                <span className="text-muted-foreground line-through">{formatPrice(product.price)}</span>
               </div>
             ) : (
-              <span className="text-foreground">${formatPrice(product.price)}</span>
+              <span className="text-foreground">{formatPrice(product.price)}</span>
             )}
           </div>
         </div>
@@ -306,11 +303,11 @@ function ProductPagination({
           <label htmlFor="products-per-page" className="text-sm text-muted-foreground">
             Per page
           </label>
-          <select
+          <select name="pageSize"
             id="products-per-page"
             value={pageSize}
             onChange={(e) => onPageSizeChange(Number(e.target.value))}
-            className="rounded-md border border-border py-2 pl-3 pr-10 text-sm"
+            className="rounded-md border border-border bg-background py-2 pl-3 pr-10 text-sm text-foreground"
           >
             {[12, 24, 36, 48].map((size) => (
               <option key={size} value={size}>
@@ -325,7 +322,7 @@ function ProductPagination({
               className="relative inline-flex items-center rounded-l-md p-2 text-muted-foreground ring-1 ring-inset ring-border hover:bg-muted/50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
             >
               <span className="sr-only">First</span>
-              <svg className="size-5" viewBox="0 0 20 20" fill="currentColor">
+              <svg aria-hidden="true" className="size-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414zm-6 0a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
               </svg>
             </button>
@@ -335,7 +332,7 @@ function ProductPagination({
               className="relative inline-flex items-center p-2 text-muted-foreground ring-1 ring-inset ring-border hover:bg-muted/50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
             >
               <span className="sr-only">Previous</span>
-              <svg className="size-5" viewBox="0 0 20 20" fill="currentColor">
+              <svg aria-hidden="true" className="size-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
               </svg>
             </button>
@@ -364,7 +361,7 @@ function ProductPagination({
               className="relative inline-flex items-center p-2 text-muted-foreground ring-1 ring-inset ring-border hover:bg-muted/50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
             >
               <span className="sr-only">Next</span>
-              <svg className="size-5" viewBox="0 0 20 20" fill="currentColor">
+              <svg aria-hidden="true" className="size-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
               </svg>
             </button>
@@ -374,7 +371,7 @@ function ProductPagination({
               className="relative inline-flex items-center rounded-r-md p-2 text-muted-foreground ring-1 ring-inset ring-border hover:bg-muted/50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
             >
               <span className="sr-only">Last</span>
-              <svg className="size-5" viewBox="0 0 20 20" fill="currentColor">
+              <svg aria-hidden="true" className="size-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M4.293 15.707a1 1 0 010-1.414L8.586 10 4.293 5.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
               </svg>
             </button>

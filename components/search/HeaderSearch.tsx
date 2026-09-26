@@ -73,7 +73,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
       {/* Search Button - Mobile: icon only, Desktop: with shortcut hint.
 
           No aria-label: it read "Search" while the button visibly read
-          "Search... Cmd K", so someone using speech input to say the words in
+          "Search… Cmd K", so someone using speech input to say the words in
           front of them could not reach this control (WCAG 2.5.3 Label in
           Name). The name now comes from whichever of the two layouts below is
           the visible one. */}
@@ -94,7 +94,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
         {/* Desktop: Search bar hint with keyboard shortcut */}
         <div className="hidden items-center gap-2 rounded-md border bg-muted/50 px-3 py-1.5 lg:flex">
           <Icons.search className="size-4 text-muted-foreground" />
-          <span className="text-sm text-muted-foreground">Search...</span>
+          <span className="text-sm text-muted-foreground">Search…</span>
           <kbd className="pointer-events-none ml-4 hidden h-5 select-none items-center gap-1 rounded border bg-background px-1.5 font-mono text-xs font-medium opacity-100 sm:inline-flex">
             <span>Cmd</span>K
           </kbd>

@@ -81,7 +81,7 @@ export async function SearchResults({ query }: SearchResultsProps) {
   if (!hasResults) {
     return (
       <div className="rounded-lg border p-8 text-center">
-        <svg
+        <svg aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           width="48"
           height="48"
@@ -98,7 +98,7 @@ export async function SearchResults({ query }: SearchResultsProps) {
         </svg>
         <h2 className="text-xl font-semibold">No results found</h2>
         <p className="mt-2 text-muted-foreground">
-          We could not find anything matching &quot;{query}&quot;. Try different keywords or browse our{' '}
+          We could not find anything matching &ldquo;{query}&rdquo;. Try different keywords or browse our{' '}
           <Link href="/collections" className="text-primary hover:underline">
             collections
           </Link>
@@ -144,7 +144,7 @@ export async function SearchResults({ query }: SearchResultsProps) {
                       />
                     ) : (
                       <div className="flex size-full items-center justify-center text-muted-foreground">
-                        <svg
+                        <svg aria-hidden="true"
                           xmlns="http://www.w3.org/2000/svg"
                           width="48"
                           height="48"
@@ -209,7 +209,7 @@ export async function SearchResults({ query }: SearchResultsProps) {
                 href={`/collections?category=${encodeURIComponent(cat.category)}`}
                 className="inline-flex items-center gap-2 rounded-full border bg-muted/50 px-4 py-2 transition-colors hover:bg-muted"
               >
-                <svg
+                <svg aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
                   height="16"
@@ -267,7 +267,7 @@ export async function SearchResults({ query }: SearchResultsProps) {
                     />
                   ) : (
                     <div className="flex size-full items-center justify-center text-muted-foreground">
-                      <svg
+                      <svg aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
                         width="32"
                         height="32"

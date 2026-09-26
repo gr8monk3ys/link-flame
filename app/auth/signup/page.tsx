@@ -101,7 +101,7 @@ export default function SignUpPage() {
     <div className="container flex min-h-[calc(100vh-200px)] items-center justify-center">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Create Account</CardTitle>
+          <CardTitle as="h1">Create Account</CardTitle>
           <CardDescription>
             Enter your information to create an account
           </CardDescription>
@@ -117,7 +117,7 @@ export default function SignUpPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
-              <Input
+              <Input name="name" autoComplete="name"
                 id="name"
                 type="text"
                 placeholder="John Doe"
@@ -129,7 +129,7 @@ export default function SignUpPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input
+              <Input name="email" autoComplete="email" spellCheck={false}
                 id="email"
                 type="email"
                 placeholder="you@example.com"
@@ -141,7 +141,7 @@ export default function SignUpPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input
+              <Input name="password" autoComplete="new-password"
                 id="password"
                 type="password"
                 placeholder="••••••••"
@@ -154,7 +154,7 @@ export default function SignUpPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input
+              <Input name="confirmPassword" autoComplete="new-password"
                 id="confirmPassword"
                 type="password"
                 placeholder="••••••••"
@@ -166,12 +166,12 @@ export default function SignUpPage() {
               />
             </div>
             {error && (
-              <div className="rounded bg-red-50 p-3 text-sm text-red-600 dark:bg-red-950/40 dark:text-red-400">
+              <div className="rounded bg-red-50 p-3 text-sm text-red-600 dark:bg-red-950/40 dark:text-red-400" role="alert">
                 {error}
               </div>
             )}
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Creating account..." : "Create Account"}
+              {loading ? "Creating account…" : "Create Account"}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">

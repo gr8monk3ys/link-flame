@@ -25,7 +25,7 @@ export default async function SharedWishlistPage({ params }: SharedWishlistPageP
       <div className="mb-8 text-center">
         <div className="mb-2 flex items-center justify-center gap-2">
           <Heart className="size-6 fill-red-500 text-red-500" />
-          <h1 className="text-3xl font-bold">{wishlist.name}</h1>
+          <h1 className="min-w-0 break-words text-3xl font-bold">{wishlist.name}</h1>
         </div>
         <p className="text-muted-foreground">
           {wishlist.items.length} {wishlist.items.length === 1 ? 'item' : 'items'}
@@ -92,17 +92,17 @@ export default async function SharedWishlistPage({ params }: SharedWishlistPageP
 
                 {item.note && (
                   <p className="mt-2 line-clamp-2 text-sm italic text-muted-foreground">
-                    &quot;{item.note}&quot;
+                    &ldquo;{item.note}&rdquo;
                   </p>
                 )}
 
                 <div className="mt-4 flex gap-2">
-                  <Link href={`/products/${item.productId}`} className="flex-1">
-                    <Button variant="outline" className="w-full" size="sm">
+                  <Button variant="outline" className="w-full" size="sm" asChild>
+                    <Link href={`/products/${item.productId}`} className="flex-1">
                       <ExternalLink className="mr-2 size-4" />
                       View Product
-                    </Button>
-                  </Link>
+                    </Link>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -115,12 +115,12 @@ export default async function SharedWishlistPage({ params }: SharedWishlistPageP
         <p className="mb-4 text-muted-foreground">
           Want to create your own wishlist?
         </p>
-        <Link href="/auth/signin">
-          <Button>
+        <Button asChild>
+          <Link href="/auth/signin">
             <Heart className="mr-2 size-4" />
             Sign Up
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       </div>
     </div>
   );

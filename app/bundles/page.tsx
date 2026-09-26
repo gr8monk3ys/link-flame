@@ -115,7 +115,7 @@ export default async function BundlesPage() {
         <div className="grid gap-6 md:grid-cols-3">
           <div className="text-center">
             <div className="mb-4 inline-flex size-12 items-center justify-center rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
-              <svg
+              <svg aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 className="size-6"
                 fill="none"
@@ -138,7 +138,7 @@ export default async function BundlesPage() {
           </div>
           <div className="text-center">
             <div className="mb-4 inline-flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <svg
+              <svg aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 className="size-6"
                 fill="none"
@@ -161,7 +161,7 @@ export default async function BundlesPage() {
           </div>
           <div className="text-center">
             <div className="mb-4 inline-flex size-12 items-center justify-center rounded-full bg-accent/20 text-accent-foreground">
-              <svg
+              <svg aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 className="size-6"
                 fill="none"

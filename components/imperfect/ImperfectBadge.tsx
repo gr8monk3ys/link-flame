@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@/lib/utils';
+import { cn, formatPrice } from '@/lib/utils';
 
 interface ImperfectBadgeProps {
   discountPercent: number;
@@ -47,7 +47,6 @@ export function ImperfectBadge({
         variantClasses[variant],
         className
       )}
-      aria-label={`Imperfect product - Save ${discountPercent}%`}
     >
       {/* Leaf icon to emphasize eco-friendliness */}
       <svg
@@ -98,7 +97,6 @@ export function ImperfectLabel({ size = 'md', className }: ImperfectLabelProps) 
         sizeClasses[size],
         className
       )}
-      aria-label="Perfectly Imperfect product"
     >
       <svg
         className={cn(iconSizeClasses[size], 'shrink-0')}
@@ -144,9 +142,8 @@ export function ImperfectSavingsBadge({
         sizeClasses[size],
         className
       )}
-      aria-label={`You save $${savings.toFixed(2)}`}
     >
-      You save ${savings.toFixed(2)}
+      You save {formatPrice(savings)}
     </span>
   );
 }

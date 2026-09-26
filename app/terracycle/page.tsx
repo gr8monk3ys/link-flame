@@ -1,11 +1,9 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import {
-  TerraCycleHero,
-  RecyclingSteps,
-  AcceptedItems,
-  TerraCycleFAQ,
-} from "@/components/terracycle";
+import { TerraCycleHero } from "@/components/terracycle/TerraCycleHero";
+import { RecyclingSteps } from "@/components/terracycle/RecyclingSteps";
+import { AcceptedItems } from "@/components/terracycle/AcceptedItems";
+import { TerraCycleFAQ } from "@/components/terracycle/TerraCycleFAQ";
 
 export const metadata: Metadata = {
   title: "TerraCycle Recycling Program",
@@ -20,7 +18,7 @@ export const metadata: Metadata = {
 
 // Recycle icon
 const RecycleIcon = ({ className }: { className?: string }) => (
-  <svg
+  <svg aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"
@@ -40,7 +38,7 @@ const RecycleIcon = ({ className }: { className?: string }) => (
 
 // Leaf icon
 const LeafIcon = ({ className }: { className?: string }) => (
-  <svg
+  <svg aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"
@@ -56,7 +54,7 @@ const LeafIcon = ({ className }: { className?: string }) => (
 
 // Globe icon
 const GlobeIcon = ({ className }: { className?: string }) => (
-  <svg
+  <svg aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"
@@ -73,7 +71,7 @@ const GlobeIcon = ({ className }: { className?: string }) => (
 
 // Truck icon
 const TruckIcon = ({ className }: { className?: string }) => (
-  <svg
+  <svg aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"
@@ -92,7 +90,7 @@ const TruckIcon = ({ className }: { className?: string }) => (
 
 export default function TerraCyclePage() {
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       {/* Hero Section */}
       <TerraCycleHero />
 
@@ -112,7 +110,7 @@ export default function TerraCyclePage() {
               </h2>
               <p className="mt-4 text-lg text-muted-foreground">
                 Traditional recycling programs cannot process many types of product
-                packaging. TerraCycle&apos;s innovative approach ensures that your empties
+                packaging. TerraCycle&rsquo;s innovative approach ensures that your empties
                 do not end up in landfills or our oceans.
               </p>
 
@@ -256,7 +254,7 @@ export default function TerraCyclePage() {
               className="inline-flex items-center gap-2 rounded-lg border border-white px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-white/10"
             >
               Visit TerraCycle
-              <svg
+              <svg aria-hidden="true"
                 className="size-4"
                 viewBox="0 0 24 24"
                 fill="none"
@@ -334,7 +332,7 @@ export default function TerraCyclePage() {
               <Link
                 key={item.title}
                 href={item.href}
-                className="group rounded-xl border bg-card p-6 shadow-sm transition-all hover:shadow-md"
+                className="group rounded-xl border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
               >
                 <h3 className="text-lg font-semibold text-foreground group-hover:text-emerald-700 dark:text-white dark:group-hover:text-emerald-400">
                   {item.title}
@@ -344,21 +342,21 @@ export default function TerraCyclePage() {
                 </p>
                 <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-emerald-700 dark:text-emerald-400">
                   Learn more
-                  <svg
-                    className="size-4 transition-transform group-hover:translate-x-1"
+                  <span className="inline-flex transition-transform group-hover:translate-x-1"><svg aria-hidden="true"
+                    className="size-4"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
                   >
                     <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
+                  </svg></span>
                 </span>
               </Link>
             ))}
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

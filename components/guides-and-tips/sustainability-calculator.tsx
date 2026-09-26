@@ -18,6 +18,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { formatNumber } from "@/lib/utils"
 
 interface CalculatorInputs {
   energyUsage: number
@@ -106,12 +107,12 @@ export function SustainabilityCalculator() {
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="energy">Monthly Energy Usage (kWh)</Label>
-            <Input
+            <Input inputMode="decimal" name="energyUsage" autoComplete="off"
               id="energy"
               type="number"
               value={inputs.energyUsage}
               onChange={(e) =>
-                setInputs({ ...inputs, energyUsage: Number(e.target.value) })
+                setInputs((prev) => ({ ...prev, energyUsage: Number(e.target.value) }))
               }
             />
           </div>
@@ -121,10 +122,10 @@ export function SustainabilityCalculator() {
             <Select
               value={inputs.transportationType}
               onValueChange={(value) =>
-                setInputs({ ...inputs, transportationType: value })
+                setInputs((prev) => ({ ...prev, transportationType: value }))
               }
             >
-              <SelectTrigger>
+              <SelectTrigger id="transportation">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -141,10 +142,10 @@ export function SustainabilityCalculator() {
             <Select
               value={inputs.dietType}
               onValueChange={(value) =>
-                setInputs({ ...inputs, dietType: value })
+                setInputs((prev) => ({ ...prev, dietType: value }))
               }
             >
-              <SelectTrigger>
+              <SelectTrigger id="diet">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -158,24 +159,24 @@ export function SustainabilityCalculator() {
 
           <div className="space-y-2">
             <Label htmlFor="waste">Weekly Waste Production (kg)</Label>
-            <Input
+            <Input inputMode="decimal" name="wasteProduction" autoComplete="off"
               id="waste"
               type="number"
               value={inputs.wasteProduction}
               onChange={(e) =>
-                setInputs({ ...inputs, wasteProduction: Number(e.target.value) })
+                setInputs((prev) => ({ ...prev, wasteProduction: Number(e.target.value) }))
               }
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="household">Household Size</Label>
-            <Input
+            <Input inputMode="numeric" name="householdSize" autoComplete="off"
               id="household"
               type="number"
               value={inputs.householdSize}
               onChange={(e) =>
-                setInputs({ ...inputs, householdSize: Number(e.target.value) })
+                setInputs((prev) => ({ ...prev, householdSize: Number(e.target.value) }))
               }
             />
           </div>
@@ -187,7 +188,7 @@ export function SustainabilityCalculator() {
       </Card>
 
       {results && (
-        <Card>
+        <Card role="status" aria-live="polite">
           <CardHeader>
             <CardTitle>Your Results</CardTitle>
           </CardHeader>
@@ -198,7 +199,7 @@ export function SustainabilityCalculator() {
                   Annual Carbon Footprint:
                 </h3>
                 <p className="text-3xl font-bold text-primary">
-                  {results.carbonFootprint.toFixed(2)} metric tons CO₂e
+                  {formatNumber(results.carbonFootprint, 2)} metric tons CO₂e
                 </p>
               </div>
 

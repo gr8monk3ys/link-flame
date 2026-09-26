@@ -13,7 +13,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, formatDate } from '@/lib/utils';
 import { cn } from '@/lib/utils';
 
 export interface WishlistItem {
@@ -121,9 +121,9 @@ export function WishlistItems({
         <p className="mb-4 text-muted-foreground">
           Start adding products to this wishlist
         </p>
-        <Link href="/products">
-          <Button>Browse Products</Button>
-        </Link>
+        <Button asChild>
+          <Link href="/products">Browse Products</Link>
+        </Button>
       </div>
     );
   }
@@ -177,13 +177,13 @@ export function WishlistItems({
               </div>
 
               {item.note && (
-                <p className="mt-2 text-sm italic text-muted-foreground">
-                  &quot;{item.note}&quot;
+                <p className="mt-2 break-words text-sm italic text-muted-foreground">
+                  &ldquo;{item.note}&rdquo;
                 </p>
               )}
 
               <p className="mt-1 text-xs text-muted-foreground">
-                Added {new Date(item.addedAt).toLocaleDateString()}
+                Added {formatDate(item.addedAt)}
               </p>
             </div>
 
@@ -197,7 +197,7 @@ export function WishlistItems({
                 {movingToCart[item.productId] ? (
                   <span className="flex items-center gap-1">
                     <span className="size-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                    Adding...
+                    Adding…
                   </span>
                 ) : (
                   <>
@@ -209,7 +209,7 @@ export function WishlistItems({
 
               <div className="flex gap-1">
                 {onUpdateNote && (
-                  <Button
+                  <Button aria-label={`Add a note to ${item.product?.title ?? "this item"}`}
                     variant="ghost"
                     size="icon"
                     className="size-8"
@@ -224,7 +224,7 @@ export function WishlistItems({
                 )}
 
                 {onMoveTo && otherWishlists.length > 0 && (
-                  <Button
+                  <Button aria-label={`Move ${item.product?.title ?? "this item"} to another list`}
                     variant="ghost"
                     size="icon"
                     className="size-8"
@@ -238,10 +238,11 @@ export function WishlistItems({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="size-8 text-destructive hover:text-destructive"
+                  className="size-8 text-destructive hover:text-destructive/80"
                   onClick={() => handleRemove(item.productId)}
                   disabled={removing[item.productId]}
                   title="Remove"
+                  aria-label={`Remove ${item.product?.title ?? "item"} from this list`}
                 >
                   {removing[item.productId] ? (
                     <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
@@ -261,7 +262,7 @@ export function WishlistItems({
           <DialogHeader>
             <DialogTitle>Move to Wishlist</DialogTitle>
             <DialogDescription>
-              Select a wishlist to move &quot;{moveDialogItem?.product.title}&quot; to
+              Select a wishlist to move &ldquo;{moveDialogItem?.product.title}&rdquo; to
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
@@ -285,14 +286,14 @@ export function WishlistItems({
           <DialogHeader>
             <DialogTitle>Add Note</DialogTitle>
             <DialogDescription>
-              Add a personal note for &quot;{noteDialogItem?.product.title}&quot;
+              Add a personal note for &ldquo;{noteDialogItem?.product.title}&rdquo;
             </DialogDescription>
           </DialogHeader>
-          <textarea
+          <textarea aria-label="Note" name="noteText" autoComplete="off"
             value={noteText}
             onChange={(e) => setNoteText(e.target.value)}
-            placeholder="e.g., Gift for mom's birthday"
-            className="min-h-[100px] w-full resize-none rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+            placeholder="e.g., Gift for mom’s birthday"
+            className="min-h-[100px] w-full resize-none rounded-md border px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             maxLength={500}
           />
           <DialogFooter>

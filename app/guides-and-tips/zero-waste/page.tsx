@@ -67,7 +67,7 @@ export default function ZeroWastePage() {
                   <h3 className="mb-2 text-xl font-bold">Kitchen & Food</h3>
                   <ul className="mb-4 space-y-2">
                     <li className="flex items-start space-x-2">
-                      <svg
+                      <svg aria-hidden="true"
                         className="size-6 shrink-0 text-green-500"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -83,7 +83,7 @@ export default function ZeroWastePage() {
                       <span>Meal planning to reduce food waste</span>
                     </li>
                     <li className="flex items-start space-x-2">
-                      <svg
+                      <svg aria-hidden="true"
                         className="size-6 shrink-0 text-green-500"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -99,7 +99,7 @@ export default function ZeroWastePage() {
                       <span>Reusable containers and bags</span>
                     </li>
                     <li className="flex items-start space-x-2">
-                      <svg
+                      <svg aria-hidden="true"
                         className="size-6 shrink-0 text-green-500"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -129,7 +129,7 @@ export default function ZeroWastePage() {
                   <h3 className="mb-2 text-xl font-bold">Bathroom & Personal Care</h3>
                   <ul className="mb-4 space-y-2">
                     <li className="flex items-start space-x-2">
-                      <svg
+                      <svg aria-hidden="true"
                         className="size-6 shrink-0 text-green-500"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -145,7 +145,7 @@ export default function ZeroWastePage() {
                       <span>Plastic-free toiletries</span>
                     </li>
                     <li className="flex items-start space-x-2">
-                      <svg
+                      <svg aria-hidden="true"
                         className="size-6 shrink-0 text-green-500"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -161,7 +161,7 @@ export default function ZeroWastePage() {
                       <span>DIY beauty products</span>
                     </li>
                     <li className="flex items-start space-x-2">
-                      <svg
+                      <svg aria-hidden="true"
                         className="size-6 shrink-0 text-green-500"
                         fill="none"
                         viewBox="0 0 24 24"

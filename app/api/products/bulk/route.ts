@@ -125,9 +125,10 @@ export async function POST(request: NextRequest) {
 
     // Create a map for ordered response matching the input order
     const productMap = new Map(normalizedProducts.map((p) => [p.id, p]))
-    const orderedProducts = ids
-      .map((id) => productMap.get(id))
-      .filter((p): p is typeof normalizedProducts[0] => p !== undefined)
+    const orderedProducts = ids.flatMap((id) => {
+      const product = productMap.get(id)
+      return product ? [product] : []
+    })
 
     return successResponse({
       products: orderedProducts,
