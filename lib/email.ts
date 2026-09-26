@@ -23,6 +23,22 @@ const resend = process.env.RESEND_API_KEY
 const FROM_EMAIL = process.env.EMAIL_FROM || 'noreply@linkflame.com';
 
 /**
+ * Escape a string for interpolation into email HTML.
+ *
+ * Contact-form fields and customer names are user-controlled; without this a
+ * submitter can inject markup (links, fake buttons, hidden text) into mail
+ * sent from our domain, including the confirmation sent to any address they type.
+ */
+export function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/**
  * Check if email service is configured
  */
 export function isEmailConfigured(): boolean {
@@ -309,7 +325,7 @@ function generateShippingNotificationHTML(orderDetails: {
           <!-- Content -->
           <div style="padding: 40px 30px;">
             <p style="margin: 0 0 20px 0; font-size: 16px;">
-              Hi ${orderDetails.customerName},
+              Hi ${escapeHtml(orderDetails.customerName)},
             </p>
 
             <p style="margin: 0 0 20px 0; font-size: 16px;">
@@ -415,7 +431,7 @@ function generateOutOfStockRefundHTML(orderId: string, customerName: string): st
             <p style="color: rgba(255, 255, 255, 0.9); margin: 10px 0 0 0;">Order Refund Notification</p>
           </div>
           <div style="padding: 40px 30px;">
-            <p>Hi ${customerName},</p>
+            <p>Hi ${escapeHtml(customerName)},</p>
             <p>We're sorry, but one or more items in your order <strong>${orderId}</strong> went out of stock between checkout and payment processing.</p>
             <p>A <strong>full refund</strong> has been automatically issued to your original payment method. Please allow 5-10 business days for the refund to appear.</p>
             <p>We sincerely apologize for the inconvenience. Please visit our store to find similar products.</p>
@@ -505,7 +521,7 @@ function generateSubscriptionPaymentFailedHTML(
             <p style="color: rgba(255, 255, 255, 0.9); margin: 10px 0 0 0;">Subscription Payment Issue</p>
           </div>
           <div style="padding: 40px 30px;">
-            <p>Hi ${customerName},</p>
+            <p>Hi ${escapeHtml(customerName)},</p>
             <p>We couldn't process payment for your subscription <strong>${subscriptionVisibleId}</strong>.</p>
             <p>This is failed payment attempt #${failedAttemptCount}.</p>
             <p>${failureNotice}</p>
@@ -615,7 +631,7 @@ function generateOrderConfirmationHTML(orderDetails: {
             <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px;">Thank you for your order!</h2>
 
             <p style="margin: 0 0 20px 0; font-size: 16px;">
-              Hi ${orderDetails.customerName},
+              Hi ${escapeHtml(orderDetails.customerName)},
             </p>
 
             <p style="margin: 0 0 20px 0; font-size: 16px;">
@@ -701,7 +717,7 @@ function generateNewsletterConfirmationHTML(email: string): string {
             <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px;">Thank you for subscribing!</h2>
 
             <p style="margin: 0 0 20px 0; font-size: 16px;">
-              You've successfully subscribed to our newsletter at <strong>${email}</strong>.
+              You've successfully subscribed to our newsletter at <strong>${escapeHtml(email)}</strong>.
             </p>
 
             <p style="margin: 0 0 20px 0; font-size: 16px;">
@@ -769,23 +785,23 @@ function generateContactNotificationHTML(contactData: {
           <div style="padding: 30px;">
             <div style="margin: 0 0 16px 0;">
               <p style="margin: 0 0 4px 0; font-size: 14px; color: #6b7280; font-weight: 600;">From:</p>
-              <p style="margin: 0; font-size: 16px; color: #1f2937;">${contactData.name} (${contactData.email})</p>
+              <p style="margin: 0; font-size: 16px; color: #1f2937;">${escapeHtml(contactData.name)} (${escapeHtml(contactData.email)})</p>
             </div>
 
             <div style="margin: 0 0 24px 0;">
               <p style="margin: 0 0 4px 0; font-size: 14px; color: #6b7280; font-weight: 600;">Subject:</p>
-              <p style="margin: 0; font-size: 16px; color: #1f2937;">${contactData.subject}</p>
+              <p style="margin: 0; font-size: 16px; color: #1f2937;">${escapeHtml(contactData.subject)}</p>
             </div>
 
             <div style="margin: 0 0 24px 0;">
               <p style="margin: 0 0 8px 0; font-size: 14px; color: #6b7280; font-weight: 600;">Message:</p>
               <div style="background-color: #f9fafb; border-left: 4px solid #10b981; padding: 16px; border-radius: 4px;">
-                <p style="margin: 0; font-size: 16px; color: #1f2937; white-space: pre-wrap;">${contactData.message}</p>
+                <p style="margin: 0; font-size: 16px; color: #1f2937; white-space: pre-wrap;">${escapeHtml(contactData.message)}</p>
               </div>
             </div>
 
             <p style="margin: 0; font-size: 14px; color: #6b7280;">
-              Reply to this email to respond directly to ${contactData.name}.
+              Reply to this email to respond directly to ${escapeHtml(contactData.name)}.
             </p>
           </div>
 
@@ -827,16 +843,16 @@ function generateContactConfirmationHTML(contactData: {
           <!-- Content -->
           <div style="padding: 40px 30px;">
             <p style="margin: 0 0 20px 0; font-size: 16px;">
-              Hi ${contactData.name},
+              Hi ${escapeHtml(contactData.name)},
             </p>
 
             <p style="margin: 0 0 20px 0; font-size: 16px;">
-              Thank you for contacting Link Flame! We've received your message about "<strong>${contactData.subject}</strong>" and our team will get back to you within 24-48 hours.
+              Thank you for contacting Link Flame! We've received your message about "<strong>${escapeHtml(contactData.subject)}</strong>" and our team will get back to you within 24-48 hours.
             </p>
 
             <div style="background-color: #f9fafb; border-left: 4px solid #10b981; padding: 16px; margin: 0 0 24px 0; border-radius: 4px;">
               <p style="margin: 0 0 8px 0; font-size: 14px; color: #6b7280; font-weight: 600;">Your message:</p>
-              <p style="margin: 0; font-size: 14px; color: #1f2937; white-space: pre-wrap;">${contactData.message}</p>
+              <p style="margin: 0; font-size: 14px; color: #1f2937; white-space: pre-wrap;">${escapeHtml(contactData.message)}</p>
             </div>
 
             <p style="margin: 0 0 8px 0; font-size: 16px;">
