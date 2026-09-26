@@ -4,7 +4,6 @@ import { getServerAuth } from '@/lib/auth';
 import {
   LayoutDashboard,
   Package,
-  FileText,
   ShoppingCart,
   Users,
   Settings,
@@ -32,7 +31,6 @@ export default async function AdminLayout({
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
     { name: 'Products', href: '/admin/products', icon: Package },
     { name: 'Orders', href: '/admin/orders', icon: ShoppingCart },
-    { name: 'Blog Posts', href: '/admin/blog', icon: FileText },
     { name: 'Users', href: '/admin/users', icon: Users },
     { name: 'Settings', href: '/admin/settings', icon: Settings },
   ];
