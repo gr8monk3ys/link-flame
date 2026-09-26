@@ -7,6 +7,7 @@
  */
 
 import { randomBytes } from 'crypto'
+import type { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 import { logger } from '@/lib/logger'
 
@@ -316,6 +317,26 @@ export async function createGiftCard(params: {
 }
 
 /**
+ * Take a row lock on a gift card for the rest of the transaction.
+ *
+ * Every balance change here is read-validate-write. Under Postgres's default
+ * READ COMMITTED isolation two concurrent transactions can both read the same
+ * balance and both write, so a $100 card could be spent twice. SELECT ... FOR
+ * UPDATE makes the second transaction wait until the first commits, and its
+ * subsequent read then sees the reduced balance.
+ */
+async function lockGiftCard(
+  tx: Prisma.TransactionClient,
+  where: { code: string } | { id: string }
+): Promise<void> {
+  if ('code' in where) {
+    await tx.$queryRaw`SELECT "id" FROM "GiftCard" WHERE "code" = ${where.code} FOR UPDATE`
+  } else {
+    await tx.$queryRaw`SELECT "id" FROM "GiftCard" WHERE "id" = ${where.id} FOR UPDATE`
+  }
+}
+
+/**
  * Redeem a gift card (apply to an order).
  *
  * @param code - The gift card code
@@ -334,6 +355,7 @@ export async function redeemGiftCard(
   const normalizedCode = normalizeGiftCardCode(code)
 
   return await prisma.$transaction(async (tx) => {
+    await lockGiftCard(tx, { code: normalizedCode })
     const giftCard = await tx.giftCard.findUnique({
       where: { code: normalizedCode },
     })
@@ -408,6 +430,7 @@ export async function holdGiftCardBalance(
   const normalizedCode = normalizeGiftCardCode(code)
 
   return await prisma.$transaction(async (tx) => {
+    await lockGiftCard(tx, { code: normalizedCode })
     const giftCard = await tx.giftCard.findUnique({
       where: { code: normalizedCode },
     })
@@ -530,6 +553,7 @@ export async function reverseGiftCardHold(
   }
 
   await prisma.$transaction(async (tx) => {
+    await lockGiftCard(tx, { id: giftCardId })
     const holdTransaction = await tx.giftCardTransaction.findUnique({
       where: { id: transactionId },
       select: {
@@ -611,6 +635,7 @@ export async function refundGiftCard(
   | { success: false; error: string }
 > {
   return await prisma.$transaction(async (tx) => {
+    await lockGiftCard(tx, { id: giftCardId })
     const giftCard = await tx.giftCard.findUnique({
       where: { id: giftCardId },
     })

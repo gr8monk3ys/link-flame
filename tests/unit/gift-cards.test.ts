@@ -52,6 +52,8 @@ import {
   createGiftCard,
   redeemGiftCard,
   refundGiftCard,
+  holdGiftCardBalance,
+  reverseGiftCardHold,
   getUserPurchasedGiftCards,
   updateExpiredGiftCards,
 } from '@/lib/gift-cards'
@@ -472,6 +474,7 @@ describe('Redemption Logic', () => {
       }
 
       const mockTx = {
+        $queryRaw: vi.fn().mockResolvedValue([]),
         giftCard: {
           findUnique: vi.fn().mockResolvedValue(mockGiftCard),
           update: vi.fn().mockResolvedValue({ ...mockGiftCard, currentBalance: 70 }),
@@ -506,6 +509,7 @@ describe('Redemption Logic', () => {
       }
 
       const mockTx = {
+        $queryRaw: vi.fn().mockResolvedValue([]),
         giftCard: {
           findUnique: vi.fn().mockResolvedValue(mockGiftCard),
           update: vi.fn().mockResolvedValue({ ...mockGiftCard, currentBalance: 0 }),
@@ -542,6 +546,7 @@ describe('Redemption Logic', () => {
 
       let updatedStatus = ''
       const mockTx = {
+        $queryRaw: vi.fn().mockResolvedValue([]),
         giftCard: {
           findUnique: vi.fn().mockResolvedValue(mockGiftCard),
           update: vi.fn().mockImplementation(({ data }) => {
@@ -567,6 +572,7 @@ describe('Redemption Logic', () => {
 
     it('should fail for non-existent code', async () => {
       const mockTx = {
+        $queryRaw: vi.fn().mockResolvedValue([]),
         giftCard: {
           findUnique: vi.fn().mockResolvedValue(null),
           update: vi.fn(),
@@ -600,6 +606,7 @@ describe('Redemption Logic', () => {
       }
 
       const mockTx = {
+        $queryRaw: vi.fn().mockResolvedValue([]),
         giftCard: {
           findUnique: vi.fn().mockResolvedValue(mockGiftCard),
           update: vi.fn(),
@@ -633,6 +640,7 @@ describe('Redemption Logic', () => {
       }
 
       const mockTx = {
+        $queryRaw: vi.fn().mockResolvedValue([]),
         giftCard: {
           findUnique: vi.fn().mockResolvedValue(mockGiftCard),
           update: vi.fn(),
@@ -667,6 +675,7 @@ describe('Redemption Logic', () => {
 
       let lookupCode = ''
       const mockTx = {
+        $queryRaw: vi.fn().mockResolvedValue([]),
         giftCard: {
           findUnique: vi.fn().mockImplementation(({ where }) => {
             lookupCode = where.code
@@ -702,6 +711,7 @@ describe('Redemption Logic', () => {
 
       let transactionData: Record<string, unknown> = {}
       const mockTx = {
+        $queryRaw: vi.fn().mockResolvedValue([]),
         giftCard: {
           findUnique: vi.fn().mockResolvedValue(mockGiftCard),
           update: vi.fn().mockResolvedValue({ ...mockGiftCard, currentBalance: 70 }),
@@ -745,6 +755,7 @@ describe('Refund Logic', () => {
       }
 
       const mockTx = {
+        $queryRaw: vi.fn().mockResolvedValue([]),
         giftCard: {
           findUnique: vi.fn().mockResolvedValue(mockGiftCard),
           update: vi.fn().mockResolvedValue({ ...mockGiftCard, currentBalance: 70 }),
@@ -779,6 +790,7 @@ describe('Refund Logic', () => {
 
       let newBalance = 0
       const mockTx = {
+        $queryRaw: vi.fn().mockResolvedValue([]),
         giftCard: {
           findUnique: vi.fn().mockResolvedValue(mockGiftCard),
           update: vi.fn().mockImplementation(({ data }) => {
@@ -819,6 +831,7 @@ describe('Refund Logic', () => {
 
       let updatedStatus = ''
       const mockTx = {
+        $queryRaw: vi.fn().mockResolvedValue([]),
         giftCard: {
           findUnique: vi.fn().mockResolvedValue(mockGiftCard),
           update: vi.fn().mockImplementation(({ data }) => {
@@ -844,6 +857,7 @@ describe('Refund Logic', () => {
 
     it('should fail for non-existent gift card', async () => {
       const mockTx = {
+        $queryRaw: vi.fn().mockResolvedValue([]),
         giftCard: {
           findUnique: vi.fn().mockResolvedValue(null),
           update: vi.fn(),
@@ -878,6 +892,7 @@ describe('Refund Logic', () => {
 
       let transactionData: Record<string, unknown> = {}
       const mockTx = {
+        $queryRaw: vi.fn().mockResolvedValue([]),
         giftCard: {
           findUnique: vi.fn().mockResolvedValue(mockGiftCard),
           update: vi.fn().mockResolvedValue({ ...mockGiftCard, currentBalance: 90 }),
@@ -1107,6 +1122,7 @@ describe('Edge Cases', () => {
       }
 
       const mockTx = {
+        $queryRaw: vi.fn().mockResolvedValue([]),
         giftCard: {
           findUnique: vi.fn().mockResolvedValue(mockGiftCard),
           update: vi.fn().mockResolvedValue({ ...mockGiftCard, currentBalance: 0 }),
@@ -1141,6 +1157,7 @@ describe('Edge Cases', () => {
       }
 
       const mockTx = {
+        $queryRaw: vi.fn().mockResolvedValue([]),
         giftCard: {
           findUnique: vi.fn().mockResolvedValue(mockGiftCard),
           update: vi.fn().mockResolvedValue({ ...mockGiftCard }),
@@ -1195,5 +1212,80 @@ describe('Edge Cases', () => {
       const result = validateGiftCardForUse(giftCard)
       expect(result.valid).toBe(true)
     })
+  })
+})
+
+describe('Concurrency: balance changes lock the gift card row first', () => {
+  const activeCard = {
+    id: 'gc-123',
+    code: 'ABCDEFGHJKLMNPQR',
+    initialBalance: 100,
+    currentBalance: 100,
+    status: GIFT_CARD_CONFIG.STATUS.ACTIVE,
+    expiresAt: new Date(Date.now() + 86400000),
+  }
+
+  // Records the order of calls so we can assert the lock precedes the read.
+  function makeTx(calls: string[]) {
+    return {
+      $queryRaw: vi.fn().mockImplementation((strings: TemplateStringsArray) => {
+        calls.push(`lock:${strings.join('?')}`)
+        return Promise.resolve([])
+      }),
+      giftCard: {
+        findUnique: vi.fn().mockImplementation(() => {
+          calls.push('read')
+          return Promise.resolve(activeCard)
+        }),
+        update: vi.fn().mockImplementation(() => {
+          calls.push('write')
+          return Promise.resolve(activeCard)
+        }),
+      },
+      giftCardTransaction: {
+        findUnique: vi.fn().mockImplementation(() => {
+          calls.push('read-hold')
+          return Promise.resolve({ id: 'txn-1', giftCardId: 'gc-123', type: 'HOLD' })
+        }),
+        create: vi.fn().mockResolvedValue({ id: 'txn-1' }),
+        delete: vi.fn().mockResolvedValue({}),
+      },
+    }
+  }
+
+  function runWith(tx: ReturnType<typeof makeTx>) {
+    const mockTransaction = prisma.$transaction as ReturnType<typeof vi.fn>
+    mockTransaction.mockImplementation(async (callback: (t: typeof tx) => Promise<unknown>) => callback(tx))
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it.each([
+    ['redeemGiftCard', () => redeemGiftCard('ABCD-EFGH-JKLM-NPQR', 30), 'WHERE "code" = ?'],
+    ['holdGiftCardBalance', () => holdGiftCardBalance('ABCDEFGHJKLMNPQR', 30), 'WHERE "code" = ?'],
+    ['refundGiftCard', () => refundGiftCard('gc-123', 30), 'WHERE "id" = ?'],
+    ['reverseGiftCardHold', () => reverseGiftCardHold('txn-1', 'gc-123', 30), 'WHERE "id" = ?'],
+  ])('%s takes SELECT ... FOR UPDATE before reading the balance', async (_name, run, whereClause) => {
+    const calls: string[] = []
+    const tx = makeTx(calls)
+    runWith(tx)
+
+    await run()
+
+    expect(calls[0]).toContain('FOR UPDATE')
+    expect(calls[0]).toContain(whereClause)
+    expect(calls.indexOf('write')).toBeGreaterThan(0)
+  })
+
+  it('locks the normalized code, so formatted and raw codes contend on the same row', async () => {
+    const calls: string[] = []
+    const tx = makeTx(calls)
+    runWith(tx)
+
+    await redeemGiftCard('abcd-efgh-jklm-npqr', 30)
+
+    expect(tx.$queryRaw.mock.calls[0][1]).toBe('ABCDEFGHJKLMNPQR')
   })
 })
