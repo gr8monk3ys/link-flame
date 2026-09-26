@@ -54,6 +54,8 @@ import {
   refundGiftCard,
   holdGiftCardBalance,
   reverseGiftCardHold,
+  activatePaidGiftCard,
+  handleGiftCardCheckoutEvent,
   getUserPurchasedGiftCards,
   updateExpiredGiftCards,
 } from '@/lib/gift-cards'
@@ -88,6 +90,7 @@ describe('Gift Card Configuration', () => {
 
   it('should have valid status values', () => {
     expect(GIFT_CARD_CONFIG.STATUS).toEqual({
+      PENDING_PAYMENT: 'PENDING_PAYMENT',
       ACTIVE: 'ACTIVE',
       REDEEMED: 'REDEEMED',
       EXPIRED: 'EXPIRED',
@@ -1001,19 +1004,19 @@ describe('Database Operations', () => {
   })
 
   describe('createGiftCard', () => {
-    it('should create gift card with correct data', async () => {
+    it('creates the card PENDING_PAYMENT with no purchase ledger entry', async () => {
       const mockFindUnique = prisma.giftCard.findUnique as ReturnType<typeof vi.fn>
       mockFindUnique.mockResolvedValue(null) // No collision
 
       const mockCreate = prisma.giftCard.create as ReturnType<typeof vi.fn>
-      mockCreate.mockResolvedValue({
+      mockCreate.mockImplementation(async ({ data }) => ({
         id: 'gc-new',
-        code: 'ABCDEFGHJKLMNPQR',
-        initialBalance: 50,
-        currentBalance: 50,
-        status: GIFT_CARD_CONFIG.STATUS.ACTIVE,
-        expiresAt: new Date(),
-      })
+        code: data.code,
+        initialBalance: data.initialBalance,
+        currentBalance: data.currentBalance,
+        status: data.status,
+        expiresAt: data.expiresAt,
+      }))
 
       const result = await createGiftCard({
         amount: 50,
@@ -1025,8 +1028,104 @@ describe('Database Operations', () => {
 
       expect(result.initialBalance).toBe(50)
       expect(result.currentBalance).toBe(50)
-      expect(result.status).toBe(GIFT_CARD_CONFIG.STATUS.ACTIVE)
-      expect(mockCreate).toHaveBeenCalled()
+      expect(result.status).toBe(GIFT_CARD_CONFIG.STATUS.PENDING_PAYMENT)
+      const createArgs = mockCreate.mock.calls[0][0]
+      expect(createArgs.data.status).toBe(GIFT_CARD_CONFIG.STATUS.PENDING_PAYMENT)
+      expect(createArgs.data.transactions).toBeUndefined()
+    })
+
+    it('a pending card cannot be redeemed', () => {
+      const result = validateGiftCardForUse({
+        status: GIFT_CARD_CONFIG.STATUS.PENDING_PAYMENT,
+        currentBalance: 50,
+        expiresAt: null,
+      })
+      expect(result.valid).toBe(false)
+    })
+  })
+
+  describe('activatePaidGiftCard', () => {
+    function txFor(card: Record<string, unknown> | null, flipped: number) {
+      const tx = {
+        giftCard: {
+          updateMany: vi.fn().mockResolvedValue({ count: flipped }),
+          findUnique: vi.fn().mockResolvedValue(card),
+        },
+        giftCardTransaction: { create: vi.fn().mockResolvedValue({}) },
+      }
+      ;(prisma.$transaction as ReturnType<typeof vi.fn>).mockImplementation(
+        async (cb: (t: typeof tx) => Promise<unknown>) => cb(tx)
+      )
+      return tx
+    }
+    const paidCard = {
+      id: 'gc-1',
+      code: 'ABCDEFGHJKLMNPQR',
+      initialBalance: 50,
+      currentBalance: 50,
+      status: GIFT_CARD_CONFIG.STATUS.ACTIVE,
+      expiresAt: null,
+    }
+
+    it('flips only a PENDING_PAYMENT card to ACTIVE and records the purchase once', async () => {
+      const tx = txFor(paidCard, 1)
+
+      const result = await activatePaidGiftCard('gc-1', 'cs_test_1')
+
+      expect(result?.status).toBe(GIFT_CARD_CONFIG.STATUS.ACTIVE)
+      expect(tx.giftCard.updateMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: 'gc-1', status: GIFT_CARD_CONFIG.STATUS.PENDING_PAYMENT },
+          data: expect.objectContaining({ status: GIFT_CARD_CONFIG.STATUS.ACTIVE }),
+        })
+      )
+      expect(tx.giftCardTransaction.create).toHaveBeenCalledTimes(1)
+      expect(tx.giftCardTransaction.create.mock.calls[0][0].data.type).toBe('PURCHASE')
+    })
+
+    it('is idempotent: a second activation returns the card without a second ledger entry', async () => {
+      const tx = txFor(paidCard, 0)
+
+      const result = await activatePaidGiftCard('gc-1', 'cs_test_1')
+
+      expect(result?.code).toBe('ABCDEFGHJKLMNPQR')
+      expect(tx.giftCardTransaction.create).not.toHaveBeenCalled()
+    })
+
+    it('refuses to activate a cancelled card', async () => {
+      txFor({ ...paidCard, status: GIFT_CARD_CONFIG.STATUS.CANCELLED }, 0)
+      expect(await activatePaidGiftCard('gc-1', 'cs_test_1')).toBeNull()
+    })
+  })
+
+  describe('handleGiftCardCheckoutEvent', () => {
+    beforeEach(() => {
+      vi.clearAllMocks()
+    })
+
+    it('does not activate when the completed session is unpaid', async () => {
+      await handleGiftCardCheckoutEvent('checkout.session.completed', {
+        id: 'cs_test_1',
+        payment_status: 'unpaid',
+        metadata: { type: 'gift_card', giftCardId: 'gc-1' },
+      })
+      expect(prisma.$transaction).not.toHaveBeenCalled()
+    })
+
+    it('cancels only an unpaid card when the session expires', async () => {
+      const updateMany = prisma.giftCard.updateMany as ReturnType<typeof vi.fn>
+      updateMany.mockResolvedValue({ count: 1 })
+
+      await handleGiftCardCheckoutEvent('checkout.session.expired', {
+        id: 'cs_test_1',
+        payment_status: 'unpaid',
+        metadata: { type: 'gift_card', giftCardId: 'gc-1' },
+      })
+
+      expect(updateMany).toHaveBeenCalledWith({
+        where: { id: 'gc-1', status: GIFT_CARD_CONFIG.STATUS.PENDING_PAYMENT },
+        data: { status: GIFT_CARD_CONFIG.STATUS.CANCELLED },
+      })
     })
   })
 
@@ -1044,7 +1143,10 @@ describe('Database Operations', () => {
 
       expect(result).toHaveLength(2)
       expect(mockFindMany).toHaveBeenCalledWith({
-        where: { purchaserId: 'user-123' },
+        where: {
+          purchaserId: 'user-123',
+          transactions: { some: { type: 'PURCHASE' } },
+        },
         orderBy: { createdAt: 'desc' },
         select: expect.any(Object),
       })

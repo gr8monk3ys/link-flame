@@ -29,6 +29,8 @@ export const GIFT_CARD_CONFIG = {
 
   // Status values
   STATUS: {
+    // Created at checkout; not redeemable until Stripe confirms payment.
+    PENDING_PAYMENT: 'PENDING_PAYMENT',
     ACTIVE: 'ACTIVE',
     REDEEMED: 'REDEEMED',
     EXPIRED: 'EXPIRED',
@@ -43,6 +45,9 @@ export const GIFT_CARD_CONFIG = {
     HOLD: 'HOLD',
   } as const,
 }
+
+/** Stripe Checkout session metadata.type for gift card purchases. */
+export const GIFT_CARD_CHECKOUT_TYPE = 'gift_card'
 
 export type GiftCardStatus = (typeof GIFT_CARD_CONFIG.STATUS)[keyof typeof GIFT_CARD_CONFIG.STATUS]
 export type GiftCardTransactionType =
@@ -255,7 +260,11 @@ export async function getGiftCardByCode(code: string): Promise<{
 }
 
 /**
- * Create a new gift card.
+ * Create a gift card awaiting payment.
+ *
+ * The card is PENDING_PAYMENT and cannot be redeemed (validateGiftCardForUse
+ * requires ACTIVE). It becomes usable only via activatePaidGiftCard, which
+ * runs once Stripe reports the checkout session as paid.
  *
  * @param params - Gift card creation parameters
  * @returns The created gift card
@@ -287,15 +296,8 @@ export async function createGiftCard(params: {
       recipientEmail: params.recipientEmail || null,
       recipientName: params.recipientName || null,
       message: params.message || null,
-      status: GIFT_CARD_CONFIG.STATUS.ACTIVE,
+      status: GIFT_CARD_CONFIG.STATUS.PENDING_PAYMENT,
       expiresAt,
-      transactions: {
-        create: {
-          amount: params.amount,
-          type: GIFT_CARD_CONFIG.TRANSACTION_TYPES.PURCHASE,
-          description: 'Gift card purchased',
-        },
-      },
     },
     select: {
       id: true,
@@ -307,12 +309,129 @@ export async function createGiftCard(params: {
     },
   })
 
-  logger.info('Gift card created', { giftCardId: giftCard.id, amount: params.amount })
+  logger.info('Gift card created pending payment', { giftCardId: giftCard.id, amount: params.amount })
 
   return {
     ...giftCard,
     initialBalance: Number(giftCard.initialBalance),
     currentBalance: Number(giftCard.currentBalance),
+  }
+}
+
+/**
+ * Activate a gift card after Stripe confirms payment.
+ *
+ * Called from both the Stripe webhook and the checkout success redirect, so it
+ * must be idempotent: only a PENDING_PAYMENT card flips to ACTIVE, and the
+ * PURCHASE ledger entry is written only by the call that performed the flip.
+ *
+ * @returns The card if it is now ACTIVE (whether activated by this call or an
+ *   earlier one), or null if it does not exist or is not payable (e.g. cancelled).
+ */
+export async function activatePaidGiftCard(
+  giftCardId: string,
+  stripeSessionId: string
+): Promise<{
+  id: string
+  code: string
+  initialBalance: number
+  currentBalance: number
+  status: string
+  expiresAt: Date | null
+} | null> {
+  return await prisma.$transaction(async (tx) => {
+    const { count } = await tx.giftCard.updateMany({
+      where: { id: giftCardId, status: GIFT_CARD_CONFIG.STATUS.PENDING_PAYMENT },
+      data: { status: GIFT_CARD_CONFIG.STATUS.ACTIVE, purchasedAt: new Date() },
+    })
+
+    const giftCard = await tx.giftCard.findUnique({
+      where: { id: giftCardId },
+      select: {
+        id: true,
+        code: true,
+        initialBalance: true,
+        currentBalance: true,
+        status: true,
+        expiresAt: true,
+      },
+    })
+
+    if (!giftCard || giftCard.status === GIFT_CARD_CONFIG.STATUS.PENDING_PAYMENT ||
+        giftCard.status === GIFT_CARD_CONFIG.STATUS.CANCELLED) {
+      return null
+    }
+
+    if (count === 1) {
+      await tx.giftCardTransaction.create({
+        data: {
+          giftCardId,
+          amount: giftCard.initialBalance,
+          type: GIFT_CARD_CONFIG.TRANSACTION_TYPES.PURCHASE,
+          description: `Gift card purchased (Stripe session ${stripeSessionId})`,
+        },
+      })
+      logger.info('Gift card activated after payment', { giftCardId, stripeSessionId })
+    }
+
+    return {
+      ...giftCard,
+      initialBalance: Number(giftCard.initialBalance),
+      currentBalance: Number(giftCard.currentBalance),
+    }
+  })
+}
+
+/**
+ * Cancel a gift card whose checkout was abandoned or failed.
+ * Only PENDING_PAYMENT cards are affected, so a paid card is never cancelled.
+ */
+export async function cancelUnpaidGiftCard(giftCardId: string): Promise<boolean> {
+  const { count } = await prisma.giftCard.updateMany({
+    where: { id: giftCardId, status: GIFT_CARD_CONFIG.STATUS.PENDING_PAYMENT },
+    data: { status: GIFT_CARD_CONFIG.STATUS.CANCELLED },
+  })
+  if (count > 0) {
+    logger.info('Unpaid gift card cancelled', { giftCardId })
+  }
+  return count > 0
+}
+
+/**
+ * Apply a Stripe Checkout webhook event to a gift card purchase: activate the
+ * card once the session is paid, or cancel it if the session expires unpaid.
+ * Both operations are idempotent, so Stripe retries are safe.
+ */
+export async function handleGiftCardCheckoutEvent(
+  eventType: string,
+  session: {
+    id: string
+    payment_status: string
+    metadata?: Record<string, string> | null
+  }
+): Promise<void> {
+  const giftCardId = session.metadata?.giftCardId
+  if (!giftCardId) {
+    logger.error('Gift card checkout session missing giftCardId', { sessionId: session.id })
+    return
+  }
+
+  if (eventType === 'checkout.session.completed') {
+    if (session.payment_status !== 'paid') {
+      logger.warn('Gift card checkout completed without payment; not activating', {
+        sessionId: session.id,
+        giftCardId,
+        paymentStatus: session.payment_status,
+      })
+      return
+    }
+    const giftCard = await activatePaidGiftCard(giftCardId, session.id)
+    if (!giftCard) {
+      // Throw so the webhook returns 500 and Stripe retries / alerts.
+      throw new Error(`Paid gift card ${giftCardId} could not be activated`)
+    }
+  } else if (eventType === 'checkout.session.expired') {
+    await cancelUnpaidGiftCard(giftCardId)
   }
 }
 
@@ -689,7 +808,11 @@ export async function refundGiftCard(
  */
 export async function getUserPurchasedGiftCards(userId: string) {
   return await prisma.giftCard.findMany({
-    where: { purchaserId: userId },
+    where: {
+      purchaserId: userId,
+      // Only paid cards: excludes checkouts still pending or abandoned.
+      transactions: { some: { type: GIFT_CARD_CONFIG.TRANSACTION_TYPES.PURCHASE } },
+    },
     orderBy: { createdAt: 'desc' },
     select: {
       id: true,

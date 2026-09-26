@@ -9,7 +9,12 @@ import { sendOrderConfirmation, isEmailConfigured, sendOutOfStockRefundEmail } f
 import { awardPurchasePoints, finalizePointsRedemption, reversePointsHold } from "@/lib/loyalty";
 import { storeOrderImpact } from "@/lib/impact";
 import { getStripe } from "@/lib/stripe-server";
-import { finalizeGiftCardHold, reverseGiftCardHold } from "@/lib/gift-cards";
+import {
+  finalizeGiftCardHold,
+  GIFT_CARD_CHECKOUT_TYPE,
+  handleGiftCardCheckoutEvent,
+  reverseGiftCardHold,
+} from "@/lib/gift-cards";
 
 export const dynamic = 'force-dynamic'
 
@@ -377,6 +382,12 @@ export async function POST(req: Request) {
   try {
     const session = event.data.object as Stripe.Checkout.Session;
     const userId = session?.metadata?.userId;
+
+    // Gift card purchases have no order snapshot; handle them separately.
+    if (session?.metadata?.type === GIFT_CARD_CHECKOUT_TYPE) {
+      await handleGiftCardCheckoutEvent(event.type, session);
+      return new NextResponse(null, { status: 200 });
+    }
 
     if (event.type === "checkout.session.completed") {
       logger.info('Processing checkout.session.completed', {
