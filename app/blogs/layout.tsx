@@ -1,5 +1,7 @@
+import Link from "next/link"
 import { NewsletterSignup } from "@/components/newsletter-signup"
 import { TagCloud } from "@/components/tag-cloud"
+import { categoryHref } from "@/lib/blog-utils"
 
 export default function BlogLayout({
   children,
@@ -10,10 +12,10 @@ export default function BlogLayout({
     <div className="container">
       <div className="flex flex-col gap-10 lg:flex-row">
         {/* Main Content */}
-        <main className="flex-1">{children}</main>
+        <div className="min-w-0 flex-1">{children}</div>
 
         {/* Sidebar */}
-        <aside className="w-full space-y-6 lg:w-[300px]">
+        <aside aria-label="Blog sidebar" className="w-full space-y-6 lg:w-[300px]">
           <NewsletterSignup
             title="Get Eco Tips"
             description="Join our community and receive weekly sustainable living tips and exclusive deals."
@@ -25,27 +27,27 @@ export default function BlogLayout({
           {/* Popular Categories */}
           <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
             <div className="p-6">
-              <h3 className="mb-4 font-semibold">Popular Categories</h3>
+              <h2 className="mb-4 font-semibold">Popular Categories</h2>
               <ul className="space-y-2">
                 <li>
-                  <a href="/blogs/green-home" className="text-muted-foreground hover:text-primary">
+                  <Link href={categoryHref("Green Home")} className="text-muted-foreground hover:text-primary">
                     Green Home & Garden
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/blogs/eco-fashion" className="text-muted-foreground hover:text-primary">
+                  <Link href={categoryHref("Fashion & Beauty")} className="text-muted-foreground hover:text-primary">
                     Eco Fashion & Beauty
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/blogs/zero-waste" className="text-muted-foreground hover:text-primary">
+                  <Link href={categoryHref("Zero Waste")} className="text-muted-foreground hover:text-primary">
                     Zero Waste Living
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/blogs/sustainable-travel" className="text-muted-foreground hover:text-primary">
+                  <Link href={categoryHref("Sustainable Travel")} className="text-muted-foreground hover:text-primary">
                     Sustainable Travel
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -54,7 +56,7 @@ export default function BlogLayout({
           {/* Featured Products */}
           <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
             <div className="p-6">
-              <h3 className="mb-4 font-semibold">Featured Products</h3>
+              <h2 className="mb-4 font-semibold">Featured Products</h2>
               <ul className="space-y-4">
                 <li>
                   <a href="#" className="block hover:opacity-80">

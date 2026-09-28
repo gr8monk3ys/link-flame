@@ -1,22 +1,21 @@
 import { getPostsByCategory, getAllPosts } from "@/lib/blog"
 import { BlogCard } from "@/components/blog-card"
-import { TagCloud } from "@/components/tag-cloud"
-import { NewsletterSignup } from "@/components/newsletter-signup"
-import { PageProps } from "@/types/next"
 import { Metadata } from "next"
+
+type Params = Promise<{ category: string }>
 
 export async function generateStaticParams() {
   const posts = await getAllPosts()
   const categories = [...new Set(posts.map(post => post.category))]
   return categories.map(category => ({
-    category: encodeURIComponent(category)
+    category
   }))
 }
 
 export async function generateMetadata({ 
   params 
-}: { params: PageProps['params'] }): Promise<Metadata> {
-  const category = decodeURIComponent(params.category)
+}: { params: Params }): Promise<Metadata> {
+  const category = decodeURIComponent((await params).category)
   
   return {
     title: `${category} Category`,
@@ -24,8 +23,8 @@ export async function generateMetadata({
   }
 }
 
-export default async function CategoryPage({ params }: { params: PageProps['params'] }) {
-  const { category } = params
+export default async function CategoryPage({ params }: { params: Params }) {
+  const { category } = await params
   const decodedCategory = decodeURIComponent(category)
   const posts = await getPostsByCategory(decodedCategory)
 
@@ -45,32 +44,19 @@ export default async function CategoryPage({ params }: { params: PageProps['para
         </p>
       </div>
 
-      <div className="flex flex-col gap-8 lg:flex-row">
-        {/* Main Content */}
-        <div className="flex-1">
-          {posts.length > 0 ? (
-            <div className="grid gap-6">
-              {posts.map((post) => (
-                <BlogCard key={post.slug} post={post} />
-              ))}
-            </div>
-          ) : (
-            <div className="py-12 text-center">
-              <p className="text-muted-foreground">
-                No articles found in this category. Check out our other topics below.
-              </p>
-            </div>
-          )}
+      {posts.length > 0 ? (
+        <div className="grid gap-6">
+          {posts.map((post) => (
+            <BlogCard key={post.slug} post={post} />
+          ))}
         </div>
-
-        {/* Sidebar */}
-        <div className="w-full lg:w-1/4">
-          <TagCloud />
-          <div className="mt-8">
-            <NewsletterSignup />
-          </div>
+      ) : (
+        <div className="py-12 text-center">
+          <p className="text-muted-foreground">
+            No articles found in this category. Browse other topics in the sidebar.
+          </p>
         </div>
-      </div>
+      )}
     </div>
   )
 }
