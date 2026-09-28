@@ -59,24 +59,24 @@ export default function BlogLayout({
               <h2 className="mb-4 font-semibold">Featured Products</h2>
               <ul className="space-y-4">
                 <li>
-                  <a href="#" className="block hover:opacity-80">
-                    <div className="font-medium">Bamboo Cutlery Set</div>
-                    <div className="text-sm text-muted-foreground">Perfect for zero-waste living</div>
-                  </a>
+                  <div className="font-medium">Bamboo Cutlery Set</div>
+                  <div className="text-sm text-muted-foreground">Perfect for zero-waste living</div>
                 </li>
                 <li>
-                  <a href="#" className="block hover:opacity-80">
-                    <div className="font-medium">Organic Cotton Tote</div>
-                    <div className="text-sm text-muted-foreground">Sustainable shopping companion</div>
-                  </a>
+                  <div className="font-medium">Organic Cotton Tote</div>
+                  <div className="text-sm text-muted-foreground">Sustainable shopping companion</div>
                 </li>
                 <li>
-                  <a href="#" className="block hover:opacity-80">
-                    <div className="font-medium">Solar Power Bank</div>
-                    <div className="text-sm text-muted-foreground">Eco-friendly charging solution</div>
-                  </a>
+                  <div className="font-medium">Solar Power Bank</div>
+                  <div className="text-sm text-muted-foreground">Eco-friendly charging solution</div>
                 </li>
               </ul>
+              <Link
+                href="/reviews"
+                className="mt-4 inline-block text-sm font-medium text-primary hover:underline"
+              >
+                Browse product reviews
+              </Link>
             </div>
           </div>
         </aside>

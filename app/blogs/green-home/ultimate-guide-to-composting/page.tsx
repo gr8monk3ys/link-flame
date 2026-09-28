@@ -112,11 +112,10 @@ const blogPost = {
       <li>Make compost tea for liquid fertilizer</li>
     </ul>
   `,
-  coverImage: "/images/blogs/composting-guide-hero.jpg",
+  coverImage: "/images/tree-root.jpg",
   publishedAt: new Date("2024-01-15"),
   author: {
     name: "Sarah Green",
-    image: "/images/team/sarah.jpg",
     bio: "Sarah is our resident sustainability expert with over a decade of experience in environmental science and organic gardening. She's passionate about helping others reduce their environmental impact through practical, actionable steps.",
   },
   category: "Green Home & Garden",
