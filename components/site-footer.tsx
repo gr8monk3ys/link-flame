@@ -1,5 +1,3 @@
-"use client"
-
 import Link from "next/link"
 import { Icons } from "@/components/icons"
 import { siteConfig } from "@/config/site"
@@ -18,7 +16,7 @@ export function SiteFooter({ className }: SiteFooterProps) {
           {/* Company Info */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <Icons.logo className="size-6" />
+              <Icons.logo className="size-6" aria-hidden="true" />
               <span className="font-bold">{siteConfig.name}</span>
             </div>
             <p className="text-sm text-muted-foreground">
@@ -32,7 +30,7 @@ export function SiteFooter({ className }: SiteFooterProps) {
                 rel="noreferrer"
                 className="text-muted-foreground hover:text-foreground"
               >
-                <Icons.twitter className="size-5" />
+                <Icons.twitter className="size-5" aria-hidden="true" />
                 <span className="sr-only">Twitter</span>
               </a>
               <a
@@ -41,7 +39,7 @@ export function SiteFooter({ className }: SiteFooterProps) {
                 rel="noreferrer"
                 className="text-muted-foreground hover:text-foreground"
               >
-                <Icons.gitHub className="size-5" />
+                <Icons.gitHub className="size-5" aria-hidden="true" />
                 <span className="sr-only">GitHub</span>
               </a>
               <a
@@ -50,7 +48,7 @@ export function SiteFooter({ className }: SiteFooterProps) {
                 rel="noreferrer"
                 className="text-muted-foreground hover:text-foreground"
               >
-                <Icons.instagram className="size-5" />
+                <Icons.instagram className="size-5" aria-hidden="true" />
                 <span className="sr-only">Instagram</span>
               </a>
             </div>
