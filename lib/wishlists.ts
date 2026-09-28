@@ -169,11 +169,11 @@ export async function updateWishlist(
     where: {
       id: wishlistId,
       userId,
-      isDefault: false, // Cannot update default wishlist
     },
   });
 
-  if (!currentWishlist) {
+  // The default wishlist keeps its name, but it can be made public/private.
+  if (!currentWishlist || (currentWishlist.isDefault && data.name !== undefined)) {
     return null;
   }
 
