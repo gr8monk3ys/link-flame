@@ -333,14 +333,14 @@ export function CarbonFootprintCalculator() {
               )}
               {impact.breakdown.transport > 4 && (
                 <li>
-                  <Link href="/clean-transport" className="text-primary hover:underline">
+                  <Link href="/guides-and-tips/clean-transport" className="text-primary hover:underline">
                     → Consider electric or hybrid vehicles
                   </Link>
                 </li>
               )}
               {impact.breakdown.lifestyle > 3 && (
                 <li>
-                  <Link href="/zero-waste" className="text-primary hover:underline">
+                  <Link href="/guides-and-tips/zero-waste" className="text-primary hover:underline">
                     → Learn about reducing waste and sustainable diet choices
                   </Link>
                 </li>
