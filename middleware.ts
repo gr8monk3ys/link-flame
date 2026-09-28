@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
+import { getToken } from "next-auth/jwt"
 import { nanoid } from "nanoid"
 
 export async function middleware(request: NextRequest) {
@@ -29,13 +30,23 @@ export async function middleware(request: NextRequest) {
     "camera=(), microphone=(), geolocation=(), interest-cohort=()"
   )
 
-  // Check admin routes
+  // Admin routes: verify the NextAuth JWT (signature + expiry) rather than
+  // sniffing for a cookie. getToken picks the correct cookie name itself
+  // (`__Secure-next-auth.session-token` on HTTPS, plain name otherwise).
   if (request.nextUrl.pathname.startsWith("/admin")) {
-    // Add your admin route protection logic here
-    // This is just a basic example - you should implement proper role-based access control
-    const session = request.cookies.get("next-auth.session-token")
-    if (!session) {
-      return NextResponse.redirect(new URL("/authentication", request.url))
+    const token = await getToken({ req: request })
+
+    if (!token) {
+      const signInUrl = new URL("/authentication", request.url)
+      signInUrl.searchParams.set(
+        "callbackUrl",
+        request.nextUrl.pathname + request.nextUrl.search
+      )
+      return NextResponse.redirect(signInUrl)
+    }
+
+    if (token.role !== "ADMIN") {
+      return NextResponse.redirect(new URL("/", request.url))
     }
   }
 
