@@ -10,7 +10,8 @@
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
-    --primary: 142.1 76.2% 36.3%;
+    /* green-700: 5:1 against white, so text-primary and white-on-primary pass AA */
+    --primary: 142.1 72.2% 29.2%;
     --primary-foreground: 355.7 100% 97.3%;
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;
@@ -22,7 +23,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
-    --ring: 142.1 76.2% 36.3%;
+    --ring: 142.1 72.2% 29.2%;
     --radius: 0.75rem;
   }
 
@@ -89,10 +90,9 @@
 }
 
 /* Enhanced Modern Button Styles */
+/* Layered on top of <Button>: keeps the variant's own colours and size. */
 .modern-button {
-  @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300
-  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50
-  hover:bg-primary/90 active:scale-95 hover:shadow-md relative overflow-hidden
+  @apply transition-[transform,box-shadow] duration-300 active:scale-95 hover:shadow-md relative overflow-hidden
   before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent
   before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-700;
 }
@@ -118,10 +118,10 @@
   @apply object-cover w-full h-full rounded-lg transition-transform duration-300 hover:scale-105;
 }
 
-/* Enhanced Text Gradients */
+/* Accent headline colour (solid: gradient-clipped text faded to 60% alpha
+   and was hard to read over the hero imagery). */
 .text-gradient {
-  @apply bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent
-  hover:from-primary/90 hover:to-primary/70 transition-all duration-300;
+  @apply text-primary;
 }
 
 /* Enhanced Animated Underline */
@@ -318,4 +318,30 @@
 
 .progress-bar-fill {
   @apply h-full bg-primary transition-all duration-500 ease-out;
+}
+
+/* Respect reduced-motion: keep state changes, drop movement. */
+@media (prefers-reduced-motion: reduce) {
+  .modern-button,
+  .hover-card-effect,
+  .responsive-image,
+  .card-flip {
+    transition-property: opacity, color, background-color, border-color, box-shadow;
+  }
+  .modern-button:active,
+  .hover-card-effect:hover,
+  .responsive-image:hover {
+    transform: none;
+  }
+  .modern-button::before {
+    display: none;
+  }
+  .floating,
+  .pulse-effect,
+  .shimmer::before,
+  .fade-in,
+  .slide-up,
+  .scale-animation {
+    animation: none;
+  }
 }
