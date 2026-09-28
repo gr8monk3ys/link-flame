@@ -145,8 +145,9 @@ export async function GET(req: Request) {
 
     // Transform the data to match the CartItem interface
     const formattedItems = cartItems.map(item => {
-      // Use variant price if available, otherwise use product price
-      const price = item.variant?.price ?? item.variant?.salePrice ??
+      // Same priority as checkout, which sets the charged amount:
+      // variant sale price > variant price > product sale price > product price
+      const price = item.variant?.salePrice ?? item.variant?.price ??
                     item.product.salePrice ?? item.product.price;
       const image = item.variant?.image ?? item.product.image;
 
