@@ -93,13 +93,17 @@ export default function OrderDetailPage() {
   const [order, setOrder] = useState<OrderWithTracking | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isMissing, setIsMissing] = useState(false);
 
   const fetchOrder = useCallback(async () => {
     if (!orderId) return;
     try {
       const response = await fetch(`/api/orders/${orderId}`);
+      // notFound() only works while rendering; thrown here it would be
+      // caught below and shown as "NEXT_HTTP_ERROR_FALLBACK;404".
       if (response.status === 404) {
-        notFound();
+        setIsMissing(true);
+        return;
       }
       if (!response.ok) {
         throw new Error("Failed to fetch order");
@@ -119,7 +123,12 @@ export default function OrderDetailPage() {
     }
   }, [isLoaded, isSignedIn, orderId, fetchOrder]);
 
-  if (!isLoaded || loading) {
+  if (isMissing) {
+    notFound();
+  }
+
+  // `loading` only clears after a fetch, which never starts when signed out.
+  if (!isLoaded || (isSignedIn && loading)) {
     return <div className="container py-10">Loading order details...</div>;
   }
 
