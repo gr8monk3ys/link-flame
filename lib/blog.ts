@@ -1,3 +1,4 @@
+import { existsSync } from "fs"
 import { readFile, readdir } from "fs/promises"
 import path from "path"
 import matter from "gray-matter"
@@ -8,6 +9,22 @@ import type { BlogPost } from "@/lib/blog-utils"
 export type { Author, BlogPost } from "@/lib/blog-utils"
 
 const postsDirectory = path.join(process.cwd(), "content/blogs")
+
+const publicDirectory = path.join(process.cwd(), "public")
+
+// An existing asset in /public, used when a post has no usable cover image.
+const DEFAULT_COVER_IMAGE = "/images/leaves.jpg"
+
+/**
+ * Returns `src` if it is a remote URL or a file that exists under /public,
+ * otherwise `undefined`, so a typo'd or not-yet-added image never 404s.
+ */
+function resolveImage(src: unknown): string | undefined {
+  if (typeof src !== "string" || src.trim() === "") return undefined
+  if (/^https?:\/\//.test(src)) return src
+  if (!src.startsWith("/")) return undefined
+  return existsSync(path.join(publicDirectory, src)) ? src : undefined
+}
 
 const byNewest = (a: BlogPost, b: BlogPost) =>
   b.publishedAt.getTime() - a.publishedAt.getTime()
@@ -24,12 +41,14 @@ export const getMDXPost = cache(async (slug: string): Promise<BlogPost | null> =
       slug,
       title: data.title,
       description: data.description || "",
-      coverImage: data.coverImage || "/images/blogs/default-hero.jpg",
+      coverImage: resolveImage(data.coverImage) ?? DEFAULT_COVER_IMAGE,
       publishedAt: new Date(data.date),
-      author: data.author || {
-        name: "Link Flame Team",
-        image: "/images/team/default.jpg",
-        bio: "Passionate about sustainability and eco-friendly living.",
+      author: {
+        name: data.author?.name || "Link Flame Team",
+        image: resolveImage(data.author?.image),
+        bio:
+          data.author?.bio ||
+          "Passionate about sustainability and eco-friendly living.",
       },
       category: data.category || "General",
       tags: data.tags || ["Sustainability"],

@@ -3,7 +3,8 @@
 
 export interface Author {
   name: string
-  image: string
+  /** Omitted when no avatar exists; render initials instead. */
+  image?: string
   bio: string
 }
 
@@ -47,4 +48,14 @@ export function categoryHref(category: string) {
 
 export function tagHref(tag: string) {
   return `/blogs/tags/${encodeURIComponent(tag.toLowerCase())}`
+}
+
+/** Up to two initials for an avatar fallback, e.g. "Link Flame Team" -> "LF". */
+export function initials(name: string) {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]!.toUpperCase())
+    .join("")
 }

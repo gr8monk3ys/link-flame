@@ -1,6 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { format } from "date-fns"
+import { AuthorAvatar } from "@/components/author-avatar"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import {
   categoryHref,
@@ -54,15 +55,7 @@ export function BlogCard({ post, featured = false }: BlogCardProps) {
           <p className="mb-4 line-clamp-2 text-muted-foreground">{description}</p>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <div className="relative size-8">
-                <Image
-                  src={author.image}
-                  alt=""
-                  fill
-                  sizes="32px"
-                  className="rounded-full object-cover"
-                />
-              </div>
+              <AuthorAvatar author={author} size={32} />
               <div className="text-sm">
                 <div className="font-medium">{author.name}</div>
                 <div className="text-muted-foreground">
