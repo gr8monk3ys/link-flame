@@ -6,7 +6,7 @@ type Params = Promise<{ tag: string }>
 
 export async function generateStaticParams() {
   const posts = await getAllPosts()
-  const tags = [...new Set(posts.flatMap(post => post.tags))]
+  const tags = [...new Set(posts.flatMap(post => post.tags.map(t => t.toLowerCase())))]
   return tags.map(tag => ({
     tag
   }))
