@@ -13,23 +13,54 @@ interface MobileNavProps {
   onClose: () => void;
 }
 
+const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
 export function MobileNav({ className, items, onClose }: MobileNavProps) {
-  // Lock body scroll while open
+  const panelRef = React.useRef<HTMLElement>(null);
+  const closeButtonRef = React.useRef<HTMLButtonElement>(null);
+  // The parent passes a fresh inline callback each render; read it through a
+  // ref so the keydown listener is attached once, not on every render.
+  const onCloseRef = React.useRef(onClose);
   React.useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
+  // Lock body scroll while open, move focus into the dialog, and hand focus
+  // back to whatever opened it (the menu button) when it closes.
+  React.useEffect(() => {
+    const previouslyFocused = document.activeElement as HTMLElement | null;
     document.body.style.overflow = "hidden";
+    closeButtonRef.current?.focus();
     return () => {
       document.body.style.overflow = "";
+      previouslyFocused?.focus?.();
     };
   }, []);
 
-  // Close on escape key
+  // Escape closes; Tab and Shift+Tab stay inside the dialog (aria-modal).
   React.useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onCloseRef.current();
+        return;
+      }
+      if (e.key !== "Tab" || !panelRef.current) return;
+      const focusable = panelRef.current.querySelectorAll<HTMLElement>(FOCUSABLE);
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+      if (e.shiftKey && (active === first || !panelRef.current.contains(active))) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (active === last || !panelRef.current.contains(active))) {
+        e.preventDefault();
+        first.focus();
+      }
     };
-    document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
-  }, [onClose]);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   return (
     <>
@@ -42,8 +73,9 @@ export function MobileNav({ className, items, onClose }: MobileNavProps) {
 
       {/* Slide-in panel */}
       <nav
+        ref={panelRef}
         className={cn(
-          "fixed inset-y-0 right-0 z-50 w-72 bg-background shadow-xl md:hidden",
+          "fixed inset-y-0 right-0 z-50 flex w-72 max-w-[85vw] flex-col bg-background shadow-xl md:hidden",
           "duration-200 animate-in slide-in-from-right",
           className
         )}
@@ -54,15 +86,17 @@ export function MobileNav({ className, items, onClose }: MobileNavProps) {
         <div className="flex items-center justify-between border-b p-4">
           <span className="text-sm font-semibold">Menu</span>
           <button
+            ref={closeButtonRef}
+            type="button"
             onClick={onClose}
             className="rounded-md p-2 hover:bg-muted"
             aria-label="Close menu"
           >
-            <X className="size-5" />
+            <X className="size-5" aria-hidden="true" />
           </button>
         </div>
 
-        <div className="overflow-y-auto p-4">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4">
           {items ? (
             <div className="flex flex-col space-y-1">
               {items.map((item) =>
