@@ -1,12 +1,14 @@
-import { getAllPosts, getFeaturedPosts } from "@/lib/blog"
+import Link from "next/link"
+import { getAllPosts } from "@/lib/blog"
+import { categoryHref } from "@/lib/blog-utils"
 import { BlogCard } from "@/components/blog-card"
 import { BlogSearch } from "@/components/blog-search"
 
 export default async function BlogsPage() {
-  const [featuredPosts, allPosts] = await Promise.all([
-    getFeaturedPosts(),
-    getAllPosts()
-  ])
+  const allPosts = await getAllPosts()
+  const featuredPosts = allPosts.filter((post) => post.featured)
+  // Only send the fields the client-side search needs (not full MDX bodies).
+  const searchablePosts = allPosts.map(({ content, ...post }) => post)
   
   // Get unique categories
   const categories = Array.from(new Set(allPosts.map(post => post.category)))
@@ -25,7 +27,7 @@ export default async function BlogsPage() {
 
       {/* Search Section */}
       <div className="my-8">
-        <BlogSearch />
+        <BlogSearch posts={searchablePosts} />
       </div>
 
       {/* Featured Posts */}
@@ -47,12 +49,12 @@ export default async function BlogsPage() {
           <section key={category} className="my-12">
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-2xl font-bold">{category}</h2>
-              <a
-                href={`/blogs/${category.toLowerCase()}`}
+              <Link
+                href={categoryHref(category)}
                 className="text-sm font-medium text-primary hover:underline"
               >
-                View All
-              </a>
+                View all<span className="sr-only"> {category} articles</span>
+              </Link>
             </div>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {categoryPosts.map((post) => (
