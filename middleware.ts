@@ -35,7 +35,7 @@ export async function middleware(request: NextRequest) {
     // This is just a basic example - you should implement proper role-based access control
     const session = request.cookies.get("next-auth.session-token")
     if (!session) {
-      return NextResponse.redirect(new URL("/login", request.url))
+      return NextResponse.redirect(new URL("/authentication", request.url))
     }
   }
 

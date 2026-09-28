@@ -12,8 +12,9 @@ export default function IndexPage() {
         <div className="absolute inset-0 -z-10">
           <Image
             src="/images/leaves.jpg"
-            alt="Sustainable living background"
+            alt=""
             fill
+            sizes="100vw"
             className="object-cover opacity-20"
             priority
           />
@@ -27,14 +28,12 @@ export default function IndexPage() {
             Join us in creating a sustainable world, one choice at a time.
           </p>
           <div className="mt-10 flex justify-center gap-4">
-            <Link href="/eco-living">
-              <Button className="modern-button">Explore Eco Living</Button>
-            </Link>
-            <Link href="/blogs">
-              <Button variant="outline" className="modern-button">
-                Read Our Blog
-              </Button>
-            </Link>
+            <Button asChild className="modern-button">
+              <Link href="/guides-and-tips">Explore Eco Living</Link>
+            </Button>
+            <Button asChild variant="outline" className="modern-button">
+              <Link href="/blogs">Read Our Blog</Link>
+            </Button>
           </div>
         </div>
       </section>
@@ -48,16 +47,17 @@ export default function IndexPage() {
               src="/images/solar-panels.jpg"
               alt="Solar panels installation"
               fill
+              sizes="(min-width: 768px) 50vw, 100vw"
               className="object-cover"
             />
           </div>
           <div className="modern-grid">
-            {features.map((feature, index) => (
+            {features.map((feature) => (
               <div
-                key={index}
+                key={feature.title}
                 className="glass-effect hover-card-effect rounded-lg p-6"
               >
-                <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-primary/10">
+                <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-primary/10" aria-hidden="true">
                   {feature.icon}
                 </div>
                 <h3 className="mb-2 font-semibold">{feature.title}</h3>
@@ -80,6 +80,7 @@ export default function IndexPage() {
               src="/images/soap-bars.jpg"
               alt="Sustainable products"
               fill
+              sizes="(min-width: 768px) 50vw, 100vw"
               className="object-cover"
             />
           </div>
@@ -100,8 +101,9 @@ export default function IndexPage() {
         <div className="absolute inset-0 -z-10">
           <Image
             src="/images/wall-hanger-plant.jpg"
-            alt="Sustainable living"
+            alt=""
             fill
+            sizes="100vw"
             className="object-cover opacity-10"
           />
         </div>
@@ -111,8 +113,8 @@ export default function IndexPage() {
             Join our community of eco-conscious individuals and start your journey
             towards sustainable living today.
           </p>
-          <Button className="modern-button" size="lg">
-            Get Started
+          <Button asChild className="modern-button" size="lg">
+            <Link href="/community/join">Get Started</Link>
           </Button>
         </div>
       </section>
