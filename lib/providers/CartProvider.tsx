@@ -65,9 +65,15 @@ function useCartProviderValue(): CartContext {
   const [hasInitializedCart, setHasInitialized] = useState(false)
   const hasAttemptedCartMigration = useRef(false)
 
-  // Track pending quantity updates to handle race conditions
-  const pendingQuantityUpdates = useRef(0)
-  const quantityUpdateVersion = useRef(0)
+  // Latest unsent quantity per line item (productId + variantId). One
+  // debounced flush sends them all, so editing two items inside the debounce
+  // window saves both instead of only the last one.
+  const pendingQuantities = useRef(
+    new Map<string, { productId: string; variantId: string | null; quantity: number }>()
+  )
+  // Flushes run one after another so a slow request can't land after a newer one.
+  const quantityFlushChain = useRef<Promise<void>>(Promise.resolve())
+  const quantityUpdateFailed = useRef(false)
 
   const syncCartFromLocalStorage = useCallback(async () => {
     setIsLoading(true)
@@ -310,56 +316,55 @@ function useCartProviderValue(): CartContext {
     }
   }, [fetchCartItems])
 
-  // Debounced API call for quantity updates with race condition handling
-  const updateQuantityApi = useDebouncedCallback(async (productId: string, quantity: number, variantId: string | null, version: number) => {
-    // Ignore stale requests - a newer update has been queued
-    if (version !== quantityUpdateVersion.current) {
-      pendingQuantityUpdates.current = Math.max(0, pendingQuantityUpdates.current - 1)
-      if (pendingQuantityUpdates.current === 0) {
-        setIsLoading(false)
-      }
-      return
-    }
+  const sendPendingQuantities = useCallback(async () => {
+    const updates = [...pendingQuantities.current.values()]
+    pendingQuantities.current.clear()
+    if (updates.length === 0) return
 
     try {
       const csrfToken = await getCsrfToken()
-      const response = await fetch('/api/cart', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-Token': csrfToken,
-        },
-        body: JSON.stringify({ productId, variantId, quantity }),
-      })
-
-      // Check again if this is still the latest version after API call
-      if (version !== quantityUpdateVersion.current) {
-        return
-      }
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
-        throw new Error(errorData.error?.message || errorData.error || 'Failed to update cart')
-      }
+      const results = await Promise.allSettled(
+        updates.map(async ({ productId, variantId, quantity }) => {
+          const response = await fetch('/api/cart', {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': csrfToken,
+            },
+            body: JSON.stringify({ productId, variantId, quantity }),
+          })
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}))
+            throw new Error(errorData.error?.message || errorData.error || 'Failed to update cart')
+          }
+        }),
+      )
+      const failure = results.find((r): r is PromiseRejectedResult => r.status === 'rejected')
+      if (failure) throw failure.reason
     } catch (error) {
-      // Only handle error if this is still the latest version
-      if (version === quantityUpdateVersion.current) {
-        if (process.env.NODE_ENV === 'development') {
-          console.error('[UPDATE_CART_ERROR]', error)
-        }
-        toast.error(error instanceof Error ? error.message : 'Failed to update quantity')
-        // Revert optimistic update on error
-        await fetchCartItems()
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[UPDATE_CART_ERROR]', error)
       }
-    } finally {
-      pendingQuantityUpdates.current = Math.max(0, pendingQuantityUpdates.current - 1)
-      if (pendingQuantityUpdates.current === 0) {
-        setIsLoading(false)
-      }
+      toast.error(error instanceof Error ? error.message : 'Failed to update quantity')
+      quantityUpdateFailed.current = true
     }
+
+    // Newer edits are queued: leave loading on and let their flush finish up.
+    if (pendingQuantities.current.size > 0) return
+
+    if (quantityUpdateFailed.current) {
+      quantityUpdateFailed.current = false
+      // Revert optimistic updates to what the server actually has
+      await fetchCartItems()
+    }
+    setIsLoading(false)
+  }, [fetchCartItems])
+
+  const flushQuantityUpdates = useDebouncedCallback(() => {
+    quantityFlushChain.current = quantityFlushChain.current.then(sendPendingQuantities)
   }, 500)
 
-  // Update quantity with optimistic updates and race condition handling
+  // Update quantity with an optimistic update; the server write is debounced
   const updateQuantity = useCallback((productId: string, quantity: number, variantId?: string | null) => {
     // Validate quantity
     if (quantity < 1 || quantity > 99) {
@@ -373,16 +378,15 @@ function useCartProviderValue(): CartContext {
       payload: { id: productId, variantId: variantId || null, quantity },
     })
 
-    // Track this update for race condition handling
-    quantityUpdateVersion.current += 1
-    pendingQuantityUpdates.current += 1
-    const currentVersion = quantityUpdateVersion.current
+    pendingQuantities.current.set(`${productId}:${variantId || ''}`, {
+      productId,
+      variantId: variantId || null,
+      quantity,
+    })
 
     setIsLoading(true)
-
-    // Actual API update (debounced) - pass version for stale request detection
-    updateQuantityApi(productId, quantity, variantId || null, currentVersion)
-  }, [updateQuantityApi])
+    flushQuantityUpdates()
+  }, [flushQuantityUpdates])
 
   // Remove item from cart with optimistic updates
   const removeItem = useCallback(async (productId: string, variantId?: string | null, cartItemId?: string) => {
