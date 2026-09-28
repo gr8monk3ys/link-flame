@@ -1,3 +1,5 @@
+import type { NavItem } from "@/types/nav"
+
 export type SiteConfig = typeof siteConfig
 
 export const siteConfig = {
@@ -43,25 +45,9 @@ export const siteConfig = {
     },
     {
       title: "Community",
-      items: [
-        {
-          title: "Join Membership",
-          href: "/community/join",
-          description: "Access exclusive content and community features",
-        },
-        {
-          title: "Success Stories",
-          href: "/community/stories",
-          description: "Real stories from our eco-conscious community",
-        },
-        {
-          title: "Events",
-          href: "/community/events",
-          description: "Workshops, webinars, and community meetups",
-        },
-      ],
+      href: "/community/join",
     },
-  ],
+  ] satisfies NavItem[],
   links: {
     twitter: "https://twitter.com/linkflame",
     github: "https://github.com/yourusername/link-flame",

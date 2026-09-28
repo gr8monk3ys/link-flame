@@ -4,6 +4,7 @@ import { siteConfig } from "@/config/site"
 import { buttonVariants } from "@/components/ui/button"
 import { Icons } from "@/components/icons"
 import { MainNav } from "@/components/main-nav"
+import { MobileNav } from "@/components/mobile-nav"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -15,9 +16,9 @@ interface SiteHeaderProps {
 export function SiteHeader({ className }: SiteHeaderProps) {
   return (
     <header className={cn("sticky top-0 z-40 w-full border-b bg-background", className)}>
-      <div className="container flex h-16 items-center gap-4 sm:justify-between">
+      <div className="container flex h-16 items-center justify-between gap-4">
         <MainNav items={siteConfig.mainNav} />
-        <div className="flex shrink-0 items-center justify-end sm:flex-1">
+        <div className="flex shrink-0 items-center justify-end">
           <div className="flex items-center space-x-1">
             <Link
               href={siteConfig.links.github}
@@ -35,9 +36,10 @@ export function SiteHeader({ className }: SiteHeaderProps) {
             <Button asChild variant="ghost" className="hidden sm:inline-flex">
               <Link href="/authentication">Login</Link>
             </Button>
-            <Button asChild>
+            <Button asChild className="hidden sm:inline-flex">
               <Link href="/authentication">Sign Up</Link>
             </Button>
+            <MobileNav items={siteConfig.mainNav} />
           </div>
         </div>
       </div>
