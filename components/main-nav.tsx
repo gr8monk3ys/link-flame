@@ -12,21 +12,22 @@ interface MainNavProps {
 
 export function MainNav({ items }: MainNavProps) {
   return (
-    <div className="flex gap-6 md:gap-10">
-      <Link href="/" className="flex items-center space-x-2">
-        <Icons.logo className="size-6" />
-        <span className="inline-block font-bold">{siteConfig.name}</span>
+    <div className="flex min-w-0 gap-6 md:gap-10">
+      <Link href="/" className="flex items-center space-x-2 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+        <Icons.logo className="size-6" aria-hidden="true" />
+        <span className="sr-only font-bold sm:not-sr-only">{siteConfig.name}</span>
       </Link>
       {items?.length ? (
-        <nav className="flex gap-6">
+        <nav aria-label="Main" className="flex min-w-0 gap-4 overflow-x-auto md:gap-6">
           {items?.map(
-            (item, index) =>
+            (item) =>
               item.href && (
                 <Link
-                  key={index}
+                  key={item.href}
                   href={item.href}
+                  aria-disabled={item.disabled || undefined}
                   className={cn(
-                    "flex items-center text-sm font-medium text-muted-foreground",
+                    "flex shrink-0 items-center whitespace-nowrap rounded-sm text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                     item.disabled && "cursor-not-allowed opacity-80"
                   )}
                 >
