@@ -75,73 +75,6 @@ function useCartProviderValue(): CartContext {
   const quantityFlushChain = useRef<Promise<void>>(Promise.resolve())
   const quantityUpdateFailed = useRef(false)
 
-  const syncCartFromLocalStorage = useCallback(async () => {
-    setIsLoading(true)
-    try {
-      const localCart = localStorage.getItem('cart')
-      const parsedCart = JSON.parse(localCart || '{}')
-
-      if (parsedCart?.items && parsedCart?.items?.length > 0) {
-        const initialCart = await Promise.all(
-          parsedCart.items.map(async ({ id, quantity }: { id: string; quantity: number }) => {
-            try {
-              const res = await fetch(`/api/products/${id}`)
-              if (!res.ok) throw new Error('Failed to fetch product')
-              const payload = await res.json()
-              const product = payload?.data ?? payload
-              if (!product?.id) {
-                throw new Error('Invalid product payload')
-              }
-              return {
-                id: product.id,
-                title: product.title,
-                price: product.price,
-                image: product.image,
-                quantity,
-              }
-            } catch (error) {
-              if (process.env.NODE_ENV === 'development') {
-                console.error(`Error fetching product ${id}:`, error)
-              }
-              return null
-            }
-          }),
-        )
-
-        dispatchCart({
-          type: 'SET_CART',
-          payload: {
-            items: initialCart.filter(Boolean),
-          },
-        })
-      } else {
-        dispatchCart({
-          type: 'SET_CART',
-          payload: {
-            items: [],
-          },
-        })
-      }
-    } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Error syncing cart from local storage:', error)
-      }
-    } finally {
-      setIsLoading(false)
-    }
-  }, [])
-
-  // Check local storage for a cart
-  // If there is a cart, fetch the products and hydrate the cart
-  useEffect(() => {
-    if (hasInitialized.current) {
-      return
-    }
-
-    hasInitialized.current = true
-    void syncCartFromLocalStorage()
-  }, [syncCartFromLocalStorage])
-
   // Fetch cart items from the server
   const fetchCartItems = useCallback(async () => {
     setIsLoading(true)
@@ -169,8 +102,23 @@ function useCartProviderValue(): CartContext {
       }
     } finally {
       setIsLoading(false)
+      // The cart page shows "empty" only after the first server answer.
+      setHasInitialized(true)
     }
   }, [])
+
+  // Hydrate from the server cart, which checkout reads. The localStorage copy
+  // keeps only ids and quantities, so rebuilding from it lost each line's
+  // variant, cart item id and sale price: after a reload a guest's remove or
+  // quantity change matched no server row, and checkout still charged it.
+  useEffect(() => {
+    if (hasInitialized.current) {
+      return
+    }
+
+    hasInitialized.current = true
+    void fetchCartItems()
+  }, [fetchCartItems])
 
   const migrateGuestCart = useCallback(async () => {
     hasAttemptedCartMigration.current = true
@@ -238,7 +186,6 @@ function useCartProviderValue(): CartContext {
       }
 
       localStorage.setItem('cart', JSON.stringify(minimalCart))
-      setHasInitialized(true)
       return true
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {

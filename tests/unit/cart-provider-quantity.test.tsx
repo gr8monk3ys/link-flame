@@ -14,7 +14,7 @@ import { CartProvider, useCart } from '@/lib/providers/CartProvider'
 
 const wrapper = ({ children }: { children: ReactNode }) => <CartProvider>{children}</CartProvider>
 
-describe('CartProvider quantity updates', () => {
+describe('CartProvider', () => {
   let patches: Array<Record<string, unknown>>
 
   beforeEach(() => {
@@ -43,6 +43,32 @@ describe('CartProvider quantity updates', () => {
 
   afterEach(() => {
     vi.unstubAllGlobals()
+  })
+
+  it('loads the guest cart from the server, keeping variant and cart item ids', async () => {
+    const serverItem = {
+      id: 'prod-b',
+      cartItemId: 'ci-9',
+      title: 'Linen tote',
+      price: 24,
+      image: '/b.jpg',
+      quantity: 2,
+      variantId: 'var-1',
+      variant: { id: 'var-1', sku: null, size: 'L', color: null, colorCode: null, material: null },
+    }
+    localStorage.setItem('cart', JSON.stringify({ items: [{ id: 'prod-b', quantity: 2, variantId: 'var-1' }] }))
+    const fetchMock = vi.fn(async (url: string) =>
+      url === '/api/cart'
+        ? new Response(JSON.stringify({ success: true, data: [serverItem] }), { status: 200 })
+        : new Response('{}', { status: 404 })
+    )
+    vi.stubGlobal('fetch', fetchMock)
+
+    const { result } = renderHook(() => useCart(), { wrapper })
+
+    await waitFor(() => expect(result.current.cart.items).toHaveLength(1))
+    expect(result.current.cart.items[0]).toMatchObject({ variantId: 'var-1', cartItemId: 'ci-9', price: 24 })
+    expect(fetchMock).not.toHaveBeenCalledWith(expect.stringMatching(/^\/api\/products\//))
   })
 
   it('saves every item changed within one debounce window, then stops loading', async () => {
