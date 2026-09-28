@@ -75,12 +75,11 @@ export function useSavedItems() {
     }
   }, []);
 
-  // Initialize saved items on mount
+  // Show the localStorage cache immediately on mount
   useEffect(() => {
     if (!hasInitialized.current) {
       hasInitialized.current = true;
 
-      // First, load from localStorage for immediate display
       try {
         const localItems = localStorage.getItem('savedItems');
         if (localItems) {
@@ -89,22 +88,18 @@ export function useSavedItems() {
       } catch (error) {
         console.error('Error loading saved items from localStorage:', error);
       }
-
-      // Then fetch from API (will update if different)
-      if (status !== 'loading') {
-        fetchSavedItems();
-      }
     }
-  }, [status, fetchSavedItems]);
+  }, []);
 
-  // Refetch when auth status changes (but not on migration, handled separately)
+  // Fetch from the API once the session resolves, and again whenever the
+  // auth status changes. SessionProvider has no initial session, so status
+  // always starts as 'loading': the first resolved status (prev === null)
+  // must trigger the fetch too. A guest -> signed-in transition is skipped
+  // here because the migration effect below fetches after migrating.
   useEffect(() => {
-    if (hasInitialized.current && status !== 'loading' && prevAuthStatus.current !== null) {
-      // Only refetch if we're not doing a migration (which has its own refetch)
-      if (!(prevAuthStatus.current === 'unauthenticated' && status === 'authenticated')) {
-        fetchSavedItems();
-      }
-    }
+    if (status === 'loading') return;
+    if (prevAuthStatus.current === 'unauthenticated' && status === 'authenticated') return;
+    fetchSavedItems();
   }, [status, fetchSavedItems]);
 
   // Handle migration when user logs in
