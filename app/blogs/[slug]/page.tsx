@@ -1,6 +1,7 @@
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { getMDXPost, getAllMDXPosts } from "@/lib/blog"
+import { MdxContent } from "@/components/mdx-content"
 
 type Params = Promise<{ slug: string }>
 
@@ -38,9 +39,11 @@ export default async function BlogPost({ params }: { params: Params }) {
   }
 
   return (
-    <article className="prose mx-auto px-4 py-8 dark:prose-invert lg:prose-xl">
-      <h1>{post.title}</h1>
-      <div className="mb-8 flex items-center gap-4 text-muted-foreground">
+    <article className="mx-auto max-w-3xl py-8">
+      <h1 className="text-balance text-4xl font-bold tracking-tight lg:text-5xl">
+        {post.title}
+      </h1>
+      <div className="mb-8 mt-4 flex items-center gap-4 text-muted-foreground">
         <time dateTime={post.publishedAt.toISOString()}>
           {post.publishedAt.toLocaleDateString("en-US", {
             year: "numeric",
@@ -51,7 +54,7 @@ export default async function BlogPost({ params }: { params: Params }) {
         <span aria-hidden="true">•</span>
         <span>{post.readingTime}</span>
       </div>
-      {/* {post.content && <MDXRemote source={post.content} />} */}
+      {post.content ? <MdxContent source={post.content} /> : null}
     </article>
   )
 }
