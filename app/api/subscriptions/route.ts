@@ -152,7 +152,31 @@ export async function GET(request: NextRequest) {
 
     const totalPages = Math.ceil(total / limit);
 
-    return paginatedResponse(subscriptions, {
+    // Prisma Decimals serialise to strings; SubscriptionCard calls toFixed()
+    // on these, so send plain numbers.
+    const toNumberOrNull = (value: { toString(): string } | null) =>
+      value === null ? null : Number(value);
+    const serialized = subscriptions.map((subscription) => ({
+      ...subscription,
+      items: subscription.items.map((item) => ({
+        ...item,
+        priceAtSubscription: Number(item.priceAtSubscription),
+        product: {
+          ...item.product,
+          price: Number(item.product.price),
+          salePrice: toNumberOrNull(item.product.salePrice),
+        },
+        variant: item.variant
+          ? {
+              ...item.variant,
+              price: toNumberOrNull(item.variant.price),
+              salePrice: toNumberOrNull(item.variant.salePrice),
+            }
+          : null,
+      })),
+    }));
+
+    return paginatedResponse(serialized, {
       page,
       limit,
       total,
