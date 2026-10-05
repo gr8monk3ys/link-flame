@@ -1,7 +1,11 @@
 /**
  * Gift Cards API Routes
  *
- * POST /api/gift-cards - Purchase a new gift card
+ * POST /api/gift-cards - Start a gift card purchase (returns a Stripe Checkout URL)
+ *
+ * The card is created PENDING_PAYMENT and its code is never returned here. It
+ * is activated by the Stripe webhook or /api/gift-cards/purchase once Stripe
+ * reports the session paid.
  *
  * @module app/api/gift-cards/route
  */
@@ -18,10 +22,13 @@ import {
   handleApiError,
 } from '@/lib/api-response'
 import { logger } from '@/lib/logger'
+import { getStripe } from '@/lib/stripe-server'
+import { getBaseUrl } from '@/lib/url'
 import {
+  cancelUnpaidGiftCard,
   createGiftCard,
-  formatGiftCardCode,
   GIFT_CARD_CONFIG,
+  GIFT_CARD_CHECKOUT_TYPE,
 } from '@/lib/gift-cards'
 
 export const dynamic = 'force-dynamic'
@@ -94,9 +101,11 @@ export async function POST(request: Request) {
       return validationErrorResponse(validation.error)
     }
 
-    const { amount, recipientEmail, recipientName, message, expiryDays } = validation.data
+    const { recipientEmail, recipientName, message, expiryDays } = validation.data
+    // Charge whole cents and store exactly what was charged.
+    const amountCents = Math.round(validation.data.amount * 100)
+    const amount = amountCents / 100
 
-    // Create the gift card
     const giftCard = await createGiftCard({
       amount,
       purchaserId: userId,
@@ -106,26 +115,51 @@ export async function POST(request: Request) {
       expiryDays,
     })
 
-    logger.info('Gift card purchased', {
+    let checkoutUrl: string | null
+    try {
+      const session = await getStripe().checkout.sessions.create({
+        mode: 'payment',
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            quantity: 1,
+            price_data: {
+              currency: 'usd',
+              unit_amount: amountCents,
+              product_data: {
+                name: `Link Flame Gift Card ($${amount.toFixed(2)})`,
+              },
+            },
+          },
+        ],
+        metadata: {
+          type: GIFT_CARD_CHECKOUT_TYPE,
+          giftCardId: giftCard.id,
+          userId: userId || '',
+        },
+        success_url: `${getBaseUrl()}/gift-cards?gift_card_session={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${getBaseUrl()}/gift-cards`,
+        expires_at: Math.floor(Date.now() / 1000) + 30 * 60,
+      })
+      checkoutUrl = session.url
+    } catch (stripeError) {
+      await cancelUnpaidGiftCard(giftCard.id)
+      throw stripeError
+    }
+
+    if (!checkoutUrl) {
+      await cancelUnpaidGiftCard(giftCard.id)
+      throw new Error('Stripe did not return a checkout URL')
+    }
+
+    logger.info('Gift card checkout started', {
       giftCardId: giftCard.id,
       amount,
       purchaserId: userId,
       hasRecipient: !!recipientEmail,
     })
 
-    // Return the created gift card (with formatted code for display)
-    return successResponse(
-      {
-        id: giftCard.id,
-        code: formatGiftCardCode(giftCard.code),
-        amount: giftCard.initialBalance,
-        balance: giftCard.currentBalance,
-        status: giftCard.status,
-        expiresAt: giftCard.expiresAt,
-      },
-      undefined,
-      201
-    )
+    return successResponse({ checkoutUrl }, undefined, 201)
   } catch (error) {
     logger.error('Failed to purchase gift card', error)
     return handleApiError(error)
