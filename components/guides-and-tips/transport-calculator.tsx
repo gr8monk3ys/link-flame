@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Card } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Link from "next/link"
+import { formatNumber, formatPrice } from "@/lib/utils"
 
 interface TransportMode {
   name: string
@@ -79,12 +80,12 @@ export function TransportCalculator() {
     const yearlyCost = yearlyDistance * mode.costPerKm
 
     return {
-      distance: yearlyDistance.toFixed(0),
-      co2: yearlyCO2.toFixed(1),
-      cost: yearlyCost.toFixed(2),
+      distance: formatNumber(yearlyDistance, 0),
+      co2: formatNumber(yearlyCO2, 1),
+      cost: formatPrice(yearlyCost),
       alternatives: mode.alternativeProducts?.map(alt => ({
         ...alt,
-        co2Saved: ((yearlyCO2 * alt.co2Savings) / 100).toFixed(1)
+        co2Saved: formatNumber((yearlyCO2 * alt.co2Savings) / 100, 1)
       }))
     }
   }
@@ -98,7 +99,7 @@ export function TransportCalculator() {
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Label>Transport Mode</Label>
+        <Label htmlFor="transport-mode">Transport Mode</Label>
         <Select
           value={mode.name}
           onValueChange={(value) => {
@@ -109,7 +110,7 @@ export function TransportCalculator() {
             }
           }}
         >
-          <SelectTrigger>
+          <SelectTrigger id="transport-mode">
             <SelectValue>{mode.name}</SelectValue>
           </SelectTrigger>
           <SelectContent>
@@ -123,8 +124,8 @@ export function TransportCalculator() {
       </div>
 
       <div className="space-y-2">
-        <Label>Daily Distance (km)</Label>
-        <Input
+        <Label htmlFor="transport-daily-distance">Daily Distance (km)</Label>
+        <Input inputMode="decimal" name="distance" autoComplete="off" id="transport-daily-distance"
           type="number"
           value={distance}
           onChange={(e) => {
@@ -136,8 +137,8 @@ export function TransportCalculator() {
       </div>
 
       <div className="space-y-2">
-        <Label>Days per Week</Label>
-        <Input
+        <Label htmlFor="transport-days-per-week">Days per Week</Label>
+        <Input inputMode="numeric" name="daysPerWeek" autoComplete="off" id="transport-days-per-week"
           type="number"
           value={daysPerWeek}
           onChange={(e) => {
@@ -154,12 +155,12 @@ export function TransportCalculator() {
       </Button>
 
       {showResults && (
-        <Card className="mt-4 p-4">
+        <Card className="mt-4 p-4" role="status" aria-live="polite">
           <h3 className="mb-2 font-semibold">Yearly Impact</h3>
           <ul className="space-y-2 text-sm">
             <li>Total Distance: {impact.distance} km</li>
             <li>CO2 Emissions: {impact.co2} kg</li>
-            <li>Total Cost: ${impact.cost}</li>
+            <li>Total Cost: {impact.cost}</li>
             {impact.alternatives && (
               <li className="mt-4">
                 <p className="font-semibold">Greener Alternatives:</p>

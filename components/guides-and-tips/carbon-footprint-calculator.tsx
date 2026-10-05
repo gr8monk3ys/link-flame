@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
 import Link from "next/link"
+import { formatNumber } from "@/lib/utils"
 
 interface FootprintFactors {
   homeEnergy: {
@@ -112,49 +113,50 @@ export function CarbonFootprintCalculator() {
         <h3 className="mb-4 text-lg font-semibold">Home Energy</h3>
         <div className="space-y-4">
           <div>
-            <Label>Monthly Electricity Usage (kWh)</Label>
-            <Input
+            <Label htmlFor="carbon-monthly-electricity-usage">Monthly Electricity Usage (kWh)</Label>
+            <Input inputMode="decimal" name="electricity" autoComplete="off" id="carbon-monthly-electricity-usage"
               type="number"
               value={factors.homeEnergy.electricity}
               onChange={(e) => 
-                setFactors({
-                  ...factors,
+                setFactors((prev) => ({
+                  ...prev,
                   homeEnergy: {
-                    ...factors.homeEnergy,
+                    ...prev.homeEnergy,
                     electricity: Number(e.target.value)
                   }
-                })
+                }))
               }
             />
           </div>
           <div>
-            <Label>Monthly Natural Gas Usage (therms)</Label>
-            <Input
+            <Label htmlFor="carbon-monthly-natural-gas-usage">Monthly Natural Gas Usage (therms)</Label>
+            <Input inputMode="decimal" name="gas" autoComplete="off" id="carbon-monthly-natural-gas-usage"
               type="number"
               value={factors.homeEnergy.gas}
               onChange={(e) => 
-                setFactors({
-                  ...factors,
+                setFactors((prev) => ({
+                  ...prev,
                   homeEnergy: {
-                    ...factors.homeEnergy,
+                    ...prev.homeEnergy,
                     gas: Number(e.target.value)
                   }
-                })
+                }))
               }
             />
           </div>
           <div>
             <Label>Renewable Energy Percentage</Label>
             <Slider
+              thumbLabel="Renewable energy percentage"
               value={[factors.homeEnergy.renewable]}
               onValueChange={(value) => 
-                setFactors({
-                  ...factors,
+                setFactors((prev) => ({
+                  ...prev,
                   homeEnergy: {
-                    ...factors.homeEnergy,
+                    ...prev.homeEnergy,
                     renewable: value[0]
                   }
-                })
+                }))
               }
               max={100}
               step={1}
@@ -169,66 +171,66 @@ export function CarbonFootprintCalculator() {
         <h3 className="mb-4 text-lg font-semibold">Transportation</h3>
         <div className="space-y-4">
           <div>
-            <Label>Annual Car Miles</Label>
-            <Input
+            <Label htmlFor="carbon-annual-car-miles">Annual Car Miles</Label>
+            <Input inputMode="decimal" name="carMiles" autoComplete="off" id="carbon-annual-car-miles"
               type="number"
               value={factors.transportation.carMiles}
               onChange={(e) => 
-                setFactors({
-                  ...factors,
+                setFactors((prev) => ({
+                  ...prev,
                   transportation: {
-                    ...factors.transportation,
+                    ...prev.transportation,
                     carMiles: Number(e.target.value)
                   }
-                })
+                }))
               }
             />
           </div>
           <div>
-            <Label>Car Fuel Efficiency (MPG)</Label>
-            <Input
+            <Label htmlFor="carbon-car-fuel-efficiency">Car Fuel Efficiency (MPG)</Label>
+            <Input inputMode="decimal" name="carEfficiency" autoComplete="off" id="carbon-car-fuel-efficiency"
               type="number"
               value={factors.transportation.carEfficiency}
               onChange={(e) => 
-                setFactors({
-                  ...factors,
+                setFactors((prev) => ({
+                  ...prev,
                   transportation: {
-                    ...factors.transportation,
+                    ...prev.transportation,
                     carEfficiency: Number(e.target.value)
                   }
-                })
+                }))
               }
             />
           </div>
           <div>
-            <Label>Annual Public Transit Miles</Label>
-            <Input
+            <Label htmlFor="carbon-annual-public-transit-miles">Annual Public Transit Miles</Label>
+            <Input inputMode="decimal" name="publicTransit" autoComplete="off" id="carbon-annual-public-transit-miles"
               type="number"
               value={factors.transportation.publicTransit}
               onChange={(e) => 
-                setFactors({
-                  ...factors,
+                setFactors((prev) => ({
+                  ...prev,
                   transportation: {
-                    ...factors.transportation,
+                    ...prev.transportation,
                     publicTransit: Number(e.target.value)
                   }
-                })
+                }))
               }
             />
           </div>
           <div>
-            <Label>Flights per Year</Label>
-            <Input
+            <Label htmlFor="carbon-flights-per-year">Flights per Year</Label>
+            <Input inputMode="numeric" name="flights" autoComplete="off" id="carbon-flights-per-year"
               type="number"
               value={factors.transportation.flights}
               onChange={(e) => 
-                setFactors({
-                  ...factors,
+                setFactors((prev) => ({
+                  ...prev,
                   transportation: {
-                    ...factors.transportation,
+                    ...prev.transportation,
                     flights: Number(e.target.value)
                   }
-                })
+                }))
               }
             />
           </div>
@@ -240,20 +242,20 @@ export function CarbonFootprintCalculator() {
         <h3 className="mb-4 text-lg font-semibold">Lifestyle</h3>
         <div className="space-y-4">
           <div>
-            <Label>Diet Type</Label>
+            <Label htmlFor="carbon-diet-type">Diet Type</Label>
             <Select
               value={factors.lifestyle.dietType}
               onValueChange={(value: "meat-heavy" | "average" | "vegetarian" | "vegan") =>
-                setFactors({
-                  ...factors,
+                setFactors((prev) => ({
+                  ...prev,
                   lifestyle: {
-                    ...factors.lifestyle,
+                    ...prev.lifestyle,
                     dietType: value
                   }
-                })
+                }))
               }
             >
-              <SelectTrigger>
+              <SelectTrigger id="carbon-diet-type">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -265,50 +267,50 @@ export function CarbonFootprintCalculator() {
             </Select>
           </div>
           <div className="space-y-2">
-            <div className="flex items-center space-x-2">
+            <label className="flex cursor-pointer items-center space-x-2">
               <input
                 type="checkbox"
                 checked={factors.lifestyle.recycling}
                 onChange={(e) => 
-                  setFactors({
-                    ...factors,
+                  setFactors((prev) => ({
+                    ...prev,
                     lifestyle: {
-                      ...factors.lifestyle,
+                      ...prev.lifestyle,
                       recycling: e.target.checked
                     }
-                  })
+                  }))
                 }
                 className="size-4 rounded border-border"
               />
-              <Label>Regular Recycling</Label>
-            </div>
-            <div className="flex items-center space-x-2">
+              <span className="text-sm font-medium leading-none">Regular Recycling</span>
+            </label>
+            <label className="flex cursor-pointer items-center space-x-2">
               <input
                 type="checkbox"
                 checked={factors.lifestyle.composting}
                 onChange={(e) => 
-                  setFactors({
-                    ...factors,
+                  setFactors((prev) => ({
+                    ...prev,
                     lifestyle: {
-                      ...factors.lifestyle,
+                      ...prev.lifestyle,
                       composting: e.target.checked
                     }
-                  })
+                  }))
                 }
                 className="size-4 rounded border-border"
               />
-              <Label>Home Composting</Label>
-            </div>
+              <span className="text-sm font-medium leading-none">Home Composting</span>
+            </label>
           </div>
         </div>
       </Card>
 
       {/* Results Section */}
-      <Card className="p-6">
+      <Card className="p-6" role="status" aria-live="polite">
         <h3 className="mb-4 text-lg font-semibold">Your Carbon Footprint</h3>
         <div className="space-y-4">
           <div>
-            <p className="text-2xl font-bold">{impact.total.toFixed(1)} metric tons CO₂e/year</p>
+            <p className="text-2xl font-bold">{formatNumber(impact.total, 1)} metric tons CO₂e/year</p>
             <p className="text-sm text-muted-foreground">
               The average American footprint is 16 metric tons CO₂e/year
             </p>
@@ -316,9 +318,9 @@ export function CarbonFootprintCalculator() {
           <div className="space-y-2">
             <p>Breakdown:</p>
             <ul className="list-inside list-disc space-y-1 text-sm">
-              <li>Home Energy: {impact.breakdown.home.toFixed(1)} tons CO₂e</li>
-              <li>Transportation: {impact.breakdown.transport.toFixed(1)} tons CO₂e</li>
-              <li>Lifestyle: {impact.breakdown.lifestyle.toFixed(1)} tons CO₂e</li>
+              <li>Home Energy: {formatNumber(impact.breakdown.home, 1)} tons CO₂e</li>
+              <li>Transportation: {formatNumber(impact.breakdown.transport, 1)} tons CO₂e</li>
+              <li>Lifestyle: {formatNumber(impact.breakdown.lifestyle, 1)} tons CO₂e</li>
             </ul>
           </div>
           <div className="space-y-2">

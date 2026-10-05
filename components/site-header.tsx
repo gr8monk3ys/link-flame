@@ -1,7 +1,7 @@
 import { siteConfig } from "@/config/site"
 import { MainNav } from "@/components/main-nav"
 import { CartLink } from "@/components/cart-link"
-import { LoyaltyBadge } from "@/components/loyalty"
+import { LoyaltyBadge } from "@/components/loyalty/LoyaltyBadge"
 import { cn } from "@/lib/utils"
 import { HeaderSearch } from "@/components/search/HeaderSearch"
 import { AnnouncementBar } from "@/components/announcement-bar"
@@ -23,13 +23,7 @@ export function SiteHeader({ className }: SiteHeaderProps) {
             {/* Predictive Search */}
             <Suspense
               fallback={
-                <button
-                  type="button"
-                  aria-label="Search"
-                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground"
-                >
-                  <span className="sr-only">Search</span>
-                </button>
+                <span aria-hidden="true" className="flex items-center gap-2 text-sm font-medium text-muted-foreground" />
               }
             >
               <HeaderSearch />

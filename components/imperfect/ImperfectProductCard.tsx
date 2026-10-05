@@ -2,8 +2,8 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { memo, useMemo, useCallback } from 'react';
-import { cn } from '@/lib/utils';
+import { memo, useCallback } from 'react';
+import { cn, formatPrice, formatNumber } from '@/lib/utils';
 import { ImperfectBadge, ImperfectSavingsBadge } from './ImperfectBadge';
 import { ImperfectReasonBadge } from './ImperfectReasonTooltip';
 import { useCart } from '@/lib/providers/CartProvider';
@@ -55,7 +55,7 @@ export const ImperfectProductCard = memo(function ImperfectProductCard({
   const { addItemToCart } = useCart();
   const { isItemSaved, toggleSaveItem } = useSavedItems();
 
-  const isWishlisted = useMemo(() => isItemSaved(product.id), [isItemSaved, product.id]);
+  const isWishlisted = isItemSaved(product.id);
 
   const handleAddToCart = useCallback(async () => {
     try {
@@ -99,10 +99,10 @@ export const ImperfectProductCard = memo(function ImperfectProductCard({
       {/* Wishlist button - top right */}
       <button
         className={cn(
-          'absolute right-4 top-4 z-10 rounded-full bg-card p-2 shadow-md transition-all',
+          'absolute right-4 top-4 z-10 rounded-full bg-card p-2 shadow-md transition-opacity',
           isWishlisted
             ? 'text-red-500 opacity-100'
-            : 'text-foreground opacity-0 group-hover:opacity-100'
+            : 'text-foreground opacity-0 focus-visible:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100'
         )}
         aria-label={
           isWishlisted
@@ -116,7 +116,7 @@ export const ImperfectProductCard = memo(function ImperfectProductCard({
 
       {/* Add to cart button */}
       <button
-        className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-full bg-amber-600 px-4 py-2 text-sm font-semibold text-white opacity-0 shadow-md transition-opacity hover:bg-amber-500 group-hover:opacity-100"
+        className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-full bg-amber-600 px-4 py-2 text-sm font-semibold text-white opacity-0 shadow-md transition-opacity hover:bg-amber-500 focus-visible:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100"
         aria-label={`Add ${product.title} to cart`}
         onClick={handleAddToCart}
       >
@@ -154,10 +154,10 @@ export const ImperfectProductCard = memo(function ImperfectProductCard({
         {/* Price display - emphasize savings */}
         <div className="flex items-baseline gap-2">
           <span className="text-lg font-bold text-amber-600 dark:text-amber-400">
-            ${product.imperfectPrice.toFixed(2)}
+            {formatPrice(product.imperfectPrice)}
           </span>
           <span className="text-sm text-muted-foreground line-through">
-            ${product.originalPrice.toFixed(2)}
+            {formatPrice(product.originalPrice)}
           </span>
         </div>
 
@@ -179,11 +179,11 @@ export const ImperfectProductCard = memo(function ImperfectProductCard({
         )}
 
         {/* Rating */}
-        {product.averageRating && (
+        {product.averageRating != null && product.averageRating > 0 && (
           <div className="flex items-center space-x-2">
             <div className="flex items-center">
               <span className="text-sm font-medium text-foreground">
-                {product.averageRating.toFixed(1)}
+                {formatNumber(product.averageRating, 1)}
               </span>
               <span className="ml-1 text-yellow-400">&#9733;</span>
             </div>

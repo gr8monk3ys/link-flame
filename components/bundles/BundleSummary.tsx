@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
-import { cn } from "@/lib/utils"
+import { cn, formatPrice } from "@/lib/utils"
 import { ShoppingCart, Loader2, Check, Tag } from "lucide-react"
 
 interface SelectedItem {
@@ -96,7 +96,7 @@ export function BundleSummary({
   const canAddToCart = meetsMinimum && !exceedsMaximum && !isLoading
 
   return (
-    <Card className={cn("sticky top-4", className)}>
+    <Card className={cn("sticky top-36", className)}>
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span>Your Bundle</span>
@@ -127,11 +127,11 @@ export function BundleSummary({
                     {item.product.title}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Qty: {item.quantity} x ${item.effectivePrice.toFixed(2)}
+                    Qty: {item.quantity} x {formatPrice(item.effectivePrice)}
                   </p>
                 </div>
                 <span className="text-sm font-medium">
-                  ${item.lineTotal.toFixed(2)}
+                  {formatPrice(item.lineTotal)}
                 </span>
               </div>
             ))}
@@ -150,10 +150,10 @@ export function BundleSummary({
           <>
             <Separator />
 
-            <div className="space-y-2">
+            <div className="space-y-2 tabular-nums">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>{formatPrice(subtotal)}</span>
               </div>
 
               <div className="flex justify-between text-sm text-green-700 dark:text-green-400">
@@ -161,20 +161,20 @@ export function BundleSummary({
                   <Tag className="mr-1 size-3" />
                   Bundle Discount ({discountPercent}%)
                 </span>
-                <span>-${discountAmount.toFixed(2)}</span>
+                <span>-{formatPrice(discountAmount)}</span>
               </div>
 
               <Separator />
 
               <div className="flex justify-between text-lg font-semibold">
                 <span>Total</span>
-                <span>${total.toFixed(2)}</span>
+                <span>{formatPrice(total)}</span>
               </div>
 
               {/* Savings Callout */}
               <div className="rounded-lg bg-green-50 p-3 text-center dark:bg-green-950">
                 <p className="text-sm font-medium text-green-700 dark:text-green-300">
-                  You save ${discountAmount.toFixed(2)} with this bundle!
+                  You save {formatPrice(discountAmount)} with this bundle!
                 </p>
               </div>
             </div>
@@ -185,13 +185,13 @@ export function BundleSummary({
       <CardFooter className="flex-col gap-3">
         {/* Status Messages */}
         {!meetsMinimum && totalItems > 0 && (
-          <p className="w-full text-center text-sm text-muted-foreground">
+          <p className="w-full text-center text-sm text-muted-foreground" role="status">
             Add {min - totalItems} more item{min - totalItems !== 1 ? "s" : ""} to complete your bundle
           </p>
         )}
 
         {exceedsMaximum && (
-          <p className="w-full text-center text-sm text-destructive">
+          <p className="w-full text-center text-sm text-destructive" role="alert">
             Remove {totalItems - (maxItems || 0)} item{(totalItems - (maxItems || 0)) !== 1 ? "s" : ""} - maximum is {maxItems}
           </p>
         )}
@@ -205,13 +205,13 @@ export function BundleSummary({
         >
           {isLoading ? (
             <>
-              <Loader2 className="mr-2 size-4 animate-spin" />
-              Adding to Cart...
+              <span className="mr-2 inline-flex shrink-0 animate-spin"><Loader2 className="size-4" /></span>
+              Adding to Cart…
             </>
           ) : meetsMinimum ? (
             <>
               <ShoppingCart className="mr-2 size-4" />
-              Add Bundle to Cart - ${total.toFixed(2)}
+              Add Bundle to Cart - {formatPrice(total)}
             </>
           ) : (
             <>

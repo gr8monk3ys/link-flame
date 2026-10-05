@@ -13,6 +13,7 @@
 import { Resend } from 'resend';
 import { logger } from '@/lib/logger';
 import { getBaseUrl } from '@/lib/url';
+import { formatPrice } from "@/lib/utils";
 
 // Initialize Resend client
 const resend = process.env.RESEND_API_KEY
@@ -588,8 +589,8 @@ function generateOrderConfirmationHTML(orderDetails: {
     <tr>
       <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">${item.title}</td>
       <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: center;">${item.quantity}</td>
-      <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: right;">$${item.price.toFixed(2)}</td>
-      <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: right;">$${(item.price * item.quantity).toFixed(2)}</td>
+      <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: right;">${formatPrice(item.price)}</td>
+      <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: right;">${formatPrice(item.price * item.quantity)}</td>
     </tr>
   `
     )
@@ -645,7 +646,7 @@ function generateOrderConfirmationHTML(orderDetails: {
               <tfoot>
                 <tr>
                   <td colspan="3" style="padding: 16px 12px 12px 12px; text-align: right; font-weight: 600; font-size: 16px; color: #1f2937;">Total:</td>
-                  <td style="padding: 16px 12px 12px 12px; text-align: right; font-weight: 700; font-size: 18px; color: #10b981;">$${orderDetails.total.toFixed(2)}</td>
+                  <td style="padding: 16px 12px 12px 12px; text-align: right; font-weight: 700; font-size: 18px; color: #10b981;">${formatPrice(orderDetails.total)}</td>
                 </tr>
               </tfoot>
             </table>

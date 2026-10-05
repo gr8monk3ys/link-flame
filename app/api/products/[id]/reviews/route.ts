@@ -60,14 +60,16 @@ export async function GET(
     // Check if product exists
     const product = await prisma.product.findUnique({
       where: { id: productId },
+      select: { id: true },
     });
 
     if (!product) {
       return notFoundResponse('Product');
     }
 
-    // Fetch reviews with user information
-    const [reviews, total] = await Promise.all([
+    // Reviews, count, average and distribution are independent: one round
+    // trip instead of three (react-best-practices 1.5).
+    const [reviews, total, avgRating, ratingDistribution] = await Promise.all([
       prisma.review.findMany({
         where: { productId },
         include: {
@@ -88,24 +90,20 @@ export async function GET(
       prisma.review.count({
         where: { productId },
       }),
+      prisma.review.aggregate({
+        where: { productId },
+        _avg: {
+          rating: true,
+        },
+      }),
+      prisma.review.groupBy({
+        by: ['rating'],
+        where: { productId },
+        _count: {
+          rating: true,
+        },
+      }),
     ]);
-
-    // Calculate average rating
-    const avgRating = await prisma.review.aggregate({
-      where: { productId },
-      _avg: {
-        rating: true,
-      },
-    });
-
-    // Get rating distribution
-    const ratingDistribution = await prisma.review.groupBy({
-      by: ['rating'],
-      where: { productId },
-      _count: {
-        rating: true,
-      },
-    });
 
     const distribution = {
       1: 0,

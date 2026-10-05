@@ -24,19 +24,19 @@ export default function JoinCommunityPage() {
       <div className="grid gap-6 md:grid-cols-3">
         <Card>
           <CardHeader>
-            <CardTitle>Weekly Eco Tips</CardTitle>
+            <CardTitle as="h2">Weekly Eco Tips</CardTitle>
             <CardDescription>Practical, low-effort wins you can actually keep.</CardDescription>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Early Drops</CardTitle>
+            <CardTitle as="h2">Early Drops</CardTitle>
             <CardDescription>Be first in line for limited bundles and imperfect deals.</CardDescription>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Rewards</CardTitle>
+            <CardTitle as="h2">Rewards</CardTitle>
             <CardDescription>Earn points on purchases and redeem for discounts.</CardDescription>
           </CardHeader>
         </Card>
@@ -45,7 +45,7 @@ export default function JoinCommunityPage() {
       <div className="mt-10 grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Create your account</CardTitle>
+            <CardTitle as="h2">Create your account</CardTitle>
             <CardDescription>Save wishlists, track orders, and unlock rewards.</CardDescription>
           </CardHeader>
           <CardContent className="flex gap-3">
@@ -60,7 +60,7 @@ export default function JoinCommunityPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Browse eco-living guides</CardTitle>
+            <CardTitle as="h2">Browse eco-living guides</CardTitle>
             <CardDescription>Zero waste, clean transport, and a greener home.</CardDescription>
           </CardHeader>
           <CardContent>

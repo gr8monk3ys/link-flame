@@ -73,7 +73,7 @@ export default async function TagPage({ params }: PageProps<{ tag: string }>) {
 
         {/* Sidebar */}
         <div className="w-full lg:w-[300px]">
-          <div className="sticky top-8 space-y-8">
+          <div className="sticky top-36 space-y-8">
             <TagCloud />
             <NewsletterSignup />
           </div>

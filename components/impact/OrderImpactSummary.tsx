@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
 import {
   Droplet,
   Leaf,
@@ -74,19 +74,19 @@ export function OrderImpactSummary({
 
   const formatValue = (val: number): string => {
     if (val >= 1000) {
-      return `${(val / 1000).toFixed(1)}k`;
+      return `${formatNumber(val / 1000, 1)}k`;
     }
     if (val >= 1) {
       return Math.round(val).toString();
     }
-    return val.toFixed(1);
+    return formatNumber(val, 1);
   };
 
   if (isLoading) {
     return (
       <Card className={cn("", className)}>
         <CardContent className="flex items-center justify-center py-8">
-          <Loader2 className="size-6 animate-spin text-muted-foreground" />
+          <span role="status"><span className="inline-flex shrink-0 animate-spin"><Loader2 className="size-6 text-muted-foreground" /></span><span className="sr-only">Loading…</span></span>
         </CardContent>
       </Card>
     );
@@ -101,7 +101,7 @@ export function OrderImpactSummary({
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 text-green-800 dark:text-green-200">
           <Sparkles className="size-5" />
-          Your Order&apos;s Impact
+          Your Order&rsquo;s Impact
         </CardTitle>
         <CardDescription className="text-green-700 dark:text-green-400">
           Thank you for making an eco-friendly choice!

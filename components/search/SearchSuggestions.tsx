@@ -57,10 +57,10 @@ export function SearchSuggestions({
         'absolute left-0 top-full z-50 mt-2 w-full overflow-hidden rounded-lg border bg-popover shadow-lg',
         className
       )}
-      role="listbox"
+      role="region"
       aria-label="Search suggestions"
     >
-      <div className="max-h-[400px] overflow-y-auto p-2">
+      <div className="max-h-[400px] overflow-y-auto overscroll-contain p-2">
         {/* Loading State */}
         {isLoading && (
           <div className="space-y-2 p-2">
@@ -83,7 +83,7 @@ export function SearchSuggestions({
 
         {/* Error State */}
         {error && (
-          <div className="p-4 text-center">
+          <div className="p-4 text-center" role="alert">
             <p className="text-sm text-destructive">{error}</p>
             <p className="mt-1 text-xs text-muted-foreground">
               Please try again later
@@ -120,7 +120,7 @@ export function SearchSuggestions({
         {showNoResults && (
           <div className="p-4 text-center">
             <p className="text-sm text-muted-foreground">
-              No results found for &quot;{trimmedQuery}&quot;
+              No results found for &ldquo;{trimmedQuery}&rdquo;
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
               Try different keywords or browse our{' '}
@@ -214,8 +214,8 @@ export function SearchSuggestions({
                   onClick={onResultSelect}
                   className="flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-primary transition-colors hover:bg-accent"
                 >
-                  See all results for &quot;{trimmedQuery}&quot;
-                  <svg
+                  See all results for &ldquo;{trimmedQuery}&rdquo;
+                  <svg aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
                     height="16"

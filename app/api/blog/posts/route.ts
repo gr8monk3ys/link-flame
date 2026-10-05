@@ -80,22 +80,22 @@ export async function GET(request: NextRequest) {
       where.featured = featured === 'true'
     }
 
-    // Get total count for pagination
-    const total = await prisma.blogPost.count({ where })
-
-    // Get paginated posts
-    const posts = await prisma.blogPost.findMany({
-      where,
-      include: {
-        author: true,
-        category: true,
-      },
-      orderBy: {
-        publishedAt: 'desc',
-      },
-      skip,
-      take: limit,
-    })
+    // Count and fetch the page in parallel
+    const [total, posts] = await Promise.all([
+      prisma.blogPost.count({ where }),
+      prisma.blogPost.findMany({
+        where,
+        include: {
+          author: true,
+          category: true,
+        },
+        orderBy: {
+          publishedAt: 'desc',
+        },
+        skip,
+        take: limit,
+      }),
+    ])
 
     const totalPages = Math.ceil(total / limit)
 

@@ -18,7 +18,7 @@ export default function ReturnPolicyPage() {
         Last updated: February 2026
       </p>
 
-      <div className="prose prose-lg max-w-none">
+      <div className="prose prose-lg max-w-none dark:prose-invert">
         <p className="text-muted-foreground">
           At Link Flame, we want you to be completely satisfied with your
           purchase. If something is not right, we are here to help. Please

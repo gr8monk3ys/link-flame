@@ -2,11 +2,9 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useDebounce } from '@/lib/hooks/useDebounce';
-import {
-  ImperfectBanner,
-  ImperfectProductGrid,
-  ImperfectExplainer,
-} from '@/components/imperfect';
+import { ImperfectBanner } from '@/components/imperfect/ImperfectBanner';
+import { ImperfectProductGrid } from '@/components/imperfect/ImperfectProductCard';
+import { ImperfectExplainer } from '@/components/imperfect/ImperfectExplainer';
 
 interface ImperfectProduct {
   id: string;
@@ -154,10 +152,10 @@ export default function ImperfectPage() {
           <div className="flex flex-wrap gap-4">
             {/* Category Filter */}
             {categories.length > 0 && (
-              <select
+              <select name="category"
                 value={filters.category}
                 onChange={(e) => handleFilterChange({ category: e.target.value })}
-                className="rounded-lg border border-border px-4 py-2 text-sm focus:border-amber-500 focus:ring-amber-500"
+                className="rounded-lg border border-border bg-background px-4 py-2 text-sm text-foreground focus-visible:border-amber-500 focus-visible:ring-amber-500"
                 aria-label="Filter by category"
               >
                 <option value="">All Categories</option>
@@ -170,14 +168,14 @@ export default function ImperfectPage() {
             )}
 
             {/* Discount Filter */}
-            <select
+            <select name="minDiscount"
               value={filters.minDiscount ?? ''}
               onChange={(e) =>
                 handleFilterChange({
                   minDiscount: e.target.value ? Number(e.target.value) : null,
                 })
               }
-              className="rounded-lg border border-border px-4 py-2 text-sm focus:border-amber-500 focus:ring-amber-500"
+              className="rounded-lg border border-border bg-background px-4 py-2 text-sm text-foreground focus-visible:border-amber-500 focus-visible:ring-amber-500"
               aria-label="Filter by discount"
             >
               {DISCOUNT_OPTIONS.map((opt) => (
@@ -188,10 +186,10 @@ export default function ImperfectPage() {
             </select>
 
             {/* Sort */}
-            <select
+            <select name="sortBy"
               value={filters.sortBy}
               onChange={(e) => handleFilterChange({ sortBy: e.target.value })}
-              className="rounded-lg border border-border px-4 py-2 text-sm focus:border-amber-500 focus:ring-amber-500"
+              className="rounded-lg border border-border bg-background px-4 py-2 text-sm text-foreground focus-visible:border-amber-500 focus-visible:ring-amber-500"
               aria-label="Sort products"
             >
               {SORT_OPTIONS.map((opt) => (
@@ -205,7 +203,7 @@ export default function ImperfectPage() {
 
         {/* Error State */}
         {error && (
-          <div className="mb-8 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200">
+          <div className="mb-8 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200" role="alert">
             <p>{error}</p>
             <button
               onClick={() => window.location.reload()}
@@ -221,7 +219,7 @@ export default function ImperfectPage() {
 
         {/* Pagination */}
         {!isLoading && totalPages > 1 && (
-          <div className="mt-12 flex items-center justify-center gap-2">
+          <nav aria-label="Pagination" className="mt-12 flex items-center justify-center gap-2">
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
@@ -237,6 +235,8 @@ export default function ImperfectPage() {
                 return (
                   <button
                     key={page}
+                    type="button"
+                    aria-current={page === currentPage ? 'page' : undefined}
                     onClick={() => handlePageChange(page)}
                     className={`rounded-lg px-4 py-2 text-sm font-medium ${
                       page === currentPage
@@ -257,7 +257,7 @@ export default function ImperfectPage() {
             >
               Next
             </button>
-          </div>
+          </nav>
         )}
 
         {/* How it works / Explainer section */}

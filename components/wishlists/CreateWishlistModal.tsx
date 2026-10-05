@@ -70,7 +70,7 @@ export function CreateWishlistModal({ onSubmit, trigger }: CreateWishlistModalPr
             <label htmlFor="name" className="mb-2 block text-sm font-medium">
               Wishlist Name
             </label>
-            <input
+            <input name="name" autoComplete="off"
               id="name"
               type="text"
               value={name}
@@ -79,20 +79,20 @@ export function CreateWishlistModal({ onSubmit, trigger }: CreateWishlistModalPr
                 setError('');
               }}
               placeholder="e.g., Gift Ideas, Kitchen Upgrades"
-              className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full rounded-md border px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               autoFocus
               onKeyDown={(e) => {
                 if (e.key === 'Enter') handleSubmit();
               }}
               maxLength={100}
             />
-            {error && <p className="mt-1 text-sm text-destructive">{error}</p>}
+            {error && <p id="wishlist-name-error" className="mt-1 text-sm text-destructive" role="alert">{error}</p>}
           </div>
 
           <div>
             <label className="mb-2 block text-sm font-medium">Visibility</label>
             <div className="flex gap-2">
-              <button
+              <button aria-pressed={!isPublic}
                 type="button"
                 onClick={() => setIsPublic(false)}
                 className={`flex flex-1 items-center justify-center gap-2 rounded-lg border p-3 transition-colors ${
@@ -104,7 +104,7 @@ export function CreateWishlistModal({ onSubmit, trigger }: CreateWishlistModalPr
                 <Lock className="size-4" />
                 <span>Private</span>
               </button>
-              <button
+              <button aria-pressed={isPublic}
                 type="button"
                 onClick={() => setIsPublic(true)}
                 className={`flex flex-1 items-center justify-center gap-2 rounded-lg border p-3 transition-colors ${
@@ -133,7 +133,7 @@ export function CreateWishlistModal({ onSubmit, trigger }: CreateWishlistModalPr
             {isSubmitting ? (
               <span className="flex items-center gap-2">
                 <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                Creating...
+                Creating…
               </span>
             ) : (
               'Create Wishlist'

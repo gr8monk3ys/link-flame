@@ -173,13 +173,14 @@ export async function getOrSetCached<T>(
  * Call this when a product is created, updated, or deleted
  */
 export async function invalidateProductCaches(productId?: string): Promise<void> {
-  await deleteCached(CacheKeys.PRODUCTS);
-  await deleteCached(CacheKeys.CATEGORIES);
-  await deleteCached(CacheKeys.PRICE_RANGES);
-
-  if (productId) {
-    await deleteCached(CacheKeys.PRODUCT(productId));
-  }
+  // Independent deletes: run them together, not one round trip at a time
+  // (react-best-practices 1.5).
+  await Promise.all([
+    deleteCached(CacheKeys.PRODUCTS),
+    deleteCached(CacheKeys.CATEGORIES),
+    deleteCached(CacheKeys.PRICE_RANGES),
+    ...(productId ? [deleteCached(CacheKeys.PRODUCT(productId))] : []),
+  ]);
 }
 
 /**
@@ -187,11 +188,10 @@ export async function invalidateProductCaches(productId?: string): Promise<void>
  * Call this when a blog post is created, updated, or deleted
  */
 export async function invalidateBlogCaches(slug?: string): Promise<void> {
-  await deleteCached(CacheKeys.BLOG_POSTS);
-  await deleteCached(CacheKeys.BLOG_CATEGORIES);
-  await deleteCached(CacheKeys.BLOG_TAGS);
-
-  if (slug) {
-    await deleteCached(CacheKeys.BLOG_POST(slug));
-  }
+  await Promise.all([
+    deleteCached(CacheKeys.BLOG_POSTS),
+    deleteCached(CacheKeys.BLOG_CATEGORIES),
+    deleteCached(CacheKeys.BLOG_TAGS),
+    ...(slug ? [deleteCached(CacheKeys.BLOG_POST(slug))] : []),
+  ]);
 }

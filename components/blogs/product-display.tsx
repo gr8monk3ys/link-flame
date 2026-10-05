@@ -5,6 +5,7 @@ import Image from "next/image"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { buttonVariants } from "@/components/ui/button"
 import { Star, Info } from "lucide-react"
+import { formatNumber } from "@/lib/utils"
 
 interface Product {
   id: number
@@ -44,7 +45,7 @@ export function ProductDisplay({
             }`}
           />
         ))}
-        <span className="ml-2 text-sm text-muted-foreground">{rating.toFixed(1)}</span>
+        <span className="ml-2 text-sm text-muted-foreground">{formatNumber(rating, 1)}</span>
       </div>
     )
   }
@@ -53,7 +54,7 @@ export function ProductDisplay({
     <Card className={`relative ${className}`}>
       <CardHeader>
         <div className="relative mb-4 h-48 w-full">
-          <Image
+          <Image sizes="(max-width: 768px) 100vw, 50vw"
             src={product.image}
             alt={product.title}
             fill
@@ -72,7 +73,8 @@ export function ProductDisplay({
         {detailed && (
           <>
             <button
-              onClick={() => setShowDetails(!showDetails)}
+              onClick={() => setShowDetails((v) => !v)}
+              aria-expanded={showDetails}
               className={buttonVariants({ variant: "outline" })}
             >
               <Info className="mr-2 size-4" />

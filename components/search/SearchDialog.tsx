@@ -87,7 +87,7 @@ export function SearchTrigger({ className, children }: SearchTriggerProps) {
       >
         {children || (
           <div className="flex items-center gap-2">
-            <svg
+            <svg aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               width="20"
               height="20"
@@ -101,7 +101,7 @@ export function SearchTrigger({ className, children }: SearchTriggerProps) {
               <circle cx="11" cy="11" r="8" />
               <path d="m21 21-4.3-4.3" />
             </svg>
-            <span className="hidden lg:inline-flex">Search...</span>
+            <span className="hidden lg:inline-flex">Search…</span>
             <kbd className="pointer-events-none ml-2 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-xs font-medium opacity-100 lg:inline-flex">
               <span>Cmd</span>K
             </kbd>

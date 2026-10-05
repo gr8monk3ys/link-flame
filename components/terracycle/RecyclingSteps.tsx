@@ -1,5 +1,3 @@
-"use client";
-
 import { cn } from "@/lib/utils";
 
 interface RecyclingStepsProps {
@@ -8,7 +6,7 @@ interface RecyclingStepsProps {
 
 // Package/Box icon
 const PackageIcon = ({ className }: { className?: string }) => (
-  <svg
+  <svg aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"
@@ -26,7 +24,7 @@ const PackageIcon = ({ className }: { className?: string }) => (
 
 // Truck/Shipping icon
 const TruckIcon = ({ className }: { className?: string }) => (
-  <svg
+  <svg aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"
@@ -45,7 +43,7 @@ const TruckIcon = ({ className }: { className?: string }) => (
 
 // Recycle icon
 const RecycleIcon = ({ className }: { className?: string }) => (
-  <svg
+  <svg aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"
@@ -65,7 +63,7 @@ const RecycleIcon = ({ className }: { className?: string }) => (
 
 // Gift/Reward icon
 const GiftIcon = ({ className }: { className?: string }) => (
-  <svg
+  <svg aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"
@@ -153,7 +151,7 @@ export function RecyclingSteps({ className }: RecyclingStepsProps) {
               <div
                 key={step.number}
                 className={cn(
-                  "relative rounded-2xl border bg-card p-6 shadow-sm transition-all hover:shadow-md",
+                  "relative rounded-2xl border bg-card p-6 shadow-sm transition-shadow hover:shadow-md",
                   step.borderColor
                 )}
               >

@@ -23,7 +23,7 @@ function ErrorContent() {
     <div className="container flex min-h-[calc(100vh-200px)] items-center justify-center">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Authentication Error</CardTitle>
+          <CardTitle as="h1">Authentication Error</CardTitle>
           <CardDescription>{errorMessage}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -46,7 +46,7 @@ function ErrorContent() {
 
 export default function AuthErrorPage() {
   return (
-    <Suspense fallback={<div className="container flex min-h-[calc(100vh-200px)] items-center justify-center">Loading...</div>}>
+    <Suspense fallback={<div className="container flex min-h-[calc(100vh-200px)] items-center justify-center" role="status">Loading…</div>}>
       <ErrorContent />
     </Suspense>
   );

@@ -1,6 +1,3 @@
-'use client'
-
-import { memo } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
@@ -38,7 +35,7 @@ function getValueDetails(slug: string): BrandValue | undefined {
   return BRAND_VALUES.find((v) => v.slug === slug)
 }
 
-export const BrandCard = memo(function BrandCard({ brand, variant = 'default', className }: BrandCardProps) {
+export function BrandCard({ brand, variant = 'default', className }: BrandCardProps) {
   const certificationDetails = brand.certifications
     .map(getCertificationDetails)
     .filter(Boolean) as BrandCertification[]
@@ -52,7 +49,7 @@ export const BrandCard = memo(function BrandCard({ brand, variant = 'default', c
       <Link
         href={`/brands/${brand.slug}`}
         className={cn(
-          'group flex items-center gap-4 rounded-lg border bg-card p-4 transition-all hover:shadow-md',
+          'group flex items-center gap-4 rounded-lg border bg-card p-4 transition-shadow hover:shadow-md',
           className
         )}
       >
@@ -73,7 +70,7 @@ export const BrandCard = memo(function BrandCard({ brand, variant = 'default', c
 
         {/* Info */}
         <div className="min-w-0 flex-1">
-          <h3 className="truncate font-semibold text-foreground transition-colors group-hover:text-primary">
+          <h3 className="truncate font-semibold text-foreground transition-colors group-hover:text-primary" translate="no">
             {brand.name}
           </h3>
           {brand.productCount !== undefined && (
@@ -91,7 +88,7 @@ export const BrandCard = memo(function BrandCard({ brand, variant = 'default', c
       <Link
         href={`/brands/${brand.slug}`}
         className={cn(
-          'group block overflow-hidden rounded-xl border bg-card transition-all hover:shadow-lg',
+          'group block overflow-hidden rounded-xl border bg-card transition-shadow hover:shadow-lg',
           className
         )}
       >
@@ -112,7 +109,7 @@ export const BrandCard = memo(function BrandCard({ brand, variant = 'default', c
 
         {/* Content */}
         <div className="p-6">
-          <h3 className="text-xl font-bold text-foreground transition-colors group-hover:text-primary">
+          <h3 className="text-xl font-bold text-foreground transition-colors group-hover:text-primary" translate="no">
             {brand.name}
           </h3>
 
@@ -159,7 +156,7 @@ export const BrandCard = memo(function BrandCard({ brand, variant = 'default', c
     <Link
       href={`/brands/${brand.slug}`}
       className={cn(
-        'group block overflow-hidden rounded-xl border bg-card transition-all hover:shadow-md',
+        'group block overflow-hidden rounded-xl border bg-card transition-shadow hover:shadow-md',
         className
       )}
     >
@@ -186,7 +183,7 @@ export const BrandCard = memo(function BrandCard({ brand, variant = 'default', c
 
       {/* Content */}
       <div className="p-4">
-        <h3 className="font-semibold text-foreground transition-colors group-hover:text-primary">
+        <h3 className="font-semibold text-foreground transition-colors group-hover:text-primary" translate="no">
           {brand.name}
         </h3>
 
@@ -261,7 +258,7 @@ export const BrandCard = memo(function BrandCard({ brand, variant = 'default', c
       </div>
     </Link>
   )
-})
+}
 
 BrandCard.displayName = 'BrandCard'
 

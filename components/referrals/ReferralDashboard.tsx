@@ -16,6 +16,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import Link from "next/link";
+import { formatDate } from "@/lib/utils";
 
 interface ReferralStats {
   referralCode: string | null;
@@ -64,7 +65,7 @@ export function ReferralDashboard() {
       ]);
 
       if (!statsRes.ok || !referralsRes.ok) {
-        throw new Error("Failed to fetch referral data");
+        throw new Error("Couldn’t load your referrals. Refresh the page to try again.");
       }
 
       const [statsData, referralsData] = await Promise.all([
@@ -84,10 +85,12 @@ export function ReferralDashboard() {
     }
   }
 
-  if (sessionStatus === "loading" || loading) {
+  // `loading` only clears after an authenticated fetch; without the status
+  // check a signed-out visitor never reached the sign-in card below.
+  if (sessionStatus === "loading" || (sessionStatus === "authenticated" && loading)) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="size-8 animate-spin text-primary" />
+        <span role="status"><span className="inline-flex shrink-0 animate-spin"><Loader2 className="size-8 text-primary" /></span><span className="sr-only">Loading…</span></span>
       </div>
     );
   }
@@ -213,7 +216,7 @@ export function ReferralDashboard() {
         <CardHeader>
           <CardTitle className="text-lg">Your Referrals</CardTitle>
           <CardDescription>
-            Track the status of people you&apos;ve referred
+            Track the status of people you&rsquo;ve referred
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -238,10 +241,10 @@ export function ReferralDashboard() {
                         {referral.refereeName?.charAt(0).toUpperCase() || "?"}
                       </span>
                     </div>
-                    <div>
-                      <p className="font-medium">{referral.refereeName}</p>
+                    <div className="min-w-0">
+                      <p className="truncate font-medium">{referral.refereeName}</p>
                       <p className="text-sm text-muted-foreground">
-                        {new Date(referral.createdAt).toLocaleDateString()}
+                        {formatDate(referral.createdAt)}
                       </p>
                     </div>
                   </div>

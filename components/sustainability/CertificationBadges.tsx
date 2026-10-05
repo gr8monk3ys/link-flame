@@ -1,5 +1,3 @@
-"use client";
-
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -23,31 +21,31 @@ interface CertificationBadgesProps {
 // Certification icon fallbacks when no iconUrl is provided
 const certificationIcons: Record<string, React.ReactNode> = {
   "1% for the Planet": (
-    <svg className="size-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg aria-hidden="true" className="size-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <circle cx="12" cy="12" r="10" />
       <path d="M12 6v12M8 8l8 8M16 8l-8 8" />
     </svg>
   ),
   "B Corp Certified": (
-    <svg className="size-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg aria-hidden="true" className="size-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <rect x="3" y="3" width="18" height="18" rx="2" />
       <path d="M8 7h4a2 2 0 110 4H8V7zM8 11h5a2 2 0 110 4H8v-4z" />
     </svg>
   ),
   "Climate Neutral": (
-    <svg className="size-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg aria-hidden="true" className="size-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
     </svg>
   ),
   "Plastic Free": (
-    <svg className="size-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg aria-hidden="true" className="size-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <circle cx="12" cy="12" r="10" />
       <path d="M4 4l16 16" />
       <path d="M9 7h6l-1 10H10L9 7z" />
     </svg>
   ),
   "Vegan": (
-    <svg className="size-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg aria-hidden="true" className="size-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10" />
       <path d="M22 2L12 12" />
       <path d="M12 22V12" />
@@ -55,12 +53,12 @@ const certificationIcons: Record<string, React.ReactNode> = {
     </svg>
   ),
   "Cruelty Free": (
-    <svg className="size-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg aria-hidden="true" className="size-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
     </svg>
   ),
   "USDA Organic": (
-    <svg className="size-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg aria-hidden="true" className="size-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <circle cx="12" cy="12" r="10" />
       <path d="M8 12h8M12 8v8" />
       <path d="M8 8l8 8M16 8l-8 8" />
@@ -129,14 +127,14 @@ export function CertificationBadges({
               {cert.iconUrl ? (
                 <Image
                   src={cert.iconUrl}
-                  alt={cert.name}
+                  alt=""
                   width={24}
                   height={24}
                   className="size-full object-contain"
                 />
               ) : (
                 certificationIcons[cert.name] || (
-                  <svg className="size-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg aria-hidden="true" className="size-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="12" cy="12" r="10" />
                     <path d="M9 12l2 2 4-4" />
                   </svg>
@@ -168,7 +166,7 @@ export function CertificationBadges({
             ) : (
               <span className={sizeClasses[size]}>
                 {certificationIcons[cert.name] || (
-                  <svg className="size-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg aria-hidden="true" className="size-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="12" cy="12" r="10" />
                     <path d="M9 12l2 2 4-4" />
                   </svg>

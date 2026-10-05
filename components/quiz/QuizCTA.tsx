@@ -64,7 +64,7 @@ export function QuizCTA({
         >
           <Sparkles className="size-4" />
           Find your perfect products
-          <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+          <span className="inline-flex transition-transform group-hover:translate-x-1"><ArrowRight className="size-4" /></span>
         </button>
 
         {hasOpened && (
@@ -155,7 +155,7 @@ export function QuizCTA({
 
             <p className="text-lg text-muted-foreground">
               Answer a few quick questions about your lifestyle and preferences,
-              and we&apos;ll recommend sustainable products tailored just for you.
+              and we&rsquo;ll recommend sustainable products tailored just for you.
             </p>
 
             <div className="flex flex-col items-center justify-center gap-4 pt-4 sm:flex-row">

@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { randomBytes } from 'crypto';
+import { cache } from 'react';
 
 export const DEFAULT_WISHLIST_NAME = 'Favorites';
 
@@ -115,7 +116,7 @@ export async function getWishlistById(wishlistId: string, userId: string) {
 /**
  * Get a public wishlist by share token
  */
-export async function getPublicWishlist(shareToken: string) {
+export const getPublicWishlist = cache(async (shareToken: string) => {
   return prisma.wishlist.findFirst({
     where: {
       shareToken,
@@ -132,7 +133,7 @@ export async function getPublicWishlist(shareToken: string) {
       },
     },
   });
-}
+})
 
 /**
  * Create a new wishlist for a user

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Plus, Edit, Trash2, Search, Eye } from 'lucide-react';
+import { formatDate } from "@/lib/utils";
 
 interface BlogPost {
   id: number;
@@ -120,7 +121,7 @@ export default function AdminBlogPage() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="text-muted-foreground">Loading blog posts...</div>
+        <div className="text-muted-foreground" role="status">Loading blog posts…</div>
       </div>
     );
   }
@@ -135,7 +136,7 @@ export default function AdminBlogPage() {
         </div>
         <Link
           href="/admin/blog/new"
-          className="flex items-center gap-2 rounded-lg bg-green-700 px-4 py-2 text-white transition-colors hover:bg-green-700"
+          className="flex items-center gap-2 rounded-lg bg-green-700 px-4 py-2 text-white transition-colors hover:bg-green-800"
         >
           <Plus className="size-5" />
           New Post
@@ -147,18 +148,18 @@ export default function AdminBlogPage() {
         <div className="flex flex-col gap-4 sm:flex-row">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
-            <input
+            <input aria-label="Search posts" name="search" autoComplete="off"
               type="text"
-              placeholder="Search posts..."
+              placeholder="Search posts…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-lg border border-border py-2 pl-10 pr-4 focus:border-transparent focus:ring-2 focus:ring-ring"
+              className="w-full rounded-lg border border-border py-2 pl-10 pr-4 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
             />
           </div>
-          <select
+          <select aria-label="Filter by status" name="filter"
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
+            className="rounded-lg border border-border bg-background px-4 py-2 text-foreground focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
           >
             <option value="all">All Posts</option>
             <option value="published">Published</option>
@@ -169,8 +170,8 @@ export default function AdminBlogPage() {
       </div>
 
       {/* Posts Table */}
-      <div className="overflow-hidden rounded-lg bg-card shadow">
-        <table className="min-w-full divide-y divide-border">
+      <div className="overflow-x-auto rounded-lg bg-card shadow">
+        <table className="min-w-full divide-y divide-border tabular-nums">
           <thead className="bg-muted">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -242,19 +243,19 @@ export default function AdminBlogPage() {
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground">
                     {post.publishedAt
-                      ? new Date(post.publishedAt).toLocaleDateString()
+                      ? formatDate(post.publishedAt)
                       : '-'}
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                     <div className="flex justify-end gap-2">
-                      <Link
+                      <Link aria-label={`View ${post.title}`}
                         href={`/blogs/${post.slug}`}
                         target="_blank"
                         className="p-1 text-muted-foreground hover:text-foreground"
                       >
                         <Eye className="size-5" />
                       </Link>
-                      <Link
+                      <Link aria-label={`Edit ${post.title}`}
                         href={`/admin/blog/${post.id}/edit`}
                         className="p-1 text-blue-600 hover:text-blue-900 dark:text-blue-400"
                       >
@@ -264,13 +265,13 @@ export default function AdminBlogPage() {
                         onClick={() => togglePublished(post.id, post.published)}
                         className={`rounded px-2 py-1 text-xs font-medium ${
                           post.published
-                            ? 'bg-muted text-foreground hover:bg-muted'
+                            ? 'bg-muted text-foreground hover:bg-muted/80'
                             : 'bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-300'
                         }`}
                       >
                         {post.published ? 'Unpublish' : 'Publish'}
                       </button>
-                      <button
+                      <button aria-label={`Delete ${post.title}`}
                         onClick={() => handleDelete(post.id)}
                         className="p-1 text-red-600 hover:text-red-900 dark:text-red-400"
                       >

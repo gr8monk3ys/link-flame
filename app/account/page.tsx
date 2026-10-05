@@ -63,7 +63,7 @@ export default function AccountPage() {
   if (!isLoaded) {
     return (
       <div className="container flex items-center justify-center py-10">
-        <Loader2 className="size-8 animate-spin" />
+        <span role="status"><span className="inline-flex shrink-0 animate-spin"><Loader2 className="size-8" /></span><span className="sr-only">Loading…</span></span>
       </div>
     );
   }
@@ -73,7 +73,7 @@ export default function AccountPage() {
       <div className="container py-10">
         <Card>
           <CardHeader>
-            <CardTitle>Sign In Required</CardTitle>
+            <CardTitle as="h1">Sign In Required</CardTitle>
             <CardDescription>
               Please sign in to access your account.
             </CardDescription>
@@ -110,11 +110,11 @@ export default function AccountPage() {
                 <User className="size-8 text-primary" />
               )}
             </div>
-            <div>
-              <CardTitle className="text-2xl">
+            <div className="min-w-0">
+              <CardTitle as="h1" className="break-words text-2xl">
                 Welcome, {session.user?.name || "User"}
               </CardTitle>
-              <CardDescription className="text-base">
+              <CardDescription className="break-all text-base">
                 {session.user?.email}
               </CardDescription>
             </div>
@@ -135,7 +135,7 @@ export default function AccountPage() {
                       <Icon className="size-6 text-primary" />
                     </div>
                     <div>
-                      <h3 className="font-semibold">{link.title}</h3>
+                      <h2 className="text-base font-semibold">{link.title}</h2>
                       <p className="text-sm text-muted-foreground">
                         {link.description}
                       </p>

@@ -47,5 +47,7 @@ export interface RecentSearch {
   timestamp: number
 }
 
-export const RECENT_SEARCHES_KEY = 'link-flame-recent-searches'
+export const RECENT_SEARCHES_KEY = 'link-flame-recent-searches:v1'
+/** Pre-versioning key; read once and migrated by storageGet. */
+export const LEGACY_RECENT_SEARCHES_KEY = 'link-flame-recent-searches'
 export const MAX_RECENT_SEARCHES = 5

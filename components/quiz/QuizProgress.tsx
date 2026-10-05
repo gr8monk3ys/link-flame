@@ -23,8 +23,8 @@ export function QuizProgress({ currentStep, totalSteps, className }: QuizProgres
       </div>
       <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
         <div
-          className="h-full rounded-full bg-primary transition-all duration-500 ease-out"
-          style={{ width: `${progress}%` }}
+          className="size-full origin-left rounded-full bg-primary transition-transform duration-500 ease-out"
+          style={{ transform: `scaleX(${progress / 100})` }}
           role="progressbar"
           aria-valuenow={currentStep}
           aria-valuemin={1}

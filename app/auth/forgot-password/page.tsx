@@ -49,15 +49,15 @@ export default function ForgotPasswordPage() {
       <div className="container flex min-h-[calc(100vh-200px)] items-center justify-center">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle>Check Your Email</CardTitle>
+            <CardTitle as="h1">Check Your Email</CardTitle>
             <CardDescription>
-              If an account exists for {email}, we&apos;ve sent a password reset link. Check your inbox and spam folder.
+              If an account exists for {email}, we&rsquo;ve sent a password reset link. Check your inbox and spam folder.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                The link will expire in 1 hour. If you don&apos;t receive an email, you can try again.
+                The link will expire in 1 hour. If you don&rsquo;t receive an email, you can try again.
               </p>
               <div className="flex flex-col gap-2">
                 <Button variant="outline" onClick={() => setSubmitted(false)}>
@@ -81,16 +81,16 @@ export default function ForgotPasswordPage() {
     <div className="container flex min-h-[calc(100vh-200px)] items-center justify-center">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Forgot Password</CardTitle>
+          <CardTitle as="h1">Forgot Password</CardTitle>
           <CardDescription>
-            Enter your email address and we&apos;ll send you a link to reset your password.
+            Enter your email address and we&rsquo;ll send you a link to reset your password.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input
+              <Input name="email" autoComplete="email" spellCheck={false}
                 id="email"
                 type="email"
                 placeholder="you@example.com"
@@ -101,12 +101,12 @@ export default function ForgotPasswordPage() {
               />
             </div>
             {error && (
-              <div className="rounded bg-red-50 p-3 text-sm text-red-600 dark:bg-red-950/40 dark:text-red-400">
+              <div className="rounded bg-red-50 p-3 text-sm text-red-600 dark:bg-red-950/40 dark:text-red-400" role="alert">
                 {error}
               </div>
             )}
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Sending..." : "Send Reset Link"}
+              {loading ? "Sending…" : "Send Reset Link"}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">

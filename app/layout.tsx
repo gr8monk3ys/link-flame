@@ -102,6 +102,12 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <ThemeProvider {...SITE_THEME_PROPS}>
             <CartProvider>
               <ErrorBoundary>
+                <a
+                  href="#main-content"
+                  className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-4 focus-visible:z-[100] focus-visible:rounded-md focus-visible:bg-background focus-visible:px-4 focus-visible:py-2 focus-visible:text-sm focus-visible:font-medium focus-visible:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  Skip to Main Content
+                </a>
                 <div className="relative flex min-h-screen flex-col">
                   {/* SiteHeader is already `sticky top-0 w-full`. Forcing it
                       to `fixed` took it out of flow and required main to
@@ -111,7 +117,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                       underneath the header on small screens. Leaving it in
                       flow is correct at any header height. */}
                   <SiteHeader />
-                  <main className="container mx-auto flex-1 px-4 pt-8 sm:px-6 lg:px-8">
+                  <main id="main-content" className="container mx-auto flex-1 px-4 pt-8 sm:px-6 lg:px-8">
                     {children}
                   </main>
                   <SiteFooter className="mt-auto" />

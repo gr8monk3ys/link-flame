@@ -4,7 +4,7 @@ import * as React from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { badgeVariants } from '@/components/ui/badge'
 import { BRAND_CERTIFICATIONS, BRAND_VALUES } from '@/lib/brands/constants'
 import { Filter, X, ChevronDown, ChevronUp } from 'lucide-react'
 
@@ -78,24 +78,26 @@ export function BrandFilters({ className }: BrandFiltersProps) {
           <p className="mb-2 text-sm text-muted-foreground">Active filters:</p>
           <div className="flex flex-wrap gap-2">
             {activeCertification && (
-              <Badge
-                variant="secondary"
-                className="cursor-pointer bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-200"
+              <button
+                type="button"
                 onClick={() => updateFilter('certification', null)}
+                aria-label={`Remove ${BRAND_CERTIFICATIONS.find((c) => c.slug === activeCertification)?.name || activeCertification} filter`}
+                className={cn(badgeVariants({ variant: "secondary" }), "cursor-pointer bg-green-100 text-green-800 hover:bg-green-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:bg-green-900/30 dark:text-green-200")}
               >
                 {BRAND_CERTIFICATIONS.find((c) => c.slug === activeCertification)?.name || activeCertification}
                 <X className="ml-1 size-3" />
-              </Badge>
+              </button>
             )}
             {activeValue && (
-              <Badge
-                variant="secondary"
-                className="cursor-pointer border-blue-200 text-blue-700 dark:border-blue-900/50 dark:text-blue-300"
+              <button
+                type="button"
                 onClick={() => updateFilter('value', null)}
+                aria-label={`Remove ${BRAND_VALUES.find((v) => v.slug === activeValue)?.name || activeValue} filter`}
+                className={cn(badgeVariants({ variant: "secondary" }), "cursor-pointer border-blue-200 text-blue-700 hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:border-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-950/40")}
               >
                 {BRAND_VALUES.find((v) => v.slug === activeValue)?.name || activeValue}
                 <X className="ml-1 size-3" />
-              </Badge>
+              </button>
             )}
           </div>
         </div>
@@ -105,7 +107,8 @@ export function BrandFilters({ className }: BrandFiltersProps) {
       <div className="border-b pb-4">
         <button
           type="button"
-          onClick={() => setShowCertifications(!showCertifications)}
+          onClick={() => setShowCertifications((v) => !v)}
+          aria-expanded={showCertifications}
           className="flex w-full items-center justify-between py-2 text-left font-medium"
         >
           <span>Certifications</span>
@@ -121,7 +124,7 @@ export function BrandFilters({ className }: BrandFiltersProps) {
             {BRAND_CERTIFICATIONS.map((cert) => {
               const isActive = activeCertification === cert.slug
               return (
-                <button
+                <button aria-pressed={isActive}
                   key={cert.slug}
                   type="button"
                   onClick={() => updateFilter('certification', cert.slug)}
@@ -141,7 +144,7 @@ export function BrandFilters({ className }: BrandFiltersProps) {
                     )}
                   >
                     {isActive && (
-                      <svg
+                      <svg aria-hidden="true"
                         className="size-3 text-white"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -168,7 +171,8 @@ export function BrandFilters({ className }: BrandFiltersProps) {
       <div>
         <button
           type="button"
-          onClick={() => setShowValues(!showValues)}
+          onClick={() => setShowValues((v) => !v)}
+          aria-expanded={showValues}
           className="flex w-full items-center justify-between py-2 text-left font-medium"
         >
           <span>Brand Values</span>
@@ -184,7 +188,7 @@ export function BrandFilters({ className }: BrandFiltersProps) {
             {BRAND_VALUES.map((val) => {
               const isActive = activeValue === val.slug
               return (
-                <button
+                <button aria-pressed={isActive}
                   key={val.slug}
                   type="button"
                   onClick={() => updateFilter('value', val.slug)}
@@ -204,7 +208,7 @@ export function BrandFilters({ className }: BrandFiltersProps) {
                     )}
                   >
                     {isActive && (
-                      <svg
+                      <svg aria-hidden="true"
                         className="size-3 text-white"
                         fill="none"
                         viewBox="0 0 24 24"

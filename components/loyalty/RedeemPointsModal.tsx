@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
-import { cn } from '@/lib/utils'
+import { cn, formatPrice, formatNumber } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -104,7 +104,7 @@ export function RedeemPointsModal({
           setCsrfToken(csrfData.token)
         }
       } catch (err) {
-        setError('Failed to load redemption data')
+        setError('Couldn’t load your points. Close this and try again.')
         if (process.env.NODE_ENV === 'development') {
           console.error('Error fetching redemption data:', err)
         }
@@ -193,7 +193,7 @@ export function RedeemPointsModal({
 
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="size-8 animate-spin rounded-full border-4 border-muted border-t-primary" />
+            <div className="size-8 animate-spin rounded-full border-4 border-muted border-t-primary" role="status" aria-label="Loading" />
           </div>
         ) : !preview ? (
           <div className="py-8 text-center">
@@ -204,7 +204,7 @@ export function RedeemPointsModal({
         ) : preview.availablePoints < preview.minimumRedemption ? (
           <div className="py-8 text-center">
             <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
-              <svg
+              <svg aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
@@ -230,10 +230,10 @@ export function RedeemPointsModal({
             <div className="rounded-lg bg-muted p-4 text-center">
               <p className="text-sm text-muted-foreground">Available Points</p>
               <p className="text-3xl font-bold">
-                {preview.availablePoints.toLocaleString()}
+                {formatNumber(preview.availablePoints)}
               </p>
               <p className="text-sm text-muted-foreground">
-                Worth up to ${preview.maxDiscount.toFixed(2)} in discounts
+                Worth up to {formatPrice(preview.maxDiscount)} in discounts
               </p>
             </div>
 
@@ -242,11 +242,12 @@ export function RedeemPointsModal({
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium">Points to Redeem</label>
                 <span className="text-lg font-semibold">
-                  {pointsToRedeem.toLocaleString()}
+                  {formatNumber(pointsToRedeem)}
                 </span>
               </div>
 
               <Slider
+                thumbLabel="Points to redeem"
                 value={[pointsToRedeem]}
                 onValueChange={([value]) => setPointsToRedeem(value)}
                 min={0}
@@ -257,7 +258,7 @@ export function RedeemPointsModal({
 
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span>0</span>
-                <span>{maxPoints.toLocaleString()} max</span>
+                <span>{formatNumber(maxPoints)} max</span>
               </div>
             </div>
 
@@ -283,19 +284,19 @@ export function RedeemPointsModal({
               <div className="flex items-center justify-between">
                 <span className="font-medium text-green-800 dark:text-green-200">Your Discount</span>
                 <span className="text-2xl font-bold text-green-700 dark:text-green-400">
-                  ${discount.toFixed(2)}
+                  {formatPrice(discount)}
                 </span>
               </div>
               {maxOrderTotal !== undefined && discount > maxOrderTotal && (
                 <p className="mt-2 text-sm text-amber-600 dark:text-amber-400">
-                  Note: Discount will be capped at your order total (${maxOrderTotal.toFixed(2)})
+                  Note: Discount will be capped at your order total ({formatPrice(maxOrderTotal)})
                 </p>
               )}
             </div>
 
             {/* Error message */}
             {error && (
-              <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400">
+              <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400" role="alert">
                 {error}
               </div>
             )}
@@ -309,15 +310,15 @@ export function RedeemPointsModal({
           <Button
             onClick={handleRedeem}
             disabled={!canRedeem || redeeming}
-            className="bg-green-700 hover:bg-green-700"
+            className="bg-green-700 hover:bg-green-800"
           >
             {redeeming ? (
               <>
                 <span className="mr-2 size-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                Redeeming...
+                Redeeming…
               </>
             ) : (
-              <>Apply ${discount.toFixed(2)} Discount</>
+              <>Apply {formatPrice(discount)} Discount</>
             )}
           </Button>
         </DialogFooter>
@@ -399,7 +400,7 @@ export function InlineRedeemWidget({
           setCsrfToken(csrfData.token)
         }
       } catch (err) {
-        setError('Failed to load points')
+        setError('Couldn’t load your points. Refresh the page to try again.')
         if (process.env.NODE_ENV === 'development') {
           console.error('Error fetching redemption data:', err)
         }
@@ -438,7 +439,7 @@ export function InlineRedeemWidget({
         setError(data.error?.message || 'Failed to apply discount')
       }
     } catch (err) {
-      setError('Failed to apply discount')
+      setError('Couldn’t apply the discount. Please try again.')
       if (process.env.NODE_ENV === 'development') {
         console.error('Error applying discount:', err)
       }
@@ -456,9 +457,9 @@ export function InlineRedeemWidget({
 
   if (sessionStatus === 'loading' || loading) {
     return (
-      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+      <div className="flex items-center gap-2 text-sm text-muted-foreground" role="status">
         <div className="size-4 animate-spin rounded-full border-2 border-muted border-t-primary" />
-        Loading rewards...
+        Loading rewards…
       </div>
     )
   }
@@ -490,7 +491,7 @@ export function InlineRedeemWidget({
       <div className="flex items-center justify-between rounded-lg border border-green-200 bg-green-50 p-3 dark:border-green-900/50 dark:bg-green-950/40">
         <div>
           <span className="font-medium text-green-800 dark:text-green-200">
-            ${appliedDiscount.toFixed(2)} discount applied
+            {formatPrice(appliedDiscount)} discount applied
           </span>
           <span className="ml-2 text-sm text-green-700 dark:text-green-400">
             ({pointsToRedeem} points)
@@ -512,16 +513,17 @@ export function InlineRedeemWidget({
     <div className="space-y-3">
       <div className="flex items-center justify-between text-sm">
         <span className="text-muted-foreground">
-          Available: {preview.availablePoints.toLocaleString()} points
+          Available: {formatNumber(preview.availablePoints)} points
         </span>
         <span className="font-medium">
-          Worth up to ${preview.maxDiscount.toFixed(2)}
+          Worth up to {formatPrice(preview.maxDiscount)}
         </span>
       </div>
 
       <div className="flex gap-2">
         <div className="flex-1">
           <Slider
+            thumbLabel="Points to redeem"
             value={[pointsToRedeem]}
             onValueChange={([value]) => setPointsToRedeem(value)}
             min={0}
@@ -531,7 +533,7 @@ export function InlineRedeemWidget({
           />
           <div className="mt-1 flex justify-between text-xs text-muted-foreground">
             <span>0</span>
-            <span>{maxPoints.toLocaleString()} max</span>
+            <span>{formatNumber(maxPoints)} max</span>
           </div>
         </div>
       </div>
@@ -539,25 +541,25 @@ export function InlineRedeemWidget({
       {pointsToRedeem > 0 && (
         <div className="flex items-center justify-between">
           <span className="text-sm">
-            Use {pointsToRedeem.toLocaleString()} points for{' '}
-            <span className="font-medium text-green-700 dark:text-green-400">${discount.toFixed(2)} off</span>
+            Use {formatNumber(pointsToRedeem)} points for{' '}
+            <span className="font-medium text-green-700 dark:text-green-400">{formatPrice(discount)} off</span>
           </span>
           <Button
             size="sm"
             onClick={handleApplyDiscount}
             disabled={!canApply || applying}
             className={cn(
-              'bg-green-700 hover:bg-green-700',
+              'bg-green-700 hover:bg-green-800',
               applying && 'opacity-50'
             )}
           >
-            {applying ? 'Applying...' : 'Apply'}
+            {applying ? 'Applying…' : 'Apply'}
           </Button>
         </div>
       )}
 
       {error && (
-        <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+        <p className="text-sm text-red-600 dark:text-red-400" role="alert">{error}</p>
       )}
     </div>
   )

@@ -156,10 +156,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]
 
-  // Dynamic blog post routes
-  let blogRoutes: MetadataRoute.Sitemap = []
-  try {
-    const posts = await prisma.blogPost.findMany({
+  // Blog posts and products are independent queries: run them together
+  // (react-best-practices 1.5). allSettled keeps each one's failure isolated,
+  // as the separate try/catch blocks did.
+  const [postsResult, productsResult] = await Promise.allSettled([
+    prisma.blogPost.findMany({
       select: {
         slug: true,
         publishedAt: true,
@@ -167,36 +168,39 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       orderBy: {
         publishedAt: 'desc',
       },
-    })
+    }),
+    prisma.product.findMany({
+      select: {
+        id: true,
+        updatedAt: true,
+      },
+    }),
+  ])
 
-    blogRoutes = posts.map((post) => ({
+  // Dynamic blog post routes
+  let blogRoutes: MetadataRoute.Sitemap = []
+  if (postsResult.status === 'fulfilled') {
+    blogRoutes = postsResult.value.map((post) => ({
       url: `${baseUrl}/blogs/${post.slug}`,
       lastModified: post.publishedAt,
       changeFrequency: 'weekly' as const,
       priority: 0.7,
     }))
-  } catch (error) {
-    logger.error('Error generating blog sitemap', error)
+  } else {
+    logger.error('Error generating blog sitemap', postsResult.reason)
   }
 
   // Dynamic product routes
   let productRoutes: MetadataRoute.Sitemap = []
-  try {
-    const products = await prisma.product.findMany({
-      select: {
-        id: true,
-        updatedAt: true,
-      },
-    })
-
-    productRoutes = products.map((product) => ({
+  if (productsResult.status === 'fulfilled') {
+    productRoutes = productsResult.value.map((product) => ({
       url: `${baseUrl}/products/${product.id}`,
       lastModified: product.updatedAt,
       changeFrequency: 'weekly' as const,
       priority: 0.6,
     }))
-  } catch (error) {
-    logger.error('Error generating product sitemap', error)
+  } else {
+    logger.error('Error generating product sitemap', productsResult.reason)
   }
 
   return [...staticRoutes, ...blogRoutes, ...productRoutes]

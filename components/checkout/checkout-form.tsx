@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { useCart } from "@/lib/providers/CartProvider";
 import { LoadingShimmer } from "@/components/ui/loading-shimmer";
 import { toast } from "sonner";
-import { CarbonNeutralBanner } from "@/components/sustainability";
+import { CarbonNeutralBanner } from "@/components/sustainability/CarbonNeutralBanner";
 import { ExpressCheckout } from "./ExpressCheckout";
 import { GiftOptions, GiftOptionsData } from "./GiftOptions";
 import {
@@ -217,7 +218,7 @@ export default function CheckoutForm({ onDiscountChange }: CheckoutFormProps) {
 
         <div className="space-y-2">
           <Label htmlFor="email" id="email-label">Email</Label>
-        <Input
+        <Input name="email" autoComplete="email" spellCheck={false}
           type="email"
           id="email"
           value={formData.email}
@@ -238,7 +239,7 @@ export default function CheckoutForm({ onDiscountChange }: CheckoutFormProps) {
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="firstName" id="firstName-label">First name</Label>
-          <Input
+          <Input name="firstName" autoComplete="given-name"
             type="text"
             id="firstName"
             value={formData.firstName}
@@ -257,7 +258,7 @@ export default function CheckoutForm({ onDiscountChange }: CheckoutFormProps) {
         </div>
         <div className="space-y-2">
           <Label htmlFor="lastName" id="lastName-label">Last name</Label>
-          <Input
+          <Input name="lastName" autoComplete="family-name"
             type="text"
             id="lastName"
             value={formData.lastName}
@@ -278,7 +279,7 @@ export default function CheckoutForm({ onDiscountChange }: CheckoutFormProps) {
       
       <div className="space-y-2">
         <Label htmlFor="address" id="address-label">Address</Label>
-        <Input
+        <Input name="address" autoComplete="street-address"
           type="text"
           id="address"
           value={formData.address}
@@ -299,7 +300,7 @@ export default function CheckoutForm({ onDiscountChange }: CheckoutFormProps) {
       <div className="grid grid-cols-3 gap-4">
         <div className="space-y-2">
           <Label htmlFor="city" id="city-label">City</Label>
-          <Input
+          <Input name="city" autoComplete="address-level2"
             type="text"
             id="city"
             value={formData.city}
@@ -318,7 +319,7 @@ export default function CheckoutForm({ onDiscountChange }: CheckoutFormProps) {
         </div>
         <div className="space-y-2">
           <Label htmlFor="state" id="state-label">State</Label>
-          <Input
+          <Input name="state" autoComplete="address-level1"
             type="text"
             id="state"
             value={formData.state}
@@ -337,7 +338,7 @@ export default function CheckoutForm({ onDiscountChange }: CheckoutFormProps) {
         </div>
         <div className="space-y-2">
           <Label htmlFor="zipCode" id="zipCode-label">ZIP code</Label>
-          <Input
+          <Input name="zipCode" autoComplete="postal-code" spellCheck={false}
             type="text"
             id="zipCode"
             value={formData.zipCode}
@@ -381,13 +382,14 @@ export default function CheckoutForm({ onDiscountChange }: CheckoutFormProps) {
       </div>
 
       <div className="flex justify-between pt-4">
-        <Button 
-          type="button" 
-          variant="outline" 
-          onClick={() => router.push("/cart")}
-          disabled={isLoading}
-        >
-          Back to cart
+        <Button variant="outline" asChild>
+          <Link
+            href="/cart"
+            aria-disabled={isLoading}
+            className={isLoading ? "pointer-events-none opacity-50" : undefined}
+          >
+            Back to cart
+          </Link>
         </Button>
         <Button 
           type="submit" 
@@ -397,7 +399,7 @@ export default function CheckoutForm({ onDiscountChange }: CheckoutFormProps) {
         >
           {isLoading ? (
             <span className="flex items-center">
-              <svg className="mr-2 size-4 animate-spin" viewBox="0 0 24 24" aria-hidden="true">
+              <span className="mr-2 inline-flex shrink-0 animate-spin" aria-hidden="true"><svg className="size-4" viewBox="0 0 24 24" aria-hidden="true">
                 <circle
                   className="opacity-25"
                   cx="12"
@@ -412,8 +414,8 @@ export default function CheckoutForm({ onDiscountChange }: CheckoutFormProps) {
                   fill="currentColor"
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 />
-              </svg>
-              Processing...
+              </svg></span>
+              Processing…
             </span>
           ) : (
             "Complete Order"

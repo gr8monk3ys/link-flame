@@ -96,27 +96,27 @@ export async function GET(req: NextRequest) {
     // Ensure default wishlist exists
     await getOrCreateDefaultWishlist(userIdToUse);
 
-    // Get total count of saved items
-    const total = await prisma.savedItem.count({
-      where: { userId: userIdToUse },
-    });
-
-    // Get paginated saved items across all wishlists
-    const savedItems = await prisma.savedItem.findMany({
-      where: { userId: userIdToUse },
-      include: {
-        product: true,
-        wishlist: {
-          select: {
-            id: true,
-            name: true,
+    // Count and fetch the page in parallel
+    const [total, savedItems] = await Promise.all([
+      prisma.savedItem.count({
+        where: { userId: userIdToUse },
+      }),
+      prisma.savedItem.findMany({
+        where: { userId: userIdToUse },
+        include: {
+          product: true,
+          wishlist: {
+            select: {
+              id: true,
+              name: true,
+            },
           },
         },
-      },
-      orderBy: { addedAt: "desc" },
-      skip,
-      take: limit,
-    });
+        orderBy: { addedAt: "desc" },
+        skip,
+        take: limit,
+      }),
+    ]);
 
     // Transform the data to match the original SavedItem interface
     const formattedItems = savedItems.map((item) => ({
@@ -250,14 +250,15 @@ export async function DELETE(req: Request) {
       );
     }
 
-    const { userId } = await getServerAuth();
-    const userIdToUse = await getUserIdForCart(userId);
-
+    // Validate the query before the auth/DB lookups (react-best-practices 1.1).
     const url = new URL(req.url);
     const productId = url.searchParams.get("productId");
     if (!productId) {
       return errorResponse("Product ID is required", undefined, undefined, 400);
     }
+
+    const { userId } = await getServerAuth();
+    const userIdToUse = await getUserIdForCart(userId);
 
     // Find the saved item across all wishlists
     const savedItem = await prisma.savedItem.findFirst({

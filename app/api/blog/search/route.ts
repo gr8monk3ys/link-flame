@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { searchPosts } from '@/lib/blog';
+import { searchPosts, getPostsByCategory, getPostsByTag } from '@/lib/blog';
 import { errorResponse, paginatedResponse, handleApiError, validationErrorResponse, rateLimitErrorResponse } from '@/lib/api-response';
 import { checkRateLimit, getIdentifier } from '@/lib/rate-limit';
 import { z } from 'zod';
@@ -93,15 +93,17 @@ export async function GET(request: NextRequest) {
     // Search posts
     let results = q ? await searchPosts(q) : [];
 
+    // Lowercase the filters once, not once per post (react-best-practices 7.4).
+    const tagLc = tag?.toLowerCase();
+    const categoryLc = category?.toLowerCase();
+
     // If no query but category/tag provided, need to fetch all posts first
     if (!q && (category || tag)) {
-      const { getPostsByCategory, getPostsByTag } = await import('@/lib/blog');
-
       if (category && tag) {
         // Filter by both category and tag
         const categoryPosts = await getPostsByCategory(category);
         results = categoryPosts.filter(post =>
-          post.tags.map(t => t.toLowerCase()).includes(tag.toLowerCase())
+          post.tags.some(t => t.toLowerCase() === tagLc)
         );
       } else if (category) {
         results = await getPostsByCategory(category);
@@ -112,12 +114,12 @@ export async function GET(request: NextRequest) {
       // Apply additional filters to search results
       if (category) {
         results = results.filter(post =>
-          post.category?.toLowerCase() === category.toLowerCase()
+          post.category?.toLowerCase() === categoryLc
         );
       }
       if (tag) {
         results = results.filter(post =>
-          post.tags.map(t => t.toLowerCase()).includes(tag.toLowerCase())
+          post.tags.some(t => t.toLowerCase() === tagLc)
         );
       }
     }

@@ -1,4 +1,4 @@
-import { ReferralDashboard } from "@/components/referrals";
+import { ReferralDashboard } from "@/components/referrals/ReferralDashboard";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

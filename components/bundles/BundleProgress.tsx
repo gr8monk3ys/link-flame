@@ -32,7 +32,7 @@ export function BundleProgress({
     <div className={cn("space-y-3", className)}>
       {/* Progress Header */}
       <div className="flex items-center justify-between">
-        <div className="text-sm font-medium">
+        <div className="text-sm font-medium" role="status">
           {isComplete ? (
             <span className="text-green-700 dark:text-green-400">Bundle complete!</span>
           ) : (
@@ -52,7 +52,7 @@ export function BundleProgress({
           <span className="text-muted-foreground">
             {" / "}
             {min}
-            {maxItems && maxItems !== min && ` - ${maxItems}`}
+            {maxItems != null && maxItems > 0 && maxItems !== min && ` - ${maxItems}`}
           </span>
         </div>
       </div>
@@ -61,11 +61,11 @@ export function BundleProgress({
       <div className="relative h-2 overflow-hidden rounded-full bg-muted">
         <div
           className={cn(
-            "absolute inset-y-0 left-0 transition-all duration-300",
+            "absolute inset-0 origin-left transition-transform duration-300",
             isComplete ? "bg-green-500" : "bg-primary",
             isOverMax && "bg-destructive"
           )}
-          style={{ width: `${Math.min(progress, 100)}%` }}
+          style={{ transform: `scaleX(${Math.min(progress, 100) / 100})` }}
         />
       </div>
 

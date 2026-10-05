@@ -10,7 +10,7 @@ import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { useCart } from '@/lib/providers/CartProvider';
 import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
+import { cn, formatPrice } from '@/lib/utils';
 import { Share2, Leaf, ShoppingCart, Sparkles, RefreshCw } from 'lucide-react';
 
 interface Product {
@@ -72,7 +72,7 @@ export function QuizResults({
       await navigator.clipboard.writeText(text);
       toast.success('Link copied to clipboard!');
     } catch {
-      toast.error('Failed to copy link');
+      toast.error('Couldn’t copy the link. Select it and copy it manually.');
     }
   }, []);
 
@@ -100,7 +100,7 @@ export function QuizResults({
       });
       toast.success(`${product.title} added to cart`);
     } catch {
-      toast.error('Failed to add item to cart');
+      toast.error('Couldn’t add the item to your cart. Please try again.');
     } finally {
       setLoadingIds((prev) => {
         const next = new Set(prev);
@@ -137,7 +137,7 @@ export function QuizResults({
         <Leaf className="mx-auto mb-4 size-16 text-muted-foreground" />
         <h3 className="mb-2 text-xl font-semibold">No recommendations yet</h3>
         <p className="mb-6 text-muted-foreground">
-          We couldn&apos;t find products matching your preferences. Try adjusting your answers!
+          We couldn&rsquo;t find products matching your preferences. Try adjusting your answers!
         </p>
         {onRetakeQuiz && (
           <Button onClick={onRetakeQuiz} variant="outline">
@@ -160,7 +160,7 @@ export function QuizResults({
           Your Personalized Recommendations
         </h2>
         <p className="mx-auto max-w-lg text-muted-foreground">
-          Based on your answers, we&apos;ve selected {products.length} eco-friendly products
+          Based on your answers, we&rsquo;ve selected {products.length} eco-friendly products
           that match your lifestyle and values.
         </p>
 
@@ -186,14 +186,14 @@ export function QuizResults({
         {products.map((product, index) => {
           const isLoading = loadingIds.has(product.id);
           const isOutOfStock = product.inventory <= 0;
-          const isOnSale = product.salePrice && product.salePrice < product.price;
+          const isOnSale = product.salePrice != null && product.salePrice < product.price;
           const isAnimated = animatedCards.has(index);
 
           return (
             <Card
               key={product.id}
               className={cn(
-                'group overflow-hidden transition-all duration-500',
+                'group overflow-hidden transition-[transform,opacity,box-shadow] duration-500',
                 'hover:-translate-y-1 hover:shadow-lg',
                 isAnimated
                   ? 'translate-y-0 opacity-100'
@@ -203,7 +203,7 @@ export function QuizResults({
               <CardHeader className="relative p-0">
                 <Link href={`/products/${product.id}`}>
                   <AspectRatio ratio={1}>
-                    <Image
+                    <Image sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       src={product.image}
                       alt={product.title}
                       fill
@@ -248,11 +248,11 @@ export function QuizResults({
                 )}
                 <div className="mt-3 flex items-baseline gap-2">
                   <span className="text-lg font-bold">
-                    ${(product.salePrice || product.price).toFixed(2)}
+                    {formatPrice(product.salePrice || product.price)}
                   </span>
                   {isOnSale && (
                     <span className="text-sm text-muted-foreground line-through">
-                      ${product.price.toFixed(2)}
+                      {formatPrice(product.price)}
                     </span>
                   )}
                 </div>
@@ -267,8 +267,8 @@ export function QuizResults({
                 >
                   {isLoading ? (
                     <span className="flex items-center">
-                      <svg
-                        className="-ml-1 mr-2 size-4 animate-spin"
+                      <span className="-ml-1 mr-2 inline-flex shrink-0 animate-spin" aria-hidden="true"><svg aria-hidden="true"
+                        className="size-4"
                         fill="none"
                         viewBox="0 0 24 24"
                       >
@@ -285,8 +285,8 @@ export function QuizResults({
                           fill="currentColor"
                           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                         />
-                      </svg>
-                      Adding...
+                      </svg></span>
+                      Adding…
                     </span>
                   ) : isOutOfStock ? (
                     'Out of Stock'

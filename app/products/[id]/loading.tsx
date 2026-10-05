@@ -1,6 +1,7 @@
 export default function ProductDetailLoading() {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8" role="status" aria-busy="true">
+      <span className="sr-only">Loading…</span>
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
         <div className="h-96 w-full animate-pulse rounded bg-muted" />
         <div className="space-y-4">

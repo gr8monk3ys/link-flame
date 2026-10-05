@@ -92,9 +92,12 @@ export function calculateProratedPartialRefund(
     throw new Error('Order has no remaining refundable amount')
   }
 
+  // Index the order's items once instead of a find() per refund line
+  // (react-best-practices 7.2).
+  const orderItemsById = new Map(order.items.map((item) => [item.id, item]))
   let selectedSubtotal = 0
   for (const refundItem of normalizedItems) {
-    const orderItem = order.items.find((item) => item.id === refundItem.orderItemId)
+    const orderItem = orderItemsById.get(refundItem.orderItemId)
     if (!orderItem) {
       throw new Error(`Order item not found: ${refundItem.orderItemId}`)
     }
@@ -367,8 +370,9 @@ export async function processRefund(request: RefundRequest): Promise<RefundResul
       // Partial refund: only restore specified items
       const inventoryItems: Array<{ productId: string; variantId: string | null; quantity: number }> = []
 
+      const orderItemsById = new Map(order.items.map((oi) => [oi.id, oi]))
       for (const refundItem of normalizedRefundItems) {
-        const orderItem = order.items.find((oi) => oi.id === refundItem.orderItemId)
+        const orderItem = orderItemsById.get(refundItem.orderItemId)
         if (!orderItem) {
           throw new Error(`Order item not found: ${refundItem.orderItemId}`)
         }

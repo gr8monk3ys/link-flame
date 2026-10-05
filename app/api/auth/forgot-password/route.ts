@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, after } from 'next/server'
 import { z } from 'zod'
 import { randomBytes, createHash } from 'crypto'
 import { prisma } from '@/lib/prisma'
@@ -77,10 +77,14 @@ export async function POST(request: Request): Promise<NextResponse> {
       },
     })
 
-    // Send email (non-blocking — don't let email failure break the response)
-    sendPasswordResetEmail(email.toLowerCase(), token).catch((err) => {
-      logger.error('Failed to send password reset email', err)
-    })
+    // Send the email after the response (react-best-practices 3.10). A bare
+    // un-awaited promise can be frozen with the function once the response is
+    // sent; after() keeps the invocation alive until it settles.
+    after(() =>
+      sendPasswordResetEmail(email.toLowerCase(), token).catch((err) => {
+        logger.error('Failed to send password reset email', err)
+      })
+    )
 
     return successResponse
   } catch (error) {

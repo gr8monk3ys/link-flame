@@ -93,7 +93,7 @@ export default function SustainableAppliancesPage() {
               <div className="space-y-2">
                 {category.features.map((feature, i) => (
                   <div key={i} className="flex items-center gap-2 text-sm">
-                    <svg
+                    <svg aria-hidden="true"
                       className="size-4 text-primary"
                       fill="none"
                       viewBox="0 0 24 24"

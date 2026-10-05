@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-import { cn } from "@/lib/utils"
+import { cn, formatPrice } from "@/lib/utils"
 import { Minus, Plus, Lock } from "lucide-react"
 
 interface Product {
@@ -158,7 +158,7 @@ export function BundleProductSelector({
             <Card
               key={product.id}
               className={cn(
-                "overflow-hidden transition-all",
+                "overflow-hidden transition-[box-shadow,opacity]",
                 isSelected && "ring-2 ring-primary",
                 isOutOfStock && "opacity-50"
               )}
@@ -184,17 +184,17 @@ export function BundleProductSelector({
                   {/* Product Info */}
                   <div className="flex flex-1 flex-col">
                     <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1">
+                      <div className="min-w-0 flex-1">
                         <h4 className="line-clamp-1 text-sm font-medium">
                           {product.title}
                         </h4>
                         <div className="flex items-baseline gap-2">
                           <span className="text-sm font-semibold">
-                            ${effectivePrice.toFixed(2)}
+                            {formatPrice(effectivePrice)}
                           </span>
-                          {product.salePrice && (
+                          {product.salePrice != null && (
                             <span className="text-xs text-muted-foreground line-through">
-                              ${product.price.toFixed(2)}
+                              {formatPrice(product.price)}
                             </span>
                           )}
                         </div>

@@ -9,7 +9,7 @@ import { WishlistManager } from '@/components/wishlists/WishlistManager';
 import { useWishlists } from '@/hooks/useWishlists';
 import { useCart } from '@/lib/providers/CartProvider';
 import { toast } from 'sonner';
-import type { WishlistItem } from '@/components/wishlists';
+import type { WishlistItem } from '@/components/wishlists/WishlistCard';
 
 export default function SavedItemsClient() {
   const { data: session, status } = useSession();
@@ -37,7 +37,7 @@ export default function SavedItemsClient() {
   if (!isAuthLoaded) {
     return (
       <div className="container flex items-center justify-center py-10">
-        <Loader2 className="size-8 animate-spin" />
+        <span role="status"><span className="inline-flex shrink-0 animate-spin"><Loader2 className="size-8" /></span><span className="sr-only">Loading…</span></span>
       </div>
     );
   }
@@ -47,7 +47,7 @@ export default function SavedItemsClient() {
       <div className="container py-10">
         <Card>
           <CardHeader>
-            <CardTitle>Sign In Required</CardTitle>
+            <CardTitle as="h1">Sign In Required</CardTitle>
             <CardDescription>
               Please sign in to view your wishlists.
             </CardDescription>

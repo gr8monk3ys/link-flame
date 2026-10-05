@@ -191,15 +191,19 @@ export async function GET(request: NextRequest) {
           include: includeConfig,
         })
 
+        // Average each product's rating once, not twice per comparison
+        // (react-best-practices 7.4).
+        const avgRating = new Map(
+          allProducts.map((p) => [
+            p.id,
+            p.reviews.length > 0
+              ? p.reviews.reduce((sum, review) => sum + review.rating, 0) / p.reviews.length
+              : 0,
+          ])
+        )
         const sorted = allProducts.sort((a, b) => {
-          const ratingA =
-            a.reviews.length > 0
-              ? a.reviews.reduce((sum, review) => sum + review.rating, 0) / a.reviews.length
-              : 0
-          const ratingB =
-            b.reviews.length > 0
-              ? b.reviews.reduce((sum, review) => sum + review.rating, 0) / b.reviews.length
-              : 0
+          const ratingA = avgRating.get(a.id) ?? 0
+          const ratingB = avgRating.get(b.id) ?? 0
 
           if (ratingB !== ratingA) {
             return ratingB - ratingA

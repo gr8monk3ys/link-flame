@@ -3,8 +3,8 @@ import CTASection from "@/components/home/CTASection";
 import { ImpactBand } from "@/components/home/ImpactBand";
 import { FeaturedBrands } from "@/components/home/FeaturedBrands";
 import { FeaturedProducts } from "@/components/home/FeaturedProducts";
-import { QuizCTA } from "@/components/quiz";
-import { SustainabilityCommitment } from "@/components/sustainability";
+import { QuizCTA } from "@/components/quiz/QuizCTA";
+import { SustainabilityCommitment } from "@/components/sustainability/SustainabilityCommitment";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 
@@ -62,7 +62,7 @@ function FeaturedProductsLoading() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
           <div className="mx-auto h-10 w-64 animate-pulse rounded bg-muted" />
-          <div className="mx-auto mt-4 h-6 w-96 animate-pulse rounded bg-muted" />
+          <div className="mx-auto mt-4 h-6 w-96 max-w-full animate-pulse rounded bg-muted" />
         </div>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
@@ -86,8 +86,8 @@ function FeaturedBrandsLoading() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
           <div className="mx-auto mb-4 size-12 animate-pulse rounded-full bg-muted" />
-          <div className="mx-auto h-10 w-80 animate-pulse rounded bg-muted" />
-          <div className="mx-auto mt-4 h-6 w-96 animate-pulse rounded bg-muted" />
+          <div className="mx-auto h-10 w-80 max-w-full animate-pulse rounded bg-muted" />
+          <div className="mx-auto mt-4 h-6 w-96 max-w-full animate-pulse rounded bg-muted" />
         </div>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (

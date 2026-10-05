@@ -1,5 +1,3 @@
-'use client';
-
 import { cn } from '@/lib/utils';
 
 interface ImperfectExplainerProps {
@@ -25,7 +23,7 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
             <QuestionMarkIcon className="size-6 text-amber-700 dark:text-amber-300" />
           </div>
           <div>
-            <h3 className="font-semibold text-amber-900 dark:text-amber-100">What does &quot;Perfectly Imperfect&quot; mean?</h3>
+            <h3 className="font-semibold text-amber-900 dark:text-amber-100">What does &ldquo;Perfectly Imperfect&rdquo; mean?</h3>
             <p className="mt-2 text-sm text-amber-800 dark:text-amber-200">
               These products have minor cosmetic issues like dented packaging or label misprints,
               but the quality inside is 100% the same. You get the same great product at a
@@ -52,7 +50,7 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
             >
               <summary className="flex cursor-pointer list-none items-center justify-between p-6">
                 <span className="font-medium text-foreground">{faq.question}</span>
-                <ChevronDownIcon className="size-5 text-muted-foreground transition-transform group-open:rotate-180" />
+                <span className="inline-flex transition-transform group-open:rotate-180"><ChevronDownIcon className="size-5 text-muted-foreground" /></span>
               </summary>
               <div className="px-6 pb-6">
                 <p className="text-muted-foreground">{faq.answer}</p>
@@ -76,7 +74,7 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
           How Perfectly Imperfect Works
         </h2>
         <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-          Same quality products at lower prices. Here&apos;s why choosing imperfect is the smart
+          Same quality products at lower prices. Here&rsquo;s why choosing imperfect is the smart
           (and sustainable) choice.
         </p>
       </div>
@@ -97,7 +95,7 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
       {/* Common imperfections */}
       <div className="rounded-3xl border border-border bg-card p-8 shadow-lg md:p-12">
         <h3 className="mb-8 text-center text-2xl font-bold text-foreground">
-          What makes something &quot;Imperfect&quot;?
+          What makes something &ldquo;Imperfect&rdquo;?
         </h3>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -128,7 +126,7 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
             </h4>
             <p className="mt-1 text-green-800 dark:text-green-200">
               Every imperfect item comes with the same quality guarantee as our regular products.
-              If you&apos;re not satisfied for any reason, return it for a full refund.
+              If you&rsquo;re not satisfied for any reason, return it for a full refund.
             </p>
           </div>
         </div>
@@ -141,7 +139,7 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
             Your Impact
           </h3>
           <p className="mt-2 text-green-800 dark:text-green-200">
-            By choosing imperfect, you&apos;re helping make a difference
+            By choosing imperfect, you&rsquo;re helping make a difference
           </p>
         </div>
 
@@ -163,7 +161,7 @@ const STEPS = [
   {
     title: 'Minor Imperfections',
     description:
-      'Products with cosmetic issues like dented packaging or label misprints that don\'t affect quality.',
+      'Products with cosmetic issues like dented packaging or label misprints that don’t affect quality.',
     icon: PackageIcon,
   },
   {
@@ -213,17 +211,17 @@ const FAQ_ITEMS = [
   {
     question: 'Is the quality different from regular products?',
     answer:
-      'Absolutely not! The product quality is exactly the same. The only difference is cosmetic imperfections on the packaging or minor issues that don\'t affect the product inside.',
+      'Absolutely not! The product quality is exactly the same. The only difference is cosmetic imperfections on the packaging or minor issues that don’t affect the product inside.',
   },
   {
     question: 'Can I return an imperfect item?',
     answer:
-      'Yes! All imperfect items come with the same return policy as our regular products. If you\'re not satisfied for any reason, you can return it for a full refund.',
+      'Yes! All imperfect items come with the same return policy as our regular products. If you’re not satisfied for any reason, you can return it for a full refund.',
   },
   {
     question: 'Why are imperfect items discounted?',
     answer:
-      'These items can\'t be sold as "new" at full price due to cosmetic issues, but throwing them away would create unnecessary waste. We pass the savings on to you while reducing our environmental impact.',
+      'These items can’t be sold as “new” at full price due to cosmetic issues, but throwing them away would create unnecessary waste. We pass the savings on to you while reducing our environmental impact.',
   },
   {
     question: 'Are imperfect items used or refurbished?',

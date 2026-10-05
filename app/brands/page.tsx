@@ -1,7 +1,8 @@
 import { Metadata } from 'next'
 import { Suspense } from 'react'
 import { prisma } from '@/lib/prisma'
-import { BrandGrid, BrandFilters } from '@/components/brands'
+import { BrandGrid } from '@/components/brands/BrandGrid'
+import { BrandFilters } from '@/components/brands/BrandFilters'
 import { Building2 } from 'lucide-react'
 
 // Render at request time — DB not available during Vercel build
@@ -134,10 +135,11 @@ async function BrandsContent({
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="mt-8 flex justify-center gap-2">
+        <nav aria-label="Pagination" className="mt-8 flex justify-center gap-2">
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
             <a
               key={pageNum}
+              aria-current={pageNum === page ? 'page' : undefined}
               href={`/brands?${new URLSearchParams({
                 ...searchParams,
                 page: pageNum.toString(),
@@ -151,7 +153,7 @@ async function BrandsContent({
               {pageNum}
             </a>
           ))}
-        </div>
+        </nav>
       )}
     </>
   )
@@ -183,7 +185,7 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
         <div className="lg:grid lg:grid-cols-4 lg:gap-8">
           {/* Filters Sidebar */}
           <div className="hidden lg:block">
-            <div className="sticky top-4">
+            <div className="sticky top-36">
               <Suspense fallback={<div className="h-96 animate-pulse rounded-lg bg-muted" />}>
                 <BrandFilters />
               </Suspense>

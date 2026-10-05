@@ -63,7 +63,7 @@ export default function EcoLivingPage() {
                   </div>
                   <CardTitle as="h2" className="flex items-center justify-between">
                     {category.title}
-                    <ArrowRight className="size-5 text-muted-foreground transition-transform group-hover:translate-x-1" />
+                    <span className="inline-flex transition-transform group-hover:translate-x-1"><ArrowRight className="size-5 text-muted-foreground" /></span>
                   </CardTitle>
                   <CardDescription>{category.description}</CardDescription>
                 </CardHeader>

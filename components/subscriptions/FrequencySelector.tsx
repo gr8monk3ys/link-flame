@@ -60,11 +60,11 @@ export function FrequencySelector({
         <label htmlFor="frequency-select" className="sr-only">
           Delivery frequency
         </label>
-        <select
+        <select name="selectedFrequency"
           id="frequency-select"
           value={selectedFrequency}
           onChange={(e) => onFrequencyChange(e.target.value as SubscriptionFrequency)}
-          className="block w-full rounded-md border-border py-2 pl-3 pr-10 text-base focus:border-primary focus:outline-none focus:ring-ring sm:text-sm"
+          className="block w-full rounded-md border-border bg-background py-2 pl-3 pr-10 text-base text-foreground focus-visible:border-primary focus-visible:outline-none focus-visible:ring-ring sm:text-sm"
         >
           {frequencyOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -90,7 +90,7 @@ export function FrequencySelector({
                 checked
                   ? 'border-green-600 bg-green-50 dark:bg-green-950/40'
                   : 'border-border bg-card hover:bg-muted',
-                'relative flex cursor-pointer rounded-lg border p-4 focus:outline-none'
+                'relative flex cursor-pointer rounded-lg border p-4 focus-visible:outline-none'
               )
             }
           >

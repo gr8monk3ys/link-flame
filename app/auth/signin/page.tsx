@@ -48,7 +48,7 @@ function SignInForm() {
     <div className="container flex min-h-[calc(100vh-200px)] items-center justify-center">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Sign In</CardTitle>
+          <CardTitle as="h1">Sign In</CardTitle>
           <CardDescription>
             Enter your credentials to access your account
           </CardDescription>
@@ -57,7 +57,7 @@ function SignInForm() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input
+              <Input name="email" autoComplete="email" spellCheck={false}
                 id="email"
                 type="email"
                 placeholder="you@example.com"
@@ -69,7 +69,7 @@ function SignInForm() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input
+              <Input name="password" autoComplete="current-password"
                 id="password"
                 type="password"
                 placeholder="••••••••"
@@ -80,7 +80,7 @@ function SignInForm() {
               />
             </div>
             {error && (
-              <div className="rounded bg-red-50 p-3 text-sm text-red-600 dark:bg-red-950/40 dark:text-red-400">
+              <div className="rounded bg-red-50 p-3 text-sm text-red-600 dark:bg-red-950/40 dark:text-red-400" role="alert">
                 {error}
               </div>
             )}
@@ -90,11 +90,11 @@ function SignInForm() {
               </Link>
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Signing in..." : "Sign In"}
+              {loading ? "Signing in…" : "Sign In"}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{" "}
+            Don&rsquo;t have an account?{" "}
             <Link href="/auth/signup" className="text-primary hover:underline">
               Sign up
             </Link>
@@ -107,7 +107,7 @@ function SignInForm() {
 
 export default function SignInPage() {
   return (
-    <Suspense fallback={<div className="container flex min-h-[calc(100vh-200px)] items-center justify-center">Loading...</div>}>
+    <Suspense fallback={<div className="container flex min-h-[calc(100vh-200px)] items-center justify-center" role="status">Loading…</div>}>
       <SignInForm />
     </Suspense>
   );

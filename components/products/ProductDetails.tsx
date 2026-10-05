@@ -7,11 +7,15 @@ import { useCart } from "@/lib/providers/CartProvider";
 import { toast } from 'sonner';
 import { ProductReviews } from '@/components/products/product-reviews';
 import { VariantSelector, ProductVariant } from '@/components/products/variant-selector';
-import { SubscribeOption } from '@/components/subscriptions';
+import { SubscribeOption } from '@/components/subscriptions/SubscribeOption';
 import { SubscriptionFrequency } from '@/lib/subscriptions';
-import { ImperfectBadge, ImperfectReasonTooltip, ImperfectSavingsBadge } from '@/components/imperfect';
-import { EcoImpactCard, CertificationBadgesFull, CarbonNeutralBadge, type Certification } from '@/components/sustainability';
+import { ImperfectBadge, ImperfectSavingsBadge } from '@/components/imperfect/ImperfectBadge';
+import { ImperfectReasonTooltip } from '@/components/imperfect/ImperfectReasonTooltip';
+import { EcoImpactCard } from '@/components/sustainability/EcoImpactCard';
+import { CertificationBadgesFull, type Certification } from '@/components/sustainability/CertificationBadges';
+import { CarbonNeutralBadge } from '@/components/sustainability/CarbonNeutralBanner';
 import { ValueBadgeList } from '@/components/filters/ValueBadge';
+import { formatPrice } from "@/lib/utils";
 
 interface ProductValue {
   id: string;
@@ -32,7 +36,7 @@ export interface ProductDetailsProps {
     hasVariants: boolean;
     isSubscribable?: boolean;
     variants: ProductVariant[];
-    reviews: { rating: number }[];
+    reviewCount: number;
     // Imperfect product fields
     isImperfect?: boolean;
     imperfectReason?: string | null;
@@ -104,7 +108,7 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
                 {[displayImage].map((image) => (
                   <div
                     key={image}
-                    className="relative flex h-24 cursor-pointer items-center justify-center rounded-md bg-background text-sm font-medium uppercase hover:bg-muted"
+                    className="relative flex h-24 items-center justify-center rounded-md bg-background text-sm font-medium uppercase"
                   >
                     <span className="absolute inset-0 overflow-hidden rounded-md">
                       <Image
@@ -156,10 +160,10 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
                 <div className="space-y-2">
                   <div className="flex items-baseline gap-3">
                     <p className="text-3xl font-bold tracking-tight text-amber-600 dark:text-amber-400">
-                      {'$' + (displayPrice * (1 - product.imperfectDiscount / 100)).toFixed(2)}
+                      {formatPrice(displayPrice * (1 - product.imperfectDiscount / 100))}
                     </p>
                     <p className="text-xl text-muted-foreground line-through">
-                      {'$' + Number(displayPrice).toFixed(2)}
+                      {formatPrice(displayPrice)}
                     </p>
                   </div>
                   <ImperfectSavingsBadge
@@ -171,12 +175,12 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
               ) : (
                 <>
                   <p className="text-3xl tracking-tight text-foreground">
-                    {'$' + Number(displayPrice).toFixed(2)}
+                    {formatPrice(displayPrice)}
                   </p>
                   {/* Show original price if on sale */}
                   {selectedVariant?.salePrice && selectedVariant.price && selectedVariant.price > selectedVariant.salePrice && (
                     <p className="text-lg text-muted-foreground line-through">
-                      {'$' + Number(selectedVariant.price).toFixed(2)}
+                      {formatPrice(selectedVariant.price)}
                     </p>
                   )}
                 </>
@@ -200,11 +204,11 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
                 <div className="mt-3">
                   <span className={'inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ' + stockStatus.color}>
                     {stockStatus.isAvailable ? (
-                      <svg className="mr-1.5 size-2 text-current" fill="currentColor" viewBox="0 0 8 8">
+                      <svg aria-hidden="true" className="mr-1.5 size-2 text-current" fill="currentColor" viewBox="0 0 8 8">
                         <circle cx={4} cy={4} r={3} />
                       </svg>
                     ) : (
-                      <svg className="mr-1.5 size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg aria-hidden="true" className="mr-1.5 size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                       </svg>
                     )}
@@ -231,9 +235,9 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
                     ))}
                   </div>
                   <p className="sr-only">{averageRating} out of 5 stars</p>
-                  <div className="ml-3 text-sm font-medium text-primary hover:text-primary/80">
-                    {product.reviews.length} reviews
-                  </div>
+                  <a href="#reviews" className="ml-3 text-sm font-medium text-primary hover:text-primary/80">
+                    {product.reviewCount} {product.reviewCount === 1 ? 'review' : 'reviews'}
+                  </a>
                 </div>
               </div>
             )}
@@ -244,7 +248,7 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
             </div>
 
             {/* Sustainability Section */}
-            {(product.isPlasticFree || product.isVegan || product.isCrueltyFree || product.isOrganicCertified || product.carbonFootprintGrams) && (
+            {(product.isPlasticFree || product.isVegan || product.isCrueltyFree || product.isOrganicCertified || (product.carbonFootprintGrams ?? 0) > 0) && (
               <div className="mt-6">
                 <EcoImpactCard
                   carbonFootprintGrams={product.carbonFootprintGrams}
@@ -322,7 +326,7 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
         </div>
 
         {/* Reviews Section */}
-        <div className="mt-16 border-t pt-16">
+        <div id="reviews" className="mt-16 scroll-mt-40 border-t pt-16">
           <ProductReviews productId={product.id} />
         </div>
       </div>
@@ -472,7 +476,7 @@ function AddToCartButton({
   }
 
   const buttonText = isLoading
-    ? (isSubscription ? 'Creating subscription...' : 'Adding...')
+    ? (isSubscription ? 'Creating subscription…' : 'Adding…')
     : (isSubscription ? 'Subscribe & Save' : 'Add to cart');
 
   return (
@@ -480,7 +484,7 @@ function AddToCartButton({
       type="button"
       onClick={handleAddToCart}
       disabled={isLoading}
-      className="flex max-w-xs flex-1 items-center justify-center rounded-lg border border-transparent bg-primary px-8 py-3 text-base font-medium text-primary-foreground transition-all duration-200 hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background active:scale-[0.98] sm:w-full"
+      className="flex max-w-xs flex-1 items-center justify-center rounded-lg border border-transparent bg-primary px-8 py-3 text-base font-medium text-primary-foreground transition-[background-color,transform] duration-200 hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98] sm:w-full"
     >
       {buttonText}
     </button>

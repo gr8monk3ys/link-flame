@@ -23,6 +23,7 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { logger } from "@/lib/logger";
+import { formatPrice } from "@/lib/utils";
 
 /**
  * Loyalty tier definitions
@@ -169,33 +170,36 @@ async function getAvailablePointsFromClient(
 ): Promise<number> {
   const includePending = options.includePending ?? true;
 
-  // Get total earned points
-  const earnedPoints = await client.loyaltyPoints.aggregate({
-    where: {
-      userId,
-      // Only count non-expired points
-      OR: [
-        { expiresAt: null },
-        { expiresAt: { gt: new Date() } },
-      ],
-    },
-    _sum: {
-      points: true,
-    },
-  });
-
-  // "pending" redemptions are active holds from in-flight checkout sessions.
-  const redeemedPoints = await client.loyaltyRedemption.aggregate({
-    where: {
-      userId,
-      status: {
-        in: getRedemptionStatusesForAvailability(includePending),
+  // Earned and redeemed totals are independent: one round trip, not two
+  // (react-best-practices 1.5). Inside an interactive transaction Prisma
+  // queues them on the transaction's connection, so this is still safe there.
+  const [earnedPoints, redeemedPoints] = await Promise.all([
+    // Total earned points (only non-expired)
+    client.loyaltyPoints.aggregate({
+      where: {
+        userId,
+        OR: [
+          { expiresAt: null },
+          { expiresAt: { gt: new Date() } },
+        ],
       },
-    },
-    _sum: {
-      pointsUsed: true,
-    },
-  });
+      _sum: {
+        points: true,
+      },
+    }),
+    // "pending" redemptions are active holds from in-flight checkout sessions.
+    client.loyaltyRedemption.aggregate({
+      where: {
+        userId,
+        status: {
+          in: getRedemptionStatusesForAvailability(includePending),
+        },
+      },
+      _sum: {
+        pointsUsed: true,
+      },
+    }),
+  ]);
 
   const earned = earnedPoints._sum.points || 0;
   const redeemed = redeemedPoints._sum.pointsUsed || 0;
@@ -378,7 +382,7 @@ export async function awardPurchasePoints(userId: string, orderId: string, order
     points,
     source: POINT_SOURCES.PURCHASE,
     orderId,
-    description: `Purchase reward - $${orderTotal.toFixed(2)} order`,
+    description: `Purchase reward - ${formatPrice(orderTotal)} order`,
   });
 
   return { success: result.success, pointsAwarded: result.pointsAwarded };
@@ -661,8 +665,9 @@ export async function getUserPointHistory(
   const { page = 1, limit = 20 } = options;
   const skip = (page - 1) * limit;
 
-  // Get earned points
-  const [earnedPoints, earnedCount] = await Promise.all([
+  // Earned points and redemptions (with counts) in one round trip
+  // (react-best-practices 1.5).
+  const [earnedPoints, earnedCount, redemptions, redemptionsCount] = await Promise.all([
     prisma.loyaltyPoints.findMany({
       where: { userId },
       orderBy: { earnedAt: "desc" },
@@ -670,10 +675,6 @@ export async function getUserPointHistory(
       take: limit,
     }),
     prisma.loyaltyPoints.count({ where: { userId } }),
-  ]);
-
-  // Get redemptions
-  const [redemptions, redemptionsCount] = await Promise.all([
     prisma.loyaltyRedemption.findMany({
       where: { userId },
       orderBy: { redeemedAt: "desc" },
@@ -707,7 +708,7 @@ export async function getUserPointHistory(
       type: "redeemed" as const,
       points: -r.pointsUsed,
       source: undefined as string | undefined,
-      description: `Redeemed for $${r.discountAmount.toFixed(2)} discount`,
+      description: `Redeemed for ${formatPrice(Number(r.discountAmount))} discount`,
       orderId: r.orderId,
       date: r.redeemedAt,
     })),

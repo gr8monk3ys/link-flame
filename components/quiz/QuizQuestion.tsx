@@ -52,7 +52,7 @@ export function QuizQuestion({
     <div
       key={question}
       className={cn(
-        'transition-all duration-300 ease-out',
+        'transition-[transform,opacity] duration-300 ease-out',
         isAnimating ? 'translate-x-4 opacity-0' : 'translate-x-0 opacity-100',
         isAnimating && 'pointer-events-none'
       )}
@@ -76,9 +76,9 @@ export function QuizQuestion({
               key={option.value}
               onClick={() => handleOptionClick(option.value)}
               className={cn(
-                'group relative flex w-full items-center gap-4 rounded-lg border-2 p-4 text-left transition-all duration-200',
+                'group relative flex w-full items-center gap-4 rounded-lg border-2 p-4 text-left transition-colors duration-200',
                 'hover:border-primary/50 hover:bg-primary/5',
-                'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
                 isSelected
                   ? 'border-primary bg-primary/10 shadow-sm'
                   : 'border-border bg-card'
@@ -92,7 +92,7 @@ export function QuizQuestion({
               {/* Selection indicator */}
               <div
                 className={cn(
-                  'flex size-6 shrink-0 items-center justify-center rounded-full border-2 transition-all duration-200',
+                  'flex size-6 shrink-0 items-center justify-center rounded-full border-2 transition-colors duration-200',
                   questionType === 'SINGLE_CHOICE' ? 'rounded-full' : 'rounded-md',
                   isSelected
                     ? 'border-primary bg-primary text-primary-foreground'

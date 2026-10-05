@@ -11,6 +11,7 @@ import {
   TrendingUp,
   Package
 } from 'lucide-react';
+import { formatPrice, formatDate } from "@/lib/utils";
 
 interface StatCardProps {
   title: string;
@@ -93,7 +94,7 @@ export default async function AdminDashboard() {
       <div>
         <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
         <p className="mt-2 text-muted-foreground">
-          Welcome back! Here&apos;s what&apos;s happening with your store.
+          Welcome back! Here&rsquo;s what&rsquo;s happening with your store.
         </p>
       </div>
 
@@ -101,7 +102,7 @@ export default async function AdminDashboard() {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Total Revenue"
-          value={`$${revenue.toFixed(2)}`}
+          value={formatPrice(revenue)}
           icon={<DollarSign className="size-6" />}
         />
         <StatCard
@@ -128,7 +129,7 @@ export default async function AdminDashboard() {
             Average Order Value
           </h2>
           <p className="text-3xl font-bold text-green-700 dark:text-green-400">
-            ${avgOrderValue.toFixed(2)}
+            {formatPrice(avgOrderValue)}
           </p>
         </div>
         <div className="rounded-lg bg-card p-6 shadow">
@@ -145,7 +146,7 @@ export default async function AdminDashboard() {
           <h2 className="text-lg font-semibold text-foreground">Recent Orders</h2>
         </div>
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-border">
+          <table className="min-w-full divide-y divide-border tabular-nums">
             <thead className="bg-muted">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -182,7 +183,7 @@ export default async function AdminDashboard() {
                       {order.customerName || 'Unknown'}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-foreground">
-                      ${order.amount.toFixed(2)}
+                      {formatPrice(order.amount)}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4">
                       <span
@@ -196,7 +197,7 @@ export default async function AdminDashboard() {
                       </span>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground">
-                      {new Date(order.createdAt).toLocaleDateString()}
+                      {formatDate(order.createdAt)}
                     </td>
                   </tr>
                 ))

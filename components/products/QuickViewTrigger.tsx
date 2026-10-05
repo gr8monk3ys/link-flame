@@ -220,16 +220,17 @@ export function QuickViewTrigger({
           "group relative flex items-center justify-center rounded-full",
           "bg-card/90 shadow-md backdrop-blur-sm",
           "border border-border",
-          "transition-all duration-200 ease-in-out",
+          "transition-[transform,opacity,background-color,box-shadow] duration-200 ease-in-out",
           // Hover/Focus states
           "hover:scale-105 hover:bg-card hover:shadow-lg",
-          "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
           // Active state
           "active:scale-95",
           // Visibility transition
           showOnHover && [
             "pointer-events-none translate-y-1 opacity-0",
             "group-hover/card:pointer-events-auto group-hover/card:translate-y-0 group-hover/card:opacity-100",
+            "focus-visible:pointer-events-auto focus-visible:translate-y-0 focus-visible:opacity-100",
           ],
           // Size
           sizeClasses[size],
@@ -242,7 +243,7 @@ export function QuickViewTrigger({
         aria-expanded={isOpen}
       >
         {isLoading ? (
-          <Loader2 className={cn(iconSizes[size], "animate-spin text-muted-foreground")} />
+          <span className="inline-flex shrink-0 animate-spin"><Loader2 className={cn(iconSizes[size], "text-muted-foreground")} /></span>
         ) : (
           <Eye
             className={cn(

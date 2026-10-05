@@ -1,8 +1,9 @@
 'use client'
 
+import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
-import { cn } from '@/lib/utils'
+import { cn, formatPrice, formatNumber } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -125,7 +126,9 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
     fetchData()
   }, [status])
 
-  if (status === 'loading' || loading) {
+  // `loading` only clears after an authenticated fetch, so a signed-out
+  // visitor used to see the skeleton forever instead of the sign-in prompt.
+  if (status === 'loading' || (status === 'authenticated' && loading)) {
     return <LoyaltyDashboardSkeleton className={className} />
   }
 
@@ -134,7 +137,10 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
       <Card className={cn('text-center', className)}>
         <CardContent className="py-12">
           <p className="text-muted-foreground">
-            Please sign in to view your rewards dashboard.
+            <Link href="/auth/signin?callbackUrl=/account/loyalty" className="font-medium text-primary underline-offset-4 hover:underline">
+              Sign in
+            </Link>{' '}
+            to view your rewards dashboard.
           </p>
         </CardContent>
       </Card>
@@ -183,7 +189,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
             </div>
             <div className="text-right">
               <p className="text-4xl font-bold">
-                {summary.availablePoints.toLocaleString()}
+                {formatNumber(summary.availablePoints)}
               </p>
               <p className="text-sm text-muted-foreground">Available Points</p>
             </div>
@@ -202,17 +208,14 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
               </div>
               <div className="h-2 overflow-hidden rounded-full bg-muted">
                 <div
-                  className={cn('h-full transition-all', tierConfig.color)}
+                  className={cn('size-full origin-left transition-transform', tierConfig.color)}
                   style={{
-                    width: `${Math.min(
-                      100,
-                      ((summary.lifetimePoints % 500) / 500) * 100
-                    )}%`,
+                    transform: `scaleX(${Math.min(1, (summary.lifetimePoints % 500) / 500)})`,
                   }}
                 />
               </div>
               <p className="mt-2 text-center text-sm text-muted-foreground">
-                {summary.pointsToNextTier.toLocaleString()} points to{' '}
+                {formatNumber(summary.pointsToNextTier)} points to{' '}
                 {TIER_CONFIG[summary.nextTier]?.label || 'next tier'}
               </p>
             </div>
@@ -223,7 +226,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="text-center">
               <p className="text-2xl font-semibold">
-                {summary.lifetimePoints.toLocaleString()}
+                {formatNumber(summary.lifetimePoints)}
               </p>
               <p className="text-sm text-muted-foreground">Lifetime Points</p>
             </div>
@@ -235,7 +238,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
             </div>
             <div className="text-center">
               <p className="text-2xl font-semibold">
-                ${summary.maxDiscount.toFixed(2)}
+                {formatPrice(summary.maxDiscount)}
               </p>
               <p className="text-sm text-muted-foreground">Available Discount</p>
             </div>
@@ -255,7 +258,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="flex items-start gap-3 rounded-lg border p-4">
               <div className="flex size-10 items-center justify-center rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                <svg
+                <svg aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
@@ -276,7 +279,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
 
             <div className="flex items-start gap-3 rounded-lg border p-4">
               <div className="flex size-10 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
-                <svg
+                <svg aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
@@ -299,7 +302,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
 
             <div className="flex items-start gap-3 rounded-lg border p-4">
               <div className="flex size-10 items-center justify-center rounded-full bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400">
-                <svg
+                <svg aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
@@ -318,7 +321,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
 
             <div className="flex items-start gap-3 rounded-lg border p-4">
               <div className="flex size-10 items-center justify-center rounded-full bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400">
-                <svg
+                <svg aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
@@ -354,7 +357,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
           <ul className="space-y-2">
             {summary.tierInfo.benefits.map((benefit, index) => (
               <li key={index} className="flex items-center gap-2">
-                <svg
+                <svg aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
                   fill="currentColor"
@@ -401,7 +404,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
                       )}
                     >
                       {transaction.type === 'earned' ? (
-                        <svg
+                        <svg aria-hidden="true"
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 20 20"
                           fill="currentColor"
@@ -414,7 +417,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
                           />
                         </svg>
                       ) : (
-                        <svg
+                        <svg aria-hidden="true"
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 20 20"
                           fill="currentColor"
@@ -450,7 +453,7 @@ export function LoyaltyDashboard({ className }: LoyaltyDashboardProps) {
                     )}
                   >
                     {transaction.type === 'earned' ? '+' : ''}
-                    {transaction.points.toLocaleString()} pts
+                    {formatNumber(transaction.points)} pts
                   </p>
                 </div>
               ))}

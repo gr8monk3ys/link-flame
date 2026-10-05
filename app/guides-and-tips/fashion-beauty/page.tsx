@@ -107,7 +107,7 @@ export default function FashionBeautyPage() {
               <h3 className="mb-4 font-bold">Sustainable Fashion Tips</h3>
               <ul className="space-y-2">
                 <li className="flex items-start space-x-2">
-                  <svg
+                  <svg aria-hidden="true"
                     className="size-6 shrink-0 text-green-500"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -123,7 +123,7 @@ export default function FashionBeautyPage() {
                   <span>Choose quality over quantity</span>
                 </li>
                 <li className="flex items-start space-x-2">
-                  <svg
+                  <svg aria-hidden="true"
                     className="size-6 shrink-0 text-green-500"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -139,7 +139,7 @@ export default function FashionBeautyPage() {
                   <span>Support ethical brands</span>
                 </li>
                 <li className="flex items-start space-x-2">
-                  <svg
+                  <svg aria-hidden="true"
                     className="size-6 shrink-0 text-green-500"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -161,7 +161,7 @@ export default function FashionBeautyPage() {
               <h3 className="mb-4 font-bold">Clean Beauty Tips</h3>
               <ul className="space-y-2">
                 <li className="flex items-start space-x-2">
-                  <svg
+                  <svg aria-hidden="true"
                     className="size-6 shrink-0 text-green-500"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -177,7 +177,7 @@ export default function FashionBeautyPage() {
                   <span>Read ingredient labels carefully</span>
                 </li>
                 <li className="flex items-start space-x-2">
-                  <svg
+                  <svg aria-hidden="true"
                     className="size-6 shrink-0 text-green-500"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -193,7 +193,7 @@ export default function FashionBeautyPage() {
                   <span>Look for plastic-free packaging</span>
                 </li>
                 <li className="flex items-start space-x-2">
-                  <svg
+                  <svg aria-hidden="true"
                     className="size-6 shrink-0 text-green-500"
                     fill="none"
                     viewBox="0 0 24 24"

@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Card } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Link from "next/link"
+import { formatPrice, formatNumber } from "@/lib/utils"
 
 interface UpgradeOption {
   id: string
@@ -135,8 +136,8 @@ export function EnergySavingsCalculator() {
         <h3 className="mb-4 text-lg font-semibold">Current Energy Usage</h3>
         <div className="space-y-4">
           <div>
-            <Label>Average Monthly Electricity Bill ($)</Label>
-            <Input
+            <Label htmlFor="energy-average-monthly-electricity-bill">Average Monthly Electricity Bill ($)</Label>
+            <Input inputMode="decimal" name="monthlyBill" autoComplete="off" id="energy-average-monthly-electricity-bill"
               type="number"
               value={monthlyBill}
               onChange={(e) => setMonthlyBill(Number(e.target.value))}
@@ -144,8 +145,8 @@ export function EnergySavingsCalculator() {
             />
           </div>
           <div>
-            <Label>Electricity Rate ($ per kWh)</Label>
-            <Input
+            <Label htmlFor="energy-electricity-rate">Electricity Rate ($ per kWh)</Label>
+            <Input inputMode="decimal" name="electricityRate" autoComplete="off" id="energy-electricity-rate"
               type="number"
               value={electricityRate}
               onChange={(e) => setElectricityRate(Number(e.target.value))}
@@ -164,29 +165,29 @@ export function EnergySavingsCalculator() {
             <div key={category} className="space-y-2">
               <h4 className="font-medium capitalize">{category}</h4>
               {options.map((option) => (
-                <div key={option.id} className="flex items-start space-x-2">
+                <label key={option.id} className="flex cursor-pointer items-start space-x-2">
                   <input
                     type="checkbox"
                     checked={selectedUpgrades.includes(option.id)}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        setSelectedUpgrades([...selectedUpgrades, option.id])
+                        setSelectedUpgrades((prev) => [...prev, option.id])
                       } else {
-                        setSelectedUpgrades(selectedUpgrades.filter(id => id !== option.id))
+                        setSelectedUpgrades((prev) => prev.filter(id => id !== option.id))
                       }
                     }}
                     className="mt-1 size-4 rounded border-border"
                   />
                   <div>
-                    <Label>{option.name}</Label>
+                    <span className="text-sm font-medium leading-none">{option.name}</span>
                     <p className="text-sm text-muted-foreground">{option.description}</p>
                     <p className="text-sm">
-                      Cost: ${option.typicalCost.toLocaleString()} | 
+                      Cost: ${formatNumber(option.typicalCost)} | 
                       Savings: {option.savingsPercentage}% | 
                       Lifespan: {option.lifespan} years
                     </p>
                   </div>
-                </div>
+                </label>
               ))}
             </div>
           ))}
@@ -195,23 +196,23 @@ export function EnergySavingsCalculator() {
 
       {/* Results Section */}
       {selectedUpgrades.length > 0 && (
-        <Card className="p-6">
+        <Card className="p-6" role="status" aria-live="polite">
           <h3 className="mb-4 text-lg font-semibold">Potential Savings</h3>
           <div className="space-y-4">
             <div>
               <p className="text-2xl font-bold">
-                ${savings.totalSavings.toFixed(2)} per year
+                {formatPrice(savings.totalSavings)} per year
               </p>
               <p className="text-sm text-muted-foreground">
-                Total investment: ${savings.totalCost.toLocaleString()}
+                Total investment: ${formatNumber(savings.totalCost)}
               </p>
             </div>
 
             <div className="space-y-2">
               <p className="font-medium">ROI Analysis:</p>
               <ul className="list-inside list-disc space-y-1 text-sm">
-                <li>Return on Investment: {savings.roi.toFixed(1)}%</li>
-                <li>Payback Period: {savings.paybackPeriod.toFixed(1)} years</li>
+                <li>Return on Investment: {formatNumber(savings.roi, 1)}%</li>
+                <li>Payback Period: {formatNumber(savings.paybackPeriod, 1)} years</li>
               </ul>
             </div>
 
@@ -222,10 +223,10 @@ export function EnergySavingsCalculator() {
                   <div key={name} className="rounded-lg bg-secondary p-3">
                     <div className="flex items-center justify-between">
                       <span className="font-medium">{name}</span>
-                      <span>${yearlySavings.toFixed(2)}/year</span>
+                      <span>{formatPrice(yearlySavings)}/year</span>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Payback period: {paybackPeriod.toFixed(1)} years
+                      Payback period: {formatNumber(paybackPeriod, 1)} years
                     </p>
                     {option.productLink && (
                       <Button asChild variant="link" className="h-auto p-0">

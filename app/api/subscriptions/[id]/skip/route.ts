@@ -18,6 +18,7 @@ import {
   calculateNextDeliveryDate,
   SubscriptionFrequency,
 } from '@/lib/subscriptions';
+import { formatDate } from "@/lib/utils";
 
 export const dynamic = 'force-dynamic'
 
@@ -150,7 +151,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
     return successResponse({
       ...updatedSubscription,
-      message: `Next delivery skipped. New delivery date: ${newNextDeliveryDate.toLocaleDateString()}`,
+      message: `Next delivery skipped. New delivery date: ${formatDate(newNextDeliveryDate, "long")}`,
     });
   } catch (error) {
     logger.error('Failed to skip subscription delivery', error);

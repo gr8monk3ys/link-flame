@@ -33,6 +33,7 @@ import {
   handleApiError,
 } from "@/lib/api-response";
 import { logger } from "@/lib/logger";
+import { formatPrice } from "@/lib/utils";
 
 export const dynamic = 'force-dynamic'
 
@@ -126,7 +127,7 @@ export async function POST(req: Request) {
       pointsRedeemed: pointsToRedeem,
       discountAmount: result.discountAmount,
       remainingPoints: result.remainingPoints,
-      message: `You saved $${result.discountAmount.toFixed(2)}!`,
+      message: `You saved ${formatPrice(result.discountAmount)}!`,
     });
   } catch (error) {
     logger.error("Failed to redeem points", error);

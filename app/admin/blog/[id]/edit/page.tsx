@@ -67,11 +67,11 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
   }
 
   function handleTitleChange(title: string) {
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       title,
       slug: generateSlug(title),
-    });
+    }));
   }
 
   async function handleSubmit(e: React.FormEvent, publish?: boolean) {
@@ -131,7 +131,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="text-muted-foreground">Loading blog post...</div>
+        <div className="text-muted-foreground" role="status">Loading blog post…</div>
       </div>
     );
   }
@@ -177,14 +177,14 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
           >
             Title *
           </label>
-          <input
+          <input name="title" autoComplete="off"
             type="text"
             id="title"
             required
             value={formData.title}
             onChange={(e) => handleTitleChange(e.target.value)}
-            className="w-full rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
-            placeholder="Enter post title..."
+            className="w-full rounded-lg border border-border px-4 py-2 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
+            placeholder="Enter post title…"
           />
         </div>
 
@@ -196,13 +196,13 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
           >
             Slug *
           </label>
-          <input
+          <input name="slug" autoComplete="off" spellCheck={false}
             type="text"
             id="slug"
             required
             value={formData.slug}
-            onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-            className="w-full rounded-lg border border-border px-4 py-2 font-mono text-sm focus:border-transparent focus:ring-2 focus:ring-ring"
+            onChange={(e) => setFormData((prev) => ({ ...prev, slug: e.target.value }))}
+            className="w-full rounded-lg border border-border px-4 py-2 font-mono text-sm focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
             placeholder="post-url-slug"
           />
           <p className="mt-1 text-sm text-muted-foreground">
@@ -218,16 +218,16 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
           >
             Description * (SEO meta description)
           </label>
-          <textarea
+          <textarea name="description" autoComplete="off"
             id="description"
             required
             rows={3}
             value={formData.description}
             onChange={(e) =>
-              setFormData({ ...formData, description: e.target.value })
+              setFormData((prev) => ({ ...prev, description: e.target.value }))
             }
-            className="w-full rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
-            placeholder="Brief description for search engines..."
+            className="w-full rounded-lg border border-border px-4 py-2 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
+            placeholder="Brief description for search engines…"
           />
         </div>
 
@@ -240,15 +240,15 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
             >
               Category *
             </label>
-            <input
+            <input name="category" autoComplete="off"
               type="text"
               id="category"
               required
               value={formData.category}
               onChange={(e) =>
-                setFormData({ ...formData, category: e.target.value })
+                setFormData((prev) => ({ ...prev, category: e.target.value }))
               }
-              className="w-full rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
+              className="w-full rounded-lg border border-border px-4 py-2 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
               placeholder="e.g., Sustainability"
             />
           </div>
@@ -259,14 +259,14 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
             >
               Tags (comma-separated)
             </label>
-            <input
+            <input name="tags" autoComplete="off"
               type="text"
               id="tags"
               value={formData.tags}
               onChange={(e) =>
-                setFormData({ ...formData, tags: e.target.value })
+                setFormData((prev) => ({ ...prev, tags: e.target.value }))
               }
-              className="w-full rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
+              className="w-full rounded-lg border border-border px-4 py-2 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
               placeholder="eco-friendly, green-living"
             />
           </div>
@@ -280,16 +280,16 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
           >
             Cover Image URL *
           </label>
-          <input
+          <input name="coverImage" autoComplete="off"
             type="url"
             id="coverImage"
             required
             value={formData.coverImage}
             onChange={(e) =>
-              setFormData({ ...formData, coverImage: e.target.value })
+              setFormData((prev) => ({ ...prev, coverImage: e.target.value }))
             }
-            className="w-full rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
-            placeholder="https://images.unsplash.com/..."
+            className="w-full rounded-lg border border-border px-4 py-2 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
+            placeholder="https://images.unsplash.com/photo-…"
           />
           {formData.coverImage && (
             <div className="relative mt-3 h-48 w-full max-w-md overflow-hidden rounded-lg">
@@ -316,7 +316,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
             </label>
             <button
               type="button"
-              onClick={() => setPreview(!preview)}
+              onClick={() => setPreview((v) => !v)}
               className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400"
             >
               <Eye className="size-4" />
@@ -325,7 +325,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
           </div>
 
           {preview ? (
-            <div className="prose prose-green min-h-[400px] w-full max-w-none rounded-lg border border-border bg-muted px-4 py-3">
+            <div className="prose prose-green min-h-[400px] w-full max-w-none rounded-lg border border-border bg-muted px-4 py-3 dark:prose-invert">
               <div
                 dangerouslySetInnerHTML={{
                   __html: renderPostBody(formData.content),
@@ -333,16 +333,16 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
               />
             </div>
           ) : (
-            <textarea
+            <textarea name="content" autoComplete="off"
               id="content"
               required
               rows={20}
               value={formData.content}
               onChange={(e) =>
-                setFormData({ ...formData, content: e.target.value })
+                setFormData((prev) => ({ ...prev, content: e.target.value }))
               }
-              className="w-full rounded-lg border border-border px-4 py-3 font-mono text-sm focus:border-transparent focus:ring-2 focus:ring-ring"
-              placeholder="# Your Blog Post Content..."
+              className="w-full rounded-lg border border-border px-4 py-3 font-mono text-sm focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
+              placeholder="# Your Blog Post Content…"
             />
           )}
           <p className="mt-2 text-sm text-muted-foreground">
@@ -357,9 +357,9 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
               type="checkbox"
               checked={formData.featured}
               onChange={(e) =>
-                setFormData({ ...formData, featured: e.target.checked })
+                setFormData((prev) => ({ ...prev, featured: e.target.checked }))
               }
-              className="size-4 rounded border-border text-green-700 focus:ring-ring dark:text-green-400"
+              className="size-4 rounded border-border text-green-700 focus-visible:ring-ring dark:text-green-400"
             />
             <span className="text-sm font-medium text-foreground">
               Featured Post
@@ -375,10 +375,10 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
                 type="button"
                 onClick={(e) => handleSubmit(e)}
                 disabled={saving}
-                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-700 px-6 py-3 text-white transition-colors hover:bg-green-700 disabled:opacity-50"
+                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-700 px-6 py-3 text-white transition-colors hover:bg-green-800 disabled:opacity-50"
               >
                 <Save className="size-5" />
-                {saving ? 'Saving...' : 'Save Changes'}
+                {saving ? 'Saving…' : 'Save Changes'}
               </button>
               <button
                 type="button"
@@ -397,16 +397,16 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
                 disabled={saving}
                 className="flex-1 rounded-lg border border-border px-6 py-3 text-foreground transition-colors hover:bg-muted disabled:opacity-50"
               >
-                {saving ? 'Saving...' : 'Save as Draft'}
+                {saving ? 'Saving…' : 'Save as Draft'}
               </button>
               <button
                 type="button"
                 onClick={(e) => handleSubmit(e, true)}
                 disabled={saving}
-                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-700 px-6 py-3 text-white transition-colors hover:bg-green-700 disabled:opacity-50"
+                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-700 px-6 py-3 text-white transition-colors hover:bg-green-800 disabled:opacity-50"
               >
                 <Save className="size-5" />
-                {saving ? 'Publishing...' : 'Publish'}
+                {saving ? 'Publishing…' : 'Publish'}
               </button>
             </>
           )}

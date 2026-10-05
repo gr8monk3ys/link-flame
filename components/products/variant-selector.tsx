@@ -141,15 +141,16 @@ export function VariantSelector({
                 <button
                   key={value as string}
                   type="button"
+                  aria-pressed={isSelected}
                   onClick={() => setSelectedSize(value as string)}
                   disabled={!isAvailable}
                   className={`
                     relative min-w-12 rounded-md border px-4 py-2 text-sm font-medium
-                    transition-all duration-150
+                    transition-colors duration-150
                     ${isSelected
                       ? "border-green-600 bg-green-700 text-white"
                       : isAvailable
-                        ? "border-border bg-card text-foreground hover:border-border"
+                        ? "border-border bg-card text-foreground hover:border-primary/40"
                         : "cursor-not-allowed border-border bg-muted text-muted-foreground/40"
                     }
                     ${!isAvailable && !isSelected ? "line-through" : ""}
@@ -182,6 +183,8 @@ export function VariantSelector({
                 <button
                   key={value as string}
                   type="button"
+                  aria-pressed={isSelected}
+                  aria-label={value as string}
                   onClick={() => setSelectedColor(value as string)}
                   disabled={!isAvailable}
                   className={`
@@ -241,15 +244,16 @@ export function VariantSelector({
                 <button
                   key={value as string}
                   type="button"
+                  aria-pressed={isSelected}
                   onClick={() => setSelectedMaterial(value as string)}
                   disabled={!isAvailable}
                   className={`
                     relative rounded-md border px-4 py-2 text-sm font-medium
-                    transition-all duration-150
+                    transition-colors duration-150
                     ${isSelected
                       ? "border-green-600 bg-green-700 text-white"
                       : isAvailable
-                        ? "border-border bg-card text-foreground hover:border-border"
+                        ? "border-border bg-card text-foreground hover:border-primary/40"
                         : "cursor-not-allowed border-border bg-muted text-muted-foreground/40"
                     }
                     ${!isAvailable && !isSelected ? "line-through" : ""}
@@ -266,7 +270,7 @@ export function VariantSelector({
       {/* Variant SKU (if available) */}
       {selectedVariant?.sku && (
         <p className="text-xs text-muted-foreground">
-          SKU: {selectedVariant.sku}
+          SKU: <span translate="no">{selectedVariant.sku}</span>
         </p>
       )}
     </div>

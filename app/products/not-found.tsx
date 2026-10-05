@@ -11,7 +11,7 @@ export default function ProductNotFound() {
         </div>
         <h1 className="mb-4 text-5xl font-bold tracking-tight">Product Not Found</h1>
         <p className="mx-auto max-w-md text-lg text-muted-foreground">
-          This product doesn&apos;t exist or is no longer available.
+          This product doesn&rsquo;t exist or is no longer available.
         </p>
       </div>
 

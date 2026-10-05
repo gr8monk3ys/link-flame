@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
+import { cn, formatPrice } from '@/lib/utils'
 
 // Preset amounts for quick selection
 const PRESET_AMOUNTS = [25, 50, 100, 150, 200] as const
@@ -176,7 +176,7 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
       <div className={cn('rounded-lg border bg-card p-6', className)}>
         <div className="space-y-4 text-center">
           <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
-            <svg
+            <svg aria-hidden="true"
               className="size-8 text-green-700 dark:text-green-400"
               fill="none"
               stroke="currentColor"
@@ -198,14 +198,14 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
           <div className="mt-6 space-y-3 rounded-lg bg-muted p-4">
             <div>
               <p className="text-xs uppercase tracking-wide text-muted-foreground">Gift Card Code</p>
-              <p className="mt-1 font-mono text-xl font-bold tracking-wider text-foreground">
+              <p className="mt-1 font-mono text-xl font-bold tracking-wider text-foreground" translate="no">
                 {purchasedCard.code}
               </p>
             </div>
             <div>
               <p className="text-xs uppercase tracking-wide text-muted-foreground">Amount</p>
               <p className="mt-1 text-2xl font-bold text-green-700 dark:text-green-400">
-                ${purchasedCard.amount.toFixed(2)}
+                {formatPrice(purchasedCard.amount)}
               </p>
             </div>
             {purchasedCard.expiresAt && (
@@ -251,7 +251,7 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
           <Label id="amount-label">Select Amount</Label>
           <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
             {PRESET_AMOUNTS.map((amount) => (
-              <Button
+              <Button aria-pressed={selectedAmount === amount && !isCustom}
                 key={amount}
                 type="button"
                 variant={selectedAmount === amount && !isCustom ? 'default' : 'outline'}
@@ -269,11 +269,11 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
             </Label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-              <Input
+              <Input name="customAmount" autoComplete="off"
                 id="customAmount"
                 type="text"
                 inputMode="decimal"
-                placeholder="Custom amount"
+                placeholder="e.g. 75"
                 value={customAmount}
                 onChange={handleCustomAmountChange}
                 onFocus={handleCustomAmountFocus}
@@ -297,10 +297,10 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
 
           <div className="space-y-2">
             <Label htmlFor="recipientName">Recipient Name</Label>
-            <Input
+            <Input name="recipientName" autoComplete="off"
               id="recipientName"
               type="text"
-              placeholder="Enter recipient's name"
+              placeholder="e.g. Jane Doe"
               value={recipientName}
               onChange={(e) => setRecipientName(e.target.value)}
               maxLength={100}
@@ -310,7 +310,7 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
 
           <div className="space-y-2">
             <Label htmlFor="recipientEmail">Recipient Email</Label>
-            <Input
+            <Input name="recipientEmail" autoComplete="off" spellCheck={false}
               id="recipientEmail"
               type="email"
               placeholder="recipient@example.com"
@@ -326,9 +326,9 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
 
           <div className="space-y-2">
             <Label htmlFor="message">Personal Message</Label>
-            <textarea
+            <textarea name="message" autoComplete="off"
               id="message"
-              placeholder="Write a message for the recipient..."
+              placeholder="Write a message for the recipient…"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               maxLength={500}
@@ -350,8 +350,8 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
         >
           {isLoading ? (
             <span className="flex items-center">
-              <svg
-                className="mr-2 size-4 animate-spin"
+              <span className="mr-2 inline-flex shrink-0 animate-spin" aria-hidden="true"><svg
+                className="size-4"
                 viewBox="0 0 24 24"
                 aria-hidden="true"
               >
@@ -369,14 +369,14 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
                   fill="currentColor"
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 />
-              </svg>
-              Processing...
+              </svg></span>
+              Processing…
             </span>
           ) : (
             <>
               Purchase Gift Card
               {getEffectiveAmount() && (
-                <span className="ml-2">- ${getEffectiveAmount()?.toFixed(2)}</span>
+                <span className="ml-2">- {formatPrice(getEffectiveAmount() ?? 0)}</span>
               )}
             </>
           )}

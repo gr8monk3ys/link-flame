@@ -81,7 +81,7 @@ export function ExpressCheckout({ disabled = false, className = '' }: ExpressChe
         clearCart()
 
         // Show success message
-        toast.success('Payment successful! Redirecting to order confirmation...')
+        toast.success('Payment successful! Redirecting to order confirmation…')
 
         // Redirect to order confirmation
         router.push(redirectUrl || `/order-confirmation?orderId=${orderId}`)
@@ -126,7 +126,7 @@ export function ExpressCheckout({ disabled = false, className = '' }: ExpressChe
 
         {/* Processing indicator */}
         {isProcessing && (
-          <p className="text-center text-sm text-muted-foreground">Processing your payment...</p>
+          <p className="text-center text-sm text-muted-foreground" role="status">Processing your payment…</p>
         )}
       </div>
 
