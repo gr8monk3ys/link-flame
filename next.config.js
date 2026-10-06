@@ -14,6 +14,9 @@ const nextConfig = {
     NEXT_PUBLIC_VERCEL_ENV:
       process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.VERCEL_ENV || '',
   },
+  // The kit's `import` condition points at its TypeScript source, so Next has
+  // to compile it like first-party code.
+  transpilePackages: ['@gr8monk3ys/next-kit'],
   images: {
     // Use remotePatterns instead of domains (more secure and flexible)
     remotePatterns: [
