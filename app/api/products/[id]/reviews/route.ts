@@ -28,6 +28,15 @@ const createReviewSchema = z.object({
   comment: z.string().min(10, 'Comment must be at least 10 characters').max(1000, 'Comment must be less than 1000 characters').optional(),
 });
 
+// sortBy goes straight into `orderBy`, so only allow real scalar columns;
+// anything else (or a negative offset) used to make Prisma throw a 500.
+const listReviewsQuerySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(50).catch(10),
+  offset: z.coerce.number().int().min(0).catch(0),
+  sortBy: z.enum(['createdAt', 'rating']).catch('createdAt'),
+  order: z.enum(['asc', 'desc']).catch('desc'),
+});
+
 /**
  * GET /api/products/[id]/reviews
  *
@@ -49,13 +58,13 @@ export async function GET(
     const { id: productId } = await params;
     const { searchParams } = new URL(request.url);
 
-    // Pagination
-    const limit = Math.min(Number(searchParams.get('limit')) || 10, 50);
-    const offset = Number(searchParams.get('offset')) || 0;
-
-    // Sorting
-    const sortBy = searchParams.get('sortBy') || 'createdAt';
-    const order = searchParams.get('order') === 'asc' ? 'asc' : 'desc';
+    // Pagination and sorting; invalid values fall back to the defaults
+    const { limit, offset, sortBy, order } = listReviewsQuerySchema.parse({
+      limit: searchParams.get('limit') ?? undefined,
+      offset: searchParams.get('offset') ?? undefined,
+      sortBy: searchParams.get('sortBy') ?? undefined,
+      order: searchParams.get('order') ?? undefined,
+    });
 
     // Check if product exists
     const product = await prisma.product.findUnique({

@@ -40,12 +40,17 @@ const CartItemRow = memo(({
   saveForLater
 }: { 
   item: CartItem; 
-  updateQuantity: (id: string, quantity: number) => void; 
+  updateQuantity: (id: string, quantity: number, variantId?: string | null) => void;
   removeItem: (id: string, variantId?: string | null, cartItemId?: string) => void;
   saveForLater: (item: CartItem) => void;
 }) => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  // Two variants of one product share item.id, so key DOM ids on the variant too.
+  const rowId = item.variantId ? `${item.id}-${item.variantId}` : item.id;
+  const variantDetails = item.variant
+    ? [item.variant.size, item.variant.color, item.variant.material].filter(Boolean).join(" / ")
+    : "";
   
   const handleSaveForLater = () => {
     setIsSaving(true);
@@ -57,7 +62,6 @@ const CartItemRow = memo(({
 
   return (
     <div
-      key={item.id}
       data-testid="cart-item"
       className="cart-item flex items-center space-x-4 rounded-lg border p-4"
     >
@@ -72,8 +76,11 @@ const CartItemRow = memo(({
       </div>
       <div className="flex-1 space-y-1">
         <h3 className="font-medium">{item.title}</h3>
+        {variantDetails && (
+          <p className="text-sm text-muted-foreground">{variantDetails}</p>
+        )}
         <div className="flex items-center space-x-2">
-          <label htmlFor={`quantity-${item.id}`} className="text-sm font-medium">
+          <label htmlFor={`quantity-${rowId}`} className="text-sm font-medium">
             Quantity:
           </label>
           {isUpdating ? (
@@ -83,7 +90,7 @@ const CartItemRow = memo(({
           ) : (
             <input
               type="number"
-              id={`quantity-${item.id}`}
+              id={`quantity-${rowId}`}
               min="1"
               max="99"
               className="w-16 rounded-md border border-input bg-background px-2 py-1 text-sm"
@@ -92,7 +99,7 @@ const CartItemRow = memo(({
                 const quantity = parseInt(e.target.value);
                 if (quantity >= 1 && quantity <= 99) {
                   setIsUpdating(true);
-                  updateQuantity(item.id, quantity);
+                  updateQuantity(item.id, quantity, item.variantId ?? null);
                   // Reset updating state after a short delay
                   setTimeout(() => setIsUpdating(false), 600);
                 }
@@ -247,8 +254,8 @@ export default function CartPageClient() {
               <div className="lg:col-span-8">
                 <div className="space-y-4">
                   {items.map((item: CartItem) => (
-                    <CartItemRow 
-                      key={item.id}
+                    <CartItemRow
+                      key={item.cartItemId ?? `${item.id}:${item.variantId ?? ""}`}
                       item={item}
                       updateQuantity={updateQuantity}
                       removeItem={removeItem}
