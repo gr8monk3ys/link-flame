@@ -322,7 +322,7 @@ railway up
 
 Create `Dockerfile`:
 ```dockerfile
-FROM node:20-alpine AS base
+FROM node:24-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
