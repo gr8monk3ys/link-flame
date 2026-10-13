@@ -14,7 +14,7 @@ export default function FashionBeautyPage() {
   return (
     <div className="container max-w-4xl py-10">
       <div className="mb-10 text-center">
-        <h1 className="mb-4 text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
+        <h1 className="mb-4 text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl md:leading-10">
           Eco-Friendly Fashion & Beauty
         </h1>
         <p className="text-xl text-muted-foreground">

@@ -23,7 +23,7 @@ export default async function BlogsPage() {
   return (
     <div className="container py-10">
       <div className="flex max-w-[980px] flex-col items-start gap-2">
-        <h1 className="font-serif text-3xl font-semibold leading-tight tracking-normal md:text-4xl">
+        <h1 className="font-serif text-3xl font-semibold leading-tight tracking-normal md:text-4xl md:leading-10">
           Eco-Living Blog
         </h1>
         <p className="max-w-[700px] text-lg text-muted-foreground">
