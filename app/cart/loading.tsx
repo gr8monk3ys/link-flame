@@ -1,6 +1,7 @@
 export default function CartLoading() {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8" role="status" aria-busy="true">
+      <span className="sr-only">Loading…</span>
       <div className="mb-6 h-8 w-36 animate-pulse rounded bg-muted" />
       <div className="space-y-4">
         {Array.from({ length: 3 }).map((_, i) => (

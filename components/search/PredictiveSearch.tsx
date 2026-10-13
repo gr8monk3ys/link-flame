@@ -17,7 +17,7 @@ interface PredictiveSearchProps {
 
 export function PredictiveSearch({
   className,
-  placeholder = 'Search products, categories, and blogs...',
+  placeholder = 'Search products, categories, and blogs…',
   autoFocus = false,
   onClose,
 }: PredictiveSearchProps) {
@@ -223,7 +223,7 @@ export function PredictiveSearch({
     <div ref={containerRef} className={cn('relative w-full', className)}>
       <div className="relative">
         {/* Search Icon */}
-        <svg
+        <svg aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           width="18"
           height="18"
@@ -239,7 +239,7 @@ export function PredictiveSearch({
           <path d="m21 21-4.3-4.3" />
         </svg>
 
-        <Input
+        <Input name="query"
           ref={inputRef}
           type="search"
           value={query}
@@ -263,7 +263,7 @@ export function PredictiveSearch({
         {/* Loading Spinner */}
         {isLoading && (
           <div className="absolute right-12 top-1/2 -translate-y-1/2">
-            <svg
+            <span className="inline-flex shrink-0 animate-spin" aria-hidden="true"><svg aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               width="18"
               height="18"
@@ -273,10 +273,10 @@ export function PredictiveSearch({
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="animate-spin text-muted-foreground"
+              className="text-muted-foreground"
             >
               <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-            </svg>
+            </svg></span>
           </div>
         )}
 
@@ -290,7 +290,7 @@ export function PredictiveSearch({
             className="absolute right-12 top-1/2 size-8 -translate-y-1/2"
             aria-label="Clear search"
           >
-            <svg
+            <svg aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               width="16"
               height="16"
@@ -317,7 +317,7 @@ export function PredictiveSearch({
           className="absolute right-2 top-1/2 size-8 -translate-y-1/2"
           aria-label="Submit search"
         >
-          <svg
+          <svg aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             width="18"
             height="18"

@@ -2,6 +2,7 @@ import { Author, BlogPost } from '@/types/blog'
 import { prisma } from './prisma'
 import { transformPrismaPost } from './transformations/blog'
 import { slugify } from './utils'
+import { cache } from 'react'
 
 export type { BlogPost, Author }
 
@@ -32,7 +33,7 @@ function extractPostsFromApiResponse(payload: unknown): BlogPost[] {
 }
 
 // Helper functions
-export async function getAllPosts(): Promise<BlogPost[]> {
+export const getAllPosts = cache(async (): Promise<BlogPost[]> => {
   // During build or when running in Node.js, fetch from database
   if (typeof window === 'undefined') {
     try {
@@ -66,9 +67,9 @@ export async function getAllPosts(): Promise<BlogPost[]> {
   return posts.sort((a: BlogPost, b: BlogPost) =>
     new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
   )
-}
+})
 
-export async function getPost(slug: string): Promise<BlogPost | null> {
+export const getPost = cache(async (slug: string): Promise<BlogPost | null> => {
   // During build or when running in Node.js, fetch from database
   if (typeof window === 'undefined') {
     try {
@@ -94,7 +95,7 @@ export async function getPost(slug: string): Promise<BlogPost | null> {
     throw new Error(`Failed to fetch post: ${slug}`)
   }
   return response.json()
-}
+})
 
 export async function getFeaturedPosts(): Promise<BlogPost[]> {
   if (typeof window === 'undefined') {
@@ -175,8 +176,9 @@ export async function getPostsByTag(tag: string): Promise<BlogPost[]> {
     }
   }
   const posts = await getAllPosts()
+  const tagLc = tag.toLowerCase()
   return posts.filter(post =>
-    post.tags.map(t => t.toLowerCase()).includes(tag.toLowerCase())
+    post.tags.some(t => t.toLowerCase() === tagLc)
   ).sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
 }
 

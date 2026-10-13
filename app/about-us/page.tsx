@@ -8,7 +8,7 @@ import { buttonVariants } from "@/components/ui/button"
 export const metadata: Metadata = {
   title: "About Us",
   description:
-    "Link Flame is a small eco-commerce shop. Every product is screened for what it's made of, who made it, and what it replaces.",
+    "Link Flame is a small eco-commerce shop. Every product is screened for what it’s made of, who made it, and what it replaces.",
 }
 
 const values = [
@@ -72,7 +72,7 @@ export default function AboutUsPage() {
         <p className="max-w-[700px] text-lg text-muted-foreground">
           Link Flame is a small shop for everyday swaps — the bottle, brush, and
           wrap you use daily, minus the plastic. We stock few things on purpose:
-          every product here passed screening on what it&apos;s made of, who
+          every product here passed screening on what it&rsquo;s made of, who
           made it, and what it measurably replaces.
         </p>
       </div>
@@ -146,7 +146,7 @@ export default function AboutUsPage() {
               <CardTitle>Write for us</CardTitle>
               <CardDescription>
                 Our guides are written by people who actually live this way. If
-                that&apos;s you, pitch us.
+                that&rsquo;s you, pitch us.
               </CardDescription>
             </CardHeader>
             <CardContent>

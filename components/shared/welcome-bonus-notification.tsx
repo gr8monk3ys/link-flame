@@ -52,7 +52,8 @@ export function WelcomeBonusNotification() {
 
   return (
     <div
-      className={`fixed bottom-4 right-4 z-50 max-w-md transition-all duration-300 ${
+      role="status"
+      className={`fixed bottom-4 right-4 z-50 max-w-md transition-[transform,opacity] duration-300 ${
         isClosing ? "translate-y-full opacity-0" : "translate-y-0 opacity-100"
       }`}
     >
@@ -63,7 +64,7 @@ export function WelcomeBonusNotification() {
 
         <button
           onClick={handleDismiss}
-          className="absolute right-2 top-2 rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-muted-foreground"
+          className="absolute right-2 top-2 rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           aria-label="Dismiss notification"
         >
           <X className="size-4" />
@@ -87,11 +88,11 @@ export function WelcomeBonusNotification() {
             </p>
 
             <div className="mt-3 flex gap-2">
-              <Link href="/account/loyalty">
-                <Button size="sm" className="bg-green-700 hover:bg-green-700">
+              <Button size="sm" className="bg-green-700 hover:bg-green-800" asChild>
+                <Link href="/account/loyalty">
                   View My Points
-                </Button>
-              </Link>
+                </Link>
+              </Button>
               <Button
                 size="sm"
                 variant="outline"

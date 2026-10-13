@@ -15,6 +15,10 @@ import { CartItem } from '@/types/cart'
 import { cartReducer } from './cartReducer'
 import { toast } from 'sonner'
 import { useDebouncedCallback } from 'use-debounce'
+import { formatPrice } from "@/lib/utils"
+import { storageSet } from '@/lib/storage'
+
+const CART_STORAGE_KEY = 'cart:v1'
 
 // Helper to fetch CSRF token
 async function getCsrfToken(): Promise<string> {
@@ -185,7 +189,7 @@ function useCartProviderValue(): CartContext {
         })) || [],
       }
 
-      localStorage.setItem('cart', JSON.stringify(minimalCart))
+      storageSet(CART_STORAGE_KEY, JSON.stringify(minimalCart))
       return true
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
@@ -315,7 +319,7 @@ function useCartProviderValue(): CartContext {
   const updateQuantity = useCallback((productId: string, quantity: number, variantId?: string | null) => {
     // Validate quantity
     if (quantity < 1 || quantity > 99) {
-      toast.error('Quantity must be between 1 and 99')
+      toast.error('Enter a quantity between 1 and 99.')
       return
     }
 
@@ -412,10 +416,7 @@ function useCartProviderValue(): CartContext {
     }, 0) || 0
 
     return {
-      formatted: rawTotal.toLocaleString('en-US', {
-        style: 'currency',
-        currency: 'USD',
-      }),
+      formatted: formatPrice(rawTotal),
       raw: rawTotal,
     }
   }, [cart.items])
@@ -425,14 +426,8 @@ function useCartProviderValue(): CartContext {
     cart.items.map(item => ({
       ...item,
       totalPrice: item.price * item.quantity,
-      formattedPrice: (item.price).toLocaleString('en-US', {
-        style: 'currency',
-        currency: 'USD',
-      }),
-      formattedTotalPrice: (item.price * item.quantity).toLocaleString('en-US', {
-        style: 'currency',
-        currency: 'USD',
-      }),
+      formattedPrice: formatPrice(item.price),
+      formattedTotalPrice: formatPrice(item.price * item.quantity),
     })),
     [cart.items]
   )

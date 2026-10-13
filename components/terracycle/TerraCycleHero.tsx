@@ -1,5 +1,3 @@
-"use client";
-
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
@@ -9,7 +7,7 @@ interface TerraCycleHeroProps {
 
 // Recycle icon
 const RecycleIcon = ({ className }: { className?: string }) => (
-  <svg
+  <svg aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"
@@ -29,7 +27,7 @@ const RecycleIcon = ({ className }: { className?: string }) => (
 
 // Leaf icon
 const LeafIcon = ({ className }: { className?: string }) => (
-  <svg
+  <svg aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"
@@ -45,7 +43,7 @@ const LeafIcon = ({ className }: { className?: string }) => (
 
 // Check icon
 const CheckIcon = ({ className }: { className?: string }) => (
-  <svg
+  <svg aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"
@@ -76,9 +74,9 @@ export function TerraCycleHero({ className }: TerraCycleHeroProps) {
             </h1>
 
             <p className="mt-4 text-lg leading-8 text-muted-foreground">
-              Some packaging can&apos;t go in your curbside bin — pumps, caps,
+              Some packaging can&rsquo;t go in your curbside bin — pumps, caps,
               flexible pouches. Through TerraCycle, you can send those empties
-              back to us instead, and they&apos;re recycled or upcycled into new
+              back to us instead, and they&rsquo;re recycled or upcycled into new
               products.
             </p>
 
@@ -87,7 +85,7 @@ export function TerraCycleHero({ className }: TerraCycleHeroProps) {
               {[
                 "Free shipping labels for your returns",
                 "Earn rewards for recycling",
-                "Track what you've kept out of landfill",
+                "Track what you’ve kept out of landfill",
               ].map((benefit) => (
                 <li key={benefit} className="flex items-start gap-3">
                   <CheckIcon className="mt-0.5 size-5 shrink-0 text-primary" />

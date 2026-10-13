@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { BrandCard } from '@/components/brands'
+import { BrandCard } from '@/components/brands/BrandCard'
 import Link from 'next/link'
 import { ArrowRight, Building2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -80,7 +80,7 @@ export async function FeaturedBrands() {
           <Button asChild size="lg" variant="outline" className="group">
             <Link href="/brands">
               View All Brands
-              <ArrowRight className="ml-2 size-4 transition-transform group-hover:translate-x-1" />
+              <span className="ml-2 inline-flex transition-transform group-hover:translate-x-1"><ArrowRight className="size-4" /></span>
             </Link>
           </Button>
         </div>

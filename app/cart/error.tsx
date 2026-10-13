@@ -12,11 +12,11 @@ export default function CartError({ error, reset }: { error: Error & { digest?: 
 
   return (
     <div className="flex min-h-[50vh] flex-col items-center justify-center px-4">
-      <h2 className="mb-2 text-xl font-semibold">Could not load your cart</h2>
+      <h1 className="mb-2 text-xl font-semibold">Could not load your cart</h1>
       <p className="mb-6 text-muted-foreground">We had trouble loading your shopping cart.</p>
       <div className="flex gap-3">
-        <button onClick={() => reset()} className="rounded-md bg-green-700 px-4 py-2 text-sm text-white hover:bg-green-700">Try again</button>
-        <Link href="/products" className="rounded-md bg-muted px-4 py-2 text-sm text-foreground hover:bg-muted">Continue shopping</Link>
+        <button onClick={() => reset()} className="rounded-md bg-green-700 px-4 py-2 text-sm text-white hover:bg-green-800">Try again</button>
+        <Link href="/products" className="rounded-md bg-muted px-4 py-2 text-sm text-foreground hover:bg-muted/80">Continue shopping</Link>
       </div>
     </div>
   )

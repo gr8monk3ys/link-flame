@@ -37,7 +37,7 @@ export function ShareWishlistButton({
       toast.success('Link copied to clipboard');
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
-      toast.error('Failed to copy link');
+      toast.error('Couldn’t copy the link. Select it and copy it manually.');
     }
   };
 
@@ -72,19 +72,19 @@ export function ShareWishlistButton({
           <DialogHeader>
             <DialogTitle>Share Wishlist</DialogTitle>
             <DialogDescription>
-              Anyone with this link can view your &quot;{wishlistName}&quot; wishlist
+              Anyone with this link can view your &ldquo;{wishlistName}&rdquo; wishlist
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <input
+              <input aria-label="Share link" translate="no" name="shareUrl" autoComplete="off" spellCheck={false}
                 type="text"
                 value={shareUrl}
                 readOnly
                 className="flex-1 rounded-md border bg-muted px-3 py-2 text-sm"
               />
-              <Button size="icon" onClick={handleCopy}>
+              <Button size="icon" onClick={handleCopy} aria-label={copied ? "Link copied" : "Copy link"}>
                 {copied ? (
                   <Check className="size-4 text-green-500" />
                 ) : (
@@ -98,17 +98,17 @@ export function ShareWishlistButton({
                 <Copy className="mr-2 size-4" />
                 Copy Link
               </Button>
-              <a
+              <Button variant="outline" className="w-full" asChild>
+                <a
                 href={shareUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1"
               >
-                <Button variant="outline" className="w-full">
                   <ExternalLink className="mr-2 size-4" />
                   Preview
-                </Button>
-              </a>
+                </a>
+              </Button>
             </div>
           </div>
         </DialogContent>

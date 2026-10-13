@@ -51,7 +51,7 @@ export function BrandMark({ name, className }: BrandMarkProps) {
       )}
     >
       {/* SVG text scales with its container, so the same mark works at 64px and at hero size */}
-      <svg viewBox="0 0 100 100" className={cn('size-full', palette.fg)}>
+      <svg aria-hidden="true" viewBox="0 0 100 100" className={cn('size-full', palette.fg)}>
         <text
           x="50"
           y="50"

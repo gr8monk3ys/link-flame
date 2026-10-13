@@ -29,7 +29,7 @@ export default function FAQPage() {
           <AccordionTrigger>How do I place an order?</AccordionTrigger>
           <AccordionContent>
             Placing an order is easy! Simply browse our collections, add items to your cart, and proceed to checkout. 
-            You&apos;ll need to create an account or sign in, then follow the steps to complete your purchase securely 
+            You&rsquo;ll need to create an account or sign in, then follow the steps to complete your purchase securely 
             using your preferred payment method.
           </AccordionContent>
         </AccordionItem>
@@ -45,17 +45,17 @@ export default function FAQPage() {
         <AccordionItem value="item-4">
           <AccordionTrigger>What is your return policy?</AccordionTrigger>
           <AccordionContent>
-            We offer a 30-day return policy for all unused items in their original packaging. If you&apos;re not 
+            We offer a 30-day return policy for all unused items in their original packaging. If you&rsquo;re not 
             satisfied with your purchase, contact our customer service team to initiate a return. Once we receive 
-            the returned item, we&apos;ll process your refund within 5-7 business days.
+            the returned item, we&rsquo;ll process your refund within 5-7 business days.
           </AccordionContent>
         </AccordionItem>
 
         <AccordionItem value="item-5">
           <AccordionTrigger>How can I track my order?</AccordionTrigger>
           <AccordionContent>
-            Once your order ships, you&apos;ll receive a confirmation email with tracking information. You can also 
-            view your order status and tracking details in your account dashboard under &quot;Order History.&quot;
+            Once your order ships, you&rsquo;ll receive a confirmation email with tracking information. You can also 
+            view your order status and tracking details in your account dashboard under &ldquo;Order History.&rdquo;
           </AccordionContent>
         </AccordionItem>
 

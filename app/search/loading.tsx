@@ -1,6 +1,7 @@
 export default function SearchLoading() {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8" role="status" aria-busy="true">
+      <span className="sr-only">Loading…</span>
       <div className="mb-8 h-10 w-full max-w-lg animate-pulse rounded bg-muted" />
       <div className="space-y-4">
         {Array.from({ length: 5 }).map((_, i) => (

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { formatNumber } from "@/lib/utils";
 
 interface CountUpProps {
   value: number;
@@ -10,7 +11,7 @@ interface CountUpProps {
 }
 
 function format(n: number): string {
-  return Math.round(n).toLocaleString("en-US");
+  return formatNumber(Math.round(n));
 }
 
 /**
@@ -21,7 +22,6 @@ function format(n: number): string {
  */
 export function CountUp({ value, duration = 1400, className }: CountUpProps) {
   const ref = useRef<HTMLSpanElement>(null);
-  const [display, setDisplay] = useState(() => format(value));
   const hasRun = useRef(false);
 
   useEffect(() => {
@@ -40,7 +40,10 @@ export function CountUp({ value, duration = 1400, className }: CountUpProps) {
         const tick = (now: number) => {
           const t = Math.min((now - start) / duration, 1);
           const eased = 1 - Math.pow(1 - t, 3);
-          setDisplay(format(value * eased));
+          // Write the frame straight to the DOM: a setState per animation
+          // frame re-rendered the component ~85 times per number
+          // (react-best-practices 5.15). React still renders the final value.
+          el.textContent = format(value * eased);
           if (t < 1) requestAnimationFrame(tick);
         };
         requestAnimationFrame(tick);
@@ -53,7 +56,7 @@ export function CountUp({ value, duration = 1400, className }: CountUpProps) {
 
   return (
     <span ref={ref} className={className}>
-      {display}
+      {format(value)}
     </span>
   );
 }

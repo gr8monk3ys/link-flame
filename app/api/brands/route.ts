@@ -73,27 +73,27 @@ export async function GET(request: NextRequest) {
       where.featured = true
     }
 
-    // Get total count for pagination
-    const total = await prisma.brand.count({ where })
-
-    // Get brands with pagination
-    const brands = await prisma.brand.findMany({
-      where,
-      orderBy: [
-        { featured: 'desc' },
-        { sortOrder: 'asc' },
-        { name: 'asc' },
-      ],
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-      include: {
-        _count: {
-          select: {
-            products: true,
+    // Count and fetch the page in parallel
+    const [total, brands] = await Promise.all([
+      prisma.brand.count({ where }),
+      prisma.brand.findMany({
+        where,
+        orderBy: [
+          { featured: 'desc' },
+          { sortOrder: 'asc' },
+          { name: 'asc' },
+        ],
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        include: {
+          _count: {
+            select: {
+              products: true,
+            },
           },
         },
-      },
-    })
+      }),
+    ])
 
     // Parse JSON fields and normalize response
     const normalizedBrands = brands.map((brand) => ({

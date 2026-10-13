@@ -147,6 +147,15 @@ export async function DELETE(req: Request, { params }: RouteParams) {
       );
     }
 
+    // Get productId from query params, and reject a malformed request before
+    // the auth and rate-limit round trips (react-best-practices 1.1).
+    const url = new URL(req.url);
+    const productId = url.searchParams.get("productId");
+
+    if (!productId) {
+      return errorResponse("Product ID is required", undefined, undefined, 400);
+    }
+
     const { id: wishlistId } = await params;
     const { userId: authUserId } = await getServerAuth();
 
@@ -156,14 +165,6 @@ export async function DELETE(req: Request, { params }: RouteParams) {
 
     if (!success) {
       return rateLimitErrorResponse(reset);
-    }
-
-    // Get productId from query params
-    const url = new URL(req.url);
-    const productId = url.searchParams.get("productId");
-
-    if (!productId) {
-      return errorResponse("Product ID is required", undefined, undefined, 400);
     }
 
     const userIdToUse = await getUserIdForCart(authUserId);

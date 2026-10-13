@@ -53,14 +53,14 @@ export default function ContactPage() {
           Contact Us
         </h1>
         <p className="max-w-[700px] text-lg text-muted-foreground">
-          Have questions, suggestions, or want to collaborate? We&apos;d love to hear from you!
-          Fill out the form below and we&apos;ll get back to you as soon as possible.
+          Have questions, suggestions, or want to collaborate? We&rsquo;d love to hear from you!
+          Fill out the form below and we&rsquo;ll get back to you as soon as possible.
         </p>
       </div>
 
       <Card className="max-w-[600px]">
         <CardHeader>
-          <CardTitle>Send us a Message</CardTitle>
+          <CardTitle as="h2">Send us a Message</CardTitle>
           <CardDescription>
             We typically respond within 1-2 business days.
           </CardDescription>
@@ -71,7 +71,7 @@ export default function ContactPage() {
               <label htmlFor="name" className="mb-1 block text-sm font-medium">
                 Name
               </label>
-              <input
+              <input autoComplete="name"
                 type="text"
                 id="name"
                 name="name"
@@ -85,7 +85,7 @@ export default function ContactPage() {
               <label htmlFor="email" className="mb-1 block text-sm font-medium">
                 Email
               </label>
-              <input
+              <input autoComplete="email" spellCheck={false}
                 type="email"
                 id="email"
                 name="email"
@@ -99,7 +99,7 @@ export default function ContactPage() {
               <label htmlFor="subject" className="mb-1 block text-sm font-medium">
                 Subject
               </label>
-              <input
+              <input autoComplete="off"
                 type="text"
                 id="subject"
                 name="subject"
@@ -113,7 +113,7 @@ export default function ContactPage() {
               <label htmlFor="message" className="mb-1 block text-sm font-medium">
                 Message
               </label>
-              <textarea
+              <textarea autoComplete="off"
                 id="message"
                 name="message"
                 value={formData.message}
@@ -128,16 +128,16 @@ export default function ContactPage() {
               className={buttonVariants()}
               disabled={status === "loading"}
             >
-              {status === "loading" ? "Sending..." : "Send Message"}
+              {status === "loading" ? "Sending…" : "Send Message"}
             </button>
 
             {status === "success" && (
-              <p className="mt-2 text-sm text-green-700 dark:text-green-400">
-                Thank you for your message! We&apos;ll get back to you soon.
+              <p className="mt-2 text-sm text-green-700 dark:text-green-400" role="status">
+                Thank you for your message! We&rsquo;ll get back to you soon.
               </p>
             )}
             {status === "error" && (
-              <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+              <p className="mt-2 text-sm text-red-600 dark:text-red-400" role="alert">
                 Something went wrong. Please try again later.
               </p>
             )}
@@ -149,7 +149,7 @@ export default function ContactPage() {
       <div className="grid max-w-[980px] gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Business Inquiries</CardTitle>
+            <CardTitle as="h2">Business Inquiries</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
@@ -166,7 +166,7 @@ export default function ContactPage() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Press & Media</CardTitle>
+            <CardTitle as="h2">Press & Media</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">

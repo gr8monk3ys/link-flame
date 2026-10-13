@@ -18,7 +18,7 @@ export default function PrivacyPage() {
         Last updated: February 2026
       </p>
 
-      <div className="prose prose-lg max-w-none">
+      <div className="prose prose-lg max-w-none dark:prose-invert">
         <p className="text-muted-foreground">
           At Link Flame, we take your privacy seriously. This Privacy Policy
           explains how we collect, use, share, and protect your personal
@@ -147,7 +147,7 @@ export default function PrivacyPage() {
               rel="noopener noreferrer"
               className="text-primary hover:underline"
             >
-              Stripe&apos;s Privacy Policy
+              Stripe&rsquo;s Privacy Policy
             </a>
             .
           </li>
@@ -170,7 +170,7 @@ export default function PrivacyPage() {
               rel="noopener noreferrer"
               className="text-primary hover:underline"
             >
-              Vercel&apos;s Privacy Policy
+              Vercel&rsquo;s Privacy Policy
             </a>
             .
           </li>
@@ -346,11 +346,11 @@ export default function PrivacyPage() {
           >
             {CONTACT.supportEmail}
           </a>{' '}
-          with the subject line &quot;CCPA Request.&quot; We may need to verify
+          with the subject line &ldquo;CCPA Request.&rdquo; We may need to verify
           your identity before processing your request.
         </p>
 
-        <h2>9. Children&apos;s Privacy</h2>
+        <h2>9. Children&rsquo;s Privacy</h2>
         <p className="text-muted-foreground">
           Our website and services are not intended for children under 13 years
           of age. We do not knowingly collect personal information from children
@@ -371,7 +371,7 @@ export default function PrivacyPage() {
         <p className="text-muted-foreground">
           We may update this Privacy Policy from time to time to reflect changes
           in our practices, technology, or legal requirements. When we make
-          material changes, we will update the &quot;Last updated&quot; date at the top
+          material changes, we will update the &ldquo;Last updated&rdquo; date at the top
           of this page and, where appropriate, notify you by email or through a
           notice on our website. We encourage you to review this policy
           periodically.

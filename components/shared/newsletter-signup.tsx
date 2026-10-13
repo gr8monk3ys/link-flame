@@ -62,11 +62,11 @@ export function NewsletterSignup({
               "Enter yc". A min width plus wrapping keeps one row where there is
               space and drops the button below where there is not. */}
           <div className="flex flex-wrap gap-2">
-            <input
+            <input name="email" autoComplete="email" spellCheck={false}
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
+              placeholder="you@example.com"
               aria-label="Email address"
               className="flex h-10 w-full min-w-44 flex-1 rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               disabled={status === "loading"}
@@ -77,14 +77,14 @@ export function NewsletterSignup({
               className={`${buttonVariants()} shrink-0`}
               disabled={status === "loading"}
             >
-              {status === "loading" ? "Subscribing..." : "Subscribe"}
+              {status === "loading" ? "Subscribing…" : "Subscribe"}
             </button>
           </div>
           {status === "success" && (
-            <p className="text-sm text-green-700 dark:text-green-400">{message}</p>
+            <p className="text-sm text-green-700 dark:text-green-400" role="status">{message}</p>
           )}
           {status === "error" && (
-            <p className="text-sm text-red-600 dark:text-red-400">{message}</p>
+            <p className="text-sm text-red-600 dark:text-red-400" role="alert">{message}</p>
           )}
         </form>
       </CardContent>

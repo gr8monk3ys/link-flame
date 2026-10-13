@@ -93,35 +93,35 @@ export async function GET(req: NextRequest) {
     // Ensure default wishlist exists
     await getOrCreateDefaultWishlist(userIdToUse);
 
-    // Get total count of wishlists for the user
-    const total = await prisma.wishlist.count({
-      where: { userId: userIdToUse },
-    });
-
-    // Get paginated wishlists with limited items per wishlist
-    const wishlists = await prisma.wishlist.findMany({
-      where: { userId: userIdToUse },
-      include: {
-        items: {
-          include: {
-            product: true,
+    // Count and fetch the page in parallel
+    const [total, wishlists] = await Promise.all([
+      prisma.wishlist.count({
+        where: { userId: userIdToUse },
+      }),
+      prisma.wishlist.findMany({
+        where: { userId: userIdToUse },
+        include: {
+          items: {
+            include: {
+              product: true,
+            },
+            orderBy: {
+              addedAt: "desc",
+            },
+            take: itemsPerWishlist, // Limit items per wishlist
           },
-          orderBy: {
-            addedAt: "desc",
+          _count: {
+            select: { items: true }, // Get total item count for each wishlist
           },
-          take: itemsPerWishlist, // Limit items per wishlist
         },
-        _count: {
-          select: { items: true }, // Get total item count for each wishlist
-        },
-      },
-      orderBy: [
-        { isDefault: "desc" }, // Default wishlist first
-        { createdAt: "asc" },  // Then by creation date
-      ],
-      skip,
-      take: limit,
-    });
+        orderBy: [
+          { isDefault: "desc" }, // Default wishlist first
+          { createdAt: "asc" },  // Then by creation date
+        ],
+        skip,
+        take: limit,
+      }),
+    ]);
 
     // Transform the data for frontend consumption
     const formattedWishlists = wishlists.map((wishlist) => ({

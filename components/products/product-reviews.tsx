@@ -7,6 +7,7 @@ import { Star, ThumbsUp, ThumbsDown, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
+import { formatNumber, formatDate } from "@/lib/utils"
 
 interface Review {
   id: string
@@ -62,7 +63,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
       if (process.env.NODE_ENV === 'development') {
         console.error('Error fetching reviews:', error)
       }
-      toast.error('Failed to load reviews')
+      toast.error('Couldn’t load reviews. Refresh the page to try again.')
     } finally {
       setLoading(false)
     }
@@ -123,8 +124,8 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
 
   if (loading) {
     return (
-      <div className="py-8 text-center text-muted-foreground">
-        Loading reviews...
+      <div className="py-8 text-center text-muted-foreground" role="status">
+        Loading reviews…
       </div>
     )
   }
@@ -140,7 +141,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
       {/* Rating Summary */}
       <div className="flex flex-col gap-8 md:flex-row">
         <div className="flex flex-col items-center md:items-start">
-          <div className="text-5xl font-bold">{averageRating.toFixed(1)}</div>
+          <div className="text-5xl font-bold">{formatNumber(averageRating, 1)}</div>
           <div className="my-2 flex items-center gap-1">
             {[1, 2, 3, 4, 5].map((star) => (
               <Star
@@ -169,8 +170,8 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
                 <span className="w-16 text-sm">{rating} star</span>
                 <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
                   <div
-                    className="h-full bg-yellow-400 transition-all"
-                    style={{ width: `${percentage}%` }}
+                    className="size-full origin-left bg-yellow-400 transition-transform"
+                    style={{ transform: `scaleX(${percentage / 100})` }}
                   />
                 </div>
                 <span className="w-12 text-right text-sm text-muted-foreground">
@@ -195,14 +196,16 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
 
               {/* Star Rating */}
               <div>
-                <label className="mb-2 block text-sm font-medium">
+                <p id="review-rating-label" className="mb-2 block text-sm font-medium">
                   Rating *
-                </label>
-                <div className="flex items-center gap-1">
+                </p>
+                <div className="flex items-center gap-1" role="group" aria-labelledby="review-rating-label">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       key={star}
                       type="button"
+                      aria-label={`${star} ${star === 1 ? 'star' : 'stars'}`}
+                      aria-pressed={star <= rating}
                       onClick={() => setRating(star)}
                       onMouseEnter={() => setHoverRating(star)}
                       onMouseLeave={() => setHoverRating(0)}
@@ -222,13 +225,13 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
 
               {/* Comment */}
               <div>
-                <label className="mb-2 block text-sm font-medium">
+                <label className="mb-2 block text-sm font-medium" htmlFor="product-comment">
                   Comment (optional)
                 </label>
-                <Textarea
+                <Textarea name="comment" autoComplete="off" id="product-comment"
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
-                  placeholder="Share your experience with this product..."
+                  placeholder="Share your experience with this product…"
                   rows={4}
                   maxLength={1000}
                 />
@@ -242,7 +245,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
               {/* Actions */}
               <div className="flex gap-2">
                 <Button type="submit" disabled={submitting}>
-                  {submitting ? 'Submitting...' : 'Submit Review'}
+                  {submitting ? 'Submitting…' : 'Submit Review'}
                 </Button>
                 <Button
                   type="button"
@@ -298,13 +301,13 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
                   )}
 
                   {/* Review Content */}
-                  <div className="flex-1">
+                  <div className="min-w-0 flex-1 break-words">
                     <div className="mb-1 flex items-center gap-2">
                       <span className="font-medium">
                         {review.user.name || 'Anonymous'}
                       </span>
                       <span className="text-sm text-muted-foreground">
-                        {new Date(review.createdAt).toLocaleDateString()}
+                        {formatDate(review.createdAt)}
                       </span>
                     </div>
 

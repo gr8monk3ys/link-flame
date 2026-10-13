@@ -1,6 +1,6 @@
 'use client';
 
-import { SubscriptionDashboard } from '@/components/subscriptions';
+import { SubscriptionDashboard } from '@/components/subscriptions/SubscriptionDashboard';
 
 export default function SubscriptionsPage() {
   return (

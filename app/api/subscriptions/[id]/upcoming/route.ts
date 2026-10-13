@@ -137,8 +137,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const totals = calculateSubscriptionTotal(subscription.items.map(item => ({ ...item, priceAtSubscription: Number(item.priceAtSubscription) })));
 
     // Check if all items are in stock
-    const allInStock = orderItems.every(item => item.inStock);
     const outOfStockItems = orderItems.filter(item => !item.inStock);
+    const allInStock = outOfStockItems.length === 0;
 
     // Build the response
     const upcomingOrder = {
