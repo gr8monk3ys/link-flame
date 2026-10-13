@@ -30,6 +30,7 @@
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:report": "playwright show-report",
     "analyze": "ANALYZE=true next build",
+    "brand:generate": "node scripts/generate-brand.mjs",
     "lighthouse:ci": "node scripts/check-lighthouse-score.mjs http://127.0.0.1:3000 / /products /blogs /guides-and-tips /about-us"
   },
   "overrides": {
@@ -40,6 +41,8 @@
     "deepmerge-ts": "^8.0.2"
   },
   "dependencies": {
+    "@fontsource/fraunces": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
     "@gr8monk3ys/next-kit": "https://github.com/gr8monk3ys/next-kit/archive/refs/tags/v0.1.2.tar.gz",
     "@headlessui/react": "^2.2.10",
     "@mdx-js/loader": "^3.1.0",
@@ -95,6 +98,7 @@
   "devDependencies": {
     "@next/bundle-analyzer": "^16.4.0",
     "@playwright/test": "^1.64.0",
+    "@resvg/resvg-js": "^2.6.2",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.3",
@@ -112,6 +116,8 @@
     "eslint-plugin-react-hooks": "7.0.1",
     "eslint-plugin-tailwindcss": "3.18.2",
     "happy-dom": "^20.14.6",
+    "opentype.js": "^2.0.0",
+    "png-to-ico": "^3.0.2",
     "postcss": "^8.5.29",
     "prisma": "^6.19.3",
     "tailwindcss": "^3.4.19",
