@@ -24,7 +24,7 @@ export function ImperfectBanner({
     return (
       <div
         className={cn(
-          'rounded-lg border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 p-4 dark:border-amber-900/50 dark:from-amber-950/40 dark:to-orange-950/40',
+          'rounded-lg border border-amber-200 bg-linear-to-r from-amber-50 to-orange-50 p-4 dark:border-amber-900/50 dark:from-amber-950/40 dark:to-orange-950/40',
           className
         )}
       >
@@ -55,7 +55,7 @@ export function ImperfectBanner({
     return (
       <section
         className={cn(
-          'relative overflow-hidden bg-gradient-to-br from-amber-100 via-orange-50 to-yellow-100 dark:from-amber-900/30 dark:via-orange-950/40 dark:to-yellow-900/30',
+          'relative overflow-hidden bg-linear-to-br from-amber-100 via-orange-50 to-yellow-100 dark:from-amber-900/30 dark:via-orange-950/40 dark:to-yellow-900/30',
           className
         )}
       >
@@ -77,7 +77,7 @@ export function ImperfectBanner({
 
         <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
           <div className="text-center">
-            <span className="mb-6 inline-flex items-center gap-2 rounded-full bg-card/80 px-4 py-2 text-sm font-medium text-amber-800 backdrop-blur-sm dark:text-amber-200">
+            <span className="mb-6 inline-flex items-center gap-2 rounded-full bg-card/80 px-4 py-2 text-sm font-medium text-amber-800 backdrop-blur-xs dark:text-amber-200">
               <LeafIcon className="size-4" />
               Reduce Waste, Save More
             </span>
@@ -103,7 +103,7 @@ export function ImperfectBanner({
               )}
               <Link
                 href="/imperfect#how-it-works"
-                className="inline-flex items-center gap-2 rounded-xl bg-card/80 px-8 py-4 font-semibold text-amber-800 backdrop-blur-sm transition-colors hover:bg-card dark:text-amber-200"
+                className="inline-flex items-center gap-2 rounded-xl bg-card/80 px-8 py-4 font-semibold text-amber-800 backdrop-blur-xs transition-colors hover:bg-card dark:text-amber-200"
               >
                 Learn More
                 <ArrowRightIcon className="size-5" />
@@ -112,15 +112,15 @@ export function ImperfectBanner({
 
             {/* Stats */}
             <div className="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-3">
-              <div className="rounded-2xl bg-card/60 p-6 backdrop-blur-sm">
+              <div className="rounded-2xl bg-card/60 p-6 backdrop-blur-xs">
                 <p className="text-3xl font-bold text-amber-900 dark:text-amber-100">47%</p>
                 <p className="mt-1 text-sm text-amber-700 dark:text-amber-300">Average Savings</p>
               </div>
-              <div className="rounded-2xl bg-card/60 p-6 backdrop-blur-sm">
+              <div className="rounded-2xl bg-card/60 p-6 backdrop-blur-xs">
                 <p className="text-3xl font-bold text-amber-900 dark:text-amber-100">100%</p>
                 <p className="mt-1 text-sm text-amber-700 dark:text-amber-300">Same Quality</p>
               </div>
-              <div className="rounded-2xl bg-card/60 p-6 backdrop-blur-sm">
+              <div className="rounded-2xl bg-card/60 p-6 backdrop-blur-xs">
                 <p className="text-3xl font-bold text-amber-900 dark:text-amber-100">Zero</p>
                 <p className="mt-1 text-sm text-amber-700 dark:text-amber-300">Waste Created</p>
               </div>
@@ -135,7 +135,7 @@ export function ImperfectBanner({
   return (
     <div
       className={cn(
-        'rounded-2xl bg-gradient-to-r from-amber-100 to-orange-100 p-8 dark:from-amber-900/30 dark:to-orange-900/30 lg:p-12',
+        'rounded-2xl bg-linear-to-r from-amber-100 to-orange-100 p-8 dark:from-amber-900/30 dark:to-orange-900/30 lg:p-12',
         className
       )}
     >

@@ -82,7 +82,7 @@ function FeaturedProductsLoading() {
 
 function FeaturedBrandsLoading() {
   return (
-    <section className="bg-gradient-to-b from-background to-secondary/30 py-16 lg:py-20">
+    <section className="bg-linear-to-b from-background to-secondary/30 py-16 lg:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
           <div className="mx-auto mb-4 size-12 animate-pulse rounded-full bg-muted" />
@@ -92,7 +92,7 @@ function FeaturedBrandsLoading() {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="animate-pulse overflow-hidden rounded-xl border bg-card">
-              <div className="aspect-[16/9] bg-muted" />
+              <div className="aspect-video bg-muted" />
               <div className="space-y-3 p-6">
                 <div className="h-6 w-3/4 rounded bg-muted" />
                 <div className="h-4 w-full rounded bg-muted" />

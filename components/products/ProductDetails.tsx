@@ -125,7 +125,7 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
               </div>
             </div>
 
-            <div className="aspect-[3/2] overflow-hidden rounded-lg">
+            <div className="aspect-3/2 overflow-hidden rounded-lg">
               <Image
                 src={displayImage}
                 alt={product.title}
@@ -484,7 +484,7 @@ function AddToCartButton({
       type="button"
       onClick={handleAddToCart}
       disabled={isLoading}
-      className="flex max-w-xs flex-1 items-center justify-center rounded-lg border border-transparent bg-primary px-8 py-3 text-base font-medium text-primary-foreground transition-[background-color,transform] duration-200 hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98] sm:w-full"
+      className="flex max-w-xs flex-1 items-center justify-center rounded-lg border border-transparent bg-primary px-8 py-3 text-base font-medium text-primary-foreground transition-[background-color,transform] duration-200 hover:bg-primary/90 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98] sm:w-full"
     >
       {buttonText}
     </button>

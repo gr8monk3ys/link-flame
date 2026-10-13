@@ -77,7 +77,7 @@ function OrderConfirmationContent() {
   return (
     <div className="container py-12">
       <div className="mx-auto max-w-lg space-y-8">
-        <div className="rounded-lg border bg-card p-8 shadow-sm">
+        <div className="rounded-lg border bg-card p-8 shadow-xs">
           <div className="mb-6 flex flex-col items-center space-y-4 text-center">
             <div className="rounded-full bg-green-100 p-3 text-green-700 dark:bg-green-900/30 dark:text-green-400">
               <svg aria-hidden="true"

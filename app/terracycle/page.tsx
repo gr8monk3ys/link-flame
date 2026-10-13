@@ -166,7 +166,7 @@ export default function TerraCyclePage() {
             </div>
 
             {/* Visual / Stats Card */}
-            <div className="rounded-2xl bg-gradient-to-br from-gray-50 to-emerald-50 p-8 dark:from-gray-900 dark:to-emerald-900/30">
+            <div className="rounded-2xl bg-linear-to-br from-gray-50 to-emerald-50 p-8 dark:from-gray-900 dark:to-emerald-900/30">
               <h3 className="mb-6 text-xl font-semibold text-foreground">
                 Environmental Impact Equivalents
               </h3>
@@ -197,7 +197,7 @@ export default function TerraCyclePage() {
                 ].map((item) => (
                   <div
                     key={item.label}
-                    className="flex items-center gap-4 rounded-lg bg-card p-4 shadow-sm"
+                    className="flex items-center gap-4 rounded-lg bg-card p-4 shadow-xs"
                   >
                     <div className="flex size-10 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-900/50">
                       <item.icon className="size-5 text-emerald-700 dark:text-emerald-400" />
@@ -229,7 +229,7 @@ export default function TerraCyclePage() {
       {/* Get Started CTA Section */}
       <section
         id="get-started"
-        className="bg-gradient-to-b from-emerald-700 to-teal-700 py-20 dark:from-emerald-800 dark:to-teal-900"
+        className="bg-linear-to-b from-emerald-700 to-teal-700 py-20 dark:from-emerald-800 dark:to-teal-900"
       >
         <div className="container mx-auto px-4 text-center">
           <RecycleIcon className="mx-auto mb-6 size-16 text-white/80" />
@@ -243,7 +243,7 @@ export default function TerraCyclePage() {
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link
               href="/account/terracycle"
-              className="inline-flex items-center rounded-lg bg-card px-6 py-3 text-sm font-medium text-emerald-700 shadow-sm transition-colors hover:bg-muted dark:text-emerald-400"
+              className="inline-flex items-center rounded-lg bg-card px-6 py-3 text-sm font-medium text-emerald-700 shadow-xs transition-colors hover:bg-muted dark:text-emerald-400"
             >
               Request Shipping Label
             </Link>
@@ -289,7 +289,7 @@ export default function TerraCyclePage() {
             ].map((item) => (
               <div
                 key={item.title}
-                className="rounded-lg bg-white/10 p-4 backdrop-blur-sm"
+                className="rounded-lg bg-white/10 p-4 backdrop-blur-xs"
               >
                 <h3 className="font-semibold text-white">{item.title}</h3>
                 <p className="mt-1 text-sm text-emerald-50">{item.description}</p>
@@ -332,7 +332,7 @@ export default function TerraCyclePage() {
               <Link
                 key={item.title}
                 href={item.href}
-                className="group rounded-xl border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
+                className="group rounded-xl border bg-card p-6 shadow-xs transition-shadow hover:shadow-md"
               >
                 <h3 className="text-lg font-semibold text-foreground group-hover:text-emerald-700 dark:text-white dark:group-hover:text-emerald-400">
                   {item.title}

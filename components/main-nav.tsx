@@ -72,7 +72,7 @@ export function MainNav({ className, items }: MainNavProps) {
                         href={item.href}
                         className={cn(
                           navigationMenuTriggerStyle(),
-                          "data-[state=open]:bg-accent-foreground/5 data-[active]:text-foreground"
+                          "data-[state=open]:bg-accent-foreground/5 data-active:text-foreground"
                         )}
                       >
                         {item.title}
@@ -92,7 +92,7 @@ export function MainNav({ className, items }: MainNavProps) {
                               <NavigationMenuLink asChild>
                                 <Link
                                   href={subitem.href}
-                                  className="block select-none space-y-1 rounded-md p-3 leading-none outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                                  className="block select-none space-y-1 rounded-md p-3 leading-none outline-hidden transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                                 >
                                   <div className="text-sm font-medium leading-none">
                                     {subitem.title}

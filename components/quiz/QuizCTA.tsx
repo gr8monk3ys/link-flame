@@ -83,7 +83,7 @@ export function QuizCTA({
       <>
         <div
           className={cn(
-            'relative overflow-hidden rounded-xl border bg-card p-6 shadow-sm',
+            'relative overflow-hidden rounded-xl border bg-card p-6 shadow-xs',
             'transition-shadow hover:shadow-md',
             className
           )}
@@ -129,7 +129,7 @@ export function QuizCTA({
     <>
       <section
         className={cn(
-          'relative overflow-hidden bg-gradient-to-br from-secondary/50 via-accent/10 to-background',
+          'relative overflow-hidden bg-linear-to-br from-secondary/50 via-accent/10 to-background',
           'border-y',
           className
         )}

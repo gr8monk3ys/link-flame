@@ -176,7 +176,7 @@ export function EcoImpactCard({
   if (variant === "detailed") {
     return (
       <div className={cn(
-        "rounded-lg border bg-gradient-to-br from-green-50 to-emerald-50 p-5 dark:border-green-800 dark:from-green-900/20 dark:to-emerald-900/20",
+        "rounded-lg border bg-linear-to-br from-green-50 to-emerald-50 p-5 dark:border-green-800 dark:from-green-900/20 dark:to-emerald-900/20",
         className
       )}>
         <div className="mb-4 flex items-center justify-between">

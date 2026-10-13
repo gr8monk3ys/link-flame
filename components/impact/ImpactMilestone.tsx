@@ -69,7 +69,7 @@ export function ImpactMilestone({
   return (
     <div
       className={cn(
-        "fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm transition-opacity duration-300",
+        "fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs transition-opacity duration-300",
         isExiting ? "opacity-0" : "opacity-100"
       )}
     >
@@ -81,7 +81,7 @@ export function ImpactMilestone({
       />
       <div
         className={cn(
-          "relative z-10 w-full max-w-md rounded-2xl bg-gradient-to-br from-green-50 to-emerald-100 p-8 shadow-2xl transition-[transform,opacity] duration-300 dark:from-green-950 dark:to-emerald-900",
+          "relative z-10 w-full max-w-md rounded-2xl bg-linear-to-br from-green-50 to-emerald-100 p-8 shadow-2xl transition-[transform,opacity] duration-300 dark:from-green-950 dark:to-emerald-900",
           isExiting ? "scale-95 opacity-0" : "scale-100 opacity-100"
         )}
         role="dialog"

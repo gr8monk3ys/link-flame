@@ -96,7 +96,7 @@ export default function CheckoutPage() {
             
             {/* Order Summary - Right Side */}
             <div className="lg:col-span-5">
-              <div className="rounded-lg border p-6 shadow-sm" data-testid="order-summary">
+              <div className="rounded-lg border p-6 shadow-xs" data-testid="order-summary">
                 <h2 className="mb-4 text-lg font-medium">Order Summary</h2>
                 
                 {/* Cart Items */}
@@ -116,7 +116,7 @@ export default function CheckoutPage() {
                         />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h3 className="break-words font-medium">{item.title}</h3>
+                        <h3 className="wrap-break-word font-medium">{item.title}</h3>
                         <p className="text-sm text-muted-foreground">
                           Qty: {item.quantity}
                         </p>

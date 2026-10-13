@@ -28,7 +28,7 @@ export function ReferralBanner({
   if (variant === "compact") {
     return (
       <div
-        className={`relative rounded-lg border border-primary/20 bg-gradient-to-r from-primary/10 to-primary/5 p-4 ${className}`}
+        className={`relative rounded-lg border border-primary/20 bg-linear-to-r from-primary/10 to-primary/5 p-4 ${className}`}
       >
         {dismissible && (
           <button
@@ -63,7 +63,7 @@ export function ReferralBanner({
   // Full variant - suitable for main content areas
   return (
     <div
-      className={`relative overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent ${className}`}
+      className={`relative overflow-hidden rounded-xl border border-primary/20 bg-linear-to-r from-primary/10 via-primary/5 to-transparent ${className}`}
     >
       {dismissible && (
         <button
@@ -119,7 +119,7 @@ export function ReferralBanner({
       </div>
 
       {/* Decorative elements */}
-      <div className="pointer-events-none absolute right-0 top-0 size-64 -translate-y-1/2 translate-x-1/2 rounded-full bg-gradient-to-br from-primary/5 to-transparent blur-3xl" />
+      <div className="pointer-events-none absolute right-0 top-0 size-64 -translate-y-1/2 translate-x-1/2 rounded-full bg-linear-to-br from-primary/5 to-transparent blur-3xl" />
     </div>
   );
 }

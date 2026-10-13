@@ -142,7 +142,7 @@ export default function SustainabilityPage() {
             {sustainabilityPillars.map((pillar) => (
               <div
                 key={pillar.title}
-                className="rounded-2xl border bg-card p-8 shadow-sm"
+                className="rounded-2xl border bg-card p-8 shadow-xs"
               >
                 <div className="flex items-start gap-4">
                   <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-400">
@@ -247,7 +247,7 @@ export default function SustainabilityPage() {
               <div className="mt-8">
                 <Link
                   href="/terracycle"
-                  className="inline-flex items-center gap-2 rounded-lg bg-emerald-700 px-6 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-emerald-800"
+                  className="inline-flex items-center gap-2 rounded-lg bg-emerald-700 px-6 py-3 text-sm font-medium text-white shadow-xs transition-colors hover:bg-emerald-800"
                 >
                   Learn About TerraCycle
                   <svg aria-hidden="true" className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -257,7 +257,7 @@ export default function SustainabilityPage() {
               </div>
             </div>
             <div className="relative">
-              <div className="rounded-2xl bg-gradient-to-br from-emerald-700 to-teal-700 p-8 text-white shadow-xl">
+              <div className="rounded-2xl bg-linear-to-br from-emerald-700 to-teal-700 p-8 text-white shadow-xl">
                 <h3 className="mb-6 text-2xl font-bold">Program Impact</h3>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between border-b border-emerald-400/30 py-3">
@@ -299,7 +299,7 @@ export default function SustainabilityPage() {
             {certificationPartners.map((partner) => (
               <div
                 key={partner.name}
-                className="rounded-xl border bg-card p-6 text-center shadow-sm"
+                className="rounded-xl border bg-card p-6 text-center shadow-xs"
               >
                 <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-green-50 dark:bg-green-900/30">
                   <LeafIcon className="size-8 text-green-700 dark:text-green-400" />
@@ -340,7 +340,7 @@ export default function SustainabilityPage() {
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link
               href="/products"
-              className="inline-flex items-center rounded-lg bg-card px-6 py-3 text-sm font-medium text-green-700 shadow-sm transition-colors hover:bg-muted dark:text-green-400"
+              className="inline-flex items-center rounded-lg bg-card px-6 py-3 text-sm font-medium text-green-700 shadow-xs transition-colors hover:bg-muted dark:text-green-400"
             >
               Shop Sustainable Products
             </Link>

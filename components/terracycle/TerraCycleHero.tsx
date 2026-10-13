@@ -98,7 +98,7 @@ export function TerraCycleHero({ className }: TerraCycleHeroProps) {
             <div className="mt-10 flex flex-wrap gap-4">
               <Link
                 href="#get-started"
-                className="inline-flex items-center rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+                className="inline-flex items-center rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90"
               >
                 Get Started
               </Link>

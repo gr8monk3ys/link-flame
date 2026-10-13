@@ -24,7 +24,7 @@ export function BlogCard({ post, featured = false }: BlogCardProps) {
         <Link
           href={`/blogs/${slug}`}
           data-testid="blog-post-link"
-          className={`relative block ${featured ? "aspect-[2/1] md:aspect-square" : "aspect-[2/1]"}`}
+          className={`relative block ${featured ? "aspect-2/1 md:aspect-square" : "aspect-2/1"}`}
         >
           <Image
             src={coverImage}

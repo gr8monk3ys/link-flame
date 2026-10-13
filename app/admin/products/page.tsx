@@ -104,7 +104,7 @@ export default function AdminProductsPage() {
       </div>
 
       {/* Filters */}
-      <div className="rounded-lg bg-card p-4 shadow">
+      <div className="rounded-lg bg-card p-4 shadow-sm">
         <div className="flex flex-col gap-4 sm:flex-row">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
@@ -129,7 +129,7 @@ export default function AdminProductsPage() {
       </div>
 
       {/* Products Table */}
-      <div className="overflow-x-auto rounded-lg bg-card shadow">
+      <div className="overflow-x-auto rounded-lg bg-card shadow-sm">
         <table className="min-w-full divide-y divide-border tabular-nums">
           <thead className="bg-muted">
             <tr>
@@ -237,19 +237,19 @@ export default function AdminProductsPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <div className="rounded-lg bg-card p-4 shadow">
+        <div className="rounded-lg bg-card p-4 shadow-sm">
           <p className="text-sm text-muted-foreground">Total Products</p>
           <p className="mt-1 text-2xl font-bold text-foreground">
             {products.length}
           </p>
         </div>
-        <div className="rounded-lg bg-card p-4 shadow">
+        <div className="rounded-lg bg-card p-4 shadow-sm">
           <p className="text-sm text-muted-foreground">Low Stock</p>
           <p className="mt-1 text-2xl font-bold text-yellow-600 dark:text-yellow-400">
             {products.filter((p) => p.inventory <= 5 && p.inventory > 0).length}
           </p>
         </div>
-        <div className="rounded-lg bg-card p-4 shadow">
+        <div className="rounded-lg bg-card p-4 shadow-sm">
           <p className="text-sm text-muted-foreground">Out of Stock</p>
           <p className="mt-1 text-2xl font-bold text-red-600 dark:text-red-400">
             {products.filter((p) => p.inventory === 0).length}

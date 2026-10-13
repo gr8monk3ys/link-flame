@@ -265,7 +265,7 @@ export function ActiveFilters({ className, queryString, initialValues }: ActiveF
           <span className="truncate">{filter.label}</span>
           <button
             onClick={filter.onRemove}
-            className="ml-1 rounded-full p-0.5 transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="ml-1 rounded-full p-0.5 transition-colors hover:bg-muted focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
             aria-label={`Remove ${filter.label} filter`}
           >
             <svg aria-hidden="true" className="size-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

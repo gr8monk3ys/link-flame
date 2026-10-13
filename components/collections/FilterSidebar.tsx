@@ -57,7 +57,7 @@ function SortSection({
           <SelectTrigger
             id="sortBy"
             aria-label="Sort products"
-            className="h-10 w-full border-border bg-background text-sm shadow-sm"
+            className="h-10 w-full border-border bg-background text-sm shadow-xs"
           >
             <SelectValue placeholder="Newest" />
           </SelectTrigger>
@@ -93,7 +93,7 @@ function SearchSection({
           value={filters.search}
           onChange={(e) => onFilterChange({ search: e.target.value })}
           placeholder="Search products…"
-          className="w-full rounded-md border border-border p-2 text-sm shadow-sm focus-visible:border-primary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          className="w-full rounded-md border border-border p-2 text-sm shadow-xs focus-visible:border-primary focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
         />
       </div>
     </div>
@@ -242,7 +242,7 @@ function PriceRangeSection({
                 },
               })
             }
-            className="w-full rounded-md border border-border p-2 text-sm shadow-sm focus-visible:border-primary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            className="w-full rounded-md border border-border p-2 text-sm shadow-xs focus-visible:border-primary focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
           />
         </div>
         <div>
@@ -263,7 +263,7 @@ function PriceRangeSection({
                 },
               })
             }
-            className="w-full rounded-md border border-border p-2 text-sm shadow-sm focus-visible:border-primary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            className="w-full rounded-md border border-border p-2 text-sm shadow-xs focus-visible:border-primary focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
           />
         </div>
       </div>
@@ -341,7 +341,7 @@ function SubscribableSection({
   onFilterChange,
 }: FilterSidebarProps) {
   return (
-    <div className="rounded-xl border border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 p-4 dark:border-blue-900/50 dark:from-blue-950/40 dark:to-indigo-950/40">
+    <div className="rounded-xl border border-blue-200 bg-linear-to-br from-blue-50 to-indigo-50 p-4 dark:border-blue-900/50 dark:from-blue-950/40 dark:to-indigo-950/40">
       <div className="mb-3 flex items-center gap-2">
         <svg
           className="size-5 text-blue-700 dark:text-blue-300"
@@ -385,7 +385,7 @@ function ImperfectSection({
   onFilterChange,
 }: FilterSidebarProps) {
   return (
-    <div className="rounded-xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 p-4 dark:border-amber-900/50 dark:from-amber-950/40 dark:to-orange-950/40">
+    <div className="rounded-xl border border-amber-200 bg-linear-to-br from-amber-50 to-orange-50 p-4 dark:border-amber-900/50 dark:from-amber-950/40 dark:to-orange-950/40">
       <div className="mb-3 flex items-center gap-2">
         <svg
           className="size-5 text-amber-600 dark:text-amber-400"

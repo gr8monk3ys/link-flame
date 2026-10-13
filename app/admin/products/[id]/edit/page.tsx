@@ -248,7 +248,7 @@ export default function AdminProductEditPage() {
       )}
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="rounded-lg bg-card p-6 shadow">
+      <form onSubmit={handleSubmit} className="rounded-lg bg-card p-6 shadow-sm">
         <div className="space-y-6">
           {/* Title */}
           <div>
@@ -262,7 +262,7 @@ export default function AdminProductEditPage() {
               onChange={(e) => setTitle(e.target.value)}
               required
               maxLength={200}
-              className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus-visible:border-green-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-green-500"
+              className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-xs focus-visible:border-green-500 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-green-500"
               placeholder="e.g., Bamboo Toothbrush Set"
             />
           </div>
@@ -278,7 +278,7 @@ export default function AdminProductEditPage() {
               value={subtitle}
               onChange={(e) => setSubtitle(e.target.value)}
               maxLength={200}
-              className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus-visible:border-green-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-green-500"
+              className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-xs focus-visible:border-green-500 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-green-500"
               placeholder="e.g., Pack of 4 - Soft Bristles"
             />
           </div>
@@ -294,7 +294,7 @@ export default function AdminProductEditPage() {
               onChange={(e) => setDescription(e.target.value)}
               rows={4}
               maxLength={2000}
-              className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus-visible:border-green-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-green-500"
+              className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-xs focus-visible:border-green-500 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-green-500"
               placeholder="Describe the product…"
             />
           </div>
@@ -313,7 +313,7 @@ export default function AdminProductEditPage() {
                 required
                 min="0.01"
                 step="0.01"
-                className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus-visible:border-green-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-green-500"
+                className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-xs focus-visible:border-green-500 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-green-500"
                 placeholder="0.00"
               />
             </div>
@@ -329,7 +329,7 @@ export default function AdminProductEditPage() {
                 onChange={(e) => setSalePrice(e.target.value)}
                 min="0.01"
                 step="0.01"
-                className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus-visible:border-green-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-green-500"
+                className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-xs focus-visible:border-green-500 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-green-500"
                 placeholder="0.00"
               />
             </div>
@@ -346,7 +346,7 @@ export default function AdminProductEditPage() {
               value={image}
               onChange={(e) => setImage(e.target.value)}
               required
-              className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus-visible:border-green-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-green-500"
+              className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-xs focus-visible:border-green-500 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-green-500"
               placeholder="https://example.com/image.jpg"
             />
           </div>
@@ -361,7 +361,7 @@ export default function AdminProductEditPage() {
                 id="category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="mt-1 block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground shadow-sm focus-visible:border-green-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-green-500"
+                className="mt-1 block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground shadow-xs focus-visible:border-green-500 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-green-500"
               >
                 {CATEGORIES.map((cat) => (
                   <option key={cat} value={cat}>
@@ -382,7 +382,7 @@ export default function AdminProductEditPage() {
                 onChange={(e) => setInventory(e.target.value)}
                 min="0"
                 step="1"
-                className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus-visible:border-green-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-green-500"
+                className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-xs focus-visible:border-green-500 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-green-500"
                 placeholder="0"
               />
             </div>
@@ -420,7 +420,7 @@ export default function AdminProductEditPage() {
                     min="1"
                     max="90"
                     step="1"
-                    className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-sm focus-visible:border-green-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-green-500"
+                    className="mt-1 block w-full rounded-lg border border-border px-3 py-2 shadow-xs focus-visible:border-green-500 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-green-500"
                     placeholder="e.g., 20"
                   />
                 </div>

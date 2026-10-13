@@ -78,9 +78,9 @@ export function QuizQuestion({
               className={cn(
                 'group relative flex w-full items-center gap-4 rounded-lg border-2 p-4 text-left transition-colors duration-200',
                 'hover:border-primary/50 hover:bg-primary/5',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
+                'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
                 isSelected
-                  ? 'border-primary bg-primary/10 shadow-sm'
+                  ? 'border-primary bg-primary/10 shadow-xs'
                   : 'border-border bg-card'
               )}
               style={{
