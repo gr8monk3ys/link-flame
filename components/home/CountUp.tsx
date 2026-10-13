@@ -43,7 +43,10 @@ export function CountUp({ value, duration = 1400, className }: CountUpProps) {
           // Write the frame straight to the DOM: a setState per animation
           // frame re-rendered the component ~85 times per number
           // (react-best-practices 5.15). React still renders the final value.
-          el.textContent = format(value * eased);
+          // Update the existing text node rather than replacing it, so the
+          // node React owns stays in place.
+          if (el.firstChild) el.firstChild.nodeValue = format(value * eased);
+          else el.textContent = format(value * eased);
           if (t < 1) requestAnimationFrame(tick);
         };
         requestAnimationFrame(tick);

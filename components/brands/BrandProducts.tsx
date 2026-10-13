@@ -30,7 +30,7 @@ export interface BrandProductsProps {
 }
 
 function ProductCard({ product }: { product: BrandProduct }) {
-  const isOnSale = product.salePrice != null && product.salePrice < product.price
+  const isOnSale = product.salePrice != null && product.salePrice > 0 && product.salePrice < product.price
   const displayPrice = product.salePrice || product.price
   const isOutOfStock = product.inventory <= 0
 

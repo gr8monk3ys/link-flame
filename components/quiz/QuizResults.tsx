@@ -186,7 +186,7 @@ export function QuizResults({
         {products.map((product, index) => {
           const isLoading = loadingIds.has(product.id);
           const isOutOfStock = product.inventory <= 0;
-          const isOnSale = product.salePrice != null && product.salePrice < product.price;
+          const isOnSale = product.salePrice != null && product.salePrice > 0 && product.salePrice < product.price;
           const isAnimated = animatedCards.has(index);
 
           return (
