@@ -81,7 +81,7 @@ export async function GET(req: Request) {
     // Format order with gift info for display
     const formattedOrder = {
       id: order.id,
-      amount: order.amount,
+      amount: Number(order.amount),
       status: order.status,
       customerName: order.customerName,
       customerEmail: order.customerEmail,
@@ -99,7 +99,7 @@ export async function GET(req: Request) {
       items: order.items.map((item) => ({
         id: item.id,
         title: item.title,
-        price: item.price,
+        price: Number(item.price),
         quantity: item.quantity,
         productImage: item.product?.image,
       })),

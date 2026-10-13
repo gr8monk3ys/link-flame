@@ -105,7 +105,7 @@ export default function SavedItemsClient() {
       image: item.product.image,
       quantity: 1,
     });
-    toast.success('Added to cart');
+    // addItemToCart shows its own success or error toast.
   };
 
   const handleMoveItem = async (

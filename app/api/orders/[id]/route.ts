@@ -112,9 +112,20 @@ export async function GET(
       current: index === currentStatusIndex,
     }));
 
+    // Prisma Decimals serialise to strings; the order page calls toFixed()
+    // on these, so send plain numbers.
+    const toNumberOrNull = (value: { toString(): string } | null) =>
+      value === null ? null : Number(value);
+
     // Format order with additional tracking info
     const formattedOrder = {
       ...order,
+      amount: Number(order.amount),
+      refundAmount: toNumberOrNull(order.refundAmount),
+      loyaltyDiscountAmount: toNumberOrNull(order.loyaltyDiscountAmount),
+      giftCardAmountUsed: toNumberOrNull(order.giftCardAmountUsed),
+      discountTotal: toNumberOrNull(order.discountTotal),
+      items: order.items.map((item) => ({ ...item, price: Number(item.price) })),
       shippingStatusLabel: order.shippingStatus
         ? SHIPPING_STATUS_LABELS[order.shippingStatus] || order.shippingStatus
         : "Processing",
