@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/gr8monk3ys/link-flame/compare/v0.1.0...v0.2.0) (2026-10-13)
+
+
+### Features
+
+* **brand:** Link Flame mark, lockups, favicons and app icons ([#116](https://github.com/gr8monk3ys/link-flame/issues/116)) ([742dfb7](https://github.com/gr8monk3ys/link-flame/commit/742dfb7dd3a6ffe14a89b93bd17497a674a09ce6))
+
 ## 0.1.0 (2026-10-13)
 
 
