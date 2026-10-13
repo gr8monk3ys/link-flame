@@ -122,8 +122,9 @@ class ErrorBoundaryClass extends Component<Props, State> {
             <Button variant="outline" onClick={this.handleReload}>
               Reload Page
             </Button>
-            <Button variant="outline" onClick={() => window.location.href = '/'}>
-              Go to Homepage
+            {/* A plain link on purpose: a full document load is what clears a crashed tree. */}
+            <Button variant="outline" asChild>
+              <a href="/">Go to Homepage</a>
             </Button>
           </div>
           {process.env.NODE_ENV === 'development' && this.state.error && (

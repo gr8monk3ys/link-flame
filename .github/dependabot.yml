@@ -7,6 +7,17 @@ updates:
   schedule:
     interval: monthly
   open-pull-requests-limit: 3
+  ignore:
+    # eslint-plugin-react-hooks 7.1 tightened set-state-in-effect and added the
+    # compiler-backed rules (use before declaration, impure calls in render):
+    # 4 errors and 28 warnings across ~15 components under --max-warnings=0
+    # (PR #109, 2026-10-12). eslint-config-next >=16.4 depends on ^7.1.0 and
+    # installs its own copy, so the two are held back together. Remove both
+    # entries once those components are refactored.
+    - dependency-name: eslint-plugin-react-hooks
+      versions: ['>=7.1.0']
+    - dependency-name: eslint-config-next
+      versions: ['>=16.4.0']
   groups:
     development-dependencies:
       dependency-type: development
