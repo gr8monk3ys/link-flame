@@ -72,7 +72,8 @@ figure the shopper can add up.
 
 - Stack: Next.js 16 App Router, React 19, PostgreSQL on Neon via Prisma,
   NextAuth v5 (split Edge/Node config), Stripe checkout and two webhook
-  secrets, Tailwind v3, npm.
+  secrets, Tailwind v4 (the theme is `@theme inline` in `styles/globals.css`;
+  no `tailwind.config.js`), npm.
 - Every API route is `force-dynamic`; the home page renders at request time
   because the database is not reachable during the Vercel build. Sections
   that depend on data (`FeaturedProducts`, `FeaturedBrands`, `ImpactBand`)

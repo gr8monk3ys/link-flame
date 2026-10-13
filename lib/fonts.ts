@@ -1,7 +1,7 @@
 import { Inter as FontSans, Lora } from "next/font/google"
 
 // JetBrains Mono used to be declared here too. Nothing imported it and
-// `--font-mono` is not wired into tailwind.config.js, but next/font preloads
+// `--font-mono` is not mapped in styles/globals.css's @theme, but next/font preloads
 // every font a module declares, so every page fetched a 40 KB monospace file
 // at high priority ahead of the hero image. `font-mono` classes already
 // resolve to Tailwind's default stack and still do.
