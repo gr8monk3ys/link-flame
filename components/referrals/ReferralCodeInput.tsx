@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Check, X, Loader2, Gift, Tag } from "lucide-react";
 import { toast } from "sonner";
+import { csrfHeaders, fetchCsrfToken } from "@/lib/csrf-client";
 
 interface ReferralCodeInputProps {
   onCodeApplied?: (code: string, discountPercent: number) => void;
@@ -43,11 +44,11 @@ export function ReferralCodeInput({
     setError(null);
 
     try {
+      // /api/referrals/validate checks the CSRF double-submit token (403 without it).
+      const csrfToken = await fetchCsrfToken();
       const response = await fetch("/api/referrals/validate", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: csrfHeaders(csrfToken, { "Content-Type": "application/json" }),
         body: JSON.stringify({ code: code.trim(), apply: false }),
       });
 

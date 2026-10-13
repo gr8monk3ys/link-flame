@@ -7,6 +7,7 @@ import { QuizProgress } from '@/components/quiz/QuizProgress';
 import { QuizQuestion } from '@/components/quiz/QuizQuestion';
 import { QuizResults } from '@/components/quiz/QuizResults';
 import { cn } from '@/lib/utils';
+import { csrfHeaders, fetchCsrfToken } from '@/lib/csrf-client';
 import { ArrowLeft, ArrowRight, Loader2, Leaf, Sparkles } from 'lucide-react';
 
 interface QuizOption {
@@ -119,9 +120,11 @@ export function QuizPageClient() {
     setError(null);
 
     try {
+      // /api/quiz/submit validates the CSRF double-submit token (403 without it).
+      const csrfToken = await fetchCsrfToken();
       const response = await fetch('/api/quiz/submit', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: csrfHeaders(csrfToken, { 'Content-Type': 'application/json' }),
         body: JSON.stringify({ responses: answers }),
       });
 

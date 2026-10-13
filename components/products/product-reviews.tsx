@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
 import { formatNumber, formatDate } from "@/lib/utils"
+import { csrfHeaders, fetchCsrfToken } from "@/lib/csrf-client"
 
 interface Review {
   id: string
@@ -89,11 +90,11 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
     setSubmitting(true)
 
     try {
+      // The reviews route validates the CSRF double-submit token (403 without it).
+      const csrfToken = await fetchCsrfToken()
       const response = await fetch(`/api/products/${productId}/reviews`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: csrfHeaders(csrfToken, { 'Content-Type': 'application/json' }),
         body: JSON.stringify({
           rating,
           comment: comment.trim() || undefined,

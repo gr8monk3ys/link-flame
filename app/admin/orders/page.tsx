@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Search, ExternalLink, Eye, Gift, RefreshCw } from 'lucide-react';
 import { formatPrice, formatDate } from "@/lib/utils";
+import { csrfHeaders, fetchCsrfToken } from "@/lib/csrf-client";
 
 interface Order {
   id: string;
@@ -34,12 +35,10 @@ const CARRIER_OPTIONS = [
   { value: 'Other', label: 'Other' },
 ];
 
-function getCsrfToken(): string | undefined {
-  return document.cookie
-    .split('; ')
-    .find((c) => c.startsWith('csrf_token='))
-    ?.split('=')[1];
-}
+// The CSRF token is fetched from /api/csrf per request: the `csrf_token`
+// cookie is HTTP-only (and holds the signed form, not the bare token), so
+// reading document.cookie here always came back empty and every PATCH and
+// refund POST answered 403.
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -103,15 +102,12 @@ export default function AdminOrdersPage() {
 
   async function updateShippingStatus(orderId: string, status: string) {
     try {
-      const csrfToken = getCsrfToken();
+      const csrfToken = await fetchCsrfToken();
       const tracking = trackingInputs[orderId];
 
       const res = await fetch(`/api/orders/${orderId}`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {}),
-        },
+        headers: csrfHeaders(csrfToken, { 'Content-Type': 'application/json' }),
         body: JSON.stringify({
           shippingStatus: status,
           ...(tracking?.trackingNumber
@@ -165,14 +161,11 @@ export default function AdminOrdersPage() {
     setRefundingOrderId(orderId);
 
     try {
-      const csrfToken = getCsrfToken();
+      const csrfToken = await fetchCsrfToken();
 
       const res = await fetch(`/api/orders/${orderId}/refund`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {}),
-        },
+        headers: csrfHeaders(csrfToken, { 'Content-Type': 'application/json' }),
       });
 
       if (res.ok) {
