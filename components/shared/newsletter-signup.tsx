@@ -3,6 +3,9 @@
 import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { buttonVariants } from "@/components/ui/button"
+import { apiErrorMessage, csrfHeaders, fetchCsrfToken } from "@/lib/csrf-client"
+
+const GENERIC_ERROR_MESSAGE = "Failed to subscribe. Please try again later."
 
 interface NewsletterSignupProps {
   title?: string
@@ -24,27 +27,31 @@ export function NewsletterSignup({
     setStatus("loading")
 
     try {
+      // /api/newsletter validates the CSRF double-submit token and answers 403
+      // without it. Fetched per submit, not on mount: this form sits in the
+      // footer of every page and must not add a request to every page load.
+      const csrfToken = await fetchCsrfToken()
       const response = await fetch("/api/newsletter", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: csrfHeaders(csrfToken, { "Content-Type": "application/json" }),
         body: JSON.stringify({ email }),
       })
 
-      const data = await response.json()
+      const data = await response.json().catch(() => null)
 
       if (response.ok) {
         setStatus("success")
-        setMessage(data.message)
+        // successResponse() puts the message under meta, not at the top level.
+        setMessage(data?.meta?.message || "Thanks for subscribing!")
         setEmail("")
       } else {
         setStatus("error")
-        setMessage(data.error)
+        // error is an object ({ message, code }); rendering it directly would throw.
+        setMessage(apiErrorMessage(data) ?? GENERIC_ERROR_MESSAGE)
       }
     } catch (error) {
       setStatus("error")
-      setMessage("Failed to subscribe. Please try again later.")
+      setMessage(error instanceof Error && error.message ? error.message : GENERIC_ERROR_MESSAGE)
     }
   }
 

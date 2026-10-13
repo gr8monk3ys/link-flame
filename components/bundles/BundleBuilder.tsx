@@ -9,6 +9,7 @@ import { BundleProductSelector } from "./BundleProductSelector"
 import { BundleSummary } from "./BundleSummary"
 import { toast } from "sonner"
 import { formatPrice } from "@/lib/utils"
+import { apiErrorMessage, csrfHeaders, fetchCsrfToken } from "@/lib/csrf-client"
 
 interface Product {
   id: string
@@ -104,18 +105,18 @@ export function BundleBuilder({ bundle }: BundleBuilderProps) {
     setIsAddingToCart(true)
 
     try {
+      // The route validates the CSRF double-submit token (403 without it).
+      const csrfToken = await fetchCsrfToken()
       const response = await fetch(`/api/bundles/${bundle.slug}/add-to-cart`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: csrfHeaders(csrfToken, { "Content-Type": "application/json" }),
         body: JSON.stringify({ selectedItems }),
       })
 
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to add bundle to cart")
+        throw new Error(apiErrorMessage(data) ?? "Failed to add bundle to cart")
       }
 
       toast.success(data.message || "Bundle added to cart!")

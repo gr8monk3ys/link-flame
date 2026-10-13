@@ -3,6 +3,7 @@ import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
 import type { CartItem } from '@/types/cart';
 import { storageGet, storageSet } from '@/lib/storage';
+import { fetchCsrfToken } from '@/lib/csrf-client';
 
 const SAVED_ITEMS_KEY = 'savedItems:v1';
 
@@ -23,20 +24,9 @@ export function useSavedItems() {
   const hasInitialized = useRef(false);
   const prevAuthStatus = useRef<string | null>(null);
 
-  const getCsrfToken = useCallback(async (): Promise<string> => {
-    const response = await fetch('/api/csrf');
-    if (!response.ok) {
-      throw new Error('Failed to get CSRF token');
-    }
-
-    const data = await response.json().catch(() => ({}));
-    const token = typeof data?.token === 'string' ? data.token : null;
-    if (!token) {
-      throw new Error('Failed to get CSRF token');
-    }
-
-    return token;
-  }, []);
+  // Same contract as before (resolves the token, throws when /api/csrf fails
+  // or returns none), now shared with every other mutating client.
+  const getCsrfToken = useCallback((): Promise<string> => fetchCsrfToken(), []);
 
   // Fetch saved items from the API
   const fetchSavedItems = useCallback(async () => {
