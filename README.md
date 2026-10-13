@@ -20,7 +20,9 @@ Product subscriptions, loyalty, referrals, gift cards, bundles, and wishlists
 stayed; they are all wired into the shop.
 
 Stack: Next.js 16 (App Router, React 19), PostgreSQL on Neon via Prisma,
-NextAuth v5 (split Edge/Node config), Stripe checkout + webhooks, Tailwind v3.
+NextAuth v5 (split Edge/Node config), Stripe checkout + webhooks, Tailwind v4
+(`styles/globals.css` holds the whole theme under `@theme inline`; there is no
+`tailwind.config.js`).
 Package manager is npm; CI, Vercel, and the Dockerfile all run `npm ci`.
 
 ## Run

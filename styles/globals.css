@@ -1,6 +1,144 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+/* tw-animate-css is the CSS-only port of the tailwindcss-animate plugin; the
+   Radix primitives in components/ui/* use its class names unchanged. */
+@import "tw-animate-css";
+/* v3's palette values for the raw text-green-700 / from-emerald-50 / ...
+   utilities still in the tree; see the note in that file. */
+@import "./tailwind-v3-palette.css";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+/* The v3 `container` (centred, 2rem padding, 1400px from the 2xl screen)
+   reconciled with the `.container { @apply mx-auto px-4 sm:px-6 lg:px-8
+   max-w-7xl }` base rule that used to sit below it. In v3 the component layer's
+   unconditional 2rem padding overrode the base rule's responsive padding, and
+   the base rule's max-w-7xl was the cap until the 1400px screen; these are
+   those computed values. v4's core container steps max-width up at every
+   breakpoint, which v3's did not, so the sm+ block pins it back to 80rem. */
+@utility container {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 2rem;
+  max-width: 80rem;
+  @media (width >= --theme(--breakpoint-sm)) {
+    max-width: 80rem;
+  }
+  @media (width >= 1400px) {
+    max-width: 1400px;
+  }
+}
+
+/* Theme tokens. The colour values stay as bare HSL triplets on :root / .dark
+   below (so utilities can add alpha, `bg-primary/10`), and @theme maps them
+   onto Tailwind's utility names.
+
+   `inline` matters: every colour here is hsl(var(--x)), and --x is swapped by
+   the .dark class. Without `inline` Tailwind would emit
+   `--color-primary: hsl(var(--primary))` on :root, resolve var(--primary)
+   there once, and every utility would inherit the light value under .dark.
+   With `inline` utilities carry `hsl(var(--primary))` themselves and resolve
+   it on the element.
+
+   Never define --spacing-xs/sm/md/lg/xl/2xl here: in Tailwind v4 they generate
+   spacing-suffixed utilities (max-w-2xl, w-lg, ...) that shadow the container
+   scale and silently collapse layouts. */
+@theme inline {
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  /* The variables come from next/font in lib/fonts.ts; the stacks behind them
+     are the ones tailwind.config.js used to append. */
+  --font-sans:
+    var(--font-sans), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-serif: var(--font-serif), Georgia, serif;
+
+  --shadow-warm-sm: 0 1px 2px 0 rgba(120, 85, 40, 0.05);
+  --shadow-warm:
+    0 1px 3px 0 rgba(120, 85, 40, 0.08), 0 1px 2px -1px rgba(120, 85, 40, 0.08);
+  --shadow-warm-md:
+    0 4px 6px -1px rgba(120, 85, 40, 0.08),
+    0 2px 4px -2px rgba(120, 85, 40, 0.06);
+  --shadow-warm-lg:
+    0 10px 15px -3px rgba(120, 85, 40, 0.08),
+    0 4px 6px -4px rgba(120, 85, 40, 0.06);
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+}
+
+/* Tailwind v3 preflight defaults that v4 changed, kept so nothing moves:
+   - border-color defaulted to --border (through the old `* { @apply
+     border-border }`); v4 defaults to currentColor. Every bare `border` in the
+     app was written against the old default.
+   - placeholders were gray-400 (#9ca3af); v4 uses currentColor at 50%. Sixty
+     inputs set `placeholder=` without a `placeholder:` utility.
+   - buttons had `cursor: pointer`; v4 uses the platform default. */
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: hsl(var(--border));
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #9ca3af;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
 
 @layer base {
   :root {
@@ -63,9 +201,6 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
   body {
     @apply bg-background text-foreground;
   }
@@ -73,7 +208,7 @@
     @apply scroll-m-20 text-balance text-4xl font-semibold tracking-normal font-serif lg:text-5xl;
   }
   h2 {
-    @apply scroll-m-20 text-balance pb-2 text-3xl font-semibold tracking-normal font-serif first:mt-0;
+    @apply scroll-m-20 text-balance pb-2 text-3xl font-semibold tracking-normal font-serif;
   }
   h3 {
     @apply scroll-m-20 text-balance text-2xl font-semibold tracking-tight;
@@ -82,10 +217,28 @@
     @apply scroll-m-20 text-balance text-xl font-semibold tracking-tight;
   }
   p {
-    @apply leading-relaxed [&:not(:first-child)]:mt-6;
+    /* `line-height` as a plain declaration, not `@apply leading-relaxed`: in
+       v4 the utility also sets --tw-leading, which text-sm/text-lg/... read
+       through var(--tw-leading, ...), so a `<p class="text-sm">` would have
+       grown from 20px to 22.75px lines. v3's base rule was this declaration. */
+    line-height: 1.625;
   }
-  .container {
-    @apply mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl;
+}
+
+/* The two base rules that out-rank a single-class utility. In v3 these sat
+   in the base layer as `p { [&:not(:first-child)]:mt-6 }` and
+   `h2 { first:mt-0 }`, but v3 had no cascade layers, so their (0,1,1)
+   specificity beat `mt-1` (0,1,0) on the same element and lost to
+   `space-y-N > :not([hidden]) ~ :not([hidden])` (0,3,0). v4 puts base below
+   utilities, where `mt-1` would win and every helper paragraph would move
+   up. Declared in the utilities layer they rank by specificity again,
+   exactly as before. */
+@layer utilities {
+  p:not(:first-child) {
+    margin-top: 1.5rem;
+  }
+  h2:first-child {
+    margin-top: 0;
   }
 }
 
@@ -125,10 +278,60 @@
   }
 }
 
+/* v3's space-x / space-y. v4 puts the gap on the margin-end of every child but
+   the last (`> :not(:last-child)`); v3 put it on the margin-start of every
+   child but the first (`> :not([hidden]) ~ :not([hidden])`). The two are not
+   the same here: the `p:not(:first-child)` rule above kept its 24px when the
+   paragraph was the last child, and an inline <label> before an <input>
+   ignores a vertical margin, so form fields closed up. Both rules together
+   restore the v3 output: the @utility blocks carry v3's margin-start rule at
+   v3's specificity (0,3,0), and the @layer block below zeroes v4's margin-end
+   at zero specificity, so a child's own mb-N or mr-N still wins as it did.
+   Negative `-space-*` (two sites, both flex rows where either margin gives the
+   same geometry) stay on v4's rule. Remove this when the call sites move to
+   `gap`. */
+@utility space-x-* {
+  & > :not([hidden]) ~ :not([hidden]) {
+    --tw-space-x-reverse: 0;
+    margin-right: calc(--spacing(--value(number)) * var(--tw-space-x-reverse));
+    margin-right: calc(--value([length]) * var(--tw-space-x-reverse));
+    margin-left: calc(--spacing(--value(number)) * calc(1 - var(--tw-space-x-reverse)));
+    margin-left: calc(--value([length]) * calc(1 - var(--tw-space-x-reverse)));
+  }
+}
+
+@utility space-y-* {
+  & > :not([hidden]) ~ :not([hidden]) {
+    --tw-space-y-reverse: 0;
+    margin-top: calc(--spacing(--value(number)) * calc(1 - var(--tw-space-y-reverse)));
+    margin-top: calc(--value([length]) * calc(1 - var(--tw-space-y-reverse)));
+    margin-bottom: calc(--spacing(--value(number)) * var(--tw-space-y-reverse));
+    margin-bottom: calc(--value([length]) * var(--tw-space-y-reverse));
+  }
+}
+
+@layer utilities {
+  :where([class*="space-x-"]:not([class*="-space-x-"]) > :not(:last-child)) {
+    margin-inline-end: 0;
+  }
+  :where([class*="space-y-"]:not([class*="-space-y-"]) > :not(:last-child)) {
+    margin-block-end: 0;
+  }
+}
+
+/* Custom classes, as plain rules outside every layer with the declarations
+   they had under v3 (modulo the codemod's spellings). They are deliberately
+   not @utility blocks: an @utility lands in the utilities layer, sorted among
+   the core utilities, and a call site such as the home-page CTA
+   (`modern-button` on a `size="lg"` Button) would then take the Button's
+   `px-8` instead of the class's `px-4`. Unlayered rules beat every layer, as
+   the old post-utilities rules did. v4 compiles `@apply` with variants here
+   unchanged. */
+
 /* Enhanced Card Hover Effects */
 .hover-card-effect {
   @apply transition-[box-shadow,transform] duration-300 hover:shadow-warm-md hover:-translate-y-0.5 relative
-  before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-r before:from-primary/10 before:to-accent/5
+  before:absolute before:inset-0 before:rounded-xl before:bg-linear-to-r before:from-primary/10 before:to-accent/5
   before:opacity-0 before:transition-opacity hover:before:opacity-100;
 }
 
@@ -140,9 +343,9 @@
 /* Enhanced Modern Button Styles */
 .modern-button {
   @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition duration-300
-  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50
+  focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50
   hover:bg-primary/90 active:scale-[0.98] hover:shadow-warm-md relative overflow-hidden
-  before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent
+  before:absolute before:inset-0 before:bg-linear-to-r before:from-transparent before:via-white/10 before:to-transparent
   before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-1000;
 }
 
@@ -178,12 +381,13 @@
 
 /* Enhanced Animated Underline */
 .animated-underline {
-  @apply relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 
-  after:bg-gradient-to-r after:from-primary after:to-primary/60 after:transition-transform after:duration-300 
+  @apply relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0
+  after:bg-linear-to-r after:from-primary after:to-primary/60 after:transition-transform after:duration-300
   hover:after:origin-bottom-left hover:after:scale-x-100;
 }
 
-/* New: Fade In Animation */
+/* New: Fade In Animation. tw-animate-css also defines `fade-in` (it sets the
+   enter-animation opacity); both definitions apply, as they did in v3. */
 .fade-in {
   @apply animate-[fadeIn_0.5s_ease-in-out];
 }
@@ -200,13 +404,13 @@
 
 /* New: Pulse Effect */
 .pulse-effect {
-  @apply animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite];
+  @apply animate-pulse;
 }
 
 /* New: Shimmer Effect */
 .shimmer {
   @apply relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full
-  before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent 
+  before:animate-[shimmer_2s_infinite] before:bg-linear-to-r before:from-transparent
   before:via-white/10 before:to-transparent;
 }
 
@@ -217,30 +421,30 @@
 
 /* New: Highlight Effect */
 .highlight-effect {
-  @apply relative after:absolute after:bottom-0 after:left-0 after:h-1/2 after:w-full 
+  @apply relative after:absolute after:bottom-0 after:left-0 after:h-1/2 after:w-full
   after:bg-primary/10 after:transition-transform after:duration-300 hover:after:scale-105;
 }
 
 /* New: Card Flip Effect */
 .card-flip-container {
-  @apply relative [perspective:1000px];
+  @apply relative perspective-[1000px];
 }
 
 .card-flip {
-  @apply relative w-full h-full transition-transform duration-500 [transform-style:preserve-3d];
+  @apply relative w-full h-full transition-transform duration-500 transform-3d;
 }
 
 .card-flip:hover {
-  @apply [transform:rotateY(180deg)];
+  @apply transform-[rotateY(180deg)];
 }
 
 .card-flip-front,
 .card-flip-back {
-  @apply absolute w-full h-full [backface-visibility:hidden];
+  @apply absolute w-full h-full backface-hidden;
 }
 
 .card-flip-back {
-  @apply [transform:rotateY(180deg)];
+  @apply transform-[rotateY(180deg)];
 }
 
 /* New: Loading Spinner */
@@ -276,7 +480,7 @@
 
 /* New: Custom Scrollbar */
 .custom-scrollbar {
-  @apply [scrollbar-width:thin];
+  @apply scrollbar-thin;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -293,7 +497,7 @@
 
 /* New: Focus Ring */
 .focus-ring {
-  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
+  @apply focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
   focus-visible:ring-offset-background transition-shadow duration-300;
 }
 
@@ -312,8 +516,8 @@
 
 /* New: Input Focus Effect */
 .input-focus-effect {
-  @apply transition-[border-color,box-shadow] duration-300 border-border focus-visible:border-primary focus-visible:ring-2 
-  focus-visible:ring-primary/20 focus-visible:outline-none;
+  @apply transition-[border-color,box-shadow] duration-300 border-border focus-visible:border-primary focus-visible:ring-2
+  focus-visible:ring-primary/20 focus-visible:outline-hidden;
 }
 
 /* New: Tag Cloud */
@@ -332,14 +536,14 @@
 }
 
 .content-section::before {
-  @apply absolute inset-0 bg-gradient-to-b from-background/50 to-background
+  @apply absolute inset-0 bg-linear-to-b from-background/50 to-background
   pointer-events-none content-[''];
 }
 
 /* New: Hero Section */
 .hero-section {
   @apply relative min-h-[60vh] flex items-center justify-center overflow-hidden
-  bg-gradient-to-b from-primary/5 to-background;
+  bg-linear-to-b from-primary/5 to-background;
 }
 
 /* New: Feature Grid */
@@ -354,12 +558,12 @@
 
 /* New: Testimonial Card */
 .testimonial-card {
-  @apply p-6 rounded-xl bg-background shadow-sm hover:shadow-md
+  @apply p-6 rounded-xl bg-background shadow-xs hover:shadow-md
   transition-shadow duration-300 relative overflow-hidden;
 }
 
 .testimonial-card::before {
-  @apply absolute top-0 left-0 w-full h-1 bg-gradient-to-r
+  @apply absolute top-0 left-0 w-full h-1 bg-linear-to-r
   from-primary/50 to-primary content-[''];
 }
 
@@ -378,8 +582,8 @@
    control stays - wearing the same tokens as every other field instead of the
    browser's default chrome. */
 .date-field {
-  @apply h-10 w-full rounded-md border border-border bg-background px-3 text-sm shadow-sm
-  transition-colors focus-visible:border-primary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring;
+  @apply h-10 w-full rounded-md border border-border bg-background px-3 text-sm shadow-xs
+  transition-colors focus-visible:border-primary focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring;
   color-scheme: light;
 }
 

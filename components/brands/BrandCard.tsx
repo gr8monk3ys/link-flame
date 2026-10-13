@@ -93,7 +93,7 @@ export function BrandCard({ brand, variant = 'default', className }: BrandCardPr
         )}
       >
         {/* Logo Header */}
-        <div className="relative aspect-[16/9] bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-950/40 dark:to-emerald-900/30">
+        <div className="relative aspect-video bg-linear-to-br from-green-50 to-emerald-100 dark:from-green-950/40 dark:to-emerald-900/30">
           {brand.logo ? (
             <Image
               src={brand.logo}

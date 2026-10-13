@@ -57,7 +57,7 @@ export function AnnouncementBar({ className }: { className?: string }) {
       <div
         data-announcement-bar=""
         className={cn(
-          "border-b border-emerald-900/10 bg-gradient-to-r from-emerald-700 to-green-700 text-white",
+          "border-b border-emerald-900/10 bg-linear-to-r from-emerald-700 to-green-700 text-white",
           className
         )}
         role="region"
@@ -94,7 +94,7 @@ export function AnnouncementBar({ className }: { className?: string }) {
           <button
             type="button"
             onClick={onDismiss}
-            className="rounded-md px-2 py-1 text-white/90 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+            className="rounded-md px-2 py-1 text-white/90 hover:bg-white/10 hover:text-white focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-white/50"
             aria-label="Dismiss announcement"
           >
             <span aria-hidden>×</span>

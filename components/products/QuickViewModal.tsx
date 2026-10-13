@@ -90,7 +90,7 @@ function ImageGallery({
             <button
               type="button"
               onClick={handlePrevious}
-              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-card/80 p-2 shadow-md transition-colors hover:bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-card/80 p-2 shadow-md transition-colors hover:bg-card focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
               aria-label="Previous image"
             >
               <ChevronLeft className="size-4" />
@@ -98,7 +98,7 @@ function ImageGallery({
             <button
               type="button"
               onClick={handleNext}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-card/80 p-2 shadow-md transition-colors hover:bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-card/80 p-2 shadow-md transition-colors hover:bg-card focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
               aria-label="Next image"
             >
               <ChevronRight className="size-4" />
@@ -189,7 +189,7 @@ function QuantitySelector({
           }
         }}
         disabled={disabled}
-        className="h-9 w-14 rounded-md border text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+        className="h-9 w-14 rounded-md border text-center focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
         aria-label="Quantity"
       />
       <Button
@@ -399,7 +399,7 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
         {/* Overlay */}
         <DialogPrimitive.Overlay
           className={cn(
-            "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm",
+            "fixed inset-0 z-50 bg-black/60 backdrop-blur-xs",
             "data-[state=open]:animate-in data-[state=closed]:animate-out",
             "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
           )}
@@ -409,7 +409,7 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
         <DialogPrimitive.Content
           className={cn(
             // Base styles
-            "fixed z-50 bg-background shadow-xl focus-visible:outline-none",
+            "fixed z-50 bg-background shadow-xl focus-visible:outline-hidden",
             // Desktop: Centered modal
             "sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2",
             "sm:w-[95vw] sm:max-w-4xl",
@@ -442,7 +442,7 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
             className={cn(
               "absolute right-4 top-4 z-10 rounded-full bg-card/90 p-2 shadow-md",
               "transition-colors hover:bg-muted",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             )}
             aria-label="Close quick view"
           >
@@ -594,7 +594,7 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
                   <Link
                     href={`/products/${product.id}`}
                     onClick={() => onOpenChange(false)}
-                    className="inline-flex items-center rounded text-sm font-medium text-green-700 hover:text-green-800 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 dark:text-green-400"
+                    className="inline-flex items-center rounded text-sm font-medium text-green-700 hover:text-green-800 hover:underline focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 dark:text-green-400"
                   >
                     <Eye className="mr-2 size-4" />
                     View Full Details

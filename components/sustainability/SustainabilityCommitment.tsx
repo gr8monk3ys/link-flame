@@ -179,7 +179,7 @@ export function SustainabilityCommitment({
           {commitments.map((commitment) => (
             <div
               key={commitment.title}
-              className="group rounded-xl border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
+              className="group rounded-xl border bg-card p-6 shadow-xs transition-shadow hover:shadow-md"
             >
               <div className={cn(
                 "mb-4 inline-flex size-12 items-center justify-center rounded-lg",
@@ -200,7 +200,7 @@ export function SustainabilityCommitment({
         <div className="mt-10 text-center">
           <Link
             href="/sustainability"
-            className="inline-flex items-center gap-2 rounded-lg bg-green-700 px-6 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-green-800 dark:bg-green-700 dark:hover:bg-green-700"
+            className="inline-flex items-center gap-2 rounded-lg bg-green-700 px-6 py-3 text-sm font-medium text-white shadow-xs transition-colors hover:bg-green-800 dark:bg-green-700 dark:hover:bg-green-700"
           >
             Learn About Our Impact
             <svg aria-hidden="true" className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -217,7 +217,7 @@ export function SustainabilityCommitment({
 export function SustainabilityBanner({ className }: { className?: string }) {
   return (
     <div className={cn(
-      "bg-gradient-to-r from-green-700 to-emerald-700 text-white",
+      "bg-linear-to-r from-green-700 to-emerald-700 text-white",
       className
     )}>
       <div className="container mx-auto px-4 py-3">

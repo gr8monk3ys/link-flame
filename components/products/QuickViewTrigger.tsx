@@ -218,12 +218,12 @@ export function QuickViewTrigger({
         className={cn(
           // Base styles
           "group relative flex items-center justify-center rounded-full",
-          "bg-card/90 shadow-md backdrop-blur-sm",
+          "bg-card/90 shadow-md backdrop-blur-xs",
           "border border-border",
           "transition-[transform,opacity,background-color,box-shadow] duration-200 ease-in-out",
           // Hover/Focus states
           "hover:scale-105 hover:bg-card hover:shadow-lg",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+          "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
           // Active state
           "active:scale-95",
           // Visibility transition

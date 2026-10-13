@@ -71,7 +71,7 @@ export function ReferralShareCard({
   }
 
   return (
-    <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10">
+    <Card className="border-primary/20 bg-linear-to-br from-primary/5 to-primary/10">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Share2 className="size-5" />

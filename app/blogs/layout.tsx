@@ -25,7 +25,7 @@ export default function BlogLayout({
           <TagCloud />
 
           {/* Popular Categories */}
-          <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+          <div className="rounded-lg border bg-card text-card-foreground shadow-xs">
             <div className="p-6">
               <h2 className="mb-4 text-base font-semibold">Popular Categories</h2>
               <ul className="space-y-2">
@@ -78,7 +78,7 @@ async function FeaturedProducts() {
   return (
     <>
       {featuredProducts.length > 0 && (
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+        <div className="rounded-lg border bg-card text-card-foreground shadow-xs">
           <div className="p-6">
             <h2 className="mb-4 text-base font-semibold">From the Shop</h2>
             <ul className="space-y-4">

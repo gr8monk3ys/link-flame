@@ -211,7 +211,7 @@ function ProductCard({
       </div>
       <div className="mt-4 space-y-2">
         <div className="flex justify-between gap-2">
-          <h3 className="min-w-0 break-words text-sm text-foreground">
+          <h3 className="min-w-0 wrap-break-word text-sm text-foreground">
             <Link href={`/products/${product.id}`}>
               <span aria-hidden="true" className="absolute inset-0" />
               {product.title}
@@ -315,7 +315,7 @@ function ProductPagination({
               </option>
             ))}
           </select>
-          <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm">
+          <nav className="isolate inline-flex -space-x-px rounded-md shadow-xs">
             <button
               onClick={() => onPageChange(1)}
               disabled={currentPage === 1}
@@ -345,7 +345,7 @@ function ProductPagination({
                     onClick={() => onPageChange(page)}
                     className={`relative inline-flex items-center p-2 text-sm font-semibold ${
                       page === currentPage
-                        ? 'z-10 bg-primary text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600'
+                        ? 'z-10 bg-primary text-white focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600'
                         : 'text-foreground ring-1 ring-inset ring-border hover:bg-muted/50 focus:z-20 focus:outline-offset-0'
                     }`}
                   >

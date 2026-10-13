@@ -119,7 +119,7 @@ export function ImpactShareCard({ metrics, onClose }: ImpactShareCardProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center overscroll-contain bg-black/50 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center overscroll-contain bg-black/50 p-4 backdrop-blur-xs"
       onClick={onClose}
     >
       <div
@@ -141,7 +141,7 @@ export function ImpactShareCard({ metrics, onClose }: ImpactShareCardProps) {
         {/* Share Card Preview */}
         <div
           ref={cardRef}
-          className="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 p-8 dark:from-green-950 dark:via-emerald-950 dark:to-teal-950"
+          className="bg-linear-to-br from-green-50 via-emerald-50 to-teal-50 p-8 dark:from-green-950 dark:via-emerald-950 dark:to-teal-950"
         >
           {/* Header */}
           <div className="mb-6 text-center">

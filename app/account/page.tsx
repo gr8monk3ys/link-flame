@@ -111,7 +111,7 @@ export default function AccountPage() {
               )}
             </div>
             <div className="min-w-0">
-              <CardTitle as="h1" className="break-words text-2xl">
+              <CardTitle as="h1" className="wrap-break-word text-2xl">
                 Welcome, {session.user?.name || "User"}
               </CardTitle>
               <CardDescription className="break-all text-base">

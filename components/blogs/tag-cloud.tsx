@@ -19,7 +19,7 @@ export async function TagCloud() {
   if (tags.length === 0) return null
 
   return (
-    <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+    <div className="rounded-lg border bg-card text-card-foreground shadow-xs">
       <div className="p-6">
         <h3 className="mb-4 font-semibold">Popular Topics</h3>
         <div className="flex flex-wrap gap-2">

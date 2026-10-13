@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Link Flame: an eco-friendly e-commerce storefront + blog. Next.js 16 (App Router, React 19), PostgreSQL via Neon + Prisma, NextAuth v5, Stripe, Tailwind v3 (not v4). Live at https://link-flame-rouge.vercel.app (also https://link-flame.vivancedata.com). Public repo: everything committed is public. Package manager is npm (`package-lock.json`); CI, Vercel, and the Dockerfile all use `npm ci`.
+Link Flame: an eco-friendly e-commerce storefront + blog. Next.js 16 (App Router, React 19), PostgreSQL via Neon + Prisma, NextAuth v5, Stripe, Tailwind v4 (CSS-first: no `tailwind.config.js`). Live at https://link-flame-rouge.vercel.app (also https://link-flame.vivancedata.com). Public repo: everything committed is public. Package manager is npm (`package-lock.json`); CI, Vercel, and the Dockerfile all use `npm ci`.
 
 ## Run / test
 
@@ -36,7 +36,7 @@ Commits follow Conventional Commits (`feat:`, `fix:`, `perf:`, `build:`, `chore:
 - `lib/auth.ts` (`getServerAuth`, `requireRole`), `lib/csrf.ts`, `lib/api-response.ts`, `lib/env.ts` (Zod; warns, never throws at build), `lib/session.ts` (30-day guest cart cookie), `lib/providers/CartProvider.tsx`, `lib/rate-limit.ts` (Upstash when configured, in-memory otherwise), `lib/safe-redirect.ts` (the only accepted `callbackUrl` shapes).
 - API routes in `app/api/*`; each exports `dynamic = 'force-dynamic'` or the Vercel build tries to prerender it without a DB.
 - `prisma/schema.prisma` (Postgres, money is `@db.Decimal(10,2)`), `prisma/seed.ts`, migrations in `prisma/migrations/`. `prisma/migrations_legacy_sqlite/` is history only.
-- Styling: HSL tokens in `styles/globals.css`, fonts in `lib/fonts.ts`, `cn()` in `lib/utils.ts`. `DESIGN.md` is the design system; read it before touching a className.
+- Styling: Tailwind v4. `styles/globals.css` is the whole theme: `@import "tailwindcss"`, the HSL tokens on `:root`/`.dark`, and `@theme inline` mapping them onto utility names (`--color-*`, `--radius-*`, `--font-*`, `--shadow-warm-*`); there is no `tailwind.config.js`. `@theme inline` is required so `hsl(var(--x))` resolves per element and `.dark` works; never define `--spacing-*` tokens there (they shadow `max-w-*`). Custom classes are `@utility` blocks. `tests/unit/tailwind-v4-renames.test.ts` rejects v3-only spellings (`outline-none`, `bg-gradient-to-*`, `variant="outline-solid"`, ...). Fonts in `lib/fonts.ts`, `cn()` in `lib/utils.ts` (`tailwind-merge` 3). `DESIGN.md` is the design system; read it before touching a className.
 
 ## Gotchas
 

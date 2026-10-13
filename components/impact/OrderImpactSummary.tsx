@@ -97,7 +97,7 @@ export function OrderImpactSummary({
   }
 
   return (
-    <Card className={cn("border-green-200 bg-gradient-to-br from-green-50 to-emerald-50 dark:border-green-800 dark:from-green-950 dark:to-emerald-950", className)}>
+    <Card className={cn("border-green-200 bg-linear-to-br from-green-50 to-emerald-50 dark:border-green-800 dark:from-green-950 dark:to-emerald-950", className)}>
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 text-green-800 dark:text-green-200">
           <Sparkles className="size-5" />

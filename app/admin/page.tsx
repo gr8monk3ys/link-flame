@@ -23,7 +23,7 @@ interface StatCardProps {
 
 function StatCard({ title, value, change, icon, trend }: StatCardProps) {
   return (
-    <div className="rounded-lg bg-card p-6 shadow">
+    <div className="rounded-lg bg-card p-6 shadow-sm">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-muted-foreground">{title}</p>
@@ -124,7 +124,7 @@ export default async function AdminDashboard() {
 
       {/* Additional Stats */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <div className="rounded-lg bg-card p-6 shadow">
+        <div className="rounded-lg bg-card p-6 shadow-sm">
           <h2 className="mb-4 text-lg font-semibold text-foreground">
             Average Order Value
           </h2>
@@ -132,7 +132,7 @@ export default async function AdminDashboard() {
             {formatPrice(avgOrderValue)}
           </p>
         </div>
-        <div className="rounded-lg bg-card p-6 shadow">
+        <div className="rounded-lg bg-card p-6 shadow-sm">
           <h2 className="mb-4 text-lg font-semibold text-foreground">
             Blog Posts
           </h2>
@@ -141,7 +141,7 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Recent Orders */}
-      <div className="rounded-lg bg-card shadow">
+      <div className="rounded-lg bg-card shadow-sm">
         <div className="border-b border-border px-6 py-4">
           <h2 className="text-lg font-semibold text-foreground">Recent Orders</h2>
         </div>

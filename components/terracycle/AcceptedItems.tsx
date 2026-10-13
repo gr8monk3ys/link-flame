@@ -182,7 +182,7 @@ export function AcceptedItems({ className }: AcceptedItemsProps) {
           {acceptedCategories.map((category) => (
             <div
               key={category.name}
-              className="rounded-xl border bg-card p-6 shadow-sm"
+              className="rounded-xl border bg-card p-6 shadow-xs"
             >
               {/* Category Header */}
               <div className="mb-4 flex items-center gap-3">

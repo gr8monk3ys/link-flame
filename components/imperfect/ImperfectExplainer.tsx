@@ -14,7 +14,7 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
     return (
       <div
         className={cn(
-          'rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 p-6 dark:border-amber-900/50 dark:from-amber-950/40 dark:to-orange-950/40',
+          'rounded-2xl border border-amber-200 bg-linear-to-br from-amber-50 to-orange-50 p-6 dark:border-amber-900/50 dark:from-amber-950/40 dark:to-orange-950/40',
           className
         )}
       >
@@ -133,7 +133,7 @@ export function ImperfectExplainer({ variant = 'full', className }: ImperfectExp
       </div>
 
       {/* Environmental impact */}
-      <div className="mt-16 rounded-3xl bg-gradient-to-br from-green-50 to-emerald-50 p-8 dark:from-green-950/40 dark:to-emerald-950/40 md:p-12">
+      <div className="mt-16 rounded-3xl bg-linear-to-br from-green-50 to-emerald-50 p-8 dark:from-green-950/40 dark:to-emerald-950/40 md:p-12">
         <div className="mb-10 text-center">
           <h3 className="text-2xl font-bold text-green-900 dark:text-green-50">
             Your Impact

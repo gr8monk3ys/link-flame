@@ -129,7 +129,7 @@ export function ValueFilterSidebar({
             type="button"
             onClick={() => setExpanded((v) => !v)}
             aria-expanded={expanded}
-            className="flex flex-1 items-center justify-between gap-2 rounded-sm text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="flex flex-1 items-center justify-between gap-2 rounded-sm text-left focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
           >
             <h3 className="text-sm font-semibold text-foreground">{title}</h3>
             <span className={cn('inline-flex transition-transform', expanded && 'rotate-180')}><svg aria-hidden="true" className="size-4 text-muted-foreground"

@@ -88,7 +88,7 @@ export function PlasticFreeTag({
     return (
       <div
         className={cn(
-          "absolute -right-8 top-4 rotate-45 bg-green-700 text-center font-semibold leading-tight text-white shadow-sm",
+          "absolute -right-8 top-4 rotate-45 bg-green-700 text-center font-semibold leading-tight text-white shadow-xs",
           config.corner,
           className
         )}

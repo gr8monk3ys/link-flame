@@ -44,7 +44,7 @@ export default async function CategoryPage({ params }: PageProps<{ category: str
     <div className="container py-10">
       <div className="mb-8 flex max-w-[980px] flex-col items-start gap-2">
         <div className="flex items-center gap-2">
-          <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
+          <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl md:leading-10">
             {decodedCategory}
           </h1>
           <span className="text-lg text-muted-foreground">
