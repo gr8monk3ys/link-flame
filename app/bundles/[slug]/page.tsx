@@ -2,6 +2,7 @@ import { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import { BundleBuilder } from "@/components/bundles/BundleBuilder"
+import { cache } from 'react'
 
 // Render at request time — DB not available during Vercel build
 export const dynamic = 'force-dynamic';
@@ -10,7 +11,7 @@ interface BundlePageProps {
   params: Promise<{ slug: string }>
 }
 
-async function getBundle(slug: string) {
+const getBundle = cache(async (slug: string) => {
   const bundle = await prisma.bundle.findUnique({
     where: { slug, isActive: true },
     include: {
@@ -100,7 +101,7 @@ async function getBundle(slug: string) {
       discountPercent: bundle.discountPercent,
     },
   }
-}
+})
 
 export async function generateMetadata({
   params,

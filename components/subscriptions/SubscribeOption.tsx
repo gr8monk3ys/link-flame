@@ -10,7 +10,7 @@ import {
   calculateSavings,
   getDiscountForFrequency,
 } from '@/lib/subscriptions';
-import { cn } from '@/lib/utils';
+import { cn, formatPrice } from '@/lib/utils';
 
 interface SubscribeOptionProps {
   originalPrice: number;
@@ -69,7 +69,7 @@ export function SubscribeOption({
           onChange={handleSubscriptionToggle}
           className={cn(
             isSubscription ? 'bg-green-700' : 'bg-muted',
-            'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2'
+            'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
           )}
         >
           <span className="sr-only">Enable subscription</span>
@@ -86,14 +86,14 @@ export function SubscribeOption({
       {/* Purchase options */}
       <div className="mt-4 space-y-3">
         {/* One-time purchase option */}
-        <button
+        <button aria-pressed={!isSubscription}
           type="button"
           onClick={() => handleSubscriptionToggle(false)}
           className={cn(
             !isSubscription
               ? 'border-green-600 bg-card ring-2 ring-green-600'
-              : 'border-border bg-card hover:border-border',
-            'relative flex w-full cursor-pointer items-center justify-between rounded-lg border p-3 focus:outline-none'
+              : 'border-border bg-card hover:border-primary/40',
+            'relative flex w-full cursor-pointer items-center justify-between rounded-lg border p-3 focus-visible:outline-none'
           )}
         >
           <div className="flex items-center">
@@ -103,19 +103,19 @@ export function SubscribeOption({
             <span className="text-sm font-medium text-foreground">One-time purchase</span>
           </div>
           <span className="text-sm font-semibold text-foreground">
-            ${originalPrice.toFixed(2)}
+            {formatPrice(originalPrice)}
           </span>
         </button>
 
         {/* Subscription option */}
-        <button
+        <button aria-pressed={isSubscription}
           type="button"
           onClick={() => handleSubscriptionToggle(true)}
           className={cn(
             isSubscription
               ? 'border-green-600 bg-green-50 ring-2 ring-green-600 dark:bg-green-950/40'
-              : 'border-border bg-card hover:border-border',
-            'relative flex w-full cursor-pointer flex-col rounded-lg border p-3 focus:outline-none'
+              : 'border-border bg-card hover:border-primary/40',
+            'relative flex w-full cursor-pointer flex-col rounded-lg border p-3 focus-visible:outline-none'
           )}
         >
           <div className="flex w-full items-center justify-between">
@@ -130,10 +130,10 @@ export function SubscribeOption({
             </div>
             <div className="text-right">
               <span className="text-sm font-semibold text-green-700 dark:text-green-400">
-                ${discountedPrice.toFixed(2)}
+                {formatPrice(discountedPrice)}
               </span>
               <span className="ml-1 text-xs text-muted-foreground line-through">
-                ${originalPrice.toFixed(2)}
+                {formatPrice(originalPrice)}
               </span>
             </div>
           </div>
@@ -141,7 +141,7 @@ export function SubscribeOption({
             <div className="mt-1 flex items-center text-xs text-green-700 dark:text-green-300">
               <CalendarDays className="mr-1 size-4" />
               <span>
-                You save ${savings.toFixed(2)} per delivery
+                You save {formatPrice(savings)} per delivery
               </span>
             </div>
           )}

@@ -2,12 +2,12 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { format } from "date-fns";
 import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Package, Truck, CheckCircle, Clock, XCircle, Gift } from "lucide-react";
+import { formatPrice, formatDate } from "@/lib/utils";
 
 interface OrderWithTracking {
   id: string;
@@ -87,7 +87,7 @@ export default function OrdersPage() {
       }
       const response = await fetch(`/api/orders?${params.toString()}`);
       if (!response.ok) {
-        throw new Error("Failed to fetch orders");
+        throw new Error("Couldn’t load your orders. Refresh the page to try again.");
       }
       const data = await response.json();
       setOrders(data.data || []);
@@ -105,7 +105,7 @@ export default function OrdersPage() {
   }, [isLoaded, isSignedIn, fetchOrders]);
 
   if (!isLoaded) {
-    return <div className="container py-10">Loading...</div>;
+    return <div className="container py-10" role="status">Loading…</div>;
   }
 
   if (!isSignedIn) {
@@ -113,7 +113,7 @@ export default function OrdersPage() {
       <div className="container py-10">
         <Card>
           <CardHeader>
-            <CardTitle>Sign In Required</CardTitle>
+            <CardTitle as="h1">Sign In Required</CardTitle>
             <CardDescription>
               Please sign in to view your order history.
             </CardDescription>
@@ -124,7 +124,7 @@ export default function OrdersPage() {
   }
 
   if (loading) {
-    return <div className="container py-10">Loading orders...</div>;
+    return <div className="container py-10" role="status">Loading orders…</div>;
   }
 
   if (error) {
@@ -132,7 +132,7 @@ export default function OrdersPage() {
       <div className="container py-10">
         <Card>
           <CardHeader>
-            <CardTitle>Error</CardTitle>
+            <CardTitle as="h1">Error</CardTitle>
             <CardDescription className="text-red-600 dark:text-red-400">{error}</CardDescription>
           </CardHeader>
         </Card>
@@ -152,10 +152,10 @@ export default function OrdersPage() {
         {/* Status filter */}
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">Filter:</span>
-          <select
+          <select aria-label="Filter orders by status" name="statusFilter"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="rounded-md border px-3 py-1.5 text-sm"
+            className="rounded-md border bg-background px-3 py-1.5 text-sm text-foreground"
           >
             <option value="all">All Orders</option>
             <option value="processing">Processing</option>
@@ -171,12 +171,12 @@ export default function OrdersPage() {
       {orders.length === 0 ? (
         <Card>
           <CardHeader>
-            <CardTitle>
+            <CardTitle as="h2">
               {statusFilter === "all" ? "No Orders Yet" : "No Orders Found"}
             </CardTitle>
             <CardDescription>
               {statusFilter === "all"
-                ? "You haven't placed any orders yet. Start shopping to see your orders here!"
+                ? "You haven’t placed any orders yet. Start shopping to see your orders here!"
                 : `No orders with status "${statusFilter}" found.`}
             </CardDescription>
           </CardHeader>
@@ -208,7 +208,7 @@ export default function OrdersPage() {
                     {/* Order thumbnail */}
                     {order.thumbnail && (
                       <div className="relative size-16 shrink-0 overflow-hidden rounded-md">
-                        <Image
+                        <Image sizes="64px"
                           src={order.thumbnail}
                           alt="Order item"
                           fill
@@ -224,9 +224,9 @@ export default function OrdersPage() {
                       </div>
                     )}
                     <div>
-                      <CardTitle className="text-lg">Order #{order.id.slice(0, 8)}</CardTitle>
+                      <CardTitle as="h2" className="text-lg">Order #<span translate="no">{order.id.slice(0, 8)}</span></CardTitle>
                       <CardDescription>
-                        Placed on {format(new Date(order.createdAt), "MMMM d, yyyy")}
+                        Placed on {formatDate(order.createdAt, "long")}
                       </CardDescription>
                       <div className="mt-2 flex flex-wrap items-center gap-2">
                         {/* Payment status */}
@@ -258,7 +258,7 @@ export default function OrdersPage() {
                   </div>
                   <div className="text-right">
                     <div className="text-2xl font-bold">
-                      ${order.amount.toFixed(2)}
+                      {formatPrice(order.amount)}
                     </div>
                     <div className="text-sm text-muted-foreground">
                       {order.itemCount} {order.itemCount === 1 ? "item" : "items"}
@@ -270,7 +270,7 @@ export default function OrdersPage() {
                 {order.trackingNumber && (
                   <div className="mb-4 rounded-md bg-muted p-3">
                     <div className="text-sm">
-                      <strong>Tracking #:</strong> {order.trackingNumber}
+                      <strong>Tracking #:</strong> <span translate="no">{order.trackingNumber}</span>
                     </div>
                   </div>
                 )}

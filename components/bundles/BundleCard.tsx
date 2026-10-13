@@ -1,12 +1,9 @@
-"use client"
-
-import { memo } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
+import { cn, formatPrice } from "@/lib/utils"
 
 interface BundleProduct {
   id: string
@@ -44,13 +41,13 @@ interface BundleCardProps {
   className?: string
 }
 
-export const BundleCard = memo(function BundleCard({ bundle, className }: BundleCardProps) {
+export function BundleCard({ bundle, className }: BundleCardProps) {
   const pricing = bundle.calculatedPricing
   const productCount = bundle.products.length
   const previewImages = bundle.products.slice(0, 4).map((bp) => bp.product.image)
 
   return (
-    <Card className={cn("group overflow-hidden transition-all hover:shadow-lg", className)}>
+    <Card className={cn("group overflow-hidden transition-shadow hover:shadow-lg", className)}>
       <Link href={`/bundles/${bundle.slug}`} className="block">
         <CardHeader className="p-0">
           <div className="relative aspect-video overflow-hidden bg-muted">
@@ -80,7 +77,7 @@ export const BundleCard = memo(function BundleCard({ bundle, className }: Bundle
             )}
 
             {/* Discount Badge */}
-            <Badge className="absolute left-3 top-3 bg-green-700 text-white hover:bg-green-700">
+            <Badge className="absolute left-3 top-3 bg-green-700 text-white hover:bg-green-800">
               Save {bundle.discountPercent}%
             </Badge>
 
@@ -109,7 +106,7 @@ export const BundleCard = memo(function BundleCard({ bundle, className }: Bundle
           <div className="mb-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
             {bundle.isCustomizable ? (
               <>
-                {bundle.minItems && (
+                {bundle.minItems != null && bundle.minItems > 0 && (
                   <span className="rounded-full bg-muted px-2 py-1">
                     Pick {bundle.minItems}{bundle.maxItems && bundle.maxItems !== bundle.minItems ? `-${bundle.maxItems}` : ""} items
                   </span>
@@ -126,13 +123,13 @@ export const BundleCard = memo(function BundleCard({ bundle, className }: Bundle
           {pricing && (
             <div className="flex items-baseline gap-2">
               <span className="text-xl font-bold text-foreground">
-                ${pricing.discountedPrice.toFixed(2)}
+                {formatPrice(pricing.discountedPrice)}
               </span>
               <span className="text-sm text-muted-foreground line-through">
-                ${pricing.basePrice.toFixed(2)}
+                {formatPrice(pricing.basePrice)}
               </span>
               <span className="text-sm font-medium text-green-700 dark:text-green-400">
-                Save ${pricing.savings.toFixed(2)}
+                Save {formatPrice(pricing.savings)}
               </span>
             </div>
           )}
@@ -148,6 +145,6 @@ export const BundleCard = memo(function BundleCard({ bundle, className }: Bundle
       </CardFooter>
     </Card>
   )
-})
+}
 
 BundleCard.displayName = 'BundleCard'

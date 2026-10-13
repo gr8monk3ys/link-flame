@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -11,7 +12,7 @@ import type { CartItem } from "@/types/cart";
 import CheckoutForm from "@/components/checkout/checkout-form";
 import ErrorBoundary from "@/components/layout/error-boundary";
 import { LoadingShimmer } from "@/components/ui/loading-shimmer";
-import { CarbonNeutralBanner, CarbonNeutralShippingLine } from "@/components/sustainability";
+import { CarbonNeutralBanner, CarbonNeutralShippingLine } from "@/components/sustainability/CarbonNeutralBanner";
 import {
   DEFAULT_CHECKOUT_DISCOUNT_STATE,
   type CheckoutDiscountState,
@@ -80,8 +81,8 @@ export default function CheckoutPage() {
         ) : items.length === 0 ? (
           <div className="flex h-[450px] w-full flex-col items-center justify-center space-y-4">
             <h2 className="text-2xl font-bold">Your cart is empty</h2>
-            <Button onClick={() => router.push("/collections")}>
-              Continue Shopping
+            <Button asChild>
+              <Link href="/collections">Continue Shopping</Link>
             </Button>
           </div>
         ) : (
@@ -107,15 +108,15 @@ export default function CheckoutPage() {
                       data-testid="checkout-item"
                     >
                       <div className="relative size-16 overflow-hidden rounded-md">
-                        <Image
+                        <Image sizes="64px"
                           src={item.image}
                           alt={item.title}
                           fill
                           className="object-cover"
                         />
                       </div>
-                      <div className="flex-1">
-                        <h4 className="font-medium">{item.title}</h4>
+                      <div className="min-w-0 flex-1">
+                        <h3 className="break-words font-medium">{item.title}</h3>
                         <p className="text-sm text-muted-foreground">
                           Qty: {item.quantity}
                         </p>
@@ -161,12 +162,8 @@ export default function CheckoutPage() {
                 
                 {/* Edit Cart Link */}
                 <div className="mt-4 text-center">
-                  <Button 
-                    variant="link" 
-                    onClick={() => router.push("/cart")}
-                    className="text-sm"
-                  >
-                    Edit Cart
+                  <Button variant="link" className="text-sm" asChild>
+                    <Link href="/cart">Edit Cart</Link>
                   </Button>
                 </div>
               </div>

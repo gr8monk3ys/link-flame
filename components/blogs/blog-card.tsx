@@ -1,9 +1,9 @@
 import Image from "next/image"
 import Link from "next/link"
-import { format, parseISO } from "date-fns"
+import { parseISO } from "date-fns"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import type { BlogPost } from "@/lib/blog"
-import { slugify } from "@/lib/utils"
+import { slugify, formatDate } from "@/lib/utils"
 
 interface BlogCardProps {
   post: BlogPost
@@ -13,8 +13,8 @@ interface BlogCardProps {
 export function BlogCard({ post, featured = false }: BlogCardProps) {
   const { slug, title, description, coverImage, publishedAt, author, category, tags, readingTime } = post
   const formattedDate = typeof publishedAt === 'string'
-    ? format(parseISO(publishedAt), "MMM d, yyyy")
-    : format(publishedAt, "MMM d, yyyy")
+    ? formatDate(parseISO(publishedAt), "medium")
+    : formatDate(publishedAt, "medium")
 
   const categorySlug = category ? slugify(category) : 'uncategorized'
 

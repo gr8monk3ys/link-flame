@@ -339,10 +339,15 @@ export async function getReferralStats(userId: string): Promise<{
     }),
   ]);
 
-  // Calculate points earned from rewarded referrals
-  const totalPointsEarned = referrals
-    .filter(r => r.status === ReferralStatus.REWARDED)
-    .reduce((sum, r) => sum + r.rewardPoints, 0);
+  // One pass over the referrals for all three tallies (react-best-practices 7.6).
+  let totalPointsEarned = 0;
+  let pendingReferrals = 0;
+  let completedReferrals = 0;
+  for (const r of referrals) {
+    if (r.status === ReferralStatus.REWARDED) totalPointsEarned += r.rewardPoints;
+    if (r.status === ReferralStatus.PENDING) pendingReferrals++;
+    if (r.status === ReferralStatus.COMPLETED || r.status === ReferralStatus.REWARDED) completedReferrals++;
+  }
 
   const referralCode = user?.referralCode || await getUserReferralCode(userId);
   const baseUrl = getBaseUrl();
@@ -350,10 +355,8 @@ export async function getReferralStats(userId: string): Promise<{
   return {
     referralCode,
     totalReferred: referrals.length,
-    pendingReferrals: referrals.filter(r => r.status === ReferralStatus.PENDING).length,
-    completedReferrals: referrals.filter(
-      r => r.status === ReferralStatus.COMPLETED || r.status === ReferralStatus.REWARDED
-    ).length,
+    pendingReferrals,
+    completedReferrals,
     totalPointsEarned,
     referralLink: `${baseUrl}?ref=${referralCode}`,
   };

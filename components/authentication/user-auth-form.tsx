@@ -30,7 +30,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             <Label className="sr-only" htmlFor="email">
               Email
             </Label>
-            <Input
+            <Input name="email" spellCheck={false}
               id="email"
               placeholder="name@example.com"
               type="email"
@@ -42,7 +42,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           </div>
           <Button disabled={isLoading}>
             {isLoading && (
-              <Icons.spinner className="mr-2 size-4 animate-spin" />
+              <span className="mr-2 inline-flex shrink-0 animate-spin" aria-hidden="true"><Icons.spinner className="size-4" /></span>
             )}
             Sign In with Email
           </Button>
@@ -60,7 +60,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       </div>
       <Button variant="outline" type="button" disabled={isLoading}>
         {isLoading ? (
-          <Icons.spinner className="mr-2 size-4 animate-spin" />
+          <span className="mr-2 inline-flex shrink-0 animate-spin" aria-hidden="true"><Icons.spinner className="size-4" /></span>
         ) : (
           <Icons.gitHub className="mr-2 size-4" />
         )}{" "}

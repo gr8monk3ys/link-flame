@@ -1,6 +1,7 @@
 export default function BlogsLoading() {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8" role="status" aria-busy="true">
+      <span className="sr-only">Loading…</span>
       <div className="mb-6 h-8 w-48 animate-pulse rounded bg-muted" />
       <div className="mb-8 h-10 w-full max-w-md animate-pulse rounded bg-muted" />
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">

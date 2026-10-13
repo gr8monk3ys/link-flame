@@ -1,11 +1,16 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
+
+// Registration and the hourly update check are app-wide, once per page load:
+// a module-level guard keeps a remount (or StrictMode's double effect) from
+// registering again and stacking another interval (react-best-practices 8.2).
+let didRegister = false;
 
 export function ServiceWorkerRegistration() {
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
   useEffect(() => {
+    if (didRegister) return;
+    didRegister = true;
     if (
       typeof window !== "undefined" &&
       "serviceWorker" in navigator &&
@@ -17,7 +22,7 @@ export function ServiceWorkerRegistration() {
           console.log("[SW] Service Worker registered:", registration.scope);
 
           // Check for updates periodically
-          intervalRef.current = setInterval(() => {
+          setInterval(() => {
             registration.update();
           }, 60 * 60 * 1000); // Check every hour
         })
@@ -25,14 +30,6 @@ export function ServiceWorkerRegistration() {
           console.error("[SW] Service Worker registration failed:", error);
         });
     }
-
-    // Cleanup: Clear interval on unmount to prevent memory leak
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    };
   }, []);
 
   return null;

@@ -1,6 +1,7 @@
 export default function ProductsLoading() {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8" role="status" aria-busy="true">
+      <span className="sr-only">Loading…</span>
       <div className="mb-6 h-8 w-48 animate-pulse rounded bg-muted" />
       <div className="mb-8 flex gap-4">
         {Array.from({ length: 4 }).map((_, i) => (

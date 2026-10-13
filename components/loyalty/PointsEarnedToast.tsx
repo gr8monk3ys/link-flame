@@ -56,7 +56,7 @@ export function PointsEarnedToast({
   return (
     <div
       className={cn(
-        'fixed bottom-4 right-4 z-50 max-w-sm overflow-hidden rounded-lg border bg-background shadow-lg transition-all duration-300',
+        'fixed bottom-4 right-4 z-50 max-w-sm overflow-hidden rounded-lg border bg-background shadow-lg transition-[transform,opacity] duration-300',
         isLeaving ? 'translate-x-full opacity-0' : 'translate-x-0 opacity-100',
         className
       )}
@@ -66,7 +66,7 @@ export function PointsEarnedToast({
       {/* Celebration header */}
       <div className="bg-gradient-to-r from-green-700 to-emerald-700 px-4 py-2 text-white">
         <div className="flex items-center gap-2">
-          <svg
+          <svg aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
@@ -104,7 +104,7 @@ export function PointsEarnedToast({
           className="absolute right-2 top-2 rounded-full p-1 text-white/70 hover:bg-white/10 hover:text-white"
           aria-label="Close notification"
         >
-          <svg
+          <svg aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
@@ -118,7 +118,7 @@ export function PointsEarnedToast({
       {/* Progress bar for auto-dismiss */}
       <div className="h-1 bg-muted">
         <div
-          className="h-full bg-green-500 transition-all ease-linear"
+          className="size-full origin-left bg-green-500"
           style={{
             animation: `shrink ${duration}ms linear forwards`,
           }}
@@ -128,10 +128,10 @@ export function PointsEarnedToast({
       <style jsx>{`
         @keyframes shrink {
           from {
-            width: 100%;
+            transform: scaleX(1);
           }
           to {
-            width: 0%;
+            transform: scaleX(0);
           }
         }
       `}</style>
@@ -241,7 +241,7 @@ export function PointsEarnedToastWithStyle({
   return (
     <div
       className={cn(
-        'fixed z-50 max-w-sm overflow-hidden rounded-lg border bg-background shadow-lg transition-all duration-300',
+        'fixed z-50 max-w-sm overflow-hidden rounded-lg border bg-background shadow-lg transition-[transform,opacity] duration-300',
         isLeaving ? 'translate-x-full opacity-0' : 'translate-x-0 opacity-100',
         className
       )}
@@ -251,7 +251,7 @@ export function PointsEarnedToastWithStyle({
     >
       <div className="bg-gradient-to-r from-green-700 to-emerald-700 px-4 py-2 text-white">
         <div className="flex items-center gap-2">
-          <svg
+          <svg aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
@@ -287,7 +287,7 @@ export function PointsEarnedToastWithStyle({
           className="absolute right-2 top-2 rounded-full p-1 text-white/70 hover:bg-white/10 hover:text-white"
           aria-label="Close notification"
         >
-          <svg
+          <svg aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
@@ -300,7 +300,7 @@ export function PointsEarnedToastWithStyle({
 
       <div className="h-1 bg-muted">
         <div
-          className="h-full bg-green-500"
+          className="size-full origin-left bg-green-500"
           style={{
             animation: `shrink ${duration}ms linear forwards`,
           }}
@@ -310,10 +310,10 @@ export function PointsEarnedToastWithStyle({
       <style jsx>{`
         @keyframes shrink {
           from {
-            width: 100%;
+            transform: scaleX(1);
           }
           to {
-            width: 0%;
+            transform: scaleX(0);
           }
         }
       `}</style>

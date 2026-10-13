@@ -86,14 +86,14 @@ function SearchSection({
         <label htmlFor="search" className="sr-only">
           Search products
         </label>
-        <input
+        <input autoComplete="off"
           type="text"
           id="search"
           name="search"
           value={filters.search}
           onChange={(e) => onFilterChange({ search: e.target.value })}
-          placeholder="Search products..."
-          className="w-full rounded-md border border-border p-2 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-ring"
+          placeholder="Search products…"
+          className="w-full rounded-md border border-border p-2 text-sm shadow-sm focus-visible:border-primary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         />
       </div>
     </div>
@@ -151,7 +151,7 @@ function CategoriesSection({
                       : [...filters.categories, category.name];
                     onFilterChange({ categories: newCategories });
                   }}
-                  className="size-4 rounded border-border text-green-700 focus:ring-ring dark:text-green-400"
+                  className="size-4 rounded border-border text-green-700 focus-visible:ring-ring dark:text-green-400"
                 />
                 <label
                   htmlFor={`category-${id}`}
@@ -180,6 +180,9 @@ function RatingSection({
         {[5, 4, 3, 2, 1].map((rating) => (
           <button
             key={rating}
+            type="button"
+            aria-pressed={filters.rating === rating}
+            aria-label={`${rating} stars and up`}
             onClick={() =>
               onFilterChange({
                 rating: filters.rating === rating ? null : rating,
@@ -225,11 +228,11 @@ function PriceRangeSection({
           <label htmlFor="minPrice" className="sr-only">
             Minimum Price
           </label>
-          <input
+          <input inputMode="decimal" autoComplete="off"
             type="number"
             id="minPrice"
             name="minPrice"
-            placeholder="Min"
+            placeholder="e.g. 10"
             value={filters.priceRange.min ?? ''}
             onChange={(e) =>
               onFilterChange({
@@ -239,18 +242,18 @@ function PriceRangeSection({
                 },
               })
             }
-            className="w-full rounded-md border border-border p-2 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-ring"
+            className="w-full rounded-md border border-border p-2 text-sm shadow-sm focus-visible:border-primary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
           />
         </div>
         <div>
           <label htmlFor="maxPrice" className="sr-only">
             Maximum Price
           </label>
-          <input
+          <input inputMode="decimal" autoComplete="off"
             type="number"
             id="maxPrice"
             name="maxPrice"
-            placeholder="Max"
+            placeholder="e.g. 50"
             value={filters.priceRange.max ?? ''}
             onChange={(e) =>
               onFilterChange({
@@ -260,7 +263,7 @@ function PriceRangeSection({
                 },
               })
             }
-            className="w-full rounded-md border border-border p-2 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-ring"
+            className="w-full rounded-md border border-border p-2 text-sm shadow-sm focus-visible:border-primary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
           />
         </div>
       </div>
@@ -285,7 +288,7 @@ function DateRangeSection({
           >
             From
           </label>
-          <input
+          <input autoComplete="off"
             type="date"
             id="start-date"
             name="startDate"
@@ -310,7 +313,7 @@ function DateRangeSection({
           >
             To
           </label>
-          <input
+          <input autoComplete="off"
             type="date"
             id="end-date"
             name="endDate"
@@ -367,7 +370,7 @@ function SubscribableSection({
               subscribable: e.target.checked ? true : null,
             })
           }
-          className="size-4 rounded border-blue-300 text-blue-700 focus:ring-blue-500 dark:border-blue-800 dark:text-blue-300"
+          className="size-4 rounded border-blue-300 text-blue-700 focus-visible:ring-blue-500 dark:border-blue-800 dark:text-blue-300"
         />
         <label htmlFor="subscribable-filter" className="text-sm text-blue-800 dark:text-blue-200">
           Show only Subscribe &amp; Save items
@@ -408,7 +411,7 @@ function ImperfectSection({
               imperfect: e.target.checked ? true : null,
             })
           }
-          className="size-4 rounded border-amber-300 text-amber-600 focus:ring-amber-500 dark:border-amber-800 dark:text-amber-400"
+          className="size-4 rounded border-amber-300 text-amber-600 focus-visible:ring-amber-500 dark:border-amber-800 dark:text-amber-400"
         />
         <label htmlFor="imperfect-filter" className="text-sm text-amber-800 dark:text-amber-200">
           Show only imperfect deals
@@ -419,7 +422,7 @@ function ImperfectSection({
         className="inline-flex items-center gap-1 text-sm font-medium text-amber-700 hover:text-amber-800 dark:text-amber-300"
       >
         View all imperfect items
-        <svg
+        <svg aria-hidden="true"
           className="size-4"
           viewBox="0 0 24 24"
           fill="none"

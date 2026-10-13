@@ -105,7 +105,7 @@ export function ReferralCodeInput({
           <Check className="size-5 text-green-700 dark:text-green-400" />
           <div className="flex-1">
             <div className="flex items-center gap-2">
-              <span className="font-mono font-semibold">{applied.code}</span>
+              <span className="font-mono font-semibold" translate="no">{applied.code}</span>
               <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200">
                 {applied.discountPercent}% off
               </Badge>
@@ -134,7 +134,7 @@ export function ReferralCodeInput({
       </Label>
       <div className="flex gap-2">
         <div className="relative flex-1">
-          <Input
+          <Input name="code" autoComplete="off" spellCheck={false}
             id="referral-code"
             type="text"
             value={code}
@@ -157,7 +157,7 @@ export function ReferralCodeInput({
           disabled={disabled || loading || !code.trim()}
         >
           {loading ? (
-            <Loader2 className="size-4 animate-spin" />
+            <span className="inline-flex shrink-0 animate-spin"><Loader2 className="size-4" /></span>
           ) : (
             "Apply"
           )}
@@ -169,7 +169,7 @@ export function ReferralCodeInput({
         </p>
       )}
       <p className="text-xs text-muted-foreground">
-        Apply a friend&apos;s referral code to get a discount on your first order.
+        Apply a friend&rsquo;s referral code to get a discount on your first order.
       </p>
     </div>
   );

@@ -150,7 +150,7 @@ export function WishlistCard({
         {/* Card Footer */}
         <div className="p-4">
           <div className="flex items-start justify-between gap-2">
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <h3 className="line-clamp-1 font-semibold">{wishlist.name}</h3>
                 {wishlist.isDefault && (
@@ -168,12 +168,19 @@ export function WishlistCard({
             </div>
 
             {/* Action Menu */}
-            <div className="relative">
+            <div
+              className="relative"
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') setShowMenu(false);
+              }}
+            >
               <Button
                 variant="ghost"
                 size="icon"
                 className="size-8"
-                onClick={() => setShowMenu(!showMenu)}
+                onClick={() => setShowMenu((v) => !v)}
+                aria-haspopup="menu"
+                aria-expanded={showMenu}
               >
                 <MoreVertical className="size-4" />
                 <span className="sr-only">Actions</span>
@@ -181,9 +188,11 @@ export function WishlistCard({
 
               {showMenu && (
                 <>
+                  {/* Click-away layer for pointer users; Escape closes for keyboard users. */}
                   <div
                     className="fixed inset-0 z-10"
                     onClick={() => setShowMenu(false)}
+                    aria-hidden="true"
                   />
                   <div className="absolute right-0 top-full z-20 mt-1 w-48 rounded-md border bg-popover shadow-md">
                     {!wishlist.isDefault && (
@@ -256,12 +265,12 @@ export function WishlistCard({
               Enter a new name for your wishlist
             </DialogDescription>
           </DialogHeader>
-          <input
+          <input aria-label="Wishlist name" name="newName" autoComplete="off"
             type="text"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
-            className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
-            placeholder="Wishlist name"
+            className="w-full rounded-md border px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            placeholder="e.g. Kitchen Upgrades"
             autoFocus
             onKeyDown={(e) => {
               if (e.key === 'Enter') handleRename();
@@ -275,7 +284,7 @@ export function WishlistCard({
               Cancel
             </Button>
             <Button onClick={handleRename} disabled={isSubmitting}>
-              {isSubmitting ? 'Saving...' : 'Save'}
+              {isSubmitting ? 'Saving…' : 'Save'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -287,7 +296,7 @@ export function WishlistCard({
           <DialogHeader>
             <DialogTitle>Delete Wishlist</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete &quot;{wishlist.name}&quot;? All items will be
+              Are you sure you want to delete &ldquo;{wishlist.name}&rdquo;? All items will be
               moved to your Favorites list.
             </DialogDescription>
           </DialogHeader>
@@ -303,7 +312,7 @@ export function WishlistCard({
               onClick={handleDelete}
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Deleting...' : 'Delete'}
+              {isSubmitting ? 'Deleting…' : 'Delete'}
             </Button>
           </DialogFooter>
         </DialogContent>

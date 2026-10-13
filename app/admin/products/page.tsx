@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
+import { formatPrice } from "@/lib/utils";
 
 interface Product {
   id: string;
@@ -78,7 +79,7 @@ export default function AdminProductsPage() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="text-muted-foreground">Loading products...</div>
+        <div className="text-muted-foreground" role="status">Loading products…</div>
       </div>
     );
   }
@@ -95,7 +96,7 @@ export default function AdminProductsPage() {
         </div>
         <Link
           href="/admin/products/new"
-          className="flex items-center gap-2 rounded-lg bg-green-700 px-4 py-2 text-white transition-colors hover:bg-green-700"
+          className="flex items-center gap-2 rounded-lg bg-green-700 px-4 py-2 text-white transition-colors hover:bg-green-800"
         >
           <Plus className="size-5" />
           Add Product
@@ -107,18 +108,18 @@ export default function AdminProductsPage() {
         <div className="flex flex-col gap-4 sm:flex-row">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
-            <input
+            <input aria-label="Search products" name="search" autoComplete="off"
               type="text"
-              placeholder="Search products..."
+              placeholder="Search products…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-lg border border-border py-2 pl-10 pr-4 focus:border-transparent focus:ring-2 focus:ring-ring"
+              className="w-full rounded-lg border border-border py-2 pl-10 pr-4 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
             />
           </div>
-          <select
+          <select aria-label="Filter by stock" name="filter"
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
+            className="rounded-lg border border-border bg-background px-4 py-2 text-foreground focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
           >
             <option value="all">All Products</option>
             <option value="low-stock">Low Stock</option>
@@ -128,8 +129,8 @@ export default function AdminProductsPage() {
       </div>
 
       {/* Products Table */}
-      <div className="overflow-hidden rounded-lg bg-card shadow">
-        <table className="min-w-full divide-y divide-border">
+      <div className="overflow-x-auto rounded-lg bg-card shadow">
+        <table className="min-w-full divide-y divide-border tabular-nums">
           <thead className="bg-muted">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -174,8 +175,8 @@ export default function AdminProductsPage() {
                           unoptimized
                         />
                       </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-foreground">
+                      <div className="ml-4 min-w-0">
+                        <div className="max-w-xs truncate text-sm font-medium text-foreground" title={product.title}>
                           {product.title}
                         </div>
                       </div>
@@ -188,14 +189,14 @@ export default function AdminProductsPage() {
                     {product.salePrice ? (
                       <div>
                         <span className="text-muted-foreground line-through">
-                          ${product.price.toFixed(2)}
+                          {formatPrice(product.price)}
                         </span>
                         <span className="ml-2 text-red-600 dark:text-red-400">
-                          ${product.salePrice.toFixed(2)}
+                          {formatPrice(product.salePrice)}
                         </span>
                       </div>
                     ) : (
-                      `$${product.price.toFixed(2)}`
+                      formatPrice(product.price)
                     )}
                   </td>
                   <td className="whitespace-nowrap px-6 py-4">
@@ -213,13 +214,13 @@ export default function AdminProductsPage() {
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                     <div className="flex justify-end gap-2">
-                      <Link
+                      <Link aria-label={`Edit ${product.title}`}
                         href={`/admin/products/${product.id}/edit`}
                         className="p-1 text-blue-600 hover:text-blue-900 dark:text-blue-400"
                       >
                         <Edit className="size-5" />
                       </Link>
-                      <button
+                      <button aria-label={`Delete ${product.title}`}
                         onClick={() => handleDelete(product.id)}
                         className="p-1 text-red-600 hover:text-red-900 dark:text-red-400"
                       >

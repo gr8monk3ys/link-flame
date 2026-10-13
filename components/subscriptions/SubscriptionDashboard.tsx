@@ -115,7 +115,7 @@ export function SubscriptionDashboard() {
   if (authStatus === 'loading') {
     return (
       <div className="flex items-center justify-center py-12">
-        <RefreshCw className="size-8 animate-spin text-muted-foreground" />
+        <span role="status"><span className="inline-flex shrink-0 animate-spin"><RefreshCw className="size-8 text-muted-foreground" /></span><span className="sr-only">Loading…</span></span>
       </div>
     );
   }
@@ -133,7 +133,7 @@ export function SubscriptionDashboard() {
         <div className="mt-6">
           <Link
             href="/auth/signin"
-            className="inline-flex items-center rounded-md bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
+            className="inline-flex items-center rounded-md bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800"
           >
             Sign in
           </Link>
@@ -156,7 +156,7 @@ export function SubscriptionDashboard() {
         </div>
         <Link
           href="/products"
-          className="inline-flex items-center rounded-md bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
+          className="inline-flex items-center rounded-md bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800"
         >
           <Plus className="mr-2 size-4" />
           Add subscription
@@ -196,14 +196,14 @@ export function SubscriptionDashboard() {
       {/* Filters */}
       <div className="flex items-center gap-2">
         {filterOptions.map((option) => (
-          <button
+          <button aria-pressed={filter === option.value}
             key={option.value}
             type="button"
             onClick={() => setFilter(option.value)}
             className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
               filter === option.value
                 ? 'bg-green-700 text-white'
-                : 'bg-muted text-foreground hover:bg-muted'
+                : 'bg-muted text-foreground hover:bg-muted/80'
             }`}
           >
             {option.label}
@@ -215,7 +215,7 @@ export function SubscriptionDashboard() {
           disabled={isLoading}
           className="ml-auto inline-flex items-center rounded-md border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <RefreshCw className={`mr-1.5 size-4 ${isLoading ? 'animate-spin' : ''}`} />
+          <span className={`mr-1.5 inline-flex shrink-0 ${isLoading ? "animate-spin" : ""}`}><RefreshCw className="size-4" /></span>
           Refresh
         </button>
       </div>
@@ -223,7 +223,7 @@ export function SubscriptionDashboard() {
       {/* Subscriptions list */}
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
-          <RefreshCw className="size-8 animate-spin text-muted-foreground" />
+          <span role="status"><span className="inline-flex shrink-0 animate-spin"><RefreshCw className="size-8 text-muted-foreground" /></span><span className="sr-only">Loading…</span></span>
         </div>
       ) : filteredSubscriptions.length > 0 ? (
         <div className="space-y-4">
@@ -252,7 +252,7 @@ export function SubscriptionDashboard() {
             <div className="mt-6">
               <Link
                 href="/products"
-                className="inline-flex items-center rounded-md bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
+                className="inline-flex items-center rounded-md bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800"
               >
                 <Sparkles className="mr-2 size-4" />
                 Browse products
@@ -288,7 +288,7 @@ export function SubscriptionDashboard() {
           </div>
           <div className="flex items-start gap-3">
             <div className="flex size-8 items-center justify-center rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
-              <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg aria-hidden="true" className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
@@ -299,7 +299,7 @@ export function SubscriptionDashboard() {
           </div>
           <div className="flex items-start gap-3">
             <div className="flex size-8 items-center justify-center rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
-              <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg aria-hidden="true" className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>

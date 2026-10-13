@@ -9,7 +9,7 @@ import { X, Minus, Plus, Heart, Eye, ChevronLeft, ChevronRight, Loader2 } from "
 import { useSession } from "next-auth/react"
 import { toast } from "sonner"
 
-import { cn, formatPrice } from "@/lib/utils"
+import { cn, formatPrice, formatNumber } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useCart } from "@/lib/providers/CartProvider"
@@ -90,7 +90,7 @@ function ImageGallery({
             <button
               type="button"
               onClick={handlePrevious}
-              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-card/80 p-2 shadow-md transition-colors hover:bg-card focus:outline-none focus:ring-2 focus:ring-ring"
+              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-card/80 p-2 shadow-md transition-colors hover:bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               aria-label="Previous image"
             >
               <ChevronLeft className="size-4" />
@@ -98,7 +98,7 @@ function ImageGallery({
             <button
               type="button"
               onClick={handleNext}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-card/80 p-2 shadow-md transition-colors hover:bg-card focus:outline-none focus:ring-2 focus:ring-ring"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-card/80 p-2 shadow-md transition-colors hover:bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               aria-label="Next image"
             >
               <ChevronRight className="size-4" />
@@ -116,7 +116,7 @@ function ImageGallery({
               type="button"
               onClick={() => onIndexChange(index)}
               className={cn(
-                "relative size-16 shrink-0 overflow-hidden rounded-md border-2 transition-all",
+                "relative size-16 shrink-0 overflow-hidden rounded-md border-2 transition-[border-color,box-shadow]",
                 selectedIndex === index
                   ? "border-green-600 ring-1 ring-green-600"
                   : "border-transparent hover:border-border"
@@ -177,7 +177,7 @@ function QuantitySelector({
       >
         <Minus className="size-4" />
       </Button>
-      <input
+      <input inputMode="numeric" name="quantity" autoComplete="off"
         type="number"
         min={1}
         max={max}
@@ -189,7 +189,7 @@ function QuantitySelector({
           }
         }}
         disabled={disabled}
-        className="h-9 w-14 rounded-md border text-center focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+        className="h-9 w-14 rounded-md border text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
         aria-label="Quantity"
       />
       <Button
@@ -211,9 +211,9 @@ function QuantitySelector({
 function StarRatingDisplay({ rating, count }: { rating: number; count: number }) {
   return (
     <div className="flex items-center gap-2">
-      <div className="flex items-center" role="img" aria-label={`Rating: ${rating.toFixed(1)} out of 5 stars`}>
+      <div className="flex items-center" role="img" aria-label={`Rating: ${formatNumber(rating, 1)} out of 5 stars`}>
         {[0, 1, 2, 3, 4].map((star) => (
-          <svg
+          <svg aria-hidden="true"
             key={star}
             className={cn(
               "size-4",
@@ -409,7 +409,7 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
         <DialogPrimitive.Content
           className={cn(
             // Base styles
-            "fixed z-50 bg-background shadow-xl focus:outline-none",
+            "fixed z-50 bg-background shadow-xl focus-visible:outline-none",
             // Desktop: Centered modal
             "sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2",
             "sm:w-[95vw] sm:max-w-4xl",
@@ -442,7 +442,7 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
             className={cn(
               "absolute right-4 top-4 z-10 rounded-full bg-card/90 p-2 shadow-md",
               "transition-colors hover:bg-muted",
-              "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             )}
             aria-label="Close quick view"
           >
@@ -450,7 +450,7 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
           </DialogPrimitive.Close>
 
           {/* Scrollable content */}
-          <div className="max-h-[calc(95vh-2rem)] overflow-y-auto p-4 sm:max-h-[calc(90vh-2rem)] sm:p-6">
+          <div className="max-h-[calc(95vh-2rem)] overflow-y-auto overscroll-contain p-4 sm:max-h-[calc(90vh-2rem)] sm:p-6">
             {/* Screen reader announcement */}
             <div className="sr-only" role="status" aria-live="polite">
               Quick view for {product.title}
@@ -550,13 +550,13 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
                     <Button
                       onClick={handleAddToCart}
                       disabled={isOutOfStock || needsVariant || isAddingToCart || cartLoading}
-                      className="h-12 flex-1 bg-green-700 text-base hover:bg-green-700"
+                      className="h-12 flex-1 bg-green-700 text-base hover:bg-green-800"
                       size="lg"
                     >
                       {isAddingToCart ? (
                         <>
-                          <Loader2 className="mr-2 size-5 animate-spin" />
-                          Adding...
+                          <span className="mr-2 inline-flex shrink-0 animate-spin"><Loader2 className="size-5" /></span>
+                          Adding…
                         </>
                       ) : isOutOfStock ? (
                         "Out of Stock"
@@ -594,7 +594,7 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
                   <Link
                     href={`/products/${product.id}`}
                     onClick={() => onOpenChange(false)}
-                    className="inline-flex items-center rounded text-sm font-medium text-green-700 hover:text-green-700 hover:underline focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 dark:text-green-400"
+                    className="inline-flex items-center rounded text-sm font-medium text-green-700 hover:text-green-800 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 dark:text-green-400"
                   >
                     <Eye className="mr-2 size-4" />
                     View Full Details

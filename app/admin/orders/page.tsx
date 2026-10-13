@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Search, ExternalLink, Eye, Gift, RefreshCw } from 'lucide-react';
+import { formatPrice, formatDate } from "@/lib/utils";
 
 interface Order {
   id: string;
@@ -156,7 +157,7 @@ export default function AdminOrdersPage() {
     if (!order) return;
 
     const confirmed = window.confirm(
-      `Are you sure you want to refund order #${orderId}?\n\nAmount: $${Number(order.amount).toFixed(2)}\nCustomer: ${order.customerName || order.user?.name || 'Unknown'}\n\nThis action cannot be undone.`
+      `Are you sure you want to refund order #${orderId}?\n\nAmount: ${formatPrice(order.amount)}\nCustomer: ${order.customerName || order.user?.name || 'Unknown'}\n\nThis action cannot be undone.`
     );
 
     if (!confirmed) return;
@@ -242,7 +243,7 @@ export default function AdminOrdersPage() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="text-muted-foreground">Loading orders...</div>
+        <div className="text-muted-foreground" role="status">Loading orders…</div>
       </div>
     );
   }
@@ -260,19 +261,19 @@ export default function AdminOrdersPage() {
         <div className="flex flex-col gap-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
-            <input
+            <input aria-label="Search orders" name="search" autoComplete="off"
               type="text"
-              placeholder="Search by customer name, email, or order ID..."
+              placeholder="Search by customer name, email, or order ID…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-lg border border-border py-2 pl-10 pr-4 focus:border-transparent focus:ring-2 focus:ring-ring"
+              className="w-full rounded-lg border border-border py-2 pl-10 pr-4 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
             />
           </div>
           <div className="flex gap-4">
-            <select
+            <select aria-label="Filter by payment status" name="statusFilter"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="flex-1 rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
+              className="flex-1 rounded-lg border border-border bg-background px-4 py-2 text-foreground focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
             >
               <option value="all">All Payment Statuses</option>
               <option value="pending">Pending</option>
@@ -280,10 +281,10 @@ export default function AdminOrdersPage() {
               <option value="failed">Failed</option>
               <option value="refunded">Refunded</option>
             </select>
-            <select
+            <select aria-label="Filter by shipping status" name="shippingFilter"
               value={shippingFilter}
               onChange={(e) => setShippingFilter(e.target.value)}
-              className="flex-1 rounded-lg border border-border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-ring"
+              className="flex-1 rounded-lg border border-border bg-background px-4 py-2 text-foreground focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
             >
               <option value="all">All Shipping Statuses</option>
               <option value="pending">Pending</option>
@@ -299,8 +300,8 @@ export default function AdminOrdersPage() {
       </div>
 
       {/* Orders Table */}
-      <div className="overflow-hidden rounded-lg bg-card shadow">
-        <table className="min-w-full divide-y divide-border">
+      <div className="overflow-x-auto rounded-lg bg-card shadow">
+        <table className="min-w-full divide-y divide-border tabular-nums">
           <thead className="bg-muted">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -357,7 +358,7 @@ export default function AdminOrdersPage() {
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-sm text-foreground">
-                    ${Number(order.amount).toFixed(2)}
+                    {formatPrice(order.amount)}
                   </td>
                   <td className="whitespace-nowrap px-6 py-4">
                     <span
@@ -367,12 +368,12 @@ export default function AdminOrdersPage() {
                     </span>
                   </td>
                   <td className="whitespace-nowrap px-6 py-4">
-                    <select
+                    <select aria-label={`Shipping status for order ${order.id}`} name="shippingStatus"
                       value={order.shippingStatus || 'pending'}
                       onChange={(e) =>
                         updateShippingStatus(order.id, e.target.value)
                       }
-                      className="rounded border border-border px-2 py-1 text-sm focus:border-transparent focus:ring-2 focus:ring-ring"
+                      className="rounded border border-border bg-background px-2 py-1 text-sm text-foreground focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
                     >
                       <option value="pending">Pending</option>
                       <option value="processing">Processing</option>
@@ -386,7 +387,7 @@ export default function AdminOrdersPage() {
                   <td className="px-6 py-4">
                     {shouldShowTracking(order.shippingStatus) ? (
                       <div className="flex flex-col gap-1">
-                        <select
+                        <select name="shippingCarrier" aria-label={`Shipping carrier for order ${order.id}`}
                           value={
                             trackingInputs[order.id]?.shippingCarrier || ''
                           }
@@ -397,7 +398,7 @@ export default function AdminOrdersPage() {
                               e.target.value
                             )
                           }
-                          className="w-28 rounded border border-border p-1 text-xs focus:border-transparent focus:ring-2 focus:ring-ring"
+                          className="w-28 rounded border border-border bg-background p-1 text-xs text-foreground focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
                         >
                           {CARRIER_OPTIONS.map((opt) => (
                             <option key={opt.value} value={opt.value}>
@@ -405,9 +406,9 @@ export default function AdminOrdersPage() {
                             </option>
                           ))}
                         </select>
-                        <input
+                        <input name="trackingNumber" spellCheck={false} aria-label={`Tracking number for order ${order.id}`} autoComplete="off"
                           type="text"
-                          placeholder="Tracking #"
+                          placeholder="e.g. 1Z999AA10123456784"
                           value={
                             trackingInputs[order.id]?.trackingNumber || ''
                           }
@@ -434,7 +435,7 @@ export default function AdminOrdersPage() {
                               );
                             }
                           }}
-                          className="w-36 rounded border border-border px-2 py-1 text-xs focus:border-transparent focus:ring-2 focus:ring-ring"
+                          className="w-36 rounded border border-border px-2 py-1 text-xs focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring"
                         />
                       </div>
                     ) : (
@@ -476,7 +477,7 @@ export default function AdminOrdersPage() {
                     )}
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground">
-                    {new Date(order.createdAt).toLocaleDateString()}
+                    {formatDate(order.createdAt)}
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                     <div className="flex items-center justify-end gap-2">
@@ -495,8 +496,8 @@ export default function AdminOrdersPage() {
                         >
                           {refundingOrderId === order.id ? (
                             <>
-                              <RefreshCw className="size-3 animate-spin" />
-                              Refunding...
+                              <span className="inline-flex shrink-0 animate-spin"><RefreshCw className="size-3" /></span>
+                              Refunding…
                             </>
                           ) : (
                             'Refund'

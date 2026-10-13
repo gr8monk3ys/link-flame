@@ -1,5 +1,3 @@
-'use client';
-
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
@@ -63,7 +61,7 @@ export function ImperfectBanner({
       >
         {/* Background pattern */}
         <div className="absolute inset-0 opacity-10">
-          <svg className="size-full" xmlns="http://www.w3.org/2000/svg">
+          <svg aria-hidden="true" className="size-full" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <pattern id="leaf-pattern" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
                 <path

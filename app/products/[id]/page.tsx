@@ -94,8 +94,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
     : null;
 
   // Transform the data to match the expected format
+  // The client component only needs the review count, not every review row
+  // (react-best-practices 3.6: minimise what crosses the RSC boundary).
+  const { reviews, ...productWithoutReviews } = product
   const transformedProduct = {
-    ...product,
+    ...productWithoutReviews,
+    reviewCount: reviews.length,
     price: Number(product.price),
     salePrice: product.salePrice ? Number(product.salePrice) : null,
     variants: product.variants.map(v => ({ ...v, price: v.price ? Number(v.price) : null, salePrice: v.salePrice ? Number(v.salePrice) : null })),

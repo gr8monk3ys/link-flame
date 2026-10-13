@@ -3,10 +3,10 @@ import Image from 'next/image'
 import { PageProps } from '@/types/next'
 import { getAllPosts, getPost } from '@/lib/blog'
 import { notFound } from 'next/navigation'
-import { format, parseISO } from 'date-fns'
+import { parseISO } from 'date-fns'
 import { renderPostBody } from '@/lib/markdown'
 import { getBaseUrl } from '@/lib/url'
-import { slugify } from "@/lib/utils"
+import { slugify, formatDate } from "@/lib/utils"
 
 // Render at request time — DB not available during Vercel build
 export const dynamic = 'force-dynamic';
@@ -193,7 +193,7 @@ export default async function BlogPost({ params }: PageProps<{ slug: string }>) 
       />
 
       {/* Article Content */}
-      <article className="prose mx-auto px-4 py-8 lg:prose-xl">
+      <article className="prose mx-auto px-4 py-8 dark:prose-invert lg:prose-xl">
         <header className="mb-8">
           <h1>{post.title}</h1>
           <div className="not-prose flex items-center gap-4 text-muted-foreground">
@@ -214,7 +214,7 @@ export default async function BlogPost({ params }: PageProps<{ slug: string }>) 
             </div>
             <span>·</span>
             <time dateTime={publishedAt}>
-              {format(typeof post.publishedAt === 'string' ? parseISO(post.publishedAt) : post.publishedAt, 'MMMM d, yyyy')}
+              {formatDate(typeof post.publishedAt === 'string' ? parseISO(post.publishedAt) : post.publishedAt, 'long')}
             </time>
             {post.readingTime && (
               <>
@@ -252,7 +252,7 @@ export default async function BlogPost({ params }: PageProps<{ slug: string }>) 
               <a
                 key={tag}
                 href={`/blogs/tags/${tag.toLowerCase()}`}
-                className="inline-block rounded-full bg-muted px-3 py-1 text-sm text-muted-foreground hover:bg-muted"
+                className="inline-block rounded-full bg-muted px-3 py-1 text-sm text-muted-foreground hover:bg-muted/80"
               >
                 #{tag}
               </a>
@@ -269,7 +269,7 @@ export default async function BlogPost({ params }: PageProps<{ slug: string }>) 
         {/* Article Footer */}
         <footer className="not-prose mt-12 border-t pt-8">
           <p className="text-sm text-muted-foreground">
-            Last updated: {format(typeof updatedAt === 'string' ? parseISO(updatedAt) : new Date(updatedAt), 'MMMM d, yyyy')}
+            Last updated: {formatDate(typeof updatedAt === 'string' ? parseISO(updatedAt) : updatedAt, 'long')}
           </p>
         </footer>
       </article>

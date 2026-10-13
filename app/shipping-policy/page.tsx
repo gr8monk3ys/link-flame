@@ -18,7 +18,7 @@ export default function ShippingPolicyPage() {
         Last updated: February 2026
       </p>
 
-      <div className="prose prose-lg max-w-none">
+      <div className="prose prose-lg max-w-none dark:prose-invert">
         <p className="text-muted-foreground">
           Thank you for shopping with Link Flame. We are committed to delivering
           your eco-friendly products promptly and safely. This policy outlines

@@ -45,11 +45,8 @@ export async function ImpactBand() {
           {shown.map((metric) => (
             <div
               key={metric.slug}
-              className="border-l border-primary-foreground/20 pl-4"
+              className="flex flex-col-reverse border-l border-primary-foreground/20 pl-4"
             >
-              <dd className="font-serif text-4xl tabular-nums tracking-tight sm:text-5xl">
-                <CountUp value={metric.total} />
-              </dd>
               <dt className="mt-2">
                 <span className="block text-sm font-medium uppercase tracking-wide text-primary-foreground/90">
                   {metric.unit}
@@ -58,6 +55,9 @@ export async function ImpactBand() {
                   {metric.name}
                 </span>
               </dt>
+              <dd className="font-serif text-4xl tabular-nums tracking-tight sm:text-5xl">
+                <CountUp value={metric.total} />
+              </dd>
             </div>
           ))}
         </dl>
