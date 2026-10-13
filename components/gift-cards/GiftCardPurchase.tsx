@@ -55,6 +55,37 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
     fetchCsrfToken()
   }, [])
 
+  // Returning from Stripe Checkout: confirm payment and reveal the code.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const sessionId = params.get('gift_card_session')
+    if (!sessionId) return
+
+    params.delete('gift_card_session')
+    const query = params.toString()
+    window.history.replaceState(null, '', `${window.location.pathname}${query ? `?${query}` : ''}`)
+
+    async function confirmPurchase(id: string) {
+      setIsLoading(true)
+      try {
+        const response = await fetch(`/api/gift-cards/purchase?session_id=${encodeURIComponent(id)}`)
+        const data = await response.json()
+        if (!response.ok) {
+          throw new Error(data.error?.message || 'Could not confirm your gift card payment')
+        }
+        const giftCard: PurchasedGiftCard = data.data
+        setPurchasedCard(giftCard)
+        toast.success('Gift card purchased successfully!')
+        onPurchaseComplete?.(giftCard)
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : 'Could not confirm your gift card payment')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    confirmPurchase(sessionId)
+  }, [onPurchaseComplete])
+
   const handleAmountSelect = (amount: number) => {
     setSelectedAmount(amount)
     setIsCustom(false)
@@ -146,16 +177,13 @@ export function GiftCardPurchase({ onPurchaseComplete, className }: GiftCardPurc
         throw new Error(data.error?.message || 'Failed to purchase gift card')
       }
 
-      const giftCard: PurchasedGiftCard = data.data
-      setPurchasedCard(giftCard)
-      toast.success('Gift card purchased successfully!')
-      onPurchaseComplete?.(giftCard)
+      // Payment happens on Stripe; the card is activated only once it is paid.
+      window.location.href = data.data.checkoutUrl
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
         console.error('Gift card purchase error:', error)
       }
       toast.error(error instanceof Error ? error.message : 'Failed to purchase gift card')
-    } finally {
       setIsLoading(false)
     }
   }

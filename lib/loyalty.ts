@@ -443,6 +443,80 @@ export async function awardReferralPoints(userId: string, referralId: string): P
 }
 
 /**
+ * Create a redemption only if the user still has enough points.
+ *
+ * The balance is a ledger (earned minus redeemed), so "check then insert" is a
+ * classic write-skew: two concurrent requests can both see 500 points and both
+ * redeem 500. SERIALIZABLE makes Postgres abort one of them (P2034), and the
+ * retry then sees the other's redemption and fails the balance check.
+ */
+async function createRedemptionWithinBalance(
+  userId: string,
+  pointsToRedeem: number,
+  data: { status: 'applied' | 'pending'; orderId?: string }
+): Promise<{ redemptionId: string; availablePointsBefore: number }> {
+  const discountAmount = calculateDiscountFromPoints(pointsToRedeem)
+  const maxRetries = 3
+
+  for (let attempt = 1; attempt <= maxRetries; attempt += 1) {
+    try {
+      return await prisma.$transaction(
+        async (tx) => {
+          const availablePoints = await getAvailablePointsFromClient(tx, userId, {
+            includePending: true,
+          })
+          if (pointsToRedeem > availablePoints) {
+            throw new InsufficientPointsError(availablePoints)
+          }
+
+          const redemption = await tx.loyaltyRedemption.create({
+            data: {
+              userId,
+              pointsUsed: pointsToRedeem,
+              discount: discountAmount,
+              discountAmount,
+              orderId: data.orderId,
+              status: data.status,
+            },
+            select: {
+              id: true,
+            },
+          })
+
+          return { redemptionId: redemption.id, availablePointsBefore: availablePoints }
+        },
+        {
+          isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+        }
+      )
+    } catch (error) {
+      const isSerializationConflict =
+        (error instanceof Prisma.PrismaClientKnownRequestError &&
+          error.code === 'P2034') ||
+        (!!error &&
+          typeof error === 'object' &&
+          'code' in error &&
+          (error as { code?: string }).code === 'P2034')
+
+      if (isSerializationConflict && attempt < maxRetries) {
+        continue
+      }
+
+      throw error
+    }
+  }
+
+  throw new Error('Unable to redeem loyalty points. Please try again.')
+}
+
+class InsufficientPointsError extends Error {
+  constructor(public readonly availablePoints: number) {
+    super(`Insufficient points. You have ${availablePoints} available.`)
+    this.name = 'InsufficientPointsError'
+  }
+}
+
+/**
  * Redeem points for a discount
  */
 export async function redeemPoints(params: {
@@ -458,33 +532,14 @@ export async function redeemPoints(params: {
       return { success: false, discountAmount: 0, remainingPoints: 0, error: "Points to redeem must be positive" };
     }
 
-    // Get available points
-    const availablePoints = await getUserAvailablePoints(userId);
-
-    if (pointsToRedeem > availablePoints) {
-      return {
-        success: false,
-        discountAmount: 0,
-        remainingPoints: availablePoints,
-        error: `Insufficient points. You have ${availablePoints} available.`,
-      };
-    }
-
     const discountAmount = calculateDiscountFromPoints(pointsToRedeem);
 
-    // Create redemption record
-    await prisma.loyaltyRedemption.create({
-      data: {
-        userId,
-        pointsUsed: pointsToRedeem,
-        discount: discountAmount,
-        discountAmount,
-        orderId,
-        status: "applied",
-      },
+    const { availablePointsBefore } = await createRedemptionWithinBalance(userId, pointsToRedeem, {
+      status: "applied",
+      orderId,
     });
 
-    const remainingPoints = availablePoints - pointsToRedeem;
+    const remainingPoints = availablePointsBefore - pointsToRedeem;
 
     logger.info("Points redeemed successfully", {
       userId,
@@ -499,6 +554,14 @@ export async function redeemPoints(params: {
       remainingPoints,
     };
   } catch (error) {
+    if (error instanceof InsufficientPointsError) {
+      return {
+        success: false,
+        discountAmount: 0,
+        remainingPoints: error.availablePoints,
+        error: error.message,
+      };
+    }
     logger.error("Failed to redeem points", error, { userId, pointsToRedeem });
     return {
       success: false,
@@ -522,63 +585,18 @@ export async function holdPointsForCheckout(
   }
 
   const discountAmount = calculateDiscountFromPoints(pointsToRedeem)
-  const maxRetries = 3
+  const { redemptionId } = await createRedemptionWithinBalance(userId, pointsToRedeem, {
+    status: 'pending',
+  })
 
-  for (let attempt = 1; attempt <= maxRetries; attempt += 1) {
-    try {
-      const redemption = await prisma.$transaction(
-        async (tx) => {
-          const availablePoints = await getAvailablePointsFromClient(tx, userId, {
-            includePending: true,
-          })
-          if (pointsToRedeem > availablePoints) {
-            throw new Error(`Insufficient points. You have ${availablePoints} available.`)
-          }
+  logger.info('Points held for checkout', {
+    userId,
+    pointsHeld: pointsToRedeem,
+    discountAmount,
+    redemptionId,
+  })
 
-          return tx.loyaltyRedemption.create({
-            data: {
-              userId,
-              pointsUsed: pointsToRedeem,
-              discount: discountAmount,
-              discountAmount,
-              status: 'pending',
-            },
-            select: {
-              id: true,
-            },
-          })
-        },
-        {
-          isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-        }
-      )
-
-      logger.info('Points held for checkout', {
-        userId,
-        pointsHeld: pointsToRedeem,
-        discountAmount,
-        redemptionId: redemption.id,
-      })
-
-      return { redemptionId: redemption.id, discountAmount }
-    } catch (error) {
-      const isSerializationConflict =
-        (error instanceof Prisma.PrismaClientKnownRequestError &&
-          error.code === 'P2034') ||
-        (!!error &&
-          typeof error === 'object' &&
-          'code' in error &&
-          (error as { code?: string }).code === 'P2034')
-
-      if (isSerializationConflict && attempt < maxRetries) {
-        continue
-      }
-
-      throw error
-    }
-  }
-
-  throw new Error('Unable to hold loyalty points. Please try again.')
+  return { redemptionId, discountAmount }
 }
 
 /**
