@@ -149,7 +149,7 @@ const LEGACY = {
   "gradient-utility": {
     rule: "no-gradient",
     re: /(?<![\w-])(?:[\w-]+:)*(?:bg-linear-|bg-radial|bg-conic)[\w-]*/g,
-    baseline: 37,
+    baseline: 35,
     fix: "a flat token fill (bg-muted, bg-card) or no fill at all",
   },
   entrance: {

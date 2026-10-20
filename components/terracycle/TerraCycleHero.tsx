@@ -59,7 +59,7 @@ const CheckIcon = ({ className }: { className?: string }) => (
 export function TerraCycleHero({ className }: TerraCycleHeroProps) {
   return (
     <section
-      className={cn("border-b bg-secondary/40 py-16 lg:py-20", className)}
+      className={cn("border-b border-border bg-muted py-16 lg:py-20", className)}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">

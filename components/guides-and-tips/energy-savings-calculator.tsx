@@ -220,7 +220,7 @@ export function EnergySavingsCalculator() {
               <p className="font-medium">Breakdown by Upgrade:</p>
               <div className="space-y-3">
                 {savings.upgrades.map(({ name, yearlySavings, paybackPeriod, option }) => (
-                  <div key={name} className="rounded-lg bg-secondary p-3">
+                  <div key={name} className="rounded-lg bg-muted p-3">
                     <div className="flex items-center justify-between">
                       <span className="font-medium">{name}</span>
                       <span>{formatPrice(yearlySavings)}/year</span>

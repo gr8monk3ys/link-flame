@@ -190,7 +190,7 @@ export function QuizPageClient() {
             {/* How it works */}
             <div className="mx-auto grid max-w-2xl gap-6 py-8 sm:grid-cols-3">
               <div className="flex flex-col items-center gap-3 p-4">
-                <div className="flex size-12 items-center justify-center rounded-full bg-secondary text-xl font-semibold">
+                <div className="flex size-12 items-center justify-center rounded-full bg-muted text-xl font-semibold">
                   1
                 </div>
                 <h2 className="font-medium">Tell Us About You</h2>
@@ -199,7 +199,7 @@ export function QuizPageClient() {
                 </p>
               </div>
               <div className="flex flex-col items-center gap-3 p-4">
-                <div className="flex size-12 items-center justify-center rounded-full bg-secondary text-xl font-semibold">
+                <div className="flex size-12 items-center justify-center rounded-full bg-muted text-xl font-semibold">
                   2
                 </div>
                 <h2 className="font-medium">We Analyze</h2>
@@ -208,7 +208,7 @@ export function QuizPageClient() {
                 </p>
               </div>
               <div className="flex flex-col items-center gap-3 p-4">
-                <div className="flex size-12 items-center justify-center rounded-full bg-secondary text-xl font-semibold">
+                <div className="flex size-12 items-center justify-center rounded-full bg-muted text-xl font-semibold">
                   3
                 </div>
                 <h2 className="font-medium">Get Recommendations</h2>
