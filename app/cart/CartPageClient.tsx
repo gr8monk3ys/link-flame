@@ -76,7 +76,7 @@ const CartItemRow = memo(({
         />
       </div>
       <div className="min-w-0 flex-1 space-y-1">
-        <h2 className="break-words font-medium">{item.title}</h2>
+        <h2 className="wrap-break-word font-medium">{item.title}</h2>
         {variantDetails && (
           <p className="text-sm text-muted-foreground">{variantDetails}</p>
         )}
@@ -266,7 +266,7 @@ export default function CartPageClient() {
                 </div>
               </div>
               <div className="lg:col-span-4">
-                <div className="rounded-lg border p-6 shadow-sm">
+                <div className="rounded-lg border p-6 shadow-xs">
                   <h2 className="mb-4 text-lg font-medium">Order Summary</h2>
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">

@@ -16,7 +16,7 @@ export function SiteHeader({ className }: SiteHeaderProps) {
   return (
     <header className={cn("sticky top-0 z-40 w-full border-b border-border/60 bg-background/95 backdrop-blur-md", className)}>
       <AnnouncementBar />
-      <div className="container flex h-[4.5rem] items-center justify-between">
+      <div className="container flex h-18 items-center justify-between">
         <MainNav items={siteConfig.mainNav} />
         <div className="flex items-center space-x-4">
           <nav className="flex items-center space-x-4 sm:space-x-6">

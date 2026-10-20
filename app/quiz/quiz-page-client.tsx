@@ -257,7 +257,7 @@ export function QuizPageClient() {
               totalSteps={questions.length}
             />
 
-            <div className="rounded-xl border bg-card p-6 shadow-sm sm:p-8">
+            <div className="rounded-xl border bg-card p-6 shadow-xs sm:p-8">
               <QuizQuestion
                 question={currentQuestion.question}
                 options={currentQuestion.options}

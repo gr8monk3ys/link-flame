@@ -28,7 +28,7 @@ export function ProductResult({
       onClick={onSelect}
       className={cn(
         'flex items-center gap-3 rounded-md px-3 py-2 transition-colors',
-        'hover:bg-accent focus:bg-accent focus-visible:outline-none',
+        'hover:bg-accent focus:bg-accent focus-visible:outline-hidden',
         isHighlighted && 'bg-accent'
       )}
     >
@@ -100,7 +100,7 @@ export function CategoryResult({
       onClick={onSelect}
       className={cn(
         'flex items-center justify-between rounded-md px-3 py-2 transition-colors',
-        'hover:bg-accent focus:bg-accent focus-visible:outline-none',
+        'hover:bg-accent focus:bg-accent focus-visible:outline-hidden',
         isHighlighted && 'bg-accent'
       )}
     >
@@ -147,7 +147,7 @@ export function BlogPostResult({
       onClick={onSelect}
       className={cn(
         'flex items-center gap-3 rounded-md px-3 py-2 transition-colors',
-        'hover:bg-accent focus:bg-accent focus-visible:outline-none',
+        'hover:bg-accent focus:bg-accent focus-visible:outline-hidden',
         isHighlighted && 'bg-accent'
       )}
     >
@@ -238,7 +238,7 @@ export function RecentSearchResult({
       <button
         type="button"
         onClick={onSelect}
-        className="flex min-w-0 flex-1 items-center gap-2 px-3 py-2 text-left focus-visible:outline-none"
+        className="flex min-w-0 flex-1 items-center gap-2 px-3 py-2 text-left focus-visible:outline-hidden"
       >
         <svg aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
@@ -261,7 +261,7 @@ export function RecentSearchResult({
         <button
           type="button"
           onClick={handleRemove}
-          className="mr-2 rounded p-1 text-muted-foreground hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="mr-2 rounded p-1 text-muted-foreground hover:bg-background hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
           aria-label={`Remove "${query}" from recent searches`}
         >
           <svg aria-hidden="true"

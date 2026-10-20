@@ -105,7 +105,7 @@ export function CartImpactPreview({
   return (
     <div
       className={cn(
-        "rounded-lg border border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 p-4 dark:border-green-800 dark:from-green-950/50 dark:to-emerald-950/50",
+        "rounded-lg border border-green-200 bg-linear-to-r from-green-50 to-emerald-50 p-4 dark:border-green-800 dark:from-green-950/50 dark:to-emerald-950/50",
         className
       )}
     >

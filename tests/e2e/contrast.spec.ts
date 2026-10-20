@@ -51,9 +51,37 @@ interface Failure {
  * is measured stop by stop, composited over the backdrop.
  */
 function auditContrast(): Failure[] {
+  // Tailwind v4 compiles `/90`-style opacity utilities over `hsl(var(--x))`
+  // into `color-mix(in oklab, …)`, so getComputedStyle now answers in
+  // `oklab(0.98 0.0003 0.003 / 0.9)` rather than `rgba(…)`. Reading the
+  // numbers out of that string as 0–255 channels scored ink on paper at
+  // 1.39:1. Painting the colour onto a 1×1 sRGB canvas and reading the pixel
+  // back is the browser's own conversion of any CSS colour to sRGB bytes
+  // (getImageData is un-premultiplied, so the alpha channel survives too).
+  // Chrome keeps `oklab(…)` verbatim in fillStyle, so a fillStyle round-trip
+  // alone is not enough.
+  const canvas = document.createElement('canvas')
+  canvas.width = 1
+  canvas.height = 1
+  const probe = canvas.getContext('2d', { willReadFrequently: true, colorSpace: 'srgb' })
+  const SENTINEL = '#010203'
+  const toRgba = (value: string): number[] | null => {
+    if (!probe || !value) return null
+    probe.fillStyle = SENTINEL
+    probe.fillStyle = value
+    if (String(probe.fillStyle) === SENTINEL && value.trim().toLowerCase() !== SENTINEL) {
+      return null // not a colour the browser understands
+    }
+    probe.clearRect(0, 0, 1, 1)
+    probe.fillRect(0, 0, 1, 1)
+    const [r, g, b, a] = probe.getImageData(0, 0, 1, 1).data
+    return [r, g, b, a / 255]
+  }
+
+  /** Any CSS colour -> [r, g, b]; alpha is deliberately ignored, as before. */
   const parse = (value: string): number[] | null => {
-    const parts = value.match(/[\d.]+/g)
-    return parts ? parts.slice(0, 3).map(Number) : null
+    const c = toRgba(value)
+    return c ? c.slice(0, 3) : null
   }
 
   const luminance = (rgb: number[]): number => {
@@ -76,11 +104,9 @@ function auditContrast(): Failure[] {
     let node: Element | null = skipSelf ? el.parentElement : el
     while (node && node !== document.documentElement) {
       const style = getComputedStyle(node)
-      const parts = style.backgroundColor.match(/[\d.]+/g)
-      const opaque = parts && (parts.length < 4 || Number(parts[3]) > 0.5)
-      if (opaque) {
-        const solid = parse(style.backgroundColor)
-        return solid ? [solid] : null
+      const bg = toRgba(style.backgroundColor)
+      if (bg && bg[3] > 0.5) {
+        return [bg.slice(0, 3)]
       }
 
       const image = style.backgroundImage
@@ -105,21 +131,22 @@ function auditContrast(): Failure[] {
     return (hi + 0.05) / (lo + 0.05)
   }
 
-  /** rgb/rgba -> [r, g, b, a]; alpha defaults to 1. */
-  const parse4 = (value: string): number[] | null => {
-    const parts = value.match(/[\d.]+/g)
-    if (!parts) return null
-    const [r, g, b, a] = parts.map(Number)
-    return [r, g, b, a === undefined ? 1 : a]
-  }
+  /** Any CSS colour -> [r, g, b, a]; alpha defaults to 1. */
+  const parse4 = toRgba
 
   /**
    * Colour stops of a CSS gradient, each composited over `backdrop` so a
    * translucent stop is judged as it actually renders. `to-accent/70` measured
    * as opaque amber looks acceptable; blended onto cream it is 1.55:1.
+   *
+   * Stops may be `rgb()`, `oklab()`, `color-mix(…)` (one level of nesting) or
+   * any other colour function; each goes through the same canvas round-trip.
    */
   const gradientStopsOver = (backgroundImage: string, backdrop: number[]): number[][] => {
-    const matches = backgroundImage.match(/rgba?\([^)]+\)/g) ?? []
+    const matches =
+      backgroundImage.match(
+        /\b(?:rgba?|hsla?|oklab|oklch|lab|lch|color|color-mix)\((?:[^()]|\([^()]*\))*\)/g,
+      ) ?? []
     return matches.map((raw) => {
       const c = parse4(raw)
       if (!c) return backdrop

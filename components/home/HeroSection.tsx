@@ -48,7 +48,7 @@ export default function HeroSection() {
         </div>
 
         <div className="lg:col-span-7">
-          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-secondary shadow-warm-lg sm:aspect-[3/2]">
+          <div className="relative aspect-4/3 overflow-hidden rounded-2xl bg-secondary shadow-warm-lg sm:aspect-3/2">
             {/* Largest element in the mobile viewport, so it is the LCP
                 candidate. `preload` (Next 16's name for `priority`) emits the
                 <link rel="preload">; `fetchPriority="high"` is what moves the
@@ -87,7 +87,7 @@ export default function HeroSection() {
             <li key={value.slug}>
               <Link
                 href={`/products?values=${value.slug}`}
-                className="group flex h-full flex-col rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/40 hover:bg-secondary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                className="group flex h-full flex-col rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/40 hover:bg-secondary/50 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 <span className="font-medium tracking-tight">{value.label}</span>
                 <span className="mt-1.5 text-sm leading-relaxed text-muted-foreground">

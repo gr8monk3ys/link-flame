@@ -66,7 +66,7 @@ export default function AboutUsPage() {
     <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
       {/* Hero Section */}
       <div className="flex max-w-[980px] flex-col items-start gap-2">
-        <h1 className="font-serif text-3xl leading-tight tracking-tight md:text-4xl">
+        <h1 className="font-serif text-3xl leading-tight tracking-tight md:text-4xl md:leading-10">
           About Link Flame
         </h1>
         <p className="max-w-[700px] text-lg text-muted-foreground">

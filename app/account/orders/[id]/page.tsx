@@ -244,7 +244,7 @@ export default function OrderDetailPage() {
                 ))}
               </div>
               {/* Progress line */}
-              <div className="absolute inset-x-0 top-5 -z-0 h-0.5 bg-muted">
+              <div className="absolute inset-x-0 top-5 z-0 h-0.5 bg-muted">
                 <div
                   className="size-full origin-left bg-primary transition-transform duration-500"
                   style={{
@@ -359,7 +359,7 @@ export default function OrderDetailPage() {
           <div className="grid gap-6 md:grid-cols-2">
             <div>
               <h3 className="mb-2 font-semibold">Customer Information</h3>
-              <div className="space-y-1 break-words text-sm text-muted-foreground">
+              <div className="space-y-1 wrap-break-word text-sm text-muted-foreground">
                 {order.customerName && <div>{order.customerName}</div>}
                 {order.customerEmail && <div>{order.customerEmail}</div>}
               </div>
@@ -367,7 +367,7 @@ export default function OrderDetailPage() {
             {order.shippingAddress && (
               <div>
                 <h3 className="mb-2 font-semibold">Shipping Address</h3>
-                <div className="break-words text-sm text-muted-foreground">
+                <div className="wrap-break-word text-sm text-muted-foreground">
                   {order.shippingAddress}
                 </div>
               </div>
@@ -407,7 +407,7 @@ export default function OrderDetailPage() {
                     />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h3 className="break-words font-medium">{item.title}</h3>
+                    <h3 className="wrap-break-word font-medium">{item.title}</h3>
                     {variantDetails.length > 0 && (
                       <p className="mt-1 text-sm text-muted-foreground">
                         {variantDetails.join(' / ')}

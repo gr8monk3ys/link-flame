@@ -144,14 +144,14 @@ export function RecyclingSteps({ className }: RecyclingStepsProps) {
         {/* Steps Grid */}
         <div className="relative">
           {/* Connection Line (hidden on mobile) */}
-          <div className="absolute inset-x-0 top-1/2 z-0 hidden h-0.5 -translate-y-1/2 bg-gradient-to-r from-emerald-200 via-teal-200 to-green-200 dark:from-emerald-800 dark:via-teal-800 dark:to-green-800 lg:block" />
+          <div className="absolute inset-x-0 top-1/2 z-0 hidden h-0.5 -translate-y-1/2 bg-linear-to-r from-emerald-200 via-teal-200 to-green-200 dark:from-emerald-800 dark:via-teal-800 dark:to-green-800 lg:block" />
 
           <div className="relative z-10 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             {steps.map((step) => (
               <div
                 key={step.number}
                 className={cn(
-                  "relative rounded-2xl border bg-card p-6 shadow-sm transition-shadow hover:shadow-md",
+                  "relative rounded-2xl border bg-card p-6 shadow-xs transition-shadow hover:shadow-md",
                   step.borderColor
                 )}
               >

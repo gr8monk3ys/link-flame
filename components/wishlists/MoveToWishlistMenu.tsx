@@ -135,7 +135,7 @@ export function MoveToWishlistMenu({
                     value={newListName}
                     onChange={(e) => setNewListName(e.target.value)}
                     placeholder="e.g. Gift Ideas"
-                    className="w-full rounded-md border px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                    className="w-full rounded-md border px-3 py-2 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary"
                     autoFocus
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') handleCreateAndMove();

@@ -16,7 +16,7 @@ export default function GreenHomePage() {
   return (
     <div className="container py-10">
       <div className="mb-8 flex max-w-[980px] flex-col items-start gap-2">
-        <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
+        <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl md:leading-10">
           Green Home & Garden
         </h1>
         <p className="max-w-[700px] text-lg text-muted-foreground">

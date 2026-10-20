@@ -94,7 +94,7 @@ export function CarbonNeutralBanner({
   return (
     <div
       className={cn(
-        "rounded-lg border border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 p-4 dark:border-green-800 dark:from-green-900/20 dark:to-emerald-900/20",
+        "rounded-lg border border-green-200 bg-linear-to-r from-green-50 to-emerald-50 p-4 dark:border-green-800 dark:from-green-900/20 dark:to-emerald-900/20",
         className
       )}
     >

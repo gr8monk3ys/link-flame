@@ -221,7 +221,7 @@ export function ValueFilterBar({ className, initialValues }: ValueFilterBarProps
     <div className={cn('relative', className)}>
       {/* Left scroll indicator */}
       {showLeftScroll && (
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-background to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-linear-to-r from-background to-transparent" />
       )}
 
       {/* Scrollable container */}
@@ -241,7 +241,7 @@ export function ValueFilterBar({ className, initialValues }: ValueFilterBarProps
               className={cn(
                 'inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors',
                 'shrink-0 whitespace-nowrap border',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
                 isSelected
                   ? 'border-primary bg-primary text-white hover:bg-primary/90'
                   : 'border-border bg-card text-foreground hover:border-primary/40 hover:bg-primary/10'
@@ -264,7 +264,7 @@ export function ValueFilterBar({ className, initialValues }: ValueFilterBarProps
 
       {/* Right scroll indicator */}
       {showRightScroll && (
-        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-background to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-linear-to-l from-background to-transparent" />
       )}
     </div>
   );

@@ -59,8 +59,8 @@ export function WelcomeBonusNotification() {
     >
       <div className="relative overflow-hidden rounded-lg border border-green-200 bg-card p-4 shadow-lg dark:border-green-900/50">
         {/* Confetti-like decoration */}
-        <div className="absolute -right-2 -top-2 size-20 rotate-12 rounded-full bg-gradient-to-br from-green-100 to-green-50 opacity-50 dark:from-green-900/30 dark:to-green-950/40" />
-        <div className="absolute -bottom-4 -left-4 size-16 -rotate-12 rounded-full bg-gradient-to-tr from-yellow-100 to-yellow-50 opacity-50 dark:from-yellow-900/30 dark:to-yellow-950/40" />
+        <div className="absolute -right-2 -top-2 size-20 rotate-12 rounded-full bg-linear-to-br from-green-100 to-green-50 opacity-50 dark:from-green-900/30 dark:to-green-950/40" />
+        <div className="absolute -bottom-4 -left-4 size-16 -rotate-12 rounded-full bg-linear-to-tr from-yellow-100 to-yellow-50 opacity-50 dark:from-yellow-900/30 dark:to-yellow-950/40" />
 
         <button
           onClick={handleDismiss}

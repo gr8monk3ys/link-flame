@@ -250,7 +250,7 @@ export default function AdminOrdersPage() {
       </div>
 
       {/* Filters */}
-      <div className="rounded-lg bg-card p-4 shadow">
+      <div className="rounded-lg bg-card p-4 shadow-sm">
         <div className="flex flex-col gap-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
@@ -293,7 +293,7 @@ export default function AdminOrdersPage() {
       </div>
 
       {/* Orders Table */}
-      <div className="overflow-x-auto rounded-lg bg-card shadow">
+      <div className="overflow-x-auto rounded-lg bg-card shadow-sm">
         <table className="min-w-full divide-y divide-border tabular-nums">
           <thead className="bg-muted">
             <tr>
@@ -508,37 +508,37 @@ export default function AdminOrdersPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-6">
-        <div className="rounded-lg bg-card p-4 shadow">
+        <div className="rounded-lg bg-card p-4 shadow-sm">
           <p className="text-sm text-muted-foreground">Total Orders</p>
           <p className="mt-1 text-2xl font-bold text-foreground">
             {orders.length}
           </p>
         </div>
-        <div className="rounded-lg bg-card p-4 shadow">
+        <div className="rounded-lg bg-card p-4 shadow-sm">
           <p className="text-sm text-muted-foreground">Pending</p>
           <p className="mt-1 text-2xl font-bold text-yellow-600 dark:text-yellow-400">
             {orders.filter((o) => !o.shippingStatus || o.shippingStatus === 'processing').length}
           </p>
         </div>
-        <div className="rounded-lg bg-card p-4 shadow">
+        <div className="rounded-lg bg-card p-4 shadow-sm">
           <p className="text-sm text-muted-foreground">Shipped</p>
           <p className="mt-1 text-2xl font-bold text-blue-600 dark:text-blue-400">
             {orders.filter((o) => o.shippingStatus === 'shipped' || o.shippingStatus === 'in_transit').length}
           </p>
         </div>
-        <div className="rounded-lg bg-card p-4 shadow">
+        <div className="rounded-lg bg-card p-4 shadow-sm">
           <p className="text-sm text-muted-foreground">Delivered</p>
           <p className="mt-1 text-2xl font-bold text-green-700 dark:text-green-400">
             {orders.filter((o) => o.shippingStatus === 'delivered').length}
           </p>
         </div>
-        <div className="rounded-lg bg-card p-4 shadow">
+        <div className="rounded-lg bg-card p-4 shadow-sm">
           <p className="text-sm text-muted-foreground">Refunded</p>
           <p className="mt-1 text-2xl font-bold text-muted-foreground">
             {orders.filter((o) => o.status === 'refunded').length}
           </p>
         </div>
-        <div className="rounded-lg bg-card p-4 shadow">
+        <div className="rounded-lg bg-card p-4 shadow-sm">
           <div className="flex items-center gap-2">
             <Gift className="size-4 text-pink-600 dark:text-pink-400" />
             <p className="text-sm text-muted-foreground">Gift Orders</p>

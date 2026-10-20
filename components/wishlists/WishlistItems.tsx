@@ -177,7 +177,7 @@ export function WishlistItems({
               </div>
 
               {item.note && (
-                <p className="mt-2 break-words text-sm italic text-muted-foreground">
+                <p className="mt-2 wrap-break-word text-sm italic text-muted-foreground">
                   &ldquo;{item.note}&rdquo;
                 </p>
               )}
@@ -293,7 +293,7 @@ export function WishlistItems({
             value={noteText}
             onChange={(e) => setNoteText(e.target.value)}
             placeholder="e.g., Gift for mom’s birthday"
-            className="min-h-[100px] w-full resize-none rounded-md border px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="min-h-[100px] w-full resize-none rounded-md border px-3 py-2 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary"
             maxLength={500}
           />
           <DialogFooter>

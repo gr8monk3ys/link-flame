@@ -200,7 +200,7 @@ export default function GiftCardsPage() {
       </div>
 
       {/* CTA Section */}
-      <div className="mt-16 rounded-2xl bg-gradient-to-r from-green-700 to-emerald-700 p-8 text-center text-white">
+      <div className="mt-16 rounded-2xl bg-linear-to-r from-green-700 to-emerald-700 p-8 text-center text-white">
         <h2 className="mb-4 text-2xl font-bold">
           Give the Gift of Sustainable Living
         </h2>

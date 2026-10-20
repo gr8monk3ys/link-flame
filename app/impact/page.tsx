@@ -215,7 +215,7 @@ export default async function ImpactPage() {
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link
               href="/collections"
-              className="inline-flex items-center rounded-lg bg-background px-6 py-3 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-background/90"
+              className="inline-flex items-center rounded-lg bg-background px-6 py-3 text-sm font-medium text-foreground shadow-xs transition-colors hover:bg-background/90"
             >
               Shop all products
             </Link>
