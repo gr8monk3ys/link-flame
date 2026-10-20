@@ -48,14 +48,24 @@ export function SiteFooter({ className }: SiteFooterProps) {
       <div className="container py-12 md:py-16 lg:py-20">
         <div className="grid gap-10 lg:grid-cols-[1.1fr_2fr] lg:gap-16">
           {/* Company Info */}
-          <div className="space-y-4">
-            <Link href="/" className="inline-flex">
-              <Logo size={22} />
-            </Link>
-            <p className="max-w-sm text-sm text-muted-foreground">
-              Your trusted guide to sustainable living and eco-friendly products.
-              Making environmentally conscious choices easier for everyone.
-            </p>
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <Link href="/" className="inline-flex">
+                <Logo size={22} />
+              </Link>
+              <p className="max-w-sm text-sm text-muted-foreground">
+                Your trusted guide to sustainable living and eco-friendly products.
+                Making environmentally conscious choices easier for everyone.
+              </p>
+            </div>
+
+            {/* Newsletter: in the wide left column, where its field has room. */}
+            <NewsletterSignup
+              className="max-w-sm"
+              title="Stay Connected"
+              description="Join our community for eco-friendly tips and exclusive deals."
+            />
+
             <div className="flex gap-4">
               <a
                 href={siteConfig.links.twitter}
@@ -87,7 +97,7 @@ export function SiteFooter({ className }: SiteFooterProps) {
             </div>
           </div>
 
-          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+          <div className="grid gap-10 sm:grid-cols-3 lg:gap-8">
             {/* Quick Links */}
             <div>
               <h3 className="label-mono mb-4">Quick Links</h3>
@@ -119,14 +129,6 @@ export function SiteFooter({ className }: SiteFooterProps) {
             {/* Sustainability */}
             <div>
               <SustainabilityCommitment variant="footer" />
-            </div>
-
-            {/* Newsletter */}
-            <div>
-              <NewsletterSignup
-                title="Stay Connected"
-                description="Join our community for eco-friendly tips and exclusive deals."
-              />
             </div>
           </div>
         </div>

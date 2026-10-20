@@ -79,7 +79,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
           the visible one. */}
       <button type="button" onClick={openSearch} className={cn('inline-flex', className)}>
         {/* Mobile: a round hairline pill with the icon */}
-        <span className="cta-secondary size-9 rounded-full lg:hidden">
+        <span className="cta-secondary size-8 rounded-full sm:size-9 lg:hidden">
           <Icons.search className="size-4" aria-hidden="true" />
           <span className="sr-only">Search</span>
         </span>

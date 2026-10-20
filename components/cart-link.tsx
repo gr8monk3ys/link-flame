@@ -18,7 +18,7 @@ export function CartLink({ className }: CartLinkProps) {
   return (
     <Link
       href="/cart"
-      className={cn('cta-secondary relative size-9 rounded-full', className)}
+      className={cn('cta-secondary relative size-8 rounded-full sm:size-9', className)}
       aria-label={hasInitializedCart && itemCount > 0 ? `Cart, ${itemCount} ${itemCount === 1 ? 'item' : 'items'}` : 'Cart'}
     >
       <svg aria-hidden="true"

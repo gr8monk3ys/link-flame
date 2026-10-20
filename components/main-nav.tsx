@@ -31,15 +31,18 @@ export function MainNav({ className, items }: MainNavProps) {
   const [showMobileMenu, setShowMobileMenu] = React.useState(false);
 
   return (
-    <div className={cn("flex items-center gap-6 md:gap-10", className)}>
+    <div className={cn("flex items-center gap-3 sm:gap-6 md:gap-10", className)}>
       {/* The horizontal lockup: the leaf-flame plate beside "Link Flame" in
-          Fraunces, the mark as tall as the wordmark's capitals. */}
+          Fraunces, the mark as tall as the wordmark's capitals. A step smaller
+          below sm so the lockup, the menu pill and the three header pills fit
+          a 390px row. */}
       <Link href="/" className="flex items-center">
-        <Logo size={22} />
+        <Logo size={18} className="sm:hidden" />
+        <Logo size={22} className="hidden sm:inline-flex" />
       </Link>
       <button
         type="button"
-        className="cta-secondary size-9 rounded-full md:hidden"
+        className="cta-secondary size-8 rounded-full sm:size-9 md:hidden"
         onClick={() => setShowMobileMenu((v) => !v)}
         aria-label={showMobileMenu ? "Close menu" : "Open menu"}
         aria-expanded={showMobileMenu}

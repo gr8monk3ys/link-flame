@@ -12,7 +12,7 @@ export function AccountLink({ className }: { className?: string }) {
   const href = status === "authenticated" ? "/account" : "/auth/signin";
 
   return (
-    <Link href={href} className={cn("cta-secondary size-9 rounded-full", className)}>
+    <Link href={href} className={cn("cta-secondary size-8 rounded-full sm:size-9", className)}>
       <Icons.user className="size-4" aria-hidden="true" />
       <span className="sr-only">Account</span>
     </Link>

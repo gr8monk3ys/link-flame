@@ -30,11 +30,11 @@ export function SiteHeader({ className }: SiteHeaderProps) {
       <AnnouncementBar />
       <div className="container flex h-18 items-center justify-between">
         <MainNav items={siteConfig.mainNav} />
-        <nav className="flex items-center gap-2 sm:gap-3" aria-label="Account and cart">
+        <nav className="flex items-center gap-1.5 sm:gap-3" aria-label="Account and cart">
           {/* Predictive Search */}
           <Suspense
             fallback={
-              <span aria-hidden="true" className="inline-flex size-9 rounded-full border border-border bg-card" />
+              <span aria-hidden="true" className="inline-flex size-8 rounded-full border border-border bg-card sm:size-9" />
             }
           >
             <HeaderSearch />

@@ -100,7 +100,7 @@ export function Logo({ variant = "horizontal", size = 24, className }: LogoProps
           scripts/check-design-system.mjs (The Serif Speaks Rule). */}
       <span
         data-voice="display"
-        className="font-display font-bold leading-none tracking-tight"
+        className="whitespace-nowrap font-display font-bold leading-none tracking-tight"
         style={{ fontSize }}
       >
         Link <span className="text-primary">Flame</span>
