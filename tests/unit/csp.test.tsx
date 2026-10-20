@@ -21,11 +21,16 @@ function sha256(source: string): string {
   return `sha256-${createHash("sha256").update(source, "utf8").digest("base64")}`
 }
 
+// next-themes renders `(${fn.toString()})(args)`, so the hash rendered here
+// (from the package source) is not the one production serves (from the
+// minified server bundle); see INLINE_SCRIPT_HASHES in lib/csp.ts.
+const THEME_SCRIPT_SOURCE_HASH = "sha256-vQsXc0D1JvYJ7cfeKzl1GKst8EtTw7+Cu1OatpeSAUM="
+
 describe("inline script hashes", () => {
   // The root layout renders these two scripts on every page. They run under
   // the nonce policy by hash, so a change to either (or a next-themes upgrade
   // that rewrites its script) must be mirrored in INLINE_SCRIPT_HASHES.
-  it("matches the next-themes pre-paint script for the layout's props", () => {
+  it("trips when the next-themes pre-paint script for the layout's props changes", () => {
     const html = renderToStaticMarkup(
       <ThemeProvider {...SITE_THEME_PROPS}>
         <div />
@@ -33,7 +38,11 @@ describe("inline script hashes", () => {
     )
     const scripts = inlineScripts(html)
     expect(scripts).toHaveLength(1)
-    expect(sha256(scripts[0]), "update INLINE_SCRIPT_HASHES.theme").toBe(INLINE_SCRIPT_HASHES.theme)
+    expect(
+      sha256(scripts[0]),
+      "next-themes' script changed: run `npm run build && npm run check:csp-hashes`, " +
+        "put the served hash in INLINE_SCRIPT_HASHES.theme, then update THEME_SCRIPT_SOURCE_HASH"
+    ).toBe(THEME_SCRIPT_SOURCE_HASH)
   })
 
   it("matches the announcement bar's dismissal script", () => {
