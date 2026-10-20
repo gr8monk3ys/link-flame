@@ -1,25 +1,59 @@
-import { Inter as FontSans, Lora } from "next/font/google"
+import localFont from "next/font/local"
 
-// JetBrains Mono used to be declared here too. Nothing imported it and
-// `--font-mono` is not mapped in styles/globals.css's @theme, but next/font preloads
-// every font a module declares, so every page fetched a 40 KB monospace file
-// at high priority ahead of the hero image. `font-mono` classes already
-// resolve to Tailwind's default stack and still do.
+// Three voices, all self-hosted from the @fontsource packages so the build
+// never fetches a font. Fraunces speaks (headings, the wordmark, product
+// names), Instrument Sans reads (body), IBM Plex Mono catalogues (the wall
+// label: brand · certification · impact). See DESIGN.md → Typography.
+// tests/unit/fonts.test.ts checks the files exist and that nothing under app/,
+// components/, lib/ or hooks/ loads a font from Google.
 
-// `display: "swap"` is next/font's default; it is spelled out because the
-// swap is what makes the fonts safe to load late: text paints in the
-// size-adjusted fallback at first render and never blocks the hero.
-export const fontSans = FontSans({
-  subsets: ["latin"],
-  variable: "--font-sans",
+export const fontDisplay = localFont({
+  src: "../node_modules/@fontsource-variable/fraunces/files/fraunces-latin-wght-normal.woff2",
+  weight: "100 900",
+  style: "normal",
   display: "swap",
+  // Headings are not on the critical path the way body copy is; one preload
+  // (the body) keeps the font budget where the Lighthouse floors want it.
+  preload: false,
+  variable: "--font-display",
+  fallback: ["ui-serif", "Georgia", "serif"],
+  adjustFontFallback: false,
 })
 
-// Lora is a variable font (wght 400-700), so asking for it without a weight
-// list gets one file that covers 400/500/600/700 — the same glyphs the
-// four-weight declaration rendered.
-export const fontSerif = Lora({
-  subsets: ["latin"],
-  variable: "--font-serif",
+export const fontBody = localFont({
+  src: "../node_modules/@fontsource-variable/instrument-sans/files/instrument-sans-latin-wght-normal.woff2",
+  weight: "400 700",
+  style: "normal",
   display: "swap",
+  variable: "--font-body",
+  fallback: ["ui-sans-serif", "system-ui", "Segoe UI", "Arial", "sans-serif"],
+})
+
+export const fontMono = localFont({
+  src: [
+    {
+      path: "../node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2",
+      weight: "400",
+    },
+    {
+      path: "../node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-500-normal.woff2",
+      weight: "500",
+    },
+    {
+      path: "../node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-600-normal.woff2",
+      weight: "600",
+    },
+  ],
+  style: "normal",
+  // `optional`, not `swap`: the mono voice only ever paints small uppercase
+  // labels, and a swap there flips a metadata row between one line and two.
+  // The sibling site measured 0.135 CLS from exactly that.
+  display: "optional",
+  preload: false,
+  variable: "--font-mono",
+  fallback: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+  // Without this next/font puts a metric-adjusted Arial face ahead of the
+  // fallback list, so a load that misses the `optional` window painted every
+  // wall label in sans. The fallback for a mono label is a mono font.
+  adjustFontFallback: false,
 })

@@ -3,7 +3,7 @@ import "@/lib/env"
 import { Suspense } from "react"
 import { Metadata, Viewport } from "next"
 import { siteConfig } from "@/config/site"
-import { fontSans, fontSerif } from "@/lib/fonts"
+import { fontBody, fontDisplay, fontMono } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
 import { ThemeProvider } from "@/components/layout/theme-provider"
 import { SITE_THEME_PROPS } from "@/config/theme"
@@ -70,8 +70,10 @@ export function getMetadata(): Metadata {
 export function getViewport(): Viewport {
   return {
     themeColor: [
-      { media: '(prefers-color-scheme: light)', color: '#fcfaf8' },
-      { media: '(prefers-color-scheme: dark)', color: '#15110f' },
+      // Paper and night (styles/globals.css --background); the manifest's
+      // theme_color is the Moss ink.
+      { media: '(prefers-color-scheme: light)', color: '#f9f8f5' },
+      { media: '(prefers-color-scheme: dark)', color: '#111317' },
     ],
   }
 }
@@ -89,22 +91,23 @@ interface RootLayoutProps {
 // see lib/csp.ts.
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      // The three font variables live on <html> so portalled content (Radix
+      // dialogs, menus, sonner toasts) and the type utilities in
+      // styles/globals.css resolve them from the root, not from <body>.
+      className={cn(fontDisplay.variable, fontBody.variable, fontMono.variable)}
+    >
       <head />
-      <body
-        className={cn(
-          "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable,
-          fontSerif.variable
-        )}
-      >
+      <body className="min-h-screen bg-background font-sans antialiased">
         <SessionProvider>
           <ThemeProvider {...SITE_THEME_PROPS}>
             <CartProvider>
               <ErrorBoundary>
                 <a
                   href="#main-content"
-                  className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-4 focus-visible:z-100 focus-visible:rounded-md focus-visible:bg-background focus-visible:px-4 focus-visible:py-2 focus-visible:text-sm focus-visible:font-medium focus-visible:shadow-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
+                  className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-4 focus-visible:z-100 focus-visible:rounded-lg focus-visible:border focus-visible:border-border focus-visible:bg-card focus-visible:px-4 focus-visible:py-2 focus-visible:text-sm focus-visible:font-medium"
                 >
                   Skip to Main Content
                 </a>
