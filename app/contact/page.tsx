@@ -4,6 +4,9 @@ import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { buttonVariants } from "@/components/ui/button"
 import { CONTACT } from "@/config/constants"
+import { apiErrorMessage, csrfHeaders, fetchCsrfToken } from "@/lib/csrf-client"
+
+const GENERIC_ERROR_MESSAGE = "Something went wrong. Please try again later."
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -13,22 +16,25 @@ export default function ContactPage() {
     message: "",
   })
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
+  const [errorMessage, setErrorMessage] = useState(GENERIC_ERROR_MESSAGE)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setStatus("loading")
 
     try {
+      // /api/contact validates the CSRF double-submit token and answers 403
+      // without it; fetch one per submit rather than on mount.
+      const csrfToken = await fetchCsrfToken()
       const response = await fetch("/api/contact", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: csrfHeaders(csrfToken, { "Content-Type": "application/json" }),
         body: JSON.stringify(formData),
       })
 
       if (!response.ok) {
-        throw new Error("Failed to submit form")
+        const data: unknown = await response.json().catch(() => null)
+        throw new Error(apiErrorMessage(data) ?? GENERIC_ERROR_MESSAGE)
       }
 
       setStatus("success")
@@ -37,6 +43,7 @@ export default function ContactPage() {
       if (process.env.NODE_ENV === 'development') {
         console.error("Contact form error:", error)
       }
+      setErrorMessage(error instanceof Error && error.message ? error.message : GENERIC_ERROR_MESSAGE)
       setStatus("error")
     }
   }
@@ -138,7 +145,7 @@ export default function ContactPage() {
             )}
             {status === "error" && (
               <p className="mt-2 text-sm text-red-600 dark:text-red-400" role="alert">
-                Something went wrong. Please try again later.
+                {errorMessage}
               </p>
             )}
           </form>
