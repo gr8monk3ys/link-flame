@@ -61,6 +61,13 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
+      # DESIGN.md's mechanically checkable rules plus the legacy ratchet
+      # (scripts/check-design-system.mjs). Fails on a new raw palette hue,
+      # shadow, gradient, blur or entrance animation, and on a ratchet count
+      # that moved without its baseline.
+      - name: Check design system
+        run: npm run design:check
+
       - name: Run TypeScript type check
         run: npx tsc --noEmit
 
