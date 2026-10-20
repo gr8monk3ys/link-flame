@@ -51,10 +51,59 @@ interface Failure {
  * is measured stop by stop, composited over the backdrop.
  */
 function auditContrast(): Failure[] {
-  const parse = (value: string): number[] | null => {
-    const parts = value.match(/[\d.]+/g)
-    return parts ? parts.slice(0, 3).map(Number) : null
+  /**
+   * Any computed colour -> [r, g, b, a] in 0-255 sRGB; alpha defaults to 1.
+   *
+   * Chromium reports opaque colours as `rgb()`, but anything built with an
+   * opacity modifier (`text-primary-foreground/90`, `bg-background/95`) goes
+   * through `color-mix()` under Tailwind v4 and computes to `oklab(...)`.
+   * Reading those digits as if they were red/green/blue scored near-white
+   * text as near-black and failed every page, so the OKLab and OKLCH forms are
+   * converted here (CSS Color 4 matrices) instead of pattern-matched.
+   */
+  const toRgba = (value: string): number[] | null => {
+    const fn = value.match(/^\s*([a-z-]+)\(/i)?.[1].toLowerCase() ?? 'rgb'
+    // `color(display-p3 …)` names its space first; keep its digits out of the channels.
+    const body = fn === 'color' ? value.replace(/^\s*color\(\s*[a-z0-9-]+/i, '') : value
+    const tokens = body.match(/-?\d*\.?\d+(?:e[-+]?\d+)?%?/gi)
+    if (!tokens || tokens.length < 3) return null
+    const num = (token: string, scale = 1): number =>
+      token.endsWith('%') ? (Number(token.slice(0, -1)) / 100) * scale : Number(token)
+    const alpha = tokens.length > 3 ? num(tokens[3]) : 1
+
+    const gamma = (linear: number): number => {
+      const v = linear <= 0.0031308 ? 12.92 * linear : 1.055 * Math.pow(linear, 1 / 2.4) - 0.055
+      return Math.round(Math.min(1, Math.max(0, v)) * 255)
+    }
+    const fromOklab = (L: number, a: number, b: number): number[] => {
+      const l = Math.pow(L + 0.3963377774 * a + 0.2158037573 * b, 3)
+      const m = Math.pow(L - 0.1055613458 * a - 0.0638541728 * b, 3)
+      const s = Math.pow(L - 0.0894841775 * a - 1.291485548 * b, 3)
+      return [
+        gamma(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s),
+        gamma(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s),
+        gamma(-0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s),
+        alpha,
+      ]
+    }
+
+    switch (fn) {
+      case 'oklab':
+        return fromOklab(num(tokens[0]), num(tokens[1], 0.4), num(tokens[2], 0.4))
+      case 'oklch': {
+        const chroma = num(tokens[1], 0.4)
+        const hue = (num(tokens[2]) * Math.PI) / 180
+        return fromOklab(num(tokens[0]), chroma * Math.cos(hue), chroma * Math.sin(hue))
+      }
+      case 'color':
+        // `color(srgb r g b / a)`: channels are 0-1 fractions.
+        return [...tokens.slice(0, 3).map((t) => Math.round(num(t) * 255)), alpha]
+      default:
+        return [...tokens.slice(0, 3).map((t) => Math.round(num(t, 255))), alpha]
+    }
   }
+
+  const parse = (value: string): number[] | null => toRgba(value)?.slice(0, 3) ?? null
 
   const luminance = (rgb: number[]): number => {
     const channel = (raw: number): number => {
@@ -76,12 +125,8 @@ function auditContrast(): Failure[] {
     let node: Element | null = skipSelf ? el.parentElement : el
     while (node && node !== document.documentElement) {
       const style = getComputedStyle(node)
-      const parts = style.backgroundColor.match(/[\d.]+/g)
-      const opaque = parts && (parts.length < 4 || Number(parts[3]) > 0.5)
-      if (opaque) {
-        const solid = parse(style.backgroundColor)
-        return solid ? [solid] : null
-      }
+      const painted = toRgba(style.backgroundColor)
+      if (painted && painted[3] > 0.5) return [painted.slice(0, 3)]
 
       const image = style.backgroundImage
       if (image && image !== 'none') {
@@ -105,13 +150,7 @@ function auditContrast(): Failure[] {
     return (hi + 0.05) / (lo + 0.05)
   }
 
-  /** rgb/rgba -> [r, g, b, a]; alpha defaults to 1. */
-  const parse4 = (value: string): number[] | null => {
-    const parts = value.match(/[\d.]+/g)
-    if (!parts) return null
-    const [r, g, b, a] = parts.map(Number)
-    return [r, g, b, a === undefined ? 1 : a]
-  }
+  const parse4 = toRgba
 
   /**
    * Colour stops of a CSS gradient, each composited over `backdrop` so a
@@ -119,7 +158,7 @@ function auditContrast(): Failure[] {
    * as opaque amber looks acceptable; blended onto cream it is 1.55:1.
    */
   const gradientStopsOver = (backgroundImage: string, backdrop: number[]): number[][] => {
-    const matches = backgroundImage.match(/rgba?\([^)]+\)/g) ?? []
+    const matches = backgroundImage.match(/(?:rgba?|oklab|oklch|color)\([^()]+\)/g) ?? []
     return matches.map((raw) => {
       const c = parse4(raw)
       if (!c) return backdrop
