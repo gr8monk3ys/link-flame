@@ -2,6 +2,9 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+// Paper Card on Paper, one hairline, 18px corners, no shadow at rest or on
+// hover (DESIGN.md → Elevation → The Flat Paper Rule). An interactive card
+// warms its border on hover at the call site (`hover:border-primary/45`).
 const Card = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -9,7 +12,7 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-xl border border-border/70 bg-card text-card-foreground shadow-warm-sm transition-shadow duration-300 hover:shadow-warm-md",
+      "rounded-xl border border-border bg-card text-card-foreground transition-colors duration-200",
       className
     )}
     {...props}
@@ -34,6 +37,9 @@ CardHeader.displayName = "CardHeader"
  * above it, not on the card. A grid of cards sitting directly under the page
  * <h1> needs <h2>; defaulting every one to <h3> skipped a level and failed
  * `heading-order`. The fix is the level, never demoting the heading to a div.
+ *
+ * The title is set in the display face at Card Title size (DESIGN.md →
+ * Typography → Hierarchy); the base layer gives every heading Fraunces.
  */
 const CardTitle = React.forwardRef<
   HTMLHeadingElement,
@@ -41,10 +47,7 @@ const CardTitle = React.forwardRef<
 >(({ className, children, as: Heading = "h3", ...props }, ref) => (
   <Heading
     ref={ref}
-    className={cn(
-      "text-lg font-semibold leading-none tracking-tight",
-      className
-    )}
+    className={cn("text-card-title", className)}
     {...props}
   >
     {children ?? <span className="sr-only">Card title</span>}
@@ -78,7 +81,7 @@ const CardFooter = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn(" flex items-center p-6 pt-0", className)}
+    className={cn("flex items-center p-6 pt-0", className)}
     {...props}
   />
 ))
