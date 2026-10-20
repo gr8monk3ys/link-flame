@@ -77,28 +77,21 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
           front of them could not reach this control (WCAG 2.5.3 Label in
           Name). The name now comes from whichever of the two layouts below is
           the visible one. */}
-      <button
-        type="button"
-        onClick={openSearch}
-        className={cn(
-          'flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary',
-          className
-        )}
-      >
-        {/* Mobile: Just the icon */}
-        <div className="flex items-center lg:hidden">
-          <Icons.search className="size-5" />
+      <button type="button" onClick={openSearch} className={cn('inline-flex', className)}>
+        {/* Mobile: a round hairline pill with the icon */}
+        <span className="cta-secondary size-9 rounded-full lg:hidden">
+          <Icons.search className="size-4" aria-hidden="true" />
           <span className="sr-only">Search</span>
-        </div>
+        </span>
 
-        {/* Desktop: Search bar hint with keyboard shortcut */}
-        <div className="hidden items-center gap-2 rounded-md border bg-muted/50 px-3 py-1.5 lg:flex">
-          <Icons.search className="size-4 text-muted-foreground" />
-          <span className="text-sm text-muted-foreground">Search…</span>
-          <kbd className="pointer-events-none ml-4 hidden h-5 select-none items-center gap-1 rounded border bg-background px-1.5 font-mono text-xs font-medium opacity-100 sm:inline-flex">
+        {/* Desktop: the same pill, stretched, with the shortcut as a wall label */}
+        <span className="cta-secondary hidden h-9 items-center gap-2 rounded-full px-3 text-sm text-muted-foreground lg:inline-flex">
+          <Icons.search className="size-4" aria-hidden="true" />
+          <span>Search…</span>
+          <kbd className="label-mono pointer-events-none ml-3 hidden select-none items-center gap-1 normal-case tracking-normal sm:inline-flex">
             <span>Cmd</span>K
           </kbd>
-        </div>
+        </span>
       </button>
 
       {/* Search Dialog */}

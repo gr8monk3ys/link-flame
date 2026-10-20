@@ -30,23 +30,13 @@ import {
   type LucideProps as IconProps,
 } from "lucide-react"
 
+import { LogoMark } from "@/components/brand/Logo"
+
 export type Icon = IconProps
 
 export const Icons = {
-  logo: (props: IconProps) => (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-    >
-      <circle cx="12" cy="12" r="10"></circle>
-    </svg>
-  ),
+  /** The leaf-flame mark (components/brand/Logo.tsx), for existing call sites. */
+  logo: ({ className }: IconProps) => <LogoMark className={className} />,
   close: X,
   spinner: Loader2,
   chevronLeft: ChevronLeft,

@@ -12,33 +12,43 @@ interface SiteHeaderProps {
   className?: string
 }
 
+/**
+ * The header sheet: sticky, 72px, 90% paper with a 12px blur and a 40%
+ * hairline beneath. It is the one glass surface and carries one of the two
+ * sanctioned shadows (DESIGN.md → Elevation → The Two Sheets Rule), so it
+ * reads as a separate sheet when the page scrolls under it. Both exceptions
+ * are allowlisted by file in scripts/check-design-system.mjs.
+ */
 export function SiteHeader({ className }: SiteHeaderProps) {
   return (
-    <header className={cn("sticky top-0 z-40 w-full border-b border-border/60 bg-background/95 backdrop-blur-md", className)}>
+    <header
+      className={cn(
+        "sticky top-0 z-40 w-full border-b border-border/40 bg-background/90 shadow-[0_8px_30px_rgba(0,0,0,0.08)] backdrop-blur-md",
+        className
+      )}
+    >
       <AnnouncementBar />
       <div className="container flex h-18 items-center justify-between">
         <MainNav items={siteConfig.mainNav} />
-        <div className="flex items-center space-x-4">
-          <nav className="flex items-center space-x-4 sm:space-x-6">
-            {/* Predictive Search */}
-            <Suspense
-              fallback={
-                <span aria-hidden="true" className="flex items-center gap-2 text-sm font-medium text-muted-foreground" />
-              }
-            >
-              <HeaderSearch />
-            </Suspense>
+        <nav className="flex items-center gap-2 sm:gap-3" aria-label="Account and cart">
+          {/* Predictive Search */}
+          <Suspense
+            fallback={
+              <span aria-hidden="true" className="inline-flex size-9 rounded-full border border-border bg-card" />
+            }
+          >
+            <HeaderSearch />
+          </Suspense>
 
-            {/* Loyalty Badge - Shows points and tier for authenticated users */}
-            <LoyaltyBadge compact className="hidden sm:flex" />
+          {/* Loyalty Badge - Shows points and tier for authenticated users */}
+          <LoyaltyBadge compact className="hidden sm:flex" />
 
-            {/* Account */}
-            <AccountLink />
+          {/* Account */}
+          <AccountLink />
 
-            {/* Cart */}
-            <CartLink className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary" />
-          </nav>
-        </div>
+          {/* Cart */}
+          <CartLink />
+        </nav>
       </div>
     </header>
   )
