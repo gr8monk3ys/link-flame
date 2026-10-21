@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.0](https://github.com/gr8monk3ys/link-flame/compare/v0.1.0...v0.2.0) (2026-10-21)
+
+
+### Features
+
+* **brand:** Link Flame mark, lockups, favicons and app icons ([#116](https://github.com/gr8monk3ys/link-flame/issues/116)) ([742dfb7](https://github.com/gr8monk3ys/link-flame/commit/742dfb7dd3a6ffe14a89b93bd17497a674a09ce6))
+* **design:** Stock Ledger notebook tokens, fonts, primitives and enforcement ([#120](https://github.com/gr8monk3ys/link-flame/issues/120)) ([0f2780e](https://github.com/gr8monk3ys/link-flame/commit/0f2780ee6d369b29cbd7b286dad94a2348da2883))
+
+
+### Bug Fixes
+
+* **forms:** send the CSRF token from the contact and newsletter forms ([#118](https://github.com/gr8monk3ys/link-flame/issues/118)) ([fca371f](https://github.com/gr8monk3ys/link-flame/commit/fca371fccaf204b96e7ad332f51d1071c70e57a3))
+
 ## 0.1.0 (2026-10-13)
 
 
