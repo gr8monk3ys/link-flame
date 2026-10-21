@@ -95,8 +95,14 @@ export function Logo({ variant = "horizontal", size = 24, className }: LogoProps
       )}
     >
       <LogoMark size={size} aria-hidden />
-      {/* `font-serif` is the display face today (`--font-serif`, Lora); the notebook font PR renames it to `font-display` (Fraunces). */}
-      <span className="font-serif font-bold leading-none tracking-tight" style={{ fontSize }}>
+      {/* The wordmark is Fraunces 700 — the display face. `data-voice` marks
+          the one sanctioned `font-display` outside a heading for
+          scripts/check-design-system.mjs (The Serif Speaks Rule). */}
+      <span
+        data-voice="display"
+        className="whitespace-nowrap font-display font-bold leading-none tracking-tight"
+        style={{ fontSize }}
+      >
         Link <span className="text-primary">Flame</span>
       </span>
     </span>

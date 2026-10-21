@@ -20,6 +20,11 @@ export const PRE_PAINT_SCRIPT = `try{if(localStorage.getItem(${JSON.stringify(
   DISMISSED_CLASS
 )})}catch(e){}`;
 
+/**
+ * A hairline-bottomed strip of paper with the three store facts set as wall
+ * labels and the rewards link in Moss ink — not a filled band (DESIGN.md →
+ * Colors → The One Pen Rule: ink marks action and emphasis, never area).
+ */
 export function AnnouncementBar({ className }: { className?: string }) {
   // The bar is in the server HTML. It used to start `dismissed` and appear
   // after hydration, which pushed the whole page down by its height (a 0.10
@@ -56,36 +61,19 @@ export function AnnouncementBar({ className }: { className?: string }) {
       <script dangerouslySetInnerHTML={{ __html: PRE_PAINT_SCRIPT }} />
       <div
         data-announcement-bar=""
-        className={cn(
-          "border-b border-emerald-900/10 bg-linear-to-r from-emerald-700 to-green-700 text-white",
-          className
-        )}
+        className={cn("border-b border-border bg-background text-foreground", className)}
         role="region"
         aria-label="Store announcement"
       >
-        <div className="container flex items-center justify-between gap-3 py-2 text-sm">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            <span className="inline-flex items-center gap-2">
-              <span aria-hidden className="text-white/90">
-                ●
-              </span>
-              Carbon-neutral shipping
-            </span>
-            <span className="text-white/70" aria-hidden>
-              ·
-            </span>
-            <span className="inline-flex items-center gap-2">
-              <span aria-hidden className="text-white/90">
-                ●
-              </span>
-              Plastic-free packaging
-            </span>
-            <span className="text-white/70" aria-hidden>
-              ·
-            </span>
+        <div className="container flex items-center justify-between gap-3 py-2">
+          <div className="label-mono flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span>Carbon-neutral shipping</span>
+            <span aria-hidden>·</span>
+            <span>Plastic-free packaging</span>
+            <span aria-hidden>·</span>
             <Link
               href="/account/loyalty"
-              className="font-medium underline decoration-white/50 underline-offset-4 hover:decoration-white"
+              className="ink-underline label-link text-primary"
             >
               Earn rewards on every order
             </Link>
@@ -94,7 +82,7 @@ export function AnnouncementBar({ className }: { className?: string }) {
           <button
             type="button"
             onClick={onDismiss}
-            className="rounded-md px-2 py-1 text-white/90 hover:bg-white/10 hover:text-white focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-white/50"
+            className="inline-flex size-6 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors duration-150 hover:text-foreground"
             aria-label="Dismiss announcement"
           >
             <span aria-hidden>×</span>

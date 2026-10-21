@@ -128,16 +128,11 @@ export function QuizCTA({
   return (
     <>
       <section
-        className={cn(
-          'relative overflow-hidden bg-linear-to-br from-secondary/50 via-accent/10 to-background',
-          'border-y',
-          className
-        )}
+        className={cn('relative overflow-hidden border-y border-border bg-muted', className)}
       >
-        {/* Background decorations */}
+        {/* Decorative leaves on tinted paper; the gradient wash and the blurred
+            blooms are gone (DESIGN.md → Elevation → The Flat Paper Rule). */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute left-1/4 top-0 size-64 rounded-full bg-primary/10 blur-3xl" />
-          <div className="absolute bottom-0 right-1/4 size-96 rounded-full bg-primary/5 blur-3xl" />
           <Leaf className="absolute right-12 top-8 size-8 rotate-45 text-primary/10" />
           <Leaf className="absolute bottom-8 left-12 size-12 -rotate-12 text-primary/10" />
         </div>

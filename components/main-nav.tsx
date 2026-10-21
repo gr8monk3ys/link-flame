@@ -2,11 +2,11 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { Menu } from "lucide-react";
 
 import { NavItem } from "@/types/nav";
-import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
-import { Icons } from "@/components/shared/icons";
+import { Logo } from "@/components/brand/Logo";
 import { MobileNav } from "@/components/mobile-nav";
 import {
   NavigationMenu,
@@ -31,36 +31,25 @@ export function MainNav({ className, items }: MainNavProps) {
   const [showMobileMenu, setShowMobileMenu] = React.useState(false);
 
   return (
-    <div className={cn("flex items-center justify-between", className)}>
-      <Link href="/" className="flex items-center space-x-2">
-        <Icons.logo className="size-6" />
-        <span className="inline-block font-bold">{siteConfig.name}</span>
+    <div className={cn("flex items-center gap-3 sm:gap-6 md:gap-10", className)}>
+      {/* The horizontal lockup: the leaf-flame plate beside "Link Flame" in
+          Fraunces, the mark as tall as the wordmark's capitals. A step smaller
+          below sm so the lockup, the menu pill and the three header pills fit
+          a 390px row. */}
+      <Link href="/" className="flex items-center">
+        <Logo size={18} className="sm:hidden" />
+        <Logo size={22} className="hidden sm:inline-flex" />
       </Link>
       <button
         type="button"
-        className="rounded-md p-1 hover:bg-muted md:hidden"
+        className="cta-secondary size-8 rounded-full sm:size-9 md:hidden"
         onClick={() => setShowMobileMenu((v) => !v)}
         aria-label={showMobileMenu ? "Close menu" : "Open menu"}
         aria-expanded={showMobileMenu}
       >
-        <svg aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="size-6"
-        >
-          <line x1="3" y1="12" x2="21" y2="12" />
-          <line x1="3" y1="6" x2="21" y2="6" />
-          <line x1="3" y1="18" x2="21" y2="18" />
-        </svg>
+        <Menu className="size-5" aria-hidden="true" />
       </button>
-      <div className="hidden gap-6 md:flex md:gap-10">
+      <div className="hidden md:flex">
         {items ? (
           <NavigationMenu>
             <NavigationMenuList>
@@ -68,31 +57,23 @@ export function MainNav({ className, items }: MainNavProps) {
                 item.href ? (
                   <NavigationMenuItem key={item.title}>
                     <NavigationMenuLink asChild>
-                      <Link
-                        href={item.href}
-                        className={cn(
-                          navigationMenuTriggerStyle(),
-                          "data-[state=open]:bg-accent-foreground/5 data-active:text-foreground"
-                        )}
-                      >
+                      <Link href={item.href} className={navigationMenuTriggerStyle()}>
                         {item.title}
                       </Link>
                     </NavigationMenuLink>
                   </NavigationMenuItem>
                 ) : item.items ? (
                   <NavigationMenuItem key={item.title}>
-                    <NavigationMenuTrigger className={navigationMenuTriggerStyle()}>
-                      {item.title}
-                    </NavigationMenuTrigger>
+                    <NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
                     <NavigationMenuContent>
-                      <ul className="grid w-[400px] gap-3 p-6 md:w-[500px] lg:w-[600px] lg:grid-cols-2">
+                      <ul className="grid w-[400px] gap-2 p-4 md:w-[500px] lg:w-[600px] lg:grid-cols-2">
                         {item.items.map((subitem) =>
                           subitem.href ? (
                             <li key={subitem.title}>
                               <NavigationMenuLink asChild>
                                 <Link
                                   href={subitem.href}
-                                  className="block select-none space-y-1 rounded-md p-3 leading-none outline-hidden transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                                  className="block select-none space-y-1 rounded-lg border border-transparent p-3 leading-none transition-colors duration-150 hover:border-border hover:bg-accent focus:bg-accent"
                                 >
                                   <div className="text-sm font-medium leading-none">
                                     {subitem.title}

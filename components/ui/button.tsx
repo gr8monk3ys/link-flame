@@ -4,26 +4,29 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
+// The notebook has one filled button (cta-primary, one per view) and paper-card
+// buttons for everything else. Focus is the global :focus-visible outline in
+// styles/globals.css, so no ring stack here. The honey `accent` button of the
+// aurora era is gone: the quiz CTA is a `default` button like any other
+// primary action. See DESIGN.md → Components → Buttons.
 const buttonVariants = cva(
-  "inline-flex items-center justify-center rounded-lg text-sm font-medium transition-[color,background-color,border-color,box-shadow,transform] duration-200 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors duration-150 disabled:pointer-events-none disabled:opacity-60 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-md active:scale-[0.98]",
-        destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline:
-          "border-2 border-primary/20 text-primary hover:bg-primary/5",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "underline-offset-4 hover:underline text-primary",
+        default: "cta-primary rounded-xl",
+        destructive: "cta-secondary rounded-xl text-destructive hover:text-destructive",
+        outline: "cta-secondary rounded-xl",
+        secondary: "cta-secondary rounded-xl",
+        ghost:
+          "rounded-xl border border-transparent text-foreground hover:border-border hover:bg-card hover:text-primary",
+        link: "ink-underline h-auto px-0 text-primary",
       },
       size: {
-        default: "h-10 py-2 px-4",
-        sm: "h-9 px-3 rounded-lg",
-        lg: "h-12 px-8 rounded-lg text-base",
-        icon: "h-10 w-10",
+        default: "h-10 px-4 py-2",
+        sm: "h-9 rounded-lg px-3",
+        lg: "h-12 rounded-xl px-8 text-base",
+        icon: "size-10 rounded-xl",
       },
     },
     defaultVariants: {

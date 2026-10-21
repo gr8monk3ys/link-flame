@@ -21,7 +21,7 @@ export function QuizProgress({ currentStep, totalSteps, className }: QuizProgres
           {Math.round(progress)}%
         </span>
       </div>
-      <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
+      <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
         <div
           className="size-full origin-left rounded-full bg-primary transition-transform duration-500 ease-out"
           style={{ transform: `scaleX(${progress / 100})` }}

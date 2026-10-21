@@ -234,19 +234,19 @@ export function QuizModal({
             <div className="space-y-4 py-4">
               <div className="grid gap-3 text-sm">
                 <div className="flex items-center gap-3">
-                  <div className="flex size-8 items-center justify-center rounded-full bg-secondary text-sm font-medium">
+                  <div className="flex size-8 items-center justify-center rounded-full bg-muted text-sm font-medium">
                     1
                   </div>
                   <span>Tell us about your sustainability goals</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="flex size-8 items-center justify-center rounded-full bg-secondary text-sm font-medium">
+                  <div className="flex size-8 items-center justify-center rounded-full bg-muted text-sm font-medium">
                     2
                   </div>
                   <span>Share your preferences and values</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="flex size-8 items-center justify-center rounded-full bg-secondary text-sm font-medium">
+                  <div className="flex size-8 items-center justify-center rounded-full bg-muted text-sm font-medium">
                     3
                   </div>
                   <span>Get personalized product recommendations</span>

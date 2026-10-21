@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils"
 
 // The focusable element is the Thumb (role="slider"), not the Root <span>, so
 // a <label htmlFor> on the Root never reaches it. `thumbLabel` names the thumb.
+// Tinted-paper track, Moss range, Paper Card thumb with a Moss border; focus
+// is the global :focus-visible outline.
 const Slider = React.forwardRef<
   React.ElementRef<typeof SliderPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root> & { thumbLabel?: string }
@@ -19,10 +21,13 @@ const Slider = React.forwardRef<
     )}
     {...props}
   >
-    <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-secondary">
+    <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-muted">
       <SliderPrimitive.Range className="absolute h-full bg-primary" />
     </SliderPrimitive.Track>
-    <SliderPrimitive.Thumb aria-label={thumbLabel} className="block size-5 rounded-full border-2 border-primary bg-background ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50" />
+    <SliderPrimitive.Thumb
+      aria-label={thumbLabel}
+      className="block size-5 rounded-full border-2 border-primary bg-card transition-colors disabled:pointer-events-none disabled:opacity-50"
+    />
   </SliderPrimitive.Root>
 ))
 Slider.displayName = SliderPrimitive.Root.displayName

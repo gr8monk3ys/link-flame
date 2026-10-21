@@ -1,13 +1,20 @@
 @import "tailwindcss";
-/* tw-animate-css is the CSS-only port of the tailwindcss-animate plugin; the
-   Radix primitives in components/ui/* use its class names unchanged. */
+/* tw-animate-css is the CSS-only port of the tailwindcss-animate plugin; a
+   few Radix primitives and page components still use its class names (the
+   `entrance` ratchet in scripts/check-design-system.mjs counts them down). */
 @import "tw-animate-css";
 /* v3's palette values for the raw text-green-700 / from-emerald-50 / ...
-   utilities still in the tree; see the note in that file. */
+   utilities still in the tree; see the note in that file and the `v3-palette`
+   entry in the LEGACY table of scripts/check-design-system.mjs. Delete both
+   when the page PRs retire the last raw palette class. */
 @import "./tailwind-v3-palette.css";
 @plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
+
+/* `can-hover:` — a real mouse, not a wide screen. Copy about hovering is
+   gated on the capability it describes, not on viewport width. */
+@custom-variant can-hover (@media (hover: hover) and (pointer: fine));
 
 /* The v3 `container` (centred, 2rem padding, 1400px from the 2xl screen)
    reconciled with the `.container { @apply mx-auto px-4 sm:px-6 lg:px-8
@@ -47,6 +54,7 @@
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
+  --color-scrim: hsl(var(--scrim));
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
 
@@ -58,6 +66,19 @@
 
   --color-destructive: hsl(var(--destructive));
   --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-destructive-muted: hsl(var(--destructive-muted));
+
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+  --color-success-muted: hsl(var(--success-muted));
+
+  --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
+  --color-warning-muted: hsl(var(--warning-muted));
+
+  --color-info: hsl(var(--info));
+  --color-info-foreground: hsl(var(--info-foreground));
+  --color-info-muted: hsl(var(--info-muted));
 
   --color-muted: hsl(var(--muted));
   --color-muted-foreground: hsl(var(--muted-foreground));
@@ -71,26 +92,33 @@
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
 
-  --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-sm: calc(var(--radius) - 4px);
+  /* Soft-cornered interface: fields 8px, small controls 10px, controls 14px,
+     Card and dialogs 18px. The scale is clamped at 18px, so `rounded-2xl`,
+     `-3xl` and `-4xl` from the aurora era resolve to the card radius. Product
+     plates are square — see the `plate` utility. */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.875rem;
+  --radius-xl: 1.125rem;
+  --radius-2xl: 1.125rem;
+  --radius-3xl: 1.125rem;
+  --radius-4xl: 1.125rem;
 
-  /* The variables come from next/font in lib/fonts.ts; the stacks behind them
-     are the ones tailwind.config.js used to append. */
-  --font-sans:
-    var(--font-sans), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-serif: var(--font-serif), Georgia, serif;
+  /* Three voices with fixed jobs. Fraunces speaks, Instrument Sans reads,
+     IBM Plex Mono catalogues. The variables come from lib/fonts.ts.
+     `--font-sans` is the body voice under Tailwind's default name, and
+     `--font-serif` is a transitional alias of the display voice for the
+     `font-serif` call sites the page PRs are still migrating (the `font-serif`
+     entry in the LEGACY ratchet counts them down). */
+  --font-display: var(--font-display), ui-serif, Georgia, serif;
+  --font-body: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-display), ui-serif, Georgia, serif;
 
-  --shadow-warm-sm: 0 1px 2px 0 rgba(120, 85, 40, 0.05);
-  --shadow-warm:
-    0 1px 3px 0 rgba(120, 85, 40, 0.08), 0 1px 2px -1px rgba(120, 85, 40, 0.08);
-  --shadow-warm-md:
-    0 4px 6px -1px rgba(120, 85, 40, 0.08),
-    0 2px 4px -2px rgba(120, 85, 40, 0.06);
-  --shadow-warm-lg:
-    0 10px 15px -3px rgba(120, 85, 40, 0.08),
-    0 4px 6px -4px rgba(120, 85, 40, 0.06);
+  --default-transition-duration: var(--duration-default);
+  --transition-duration-fast: var(--duration-fast);
+  --transition-duration-slow: var(--duration-slow);
 
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
@@ -116,9 +144,11 @@
 /* Tailwind v3 preflight defaults that v4 changed, kept so nothing moves:
    - border-color defaulted to --border (through the old `* { @apply
      border-border }`); v4 defaults to currentColor. Every bare `border` in the
-     app was written against the old default.
-   - placeholders were gray-400 (#9ca3af); v4 uses currentColor at 50%. Sixty
-     inputs set `placeholder=` without a `placeholder:` utility.
+     app was written against the old default, and the hairline is the right
+     default anyway (DESIGN.md → Colors → The Sand Hairline Rule).
+   - placeholders were a fixed grey; v4 uses currentColor at 50%. Sixty inputs
+     set `placeholder=` without a `placeholder:` utility. The colour is now
+     Ink Muted at 80%, the same as the `input-field` utility.
    - buttons had `cursor: pointer`; v4 uses the platform default. */
 @layer base {
   *,
@@ -131,7 +161,7 @@
 
   input::placeholder,
   textarea::placeholder {
-    color: #9ca3af;
+    color: hsl(var(--muted-foreground) / 0.8);
   }
 
   button:not(:disabled),
@@ -140,56 +170,111 @@
   }
 }
 
+/* ============================================================
+   TOKENS — the stationery
+   Paper and night are the same neutrals as lscaturchio.xyz and InfiniStar;
+   only the ink differs. Bare HSL triplets so utilities can add alpha
+   (`bg-primary/5`). tests/unit/design-tokens.test.ts measures every
+   text/ground pair below in both themes.
+   ============================================================ */
 @layer base {
   :root {
-    --background: 40 33% 98%;
-    --foreground: 25 15% 15%;
-    --card: 40 25% 99%;
-    --card-foreground: 25 15% 15%;
-    --popover: 40 25% 99%;
-    --popover-foreground: 25 15% 15%;
-    --primary: 152 45% 30%;
-    --primary-foreground: 40 33% 98%;
-    --secondary: 35 30% 93%;
-    --secondary-foreground: 25 15% 15%;
-    --muted: 35 20% 94%;
-    /* 45% cleared 4.5:1 on --card but only reached 4.16:1 on --muted, and
-       muted-on-muted is a common pairing (facet counts, section subheads).
-       42% clears 4.5:1 against both. */
-    --muted-foreground: 25 10% 42%;
-    --accent: 38 80% 55%;
-    --accent-foreground: 25 15% 15%;
-    --destructive: 0 84.2% 60.2%;
+    /* Paper. Warm off-white, hue 38. */
+    --background: 38 25% 97%;
+    --foreground: 210 15% 12%;
+    --card: 38 25% 98%;
+    --card-foreground: 210 15% 12%;
+    --popover: 38 25% 98%;
+    --popover-foreground: 210 15% 12%;
+
+    /* Moss Ink — the one pen. #456336: 6.40:1 on paper, white on it 6.79:1. */
+    --primary: 100 30% 30%;
+    --primary-foreground: 0 0% 100%;
+    /* Moss Soft: a lighter moss for the rare secondary fill, so a second ink
+       never has to be invented. */
+    --secondary: 100 25% 36%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Paper Tinted: the recessed tone. */
+    --muted: 38 18% 92%;
+    --muted-foreground: 215 10% 42%;
+    /* Paper Warm: a sand highlight for hover fills. Honey amber is retired. */
+    --accent: 32 50% 92%;
+    --accent-foreground: 215 15% 16%;
+
+    /* 38%, not shadcn's 60.2%: #ef4444 measures 3.58:1 on paper, under the
+       body floor, and this app paints error text as body copy. */
+    --destructive: 0 72% 38%;
     --destructive-foreground: 0 0% 98%;
-    --border: 35 15% 88%;
-    --input: 35 15% 88%;
-    --ring: 152 45% 30%;
-    --radius: 0.75rem;
+    --destructive-muted: 0 72% 38% / 0.1;
+
+    /* The sand hairline. Never neutral grey. */
+    --border: 30 18% 86%;
+    --input: 30 18% 86%;
+    --ring: 100 30% 30%;
+    --radius: 0.875rem;
+
+    /* Scrim: ink in both themes, never --foreground (which inverts). */
+    --scrim: 0 0% 4%;
+    --scrim-alpha: 0.25;
+
+    /* Status. Each clears 4.5:1 on paper; the -muted tint is a 10% wash. */
+    --success: 142 76% 26%;
+    --success-foreground: 0 0% 100%;
+    --success-muted: 142 76% 26% / 0.1;
+    --warning: 38 92% 30%;
+    --warning-foreground: 0 0% 100%;
+    --warning-muted: 38 92% 30% / 0.1;
+    --info: 217 91% 40%;
+    --info-foreground: 0 0% 100%;
+    --info-muted: 217 91% 40% / 0.1;
+
+    --duration-fast: 150ms;
+    --duration-default: 200ms;
+    --duration-slow: 300ms;
   }
 
   .dark {
-    --background: 25 15% 7%;
-    --foreground: 35 20% 92%;
-    --card: 25 12% 11%;
-    --card-foreground: 35 20% 92%;
-    --popover: 25 12% 9%;
-    --popover-foreground: 35 20% 92%;
-    --primary: 152 50% 42%;
-    --primary-foreground: 25 15% 7%;
-    --secondary: 25 10% 17%;
-    --secondary-foreground: 35 20% 92%;
-    --muted: 25 8% 16%;
-    --muted-foreground: 35 10% 60%;
-    --accent: 38 65% 45%;
-    /* Honey amber is a mid-tone in both themes, so it needs dark text in both.
-       Pairing it with the near-white --foreground gave the accent button 2.66:1
-       ("Get Started" on the homepage), below the 4.5:1 floor. */
-    --accent-foreground: 25 15% 10%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 85.7% 97.3%;
-    --border: 25 10% 18%;
-    --input: 25 10% 18%;
-    --ring: 152 45% 35%;
+    /* Night: the same notebook read at night. Cool hue 220, ink lifted. */
+    --background: 220 15% 8%;
+    --foreground: 0 0% 98%;
+    --card: 220 15% 10%;
+    --card-foreground: 0 0% 98%;
+    --popover: 220 15% 10%;
+    --popover-foreground: 0 0% 98%;
+
+    /* #abc99c: 10.24:1 on night, night text on it 10.24:1. */
+    --primary: 100 30% 70%;
+    --primary-foreground: 220 15% 8%;
+    --secondary: 100 20% 36%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 220 10% 16%;
+    --muted-foreground: 220 10% 70%;
+    --accent: 210 16% 16%;
+    --accent-foreground: 0 0% 98%;
+
+    /* Lighter at night, like every other token; shadcn's 30.6% was the only
+       token that got darker in dark mode (1.86:1 on night). */
+    --destructive: 0 70% 70%;
+    --destructive-foreground: 220 15% 8%;
+    --destructive-muted: 0 70% 70% / 0.15;
+
+    --border: 220 10% 18%;
+    --input: 220 10% 18%;
+    --ring: 100 30% 70%;
+
+    --scrim-alpha: 0.55;
+
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 0%;
+    --success-muted: 142 71% 45% / 0.15;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 0%;
+    --warning-muted: 38 92% 50% / 0.15;
+    --info: 217 91% 65%;
+    --info-foreground: 0 0% 0%;
+    --info-muted: 217 91% 65% / 0.15;
   }
 }
 
@@ -200,28 +285,174 @@
   display: none;
 }
 
+/* ============================================================
+   BASE — paper, type, focus, selection, grain
+   ============================================================ */
 @layer base {
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-body);
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
+    line-height: 1.65;
+    overflow-x: clip;
   }
+
+  html {
+    /* The header is sticky and up to ~160px tall on mobile (the announcement
+       bar wraps). Keep anchor jumps and keyboard focus from landing under it. */
+    scroll-padding-top: 10rem;
+    /* Intentional, ink-tinted tap feedback instead of the platform grey. */
+    -webkit-tap-highlight-color: hsl(var(--primary) / 0.12);
+    caret-color: hsl(var(--primary));
+    scrollbar-color: hsl(var(--border)) transparent;
+    scrollbar-width: thin;
+  }
+
+  /* The Serif Speaks Rule: Fraunces on what the site says, nowhere else. */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .text-display,
+  .text-page-title,
+  .text-section-title,
+  .text-card-title,
+  .text-subsection {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    text-wrap: balance;
+  }
+
+  /* Default heading sizes, so a bare <h1> on a page the page PRs have not
+     recomposed yet still reads as a heading. They step down the same scale
+     as the type utilities below (page-title → section-title → card-title). */
   h1 {
-    @apply scroll-m-20 text-balance text-4xl font-semibold tracking-normal font-serif lg:text-5xl;
+    @apply scroll-m-20;
+    font-size: clamp(1.9rem, 3.6vw, 3.2rem);
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+    font-weight: 700;
   }
   h2 {
-    @apply scroll-m-20 text-balance pb-2 text-3xl font-semibold tracking-normal font-serif;
+    @apply scroll-m-20;
+    font-size: clamp(1.55rem, 2.4vw, 2.25rem);
+    line-height: 1.18;
+    letter-spacing: -0.026em;
+    font-weight: 650;
   }
   h3 {
-    @apply scroll-m-20 text-balance text-2xl font-semibold tracking-tight;
+    @apply scroll-m-20;
+    font-size: 1.5rem;
+    line-height: 1.2;
+    font-weight: 620;
   }
   h4 {
-    @apply scroll-m-20 text-balance text-xl font-semibold tracking-tight;
+    @apply scroll-m-20;
+    font-size: 1.25rem;
+    line-height: 1.2;
+    font-weight: 620;
   }
   p {
     /* `line-height` as a plain declaration, not `@apply leading-relaxed`: in
        v4 the utility also sets --tw-leading, which text-sm/text-lg/... read
        through var(--tw-leading, ...), so a `<p class="text-sm">` would have
        grown from 20px to 22.75px lines. v3's base rule was this declaration. */
-    line-height: 1.625;
+    line-height: 1.65;
+  }
+
+  /* No double-tap-to-zoom delay on controls. */
+  a,
+  button,
+  input,
+  label,
+  select,
+  summary,
+  textarea,
+  [role="button"] {
+    touch-action: manipulation;
+  }
+
+  /* Native selects ignore the theme on Windows dark mode unless told. */
+  select {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  /* One focus treatment, as a default rather than an opt-in: a 2px ink
+     outline at a 2px offset on everything focusable. The outline colour is
+     pre-set so it never interpolates from currentColor on the first frame. */
+  :where(a, button, input, textarea, select, summary, [tabindex]) {
+    outline-color: hsl(var(--primary));
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 2px;
+  }
+
+  /* Selecting text tints it with the ink — a small signature every reader touches. */
+  ::selection {
+    background: hsl(var(--primary) / 0.22);
+    color: hsl(var(--foreground));
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border: 3px solid hsl(var(--background));
+    border-radius: 999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.45);
+  }
+
+  /* Paper grain: a fixed, near-invisible noise field that keeps large flat
+     areas from reading as sterile screen-white. Pure CSS, no asset request. */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Reduced motion, actually collapsed. 0.01ms rather than 0s, because a
+     zero duration can skip `transitionend` and hang code waiting on it. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+
+    /* Stated exception: a loading indicator still has to read as loading.
+       Slowed, not stopped. */
+    .animate-pulse,
+    .animate-spin,
+    .loading-spinner {
+      animation-duration: 3s !important;
+      animation-iteration-count: infinite !important;
+    }
   }
 }
 
@@ -239,42 +470,6 @@
   }
   h2:first-child {
     margin-top: 0;
-  }
-}
-
-@layer base {
-  html {
-    /* The header is sticky and up to ~160px tall on mobile (the announcement
-       bar wraps). Keep anchor jumps and keyboard focus from landing under it. */
-    scroll-padding-top: 10rem;
-    /* Taps get the element's own :active/:hover styling instead of the grey
-       iOS/Android flash. */
-    -webkit-tap-highlight-color: transparent;
-  }
-  /* No double-tap-to-zoom delay on controls. */
-  a,
-  button,
-  input,
-  select,
-  textarea,
-  label,
-  summary,
-  [role="button"] {
-    touch-action: manipulation;
-  }
-}
-
-/* Honour the OS "reduce motion" setting everywhere: transitions and keyframe
-   animations (spinners, shimmers, slide-ins, count-ups driven by CSS) collapse
-   to their end state instead of moving. */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
   }
 }
 
@@ -319,258 +514,247 @@
   }
 }
 
-/* Custom classes, as plain rules outside every layer with the declarations
-   they had under v3 (modulo the codemod's spellings). They are deliberately
-   not @utility blocks: an @utility lands in the utilities layer, sorted among
-   the core utilities, and a call site such as the home-page CTA
-   (`modern-button` on a `size="lg"` Button) would then take the Button's
-   `px-8` instead of the class's `px-4`. Unlayered rules beat every layer, as
-   the old post-utilities rules did. v4 compiles `@apply` with variants here
-   unchanged. */
+/* ============================================================
+   NOTEBOOK UTILITIES
+   ============================================================ */
 
-/* Enhanced Card Hover Effects */
-.hover-card-effect {
-  @apply transition-[box-shadow,transform] duration-300 hover:shadow-warm-md hover:-translate-y-0.5 relative
-  before:absolute before:inset-0 before:rounded-xl before:bg-linear-to-r before:from-primary/10 before:to-accent/5
-  before:opacity-0 before:transition-opacity hover:before:opacity-100;
+/* The wall label: mono, small, tracked, uppercase, muted. Every piece of
+   metadata — a date, a count, a kicker, the catalogue line under a product
+   plate (BRAND · CERTIFICATION · IMPACT) — is one of these. */
+@utility label-mono {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+  font-feature-settings: "tnum" 1;
 }
 
-/* Advanced Smooth Transitions */
-.smooth-transition {
-  @apply transition duration-300 ease-in-out;
+/* A wall label that is also a tap target: WCAG 2.5.8's 24px floor on every
+   pointer, 44px where the pointer is a finger. Deterministic (viewport or
+   coarse pointer), not device-sniffed. */
+@utility label-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.5rem;
+  min-width: 1.5rem;
+  @media (max-width: 767px), (hover: none) and (pointer: coarse) {
+    min-height: 2.75rem;
+  }
 }
 
-/* Enhanced Modern Button Styles */
-.modern-button {
-  @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition duration-300
-  focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50
-  hover:bg-primary/90 active:scale-[0.98] hover:shadow-warm-md relative overflow-hidden
-  before:absolute before:inset-0 before:bg-linear-to-r before:from-transparent before:via-white/10 before:to-transparent
-  before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-1000;
+/* The pen gesture, and the site's only authored motion: a link's underline
+   is scored in from the left under the cursor or the focus ring. It cannot
+   fail closed and strand content the way an entrance animation can. */
+@utility ink-underline {
+  position: relative;
+  text-decoration: none;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: calc(50% + 0.62em);
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  &:hover::after,
+  &:focus-visible::after,
+  /* Kept on the active nav link and the pressed filter. */
+  &[aria-current="page"]::after,
+  &[aria-pressed="true"]::after {
+    transform: scaleX(1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::after {
+      transition: none;
+    }
+  }
 }
 
-/* Enhanced Glass Effect */
-.glass-effect {
-  @apply bg-card/80 backdrop-blur-md border border-border/50 shadow-warm-sm
-  hover:shadow-warm-md hover:bg-card/90 transition-[background-color,box-shadow] duration-300;
+/* The one filled button: Moss, with a 1px ledge beneath its border so it
+   feels pressed onto the page. One per view. One of the two sanctioned
+   shadows (DESIGN.md → Elevation → The Two Sheets Rule). */
+@utility cta-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border: 1px solid hsl(var(--primary) / 0.42);
+  box-shadow: 0 1px 0 hsl(var(--primary) / 0.25);
+  transition:
+    filter var(--duration-fast) ease,
+    transform 100ms ease;
+
+  &:hover {
+    color: hsl(var(--primary-foreground));
+    filter: brightness(1.06);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    background-color: hsl(var(--muted));
+    color: hsl(var(--muted-foreground));
+    border-color: hsl(var(--border));
+    box-shadow: none;
+    filter: none;
+  }
 }
 
-/* Advanced Grid Layouts */
-.modern-grid {
-  @apply grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+/* Paper Card surface with a hairline. Hover warms the border and tints the
+   paper. It never lifts (The Flat Paper Rule). */
+@utility cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  color: hsl(var(--foreground));
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  transition:
+    background-color var(--duration-fast) ease,
+    border-color var(--duration-fast) ease,
+    color var(--duration-fast) ease,
+    transform 100ms ease;
+
+  &:hover {
+    color: hsl(var(--primary));
+    border-color: hsl(var(--primary) / 0.45);
+    background: hsl(var(--primary) / 0.05);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    color: hsl(var(--muted-foreground));
+    border-color: hsl(var(--border));
+    background: hsl(var(--card));
+  }
 }
 
-/* Enhanced Section Spacing */
-.section-spacing {
-  @apply py-14 sm:py-20 lg:py-28 relative overflow-hidden;
+/* Field: Paper Card fill, hairline, focus warms the border. The global
+   :focus-visible outline is the ring. */
+@utility input-field {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--input));
+  color: hsl(var(--foreground));
+  transition: border-color var(--duration-fast) ease;
+
+  &::placeholder {
+    color: hsl(var(--muted-foreground) / 0.8);
+  }
+
+  &:focus {
+    border-color: hsl(var(--primary) / 0.5);
+  }
+
+  &[aria-invalid="true"] {
+    border-color: hsl(var(--destructive));
+  }
 }
 
-/* Enhanced Responsive Images */
-.responsive-image {
-  @apply object-cover w-full h-full rounded-lg transition-transform duration-300 hover:scale-105;
+/* The product plate: square corners and a hairline — the photograph, pasted
+   onto the ledger page. Squareness marks the work; roundness marks the
+   interface. */
+@utility plate {
+  border: 1px solid hsl(var(--border));
+  border-radius: 0;
+  background: hsl(var(--muted));
+  overflow: hidden;
+  transition: border-color var(--duration-default) ease;
 }
 
-/* Text emphasis (formerly a clipped gradient) */
-/* Clipped gradient text computes as `color: rgba(0,0,0,0)`, so contrast
-   tooling cannot see it, and the fade across its own width fought the
-   headline. The class name is kept for the pages that use it; emphasis now
-   comes from the solid primary hue. */
-.text-gradient {
-  @apply text-primary;
+/* Full-width hairline between sections. */
+@utility gallery-rule {
+  border: 0;
+  border-top: 1px solid hsl(var(--border));
+  width: 100%;
+  margin: 0;
 }
 
-/* Enhanced Animated Underline */
-.animated-underline {
-  @apply relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0
-  after:bg-linear-to-r after:from-primary after:to-primary/60 after:transition-transform after:duration-300
-  hover:after:origin-bottom-left hover:after:scale-x-100;
+/* A modal separates with a scrim, not a shadow (The Scrim Rule). */
+@utility overlay-scrim {
+  background: hsl(var(--scrim) / var(--scrim-alpha));
 }
 
-/* New: Fade In Animation. tw-animate-css also defines `fade-in` (it sets the
-   enter-animation opacity); both definitions apply, as they did in v3. */
-.fade-in {
-  @apply animate-[fadeIn_0.5s_ease-in-out];
+/* Type scale: fluid, weights stepping 720 → 700 → 650 → 620 → 560, tracking
+   loosening as size falls. The base layer gives these Fraunces. */
+@utility text-display {
+  font-size: clamp(2.4rem, 5.2vw, 4.9rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  font-weight: 720;
+  font-variant-numeric: oldstyle-nums;
 }
 
-/* New: Slide Up Animation */
-.slide-up {
-  @apply animate-[slideUp_0.5s_ease-in-out];
+@utility text-page-title {
+  font-size: clamp(1.9rem, 3.6vw, 3.2rem);
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  font-weight: 700;
 }
 
-/* New: Scale Animation */
-.scale-animation {
-  @apply animate-[scale_0.3s_ease-in-out];
+@utility text-section-title {
+  font-size: clamp(1.55rem, 2.4vw, 2.25rem);
+  line-height: 1.18;
+  letter-spacing: -0.026em;
+  font-weight: 650;
 }
 
-/* New: Pulse Effect */
-.pulse-effect {
-  @apply animate-pulse;
+@utility text-card-title {
+  font-size: 1.25rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-weight: 620;
 }
 
-/* New: Shimmer Effect */
-.shimmer {
-  @apply relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full
-  before:animate-[shimmer_2s_infinite] before:bg-linear-to-r before:from-transparent
-  before:via-white/10 before:to-transparent;
+@utility text-subsection {
+  font-size: 1.075rem;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  font-weight: 560;
 }
 
-/* New: Floating Animation */
-.floating {
-  @apply animate-[floating_3s_ease-in-out_infinite];
-}
+/* ============================================================
+   KEPT CUSTOM CLASSES
+   Plain unlayered rules (as under v3) so a call site's own utilities do not
+   out-rank them the way they would an @utility. Everything else from the
+   aurora era (hover-card-effect, modern-button, glass-effect, shimmer,
+   floating, fade-in, slide-up, scale-animation, card-flip*, hero-section,
+   content-section, testimonial-card, animated-underline, text-gradient, …)
+   is gone; the notebook equivalents are the utilities above.
+   ============================================================ */
 
-/* New: Highlight Effect */
-.highlight-effect {
-  @apply relative after:absolute after:bottom-0 after:left-0 after:h-1/2 after:w-full
-  after:bg-primary/10 after:transition-transform after:duration-300 hover:after:scale-105;
-}
-
-/* New: Card Flip Effect */
-.card-flip-container {
-  @apply relative perspective-[1000px];
-}
-
-.card-flip {
-  @apply relative w-full h-full transition-transform duration-500 transform-3d;
-}
-
-.card-flip:hover {
-  @apply transform-[rotateY(180deg)];
-}
-
-.card-flip-front,
-.card-flip-back {
-  @apply absolute w-full h-full backface-hidden;
-}
-
-.card-flip-back {
-  @apply transform-[rotateY(180deg)];
-}
-
-/* New: Loading Spinner */
-.loading-spinner {
-  @apply animate-spin rounded-full border-4 border-primary/30 border-t-primary h-8 w-8;
-}
-
-/* New Keyframes */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes scale {
-  from { transform: scale(0.95); }
-  to { transform: scale(1); }
-}
-
-@keyframes shimmer {
-  100% { transform: translateX(100%); }
-}
-
-@keyframes floating {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0); }
-}
-
-/* New: Custom Scrollbar */
-.custom-scrollbar {
-  @apply scrollbar-thin;
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  @apply w-2;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  @apply bg-primary/50 rounded-full hover:bg-primary/70;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  @apply bg-background/50;
-}
-
-/* New: Focus Ring */
-.focus-ring {
-  @apply focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
-  focus-visible:ring-offset-background transition-shadow duration-300;
-}
-
-/* New: Badge Styles */
+/* The eco-value chip: a hairline chip on paper, ink text, Moss on hover. */
 .badge {
-  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium
-  bg-primary/10 text-primary hover:bg-primary/20 transition-colors duration-300;
+  @apply inline-flex items-center rounded-full border border-border bg-card px-2.5 py-0.5 text-xs font-medium
+  text-foreground transition-colors duration-150 hover:text-primary;
 }
 
-/* New: Tooltip */
-.tooltip {
-  @apply relative before:absolute before:bottom-full before:left-1/2 before:-translate-x-1/2 before:px-2 before:py-1
-  before:rounded before:bg-foreground before:text-background before:text-xs before:content-[attr(data-tooltip)]
-  before:opacity-0 before:transition-opacity hover:before:opacity-100 before:whitespace-nowrap;
+/* Loading spinner: a Moss ring. One of the stated reduced-motion exceptions. */
+.loading-spinner {
+  @apply size-8 animate-spin rounded-full border-4 border-primary/30 border-t-primary;
 }
 
-/* New: Input Focus Effect */
-.input-focus-effect {
-  @apply transition-[border-color,box-shadow] duration-300 border-border focus-visible:border-primary focus-visible:ring-2
-  focus-visible:ring-primary/20 focus-visible:outline-hidden;
-}
-
-/* New: Tag Cloud */
-.tag-cloud {
-  @apply inline-flex gap-2 flex-wrap;
-}
-
-.tag-cloud > * {
-  @apply rounded-full px-3 py-1 text-sm bg-primary/10 text-primary
-  hover:bg-primary/20 transition-colors duration-300;
-}
-
-/* New: Content Sections */
-.content-section {
-  @apply relative py-16 overflow-hidden;
-}
-
-.content-section::before {
-  @apply absolute inset-0 bg-linear-to-b from-background/50 to-background
-  pointer-events-none content-[''];
-}
-
-/* New: Hero Section */
-.hero-section {
-  @apply relative min-h-[60vh] flex items-center justify-center overflow-hidden
-  bg-linear-to-b from-primary/5 to-background;
-}
-
-/* New: Feature Grid */
-.feature-grid {
-  @apply grid gap-8 sm:grid-cols-2 lg:grid-cols-3;
-}
-
-.feature-item {
-  @apply p-6 rounded-xl bg-background/50 border border-border/50
-  hover:shadow-lg hover:border-primary/20 transition-[border-color,box-shadow] duration-300;
-}
-
-/* New: Testimonial Card */
-.testimonial-card {
-  @apply p-6 rounded-xl bg-background shadow-xs hover:shadow-md
-  transition-shadow duration-300 relative overflow-hidden;
-}
-
-.testimonial-card::before {
-  @apply absolute top-0 left-0 w-full h-1 bg-linear-to-r
-  from-primary/50 to-primary content-[''];
-}
-
-/* New: Progress Bar. The fill animates transform, not width: set its
-   fraction with `style={{ transform: `scaleX(${fraction})` }}`. */
+/* Progress bar: flat ink on tinted paper. The fill animates transform, not
+   width: set its fraction with `style={{ transform: `scaleX(${fraction})` }}`. */
 .progress-bar {
-  @apply h-2 rounded-full bg-primary/20 overflow-hidden;
+  @apply h-2 overflow-hidden rounded-full bg-primary/20;
 }
 
 .progress-bar-fill {
@@ -579,11 +763,10 @@
 
 /* Native date inputs (catalogue filters). There is no DatePicker component in
    components/ui and this is not the place to add a dependency, so the native
-   control stays - wearing the same tokens as every other field instead of the
-   browser's default chrome. */
+   control stays — wearing the `input-field` tokens like every other field
+   instead of the browser's default chrome. */
 .date-field {
-  @apply h-10 w-full rounded-md border border-border bg-background px-3 text-sm shadow-xs
-  transition-colors focus-visible:border-primary focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring;
+  @apply input-field h-10 w-full rounded-sm px-3 text-sm;
   color-scheme: light;
 }
 

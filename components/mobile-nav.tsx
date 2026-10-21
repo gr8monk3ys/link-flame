@@ -15,6 +15,11 @@ interface MobileNavProps {
 
 const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
+/**
+ * The mobile menu: a sheet of paper at the right edge behind a scrim, with a
+ * hairline on its left rule. No shadow, no slide-in (DESIGN.md → Motion:
+ * content does not animate itself in); the scrim does the separating.
+ */
 export function MobileNav({ className, items, onClose }: MobileNavProps) {
   const panelRef = React.useRef<HTMLElement>(null);
   const closeButtonRef = React.useRef<HTMLButtonElement>(null);
@@ -64,32 +69,31 @@ export function MobileNav({ className, items, onClose }: MobileNavProps) {
 
   return (
     <>
-      {/* Backdrop */}
+      {/* Scrim */}
       <div
-        className="fixed inset-0 z-40 bg-black/50 backdrop-blur-xs md:hidden"
+        className="overlay-scrim fixed inset-0 z-40 md:hidden"
         onClick={onClose}
         aria-hidden="true"
       />
 
-      {/* Slide-in panel */}
+      {/* Sheet */}
       <nav
         ref={panelRef}
         className={cn(
-          "fixed inset-y-0 right-0 z-50 flex w-72 max-w-[85vw] flex-col bg-background shadow-xl md:hidden",
-          "duration-200 animate-in slide-in-from-right",
+          "fixed inset-y-0 right-0 z-50 flex w-72 max-w-[85vw] flex-col border-l border-border bg-background md:hidden",
           className
         )}
         role="dialog"
         aria-modal="true"
         aria-label="Mobile navigation"
       >
-        <div className="flex items-center justify-between border-b p-4">
-          <span className="text-sm font-semibold">Menu</span>
+        <div className="flex h-18 items-center justify-between border-b border-border px-4">
+          <span className="label-mono">Menu</span>
           <button
             ref={closeButtonRef}
             type="button"
             onClick={onClose}
-            className="rounded-md p-2 hover:bg-muted"
+            className="cta-secondary size-9 rounded-full"
             aria-label="Close menu"
           >
             <X className="size-5" aria-hidden="true" />
@@ -105,22 +109,20 @@ export function MobileNav({ className, items, onClose }: MobileNavProps) {
                     key={item.title}
                     href={item.href}
                     onClick={onClose}
-                    className="rounded-md px-3 py-2.5 text-sm font-medium transition-colors hover:bg-muted"
+                    className="rounded-lg px-3 py-2.5 text-sm font-medium transition-colors duration-150 hover:bg-accent hover:text-primary"
                   >
                     {item.title}
                   </Link>
                 ) : item.items ? (
-                  <div key={item.title} className="space-y-1">
-                    <h3 className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      {item.title}
-                    </h3>
+                  <div key={item.title} className="space-y-1 pt-3">
+                    <h3 className="label-mono px-3 py-2">{item.title}</h3>
                     {item.items.map((subitem) =>
                       subitem.href ? (
                         <Link
                           key={subitem.title}
                           href={subitem.href}
                           onClick={onClose}
-                          className="block rounded-md px-3 py-2 pl-6 text-sm transition-colors hover:bg-muted"
+                          className="block rounded-lg px-3 py-2 pl-6 text-sm transition-colors duration-150 hover:bg-accent hover:text-primary"
                         >
                           <span className="font-medium">{subitem.title}</span>
                           {subitem.description && (

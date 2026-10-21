@@ -69,8 +69,8 @@ export default function SustainableAppliancesPage() {
   return (
     <div className="space-y-16">
       {/* Hero Section */}
-      <section className="section-spacing text-center">
-        <h1 className="text-gradient mb-6">
+      <section className="py-12 text-center sm:py-16">
+        <h1 className="mb-6 text-primary">
           Best Sustainable Appliances
         </h1>
         <p className="mx-auto max-w-2xl text-xl text-muted-foreground">
@@ -80,13 +80,13 @@ export default function SustainableAppliancesPage() {
       </section>
 
       {/* Categories Grid */}
-      <section className="section-spacing">
+      <section className="py-12 sm:py-16">
         <h2 className="mb-12 text-center">Popular Categories</h2>
-        <div className="card-grid">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {categories.map((category, index) => (
             <div
               key={index}
-              className="glass-effect hover-card-effect rounded-lg p-6"
+              className="rounded-xl border border-border bg-card p-6 transition-colors duration-200 hover:border-primary/45"
             >
               <h3 className="mb-2 font-semibold">{category.title}</h3>
               <p className="mb-4 text-muted-foreground">{category.description}</p>
@@ -116,7 +116,7 @@ export default function SustainableAppliancesPage() {
       </section>
 
       {/* Browse Products CTA */}
-      <section className="section-spacing text-center">
+      <section className="py-12 text-center sm:py-16">
         <h2 className="mb-4">Browse Eco-Friendly Products</h2>
         <p className="mx-auto mb-8 max-w-xl text-muted-foreground">
           Explore our curated collection of sustainable products, vetted for environmental impact and quality.
@@ -127,20 +127,20 @@ export default function SustainableAppliancesPage() {
       </section>
 
       {/* Sustainability Calculator */}
-      <section className="section-spacing">
+      <section className="py-12 sm:py-16">
         <h2 className="mb-8 text-center">Calculate Your Impact</h2>
-        <div className="glass-effect mx-auto max-w-2xl rounded-lg p-6">
+        <div className="mx-auto max-w-2xl rounded-xl border border-border bg-card p-6">
           <SustainabilityCalculator />
         </div>
       </section>
 
       {/* Buying Guide */}
-      <section className="section-spacing rounded-3xl bg-primary/5">
+      <section className="rounded-xl bg-muted px-6 py-12 sm:py-16">
         <div className="mx-auto max-w-3xl">
           <h2 className="mb-8 text-center">Sustainable Appliance Buying Guide</h2>
           <div className="space-y-6">
             {buyingGuide.map((tip, index) => (
-              <div key={index} className="glass-effect rounded-lg p-6">
+              <div key={index} className="rounded-xl border border-border bg-card p-6">
                 <h3 className="mb-2 font-semibold">{tip.title}</h3>
                 <p className="text-muted-foreground">{tip.description}</p>
               </div>

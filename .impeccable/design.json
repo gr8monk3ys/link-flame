@@ -1,49 +1,405 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-13T00:00:00Z",
+  "generatedAt": "2026-10-19T22:00:00-07:00",
   "title": "Design System: Link Flame",
   "extensions": {
     "colorMeta": {
-      "forest": { "role": "primary", "displayName": "Forest", "canonical": "hsl(152 45% 30%)", "tonalRamp": ["#153727", "#1f513a", "#2a6f4f", "#358d64", "#43b17e", "#72caa1", "#aee0c9", "#e1f4eb"] },
-      "forest-deep": { "role": "primary", "displayName": "Forest Deep", "canonical": "#1f513a", "tonalRamp": ["#153727", "#1f513a", "#2a6f4f", "#358d64", "#43b17e", "#72caa1", "#aee0c9", "#e1f4eb"] },
-      "forest-bright": { "role": "primary", "displayName": "Forest Bright", "canonical": "hsl(152 50% 42%)", "tonalRamp": ["#153727", "#1f513a", "#2a6f4f", "#358d64", "#43b17e", "#72caa1", "#aee0c9", "#e1f4eb"] },
-      "honey": { "role": "secondary", "displayName": "Honey", "canonical": "hsl(38 80% 55%)", "tonalRamp": ["#533809", "#81570e", "#ae7613", "#dc9518", "#e8a530", "#efbf6c", "#f6dbac", "#fcf3e3"] },
-      "honey-dark": { "role": "secondary", "displayName": "Honey Dark", "canonical": "hsl(38 65% 45%)", "tonalRamp": ["#533809", "#81570e", "#ae7613", "#dc9518", "#e8a530", "#efbf6c", "#f6dbac", "#fcf3e3"] },
-      "paper": { "role": "neutral", "displayName": "Paper", "canonical": "hsl(40 33% 98%)", "tonalRamp": ["#15120f", "#2c2621", "#584d41", "#7b6b5b", "#a8998a", "#d4ccc4", "#f0edea", "#fbfaf9"] },
-      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "hsl(25 15% 15%)", "tonalRamp": ["#15120f", "#2c2621", "#584d41", "#7b6b5b", "#a8998a", "#d4ccc4", "#f0edea", "#fbfaf9"] },
-      "ink-muted": { "role": "neutral", "displayName": "Ink Muted", "canonical": "hsl(25 10% 42%)", "tonalRamp": ["#15120f", "#2c2621", "#584d41", "#7b6b5b", "#a8998a", "#d4ccc4", "#f0edea", "#fbfaf9"] },
-      "linen": { "role": "neutral", "displayName": "Linen", "canonical": "hsl(35 30% 93%)", "tonalRamp": ["#15120f", "#2c2621", "#584d41", "#7b6b5b", "#a8998a", "#d4ccc4", "#f0edea", "#fbfaf9"] },
-      "sand-border": { "role": "neutral", "displayName": "Sand Border", "canonical": "hsl(35 15% 88%)", "tonalRamp": ["#15120f", "#2c2621", "#584d41", "#7b6b5b", "#a8998a", "#d4ccc4", "#f0edea", "#fbfaf9"] },
-      "night": { "role": "neutral", "displayName": "Night", "canonical": "hsl(25 15% 7%)", "tonalRamp": ["#15120f", "#2c2621", "#584d41", "#7b6b5b", "#a8998a", "#d4ccc4", "#f0edea", "#fbfaf9"] },
-      "bone": { "role": "neutral", "displayName": "Bone", "canonical": "hsl(35 20% 92%)", "tonalRamp": ["#15120f", "#2c2621", "#584d41", "#7b6b5b", "#a8998a", "#d4ccc4", "#f0edea", "#fbfaf9"] },
-      "ember": { "role": "destructive", "displayName": "Ember", "canonical": "hsl(0 84.2% 60.2%)", "tonalRamp": ["#450a0a", "#7f1d1d", "#b91c1c", "#dc2626", "#ef4444", "#f87171", "#fca5a5", "#fee2e2"] }
+      "moss-ink": {
+        "role": "primary",
+        "displayName": "Moss Ink",
+        "canonical": "hsl(100 30% 30%)",
+        "tonalRamp": [
+          "hsl(100 30% 12%)",
+          "hsl(100 30% 20%)",
+          "hsl(100 30% 30%)",
+          "hsl(100 30% 40%)",
+          "hsl(100 30% 50%)",
+          "hsl(100 30% 60%)",
+          "hsl(100 30% 70%)",
+          "hsl(100 30% 86%)"
+        ]
+      },
+      "moss-ink-dark": {
+        "role": "primary",
+        "displayName": "Moss Ink (night)",
+        "canonical": "hsl(100 30% 70%)",
+        "tonalRamp": [
+          "hsl(100 30% 12%)",
+          "hsl(100 30% 20%)",
+          "hsl(100 30% 30%)",
+          "hsl(100 30% 40%)",
+          "hsl(100 30% 50%)",
+          "hsl(100 30% 60%)",
+          "hsl(100 30% 70%)",
+          "hsl(100 30% 86%)"
+        ]
+      },
+      "moss-soft": {
+        "role": "secondary",
+        "displayName": "Moss Soft",
+        "canonical": "hsl(100 25% 36%)",
+        "tonalRamp": [
+          "hsl(100 25% 14%)",
+          "hsl(100 25% 24%)",
+          "hsl(100 25% 36%)",
+          "hsl(100 25% 44%)",
+          "hsl(100 25% 54%)",
+          "hsl(100 25% 66%)",
+          "hsl(100 25% 78%)",
+          "hsl(100 25% 92%)"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "hsl(38 25% 97%)",
+        "tonalRamp": [
+          "hsl(38 25% 20%)",
+          "hsl(38 25% 35%)",
+          "hsl(38 25% 50%)",
+          "hsl(38 25% 65%)",
+          "hsl(38 25% 80%)",
+          "hsl(38 25% 90%)",
+          "hsl(38 25% 94%)",
+          "hsl(38 25% 97%)"
+        ]
+      },
+      "paper-card": {
+        "role": "neutral",
+        "displayName": "Paper Card",
+        "canonical": "hsl(38 25% 98%)",
+        "tonalRamp": [
+          "hsl(38 25% 22%)",
+          "hsl(38 25% 38%)",
+          "hsl(38 25% 54%)",
+          "hsl(38 25% 70%)",
+          "hsl(38 25% 84%)",
+          "hsl(38 25% 92%)",
+          "hsl(38 25% 96%)",
+          "hsl(38 25% 98%)"
+        ]
+      },
+      "paper-tinted": {
+        "role": "neutral",
+        "displayName": "Paper Tinted",
+        "canonical": "hsl(38 18% 92%)",
+        "tonalRamp": [
+          "hsl(38 18% 16%)",
+          "hsl(38 18% 28%)",
+          "hsl(38 18% 40%)",
+          "hsl(38 18% 54%)",
+          "hsl(38 18% 68%)",
+          "hsl(38 18% 80%)",
+          "hsl(38 18% 88%)",
+          "hsl(38 18% 92%)"
+        ]
+      },
+      "paper-warm": {
+        "role": "neutral",
+        "displayName": "Paper Warm",
+        "canonical": "hsl(32 50% 92%)",
+        "tonalRamp": [
+          "hsl(32 50% 18%)",
+          "hsl(32 50% 30%)",
+          "hsl(32 50% 42%)",
+          "hsl(32 50% 54%)",
+          "hsl(32 50% 66%)",
+          "hsl(32 50% 78%)",
+          "hsl(32 50% 86%)",
+          "hsl(32 50% 92%)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "hsl(210 15% 12%)",
+        "tonalRamp": [
+          "hsl(210 15% 12%)",
+          "hsl(210 15% 20%)",
+          "hsl(210 15% 28%)",
+          "hsl(210 15% 38%)",
+          "hsl(210 15% 50%)",
+          "hsl(210 15% 64%)",
+          "hsl(210 15% 78%)",
+          "hsl(210 15% 92%)"
+        ]
+      },
+      "ink-muted": {
+        "role": "neutral",
+        "displayName": "Ink Muted",
+        "canonical": "hsl(215 10% 42%)",
+        "tonalRamp": [
+          "hsl(215 10% 14%)",
+          "hsl(215 10% 22%)",
+          "hsl(215 10% 32%)",
+          "hsl(215 10% 42%)",
+          "hsl(215 10% 54%)",
+          "hsl(215 10% 66%)",
+          "hsl(215 10% 80%)",
+          "hsl(215 10% 92%)"
+        ]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "hsl(30 18% 86%)",
+        "tonalRamp": [
+          "hsl(30 18% 16%)",
+          "hsl(30 18% 28%)",
+          "hsl(30 18% 40%)",
+          "hsl(30 18% 52%)",
+          "hsl(30 18% 64%)",
+          "hsl(30 18% 76%)",
+          "hsl(30 18% 86%)",
+          "hsl(30 18% 94%)"
+        ]
+      },
+      "night": {
+        "role": "neutral",
+        "displayName": "Night",
+        "canonical": "hsl(220 15% 8%)",
+        "tonalRamp": [
+          "hsl(220 15% 8%)",
+          "hsl(220 15% 12%)",
+          "hsl(220 15% 18%)",
+          "hsl(220 15% 26%)",
+          "hsl(220 15% 38%)",
+          "hsl(220 15% 52%)",
+          "hsl(220 15% 70%)",
+          "hsl(220 15% 90%)"
+        ]
+      },
+      "night-card": {
+        "role": "neutral",
+        "displayName": "Night Card",
+        "canonical": "hsl(220 15% 10%)",
+        "tonalRamp": [
+          "hsl(220 15% 10%)",
+          "hsl(220 15% 14%)",
+          "hsl(220 15% 20%)",
+          "hsl(220 15% 28%)",
+          "hsl(220 15% 40%)",
+          "hsl(220 15% 54%)",
+          "hsl(220 15% 72%)",
+          "hsl(220 15% 90%)"
+        ]
+      },
+      "night-tinted": {
+        "role": "neutral",
+        "displayName": "Night Tinted",
+        "canonical": "hsl(220 10% 16%)",
+        "tonalRamp": [
+          "hsl(220 10% 16%)",
+          "hsl(220 10% 22%)",
+          "hsl(220 10% 30%)",
+          "hsl(220 10% 40%)",
+          "hsl(220 10% 52%)",
+          "hsl(220 10% 64%)",
+          "hsl(220 10% 78%)",
+          "hsl(220 10% 92%)"
+        ]
+      },
+      "night-ink": {
+        "role": "neutral",
+        "displayName": "Night Ink",
+        "canonical": "hsl(0 0% 98%)",
+        "tonalRamp": [
+          "hsl(0 0% 10%)",
+          "hsl(0 0% 25%)",
+          "hsl(0 0% 40%)",
+          "hsl(0 0% 55%)",
+          "hsl(0 0% 70%)",
+          "hsl(0 0% 82%)",
+          "hsl(0 0% 92%)",
+          "hsl(0 0% 98%)"
+        ]
+      },
+      "night-ink-muted": {
+        "role": "neutral",
+        "displayName": "Night Ink Muted",
+        "canonical": "hsl(220 10% 70%)",
+        "tonalRamp": [
+          "hsl(220 10% 14%)",
+          "hsl(220 10% 24%)",
+          "hsl(220 10% 34%)",
+          "hsl(220 10% 46%)",
+          "hsl(220 10% 58%)",
+          "hsl(220 10% 70%)",
+          "hsl(220 10% 82%)",
+          "hsl(220 10% 94%)"
+        ]
+      },
+      "night-hairline": {
+        "role": "neutral",
+        "displayName": "Night Hairline",
+        "canonical": "hsl(220 10% 18%)",
+        "tonalRamp": [
+          "hsl(220 10% 18%)",
+          "hsl(220 10% 24%)",
+          "hsl(220 10% 32%)",
+          "hsl(220 10% 42%)",
+          "hsl(220 10% 54%)",
+          "hsl(220 10% 66%)",
+          "hsl(220 10% 80%)",
+          "hsl(220 10% 92%)"
+        ]
+      },
+      "signal-error": {
+        "role": "semantic",
+        "displayName": "Error",
+        "canonical": "hsl(0 72% 38%)",
+        "tonalRamp": [
+          "hsl(0 72% 14%)",
+          "hsl(0 72% 24%)",
+          "hsl(0 72% 38%)",
+          "hsl(0 72% 48%)",
+          "hsl(0 72% 58%)",
+          "hsl(0 70% 70%)",
+          "hsl(0 70% 82%)",
+          "hsl(0 70% 94%)"
+        ]
+      },
+      "signal-success": {
+        "role": "semantic",
+        "displayName": "Success",
+        "canonical": "hsl(142 76% 26%)",
+        "tonalRamp": [
+          "hsl(142 76% 10%)",
+          "hsl(142 76% 18%)",
+          "hsl(142 76% 26%)",
+          "hsl(142 74% 34%)",
+          "hsl(142 71% 45%)",
+          "hsl(142 71% 58%)",
+          "hsl(142 71% 74%)",
+          "hsl(142 71% 92%)"
+        ]
+      },
+      "signal-warning": {
+        "role": "semantic",
+        "displayName": "Warning",
+        "canonical": "hsl(38 92% 30%)",
+        "tonalRamp": [
+          "hsl(38 92% 12%)",
+          "hsl(38 92% 20%)",
+          "hsl(38 92% 30%)",
+          "hsl(38 92% 40%)",
+          "hsl(38 92% 50%)",
+          "hsl(38 92% 62%)",
+          "hsl(38 92% 76%)",
+          "hsl(38 92% 92%)"
+        ]
+      },
+      "signal-info": {
+        "role": "semantic",
+        "displayName": "Info",
+        "canonical": "hsl(217 91% 40%)",
+        "tonalRamp": [
+          "hsl(217 91% 14%)",
+          "hsl(217 91% 24%)",
+          "hsl(217 91% 32%)",
+          "hsl(217 91% 40%)",
+          "hsl(217 91% 52%)",
+          "hsl(217 91% 65%)",
+          "hsl(217 91% 80%)",
+          "hsl(217 91% 94%)"
+        ]
+      }
     },
     "typographyMeta": {
-      "display": { "displayName": "Display", "purpose": "Home hero headline only; second line takes Forest." },
-      "headline": { "displayName": "Headline", "purpose": "Section h2 and impact-band numerals, always Lora." },
-      "title": { "displayName": "Title", "purpose": "Card titles, h3, product names." },
-      "body": { "displayName": "Body", "purpose": "Product copy and prose; leads at 1.125rem." },
-      "label": { "displayName": "Label", "purpose": "Uppercase eyebrows and unit labels, 0.1em tracking." },
-      "mono": { "displayName": "Mono", "purpose": "Code and tabular data only; never a costume." }
+      "display": {
+        "displayName": "Display",
+        "purpose": "The home masthead and nothing else. Fraunces 720, oldstyle numerals (text-display)."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "One per page; the default h1 (text-page-title)."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Section headings and the impact ledger's figures; the default h2 (text-section-title)."
+      },
+      "card-title": {
+        "displayName": "Card Title",
+        "purpose": "A product's name under its plate, a row title, a dialog title (text-card-title). A subsection step exists at 1.075rem / 560 (text-subsection)."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Reading text. Lead paragraphs use 1.125rem with text-pretty; descriptions 0.875-1rem in Ink Muted."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "The wall label (label-mono): kickers, certifications, values, dates, counts, order numbers, the catalogue line under a plate. Uppercase, tracked, tabular numerals, Ink Muted."
+      },
+      "figure": {
+        "displayName": "Figure",
+        "purpose": "A price, quantity, total or impact number on a ledger row: mono, tabular-nums, 0.875rem. Never in a filled band."
+      }
     },
     "shadows": [
-      { "name": "warm-sm", "value": "0 1px 2px 0 rgba(120, 85, 40, 0.05)", "purpose": "Card at rest." },
-      { "name": "warm", "value": "0 1px 3px 0 rgba(120, 85, 40, 0.08), 0 1px 2px -1px rgba(120, 85, 40, 0.08)", "purpose": "Popovers and dropdowns." },
-      { "name": "warm-md", "value": "0 4px 6px -1px rgba(120, 85, 40, 0.08), 0 2px 4px -2px rgba(120, 85, 40, 0.06)", "purpose": "Card and primary button hover." },
-      { "name": "warm-lg", "value": "0 10px 15px -3px rgba(120, 85, 40, 0.08), 0 4px 6px -4px rgba(120, 85, 40, 0.06)", "purpose": "Hero photograph well." }
+      {
+        "name": "header-sheet",
+        "value": "0 8px 30px rgba(0,0,0,0.08)",
+        "purpose": "The sticky header only, so it reads as a separate sheet when content scrolls under it. One of the two sanctioned shadows (The Two Sheets Rule); allowlisted by file in scripts/check-design-system.mjs."
+      },
+      {
+        "name": "cta-ledge",
+        "value": "0 1px 0 hsl(var(--primary) / 0.25)",
+        "purpose": "The primary button (cta-primary) only: a 1px ledge beneath its border so the one filled button feels pressed onto the page. Removed when disabled. No other content surface carries a shadow at rest or on hover."
+      }
     ],
     "motion": [
-      { "name": "duration-fast", "value": "200ms", "purpose": "Button colour and shadow transitions." },
-      { "name": "duration-base", "value": "300ms", "purpose": "Card hover shadow, image scale." },
-      { "name": "ease-standard", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Default Tailwind ease for state transitions." },
-      { "name": "count-up", "value": "1200ms ease-out", "purpose": "Impact band numerals; the page's one authored moment." }
+      {
+        "name": "duration-fast",
+        "value": "150ms",
+        "purpose": "Button, field and link colour/border transitions (--duration-fast)."
+      },
+      {
+        "name": "duration-default",
+        "value": "200ms",
+        "purpose": "Tailwind default transition duration; plate border warming (--duration-default)."
+      },
+      {
+        "name": "duration-slow",
+        "value": "300ms",
+        "purpose": "Slow state changes (--duration-slow)."
+      },
+      {
+        "name": "ease-standard",
+        "value": "ease",
+        "purpose": "Every hover and focus transition on the notebook utilities."
+      },
+      {
+        "name": "cta-press",
+        "value": "transform 100ms ease; translateY(1px) on :active",
+        "purpose": "Primary and secondary buttons press one pixel down."
+      },
+      {
+        "name": "ink-underline",
+        "value": "transform 240ms cubic-bezier(0.16, 1, 0.3, 1); scaleX(0) to scaleX(1) from the left",
+        "purpose": "A link's underline scored in under the cursor or focus ring. The site's only authored motion; none under prefers-reduced-motion."
+      },
+      {
+        "name": "accordion",
+        "value": "200ms ease-out; height 0 to --radix-accordion-content-height",
+        "purpose": "Radix accordion open/close."
+      },
+      {
+        "name": "loading",
+        "value": "animate-pulse (tinted-paper skeleton blocks), animate-spin (.loading-spinner ring)",
+        "purpose": "The only things that move while nothing else is happening. No shimmer sweep."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "animation-duration and transition-duration 0.01ms; loaders (animate-pulse, animate-spin, .loading-spinner) slow to 3s instead of stopping",
+        "purpose": "prefers-reduced-motion policy. 0.01ms rather than 0s so transitionend still fires."
+      }
     ],
     "breakpoints": [
       { "name": "sm", "value": "640px" },
       { "name": "md", "value": "768px" },
       { "name": "lg", "value": "1024px" },
       { "name": "xl", "value": "1280px" },
-      { "name": "2xl", "value": "1400px" }
+      { "name": "2xl", "value": "1400px (container cap)" }
     ]
   },
   "components": [
@@ -51,102 +407,186 @@
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Forest ground, Paper text; the default action.",
-      "html": "<button class=\"ds-btn-primary\">Shop all products</button>",
-      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 8px 16px; border: none; border-radius: 8px; background: hsl(var(--primary, 152 45% 30%)); color: hsl(var(--primary-foreground, 40 33% 98%)); font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: background-color 200ms, box-shadow 200ms, transform 200ms; } .ds-btn-primary:hover { background: hsl(152 45% 30% / 0.9); box-shadow: 0 4px 6px -1px rgba(120, 85, 40, 0.08), 0 2px 4px -2px rgba(120, 85, 40, 0.06); } .ds-btn-primary:active { transform: scale(0.98); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px hsl(40 33% 98%), 0 0 0 4px hsl(152 45% 30%); }"
+      "description": "The one filled button per view (cta-primary). Moss fill, white text, a 1px border of Moss at 42%, the 1px ledge. Hover brightens 6%; active presses 1px down.",
+      "html": "<button class=\"ds-btn-primary\">Add to cart</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 8px 16px; border-radius: 1.125rem; background-color: hsl(var(--primary, 100 30% 30%)); color: hsl(var(--primary-foreground, 0 0% 100%)); border: 1px solid hsl(var(--primary, 100 30% 30%) / 0.42); box-shadow: 0 1px 0 hsl(var(--primary, 100 30% 30%) / 0.25); font-family: var(--font-body, 'Instrument Sans'), ui-sans-serif, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; white-space: nowrap; cursor: pointer; transition: filter 150ms ease, transform 100ms ease; } .ds-btn-primary:hover { filter: brightness(1.06); } .ds-btn-primary:active { transform: translateY(1px); } .ds-btn-primary:focus-visible { outline: 2px solid hsl(var(--primary, 100 30% 30%)); outline-offset: 2px; } .ds-btn-primary:disabled { background-color: hsl(var(--muted, 38 18% 92%)); color: hsl(var(--muted-foreground, 215 10% 42%)); border-color: hsl(var(--border, 30 18% 86%)); box-shadow: none; filter: none; opacity: .6; pointer-events: none; }"
     },
     {
-      "name": "Outline Button",
+      "name": "Secondary Button",
       "kind": "button",
-      "refersTo": "button-outline",
-      "description": "Secondary action beside a primary; Forest text on a 20% Forest stroke.",
-      "html": "<button class=\"ds-btn-outline\">Take the 2-minute quiz</button>",
-      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 8px 16px; border: 2px solid hsl(152 45% 30% / 0.2); border-radius: 8px; background: transparent; color: hsl(152 45% 30%); font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: background-color 200ms; } .ds-btn-outline:hover { background: hsl(152 45% 30% / 0.05); } .ds-btn-outline:focus-visible { outline: none; box-shadow: 0 0 0 2px hsl(40 33% 98%), 0 0 0 4px hsl(152 45% 30%); }"
+      "refersTo": "button-secondary",
+      "description": "Every other button (cta-secondary; the outline, secondary and destructive variants). Paper Card fill, hairline, Ink text; hover tints the fill to Moss at 5%, warms the border to 45% and the text to Moss. Never lifts.",
+      "html": "<button class=\"ds-btn-secondary\">Take the 2-minute quiz</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 8px 16px; border-radius: 1.125rem; color: hsl(var(--foreground, 210 15% 12%)); background: hsl(var(--card, 38 25% 98%)); border: 1px solid hsl(var(--border, 30 18% 86%)); font-family: var(--font-body, 'Instrument Sans'), ui-sans-serif, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; white-space: nowrap; cursor: pointer; transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, transform 100ms ease; } .ds-btn-secondary:hover { color: hsl(var(--primary, 100 30% 30%)); border-color: hsl(var(--primary, 100 30% 30%) / 0.45); background: hsl(var(--primary, 100 30% 30%) / 0.05); } .ds-btn-secondary:active { transform: translateY(1px); } .ds-btn-secondary:focus-visible { outline: 2px solid hsl(var(--primary, 100 30% 30%)); outline-offset: 2px; } .ds-btn-secondary:disabled { color: hsl(var(--muted-foreground, 215 10% 42%)); border-color: hsl(var(--border, 30 18% 86%)); background: hsl(var(--card, 38 25% 98%)); opacity: .6; pointer-events: none; }"
     },
     {
-      "name": "Accent Button",
+      "name": "Header Pill",
       "kind": "button",
-      "refersTo": "button-accent",
-      "description": "Honey ground with Ink text; reserved for the quiz call-to-action.",
-      "html": "<button class=\"ds-btn-accent\">Take the 2-minute quiz</button>",
-      "css": ".ds-btn-accent { display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 8px 32px; border: none; border-radius: 8px; background: hsl(38 80% 55%); color: hsl(25 15% 15%); font-family: Inter, system-ui, sans-serif; font-size: 1rem; font-weight: 500; cursor: pointer; transition: background-color 200ms, box-shadow 200ms, transform 200ms; } .ds-btn-accent:hover { background: hsl(38 80% 55% / 0.9); box-shadow: 0 4px 6px -1px rgba(120, 85, 40, 0.08), 0 2px 4px -2px rgba(120, 85, 40, 0.06); } .ds-btn-accent:active { transform: scale(0.98); } .ds-btn-accent:focus-visible { outline: none; box-shadow: 0 0 0 2px hsl(40 33% 98%), 0 0 0 4px hsl(152 45% 30%); }"
+      "refersTo": "button-secondary",
+      "description": "The round hairline pill (cta-secondary rounded-full size-9) for search, account, cart and the theme toggle in the header. The cart count is a small Moss disc at its corner, the header's one filled chip.",
+      "html": "<a class=\"ds-pill\" href=\"#\" aria-label=\"Cart, 2 items\"><svg viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"8\" cy=\"21\" r=\"1\"/><circle cx=\"19\" cy=\"21\" r=\"1\"/><path d=\"M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12\"/></svg><span class=\"ds-pill__count\">2</span></a>",
+      "css": ".ds-pill { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 9999px; color: hsl(var(--foreground, 210 15% 12%)); background: hsl(var(--card, 38 25% 98%)); border: 1px solid hsl(var(--border, 30 18% 86%)); text-decoration: none; transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease; } .ds-pill:hover { color: hsl(var(--primary, 100 30% 30%)); border-color: hsl(var(--primary, 100 30% 30%) / 0.45); background: hsl(var(--primary, 100 30% 30%) / 0.05); } .ds-pill:focus-visible { outline: 2px solid hsl(var(--primary, 100 30% 30%)); outline-offset: 2px; } .ds-pill__count { position: absolute; top: -4px; right: -4px; display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 9999px; background: hsl(var(--primary, 100 30% 30%)); color: hsl(var(--primary-foreground, 0 0% 100%)); font-family: var(--font-mono, 'IBM Plex Mono'), ui-monospace, monospace; font-size: 0.75rem; font-weight: 600; font-variant-numeric: tabular-nums; }"
     },
     {
-      "name": "Text Input",
+      "name": "Text Field",
       "kind": "input",
-      "refersTo": "input",
-      "description": "Sand stroke on a transparent ground; Forest ring on focus.",
+      "refersTo": "input-field",
+      "description": "Field (input-field): Paper Card fill, hairline, 8px corners, 40px tall. Focus warms the border to Moss at 50% plus the global outline; invalid fields take an Error border.",
       "html": "<input class=\"ds-input\" type=\"email\" placeholder=\"you@example.com\" />",
-      "css": ".ds-input { display: flex; width: 100%; max-width: 320px; height: 40px; padding: 8px 12px; border: 1px solid hsl(35 15% 88%); border-radius: 10px; background: transparent; color: hsl(25 15% 15%); font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; transition: box-shadow 200ms; } .ds-input::placeholder { color: hsl(25 10% 42%); } .ds-input:focus-visible { outline: none; box-shadow: 0 0 0 2px hsl(40 33% 98%), 0 0 0 4px hsl(152 45% 30%); } .ds-input:disabled { opacity: 0.5; cursor: not-allowed; }"
+      "css": ".ds-input { display: flex; width: 100%; max-width: 320px; height: 40px; padding: 8px 12px; border-radius: 0.5rem; background: hsl(var(--card, 38 25% 98%)); border: 1px solid hsl(var(--input, 30 18% 86%)); color: hsl(var(--foreground, 210 15% 12%)); font-family: var(--font-body, 'Instrument Sans'), ui-sans-serif, system-ui, sans-serif; font-size: 0.875rem; transition: border-color 150ms ease; } .ds-input::placeholder { color: hsl(var(--muted-foreground, 215 10% 42%) / 0.8); } .ds-input:focus { border-color: hsl(var(--primary, 100 30% 30%) / 0.5); } .ds-input:focus-visible { outline: 2px solid hsl(var(--primary, 100 30% 30%)); outline-offset: 2px; } .ds-input[aria-invalid=\"true\"] { border-color: hsl(var(--destructive, 0 72% 38%)); } .ds-input:disabled { opacity: .5; cursor: not-allowed; }"
     },
     {
-      "name": "Badge",
+      "name": "Chip / Badge",
       "kind": "chip",
-      "refersTo": "badge",
-      "description": "Pill; Forest ground for default, 10% Forest tint for eco values.",
-      "html": "<span class=\"ds-badge\">Plastic-free</span> <span class=\"ds-badge ds-badge-tint\">Zero-waste</span>",
-      "css": ".ds-badge { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 9999px; background: hsl(152 45% 30%); color: hsl(40 33% 98%); font-family: Inter, system-ui, sans-serif; font-size: 0.75rem; font-weight: 600; transition: background-color 200ms; } .ds-badge:hover { background: hsl(152 45% 30% / 0.8); } .ds-badge-tint { background: hsl(152 45% 30% / 0.1); color: hsl(152 45% 30%); } .ds-badge-tint:hover { background: hsl(152 45% 30% / 0.2); }"
+      "refersTo": "badge-outline",
+      "description": "Fully round, 10px by 2px padding, 0.75rem semibold. The house chip is the hairline one: Paper Card with a hairline, Ink text, Moss on hover. The filled badge is Moss and reserved for a single status or count. Certifications and values are wall labels, not chips.",
+      "html": "<span class=\"ds-chip\">Refillable</span> <span class=\"ds-chip ds-chip--filled\">3</span>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 9999px; border: 1px solid hsl(var(--border, 30 18% 86%)); background: hsl(var(--card, 38 25% 98%)); color: hsl(var(--foreground, 210 15% 12%)); font-family: var(--font-body, 'Instrument Sans'), ui-sans-serif, system-ui, sans-serif; font-size: 0.75rem; font-weight: 600; transition: color 150ms ease; } .ds-chip:hover { color: hsl(var(--primary, 100 30% 30%)); } .ds-chip--filled { border-color: transparent; background: hsl(var(--primary, 100 30% 30%)); color: hsl(var(--primary-foreground, 0 0% 100%)); } .ds-chip--filled:hover { color: hsl(var(--primary-foreground, 0 0% 100%)); }"
     },
     {
       "name": "Card",
       "kind": "card",
       "refersTo": "card",
-      "description": "Paper Card on a Sand border with a warm shadow that deepens on hover.",
-      "html": "<div class=\"ds-card\"><h3 class=\"ds-card-title\">Measured impact</h3><p class=\"ds-card-body\">Every product carries a measured yearly impact versus the single-use item it replaces.</p></div>",
-      "css": ".ds-card { max-width: 360px; padding: 24px; border: 1px solid hsl(35 15% 88% / 0.7); border-radius: 12px; background: hsl(40 25% 99%); color: hsl(25 15% 15%); box-shadow: 0 1px 2px 0 rgba(120, 85, 40, 0.05); transition: box-shadow 300ms; } .ds-card:hover { box-shadow: 0 4px 6px -1px rgba(120, 85, 40, 0.08), 0 2px 4px -2px rgba(120, 85, 40, 0.06); } .ds-card-title { margin: 0 0 8px; font-family: Inter, system-ui, sans-serif; font-size: 1.125rem; font-weight: 600; letter-spacing: -0.025em; line-height: 1; } .ds-card-body { margin: 0; font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; line-height: 1.625; color: hsl(25 10% 42%); }"
+      "description": "Paper Card on Paper, 1px hairline, 18px radius, 24px padding, no shadow. Title in Fraunces at Card Title; description in Ink Muted. Most text-led lists are ledger rows rather than cards.",
+      "html": "<div class=\"ds-card\"><p class=\"ds-card__label\">Bundle</p><h3 class=\"ds-card__title\">The bathroom swap</h3><p class=\"ds-card__desc\">Bar soap, a bamboo brush and a refillable bottle. Three products, one box.</p></div>",
+      "css": ".ds-card { display: flex; flex-direction: column; gap: 6px; width: 320px; padding: 24px; border-radius: 1.125rem; border: 1px solid hsl(var(--border, 30 18% 86%)); background: hsl(var(--card, 38 25% 98%)); color: hsl(var(--card-foreground, 210 15% 12%)); font-family: var(--font-body, 'Instrument Sans'), ui-sans-serif, system-ui, sans-serif; } .ds-card__label { margin: 0; font-family: var(--font-mono, 'IBM Plex Mono'), ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: hsl(var(--muted-foreground, 215 10% 42%)); font-feature-settings: 'tnum' 1; } .ds-card__title { margin: 0; font-family: var(--font-display, Fraunces), ui-serif, Georgia, serif; font-optical-sizing: auto; font-size: 1.25rem; font-weight: 620; line-height: 1.2; letter-spacing: -0.02em; text-wrap: balance; } .ds-card__desc { margin: 0; font-size: 0.875rem; line-height: 1.65; color: hsl(var(--muted-foreground, 215 10% 42%)); }"
     },
     {
-      "name": "Nav Link",
-      "kind": "nav",
-      "refersTo": "button-outline",
-      "description": "Header item: Ink Muted, turns Forest on hover, 0.875rem medium.",
-      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link\" href=\"#\">Shop</a><a class=\"ds-nav-link\" href=\"#\">Brands</a><a class=\"ds-nav-link ds-nav-link-active\" href=\"#\">Company</a><a class=\"ds-nav-link\" href=\"#\">Eco Living</a></nav>",
-      "css": ".ds-nav { display: flex; gap: 40px; padding: 16px 0; border-bottom: 1px solid hsl(35 15% 88% / 0.6); background: hsl(40 33% 98% / 0.95); } .ds-nav-link { font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; color: hsl(25 10% 42%); text-decoration: none; transition: color 200ms; } .ds-nav-link:hover { color: hsl(152 45% 30%); } .ds-nav-link-active { color: hsl(25 15% 15%); } .ds-nav-link:focus-visible { outline: none; border-radius: 4px; box-shadow: 0 0 0 2px hsl(40 33% 98%), 0 0 0 4px hsl(152 45% 30%); }"
-    },
-    {
-      "name": "Impact Band",
+      "name": "Ledger Row",
       "kind": "custom",
-      "refersTo": "impact-band",
-      "description": "Full-bleed Forest section with Lora tabular numerals; the storefront's signature moment.",
-      "html": "<section class=\"ds-impact\"><p class=\"ds-impact-eyebrow\">Measured, not promised</p><h2 class=\"ds-impact-title\">What a year of swaps adds up to</h2><dl class=\"ds-impact-grid\"><div class=\"ds-impact-cell\"><dd class=\"ds-impact-num\">4,380</dd><dt><span class=\"ds-impact-unit\">bottles</span><span class=\"ds-impact-name\">Plastic bottles saved</span></dt></div><div class=\"ds-impact-cell\"><dd class=\"ds-impact-num\">1,095</dd><dt><span class=\"ds-impact-unit\">items</span><span class=\"ds-impact-name\">Single-use items replaced</span></dt></div></dl></section>",
-      "css": ".ds-impact { padding: 48px 32px; background: hsl(152 45% 30%); color: hsl(40 33% 98%); } .ds-impact-eyebrow { margin: 0; font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: hsl(40 33% 98% / 0.9); } .ds-impact-title { margin: 8px 0 32px; font-family: Lora, Georgia, serif; font-size: 1.875rem; font-weight: 400; letter-spacing: -0.025em; } .ds-impact-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin: 0; } .ds-impact-cell { padding-left: 16px; border-left: 1px solid hsl(40 33% 98% / 0.2); } .ds-impact-num { margin: 0; font-family: Lora, Georgia, serif; font-size: 2.25rem; font-variant-numeric: tabular-nums; letter-spacing: -0.025em; } .ds-impact-unit { display: block; margin-top: 8px; font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; color: hsl(40 33% 98% / 0.9); } .ds-impact-name { display: block; margin-top: 4px; font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; color: hsl(40 33% 98% / 0.9); }"
+      "refersTo": "ledger-row",
+      "description": "The unit of every text-led list: a hairline-divided row with a mono label above, a semibold title that turns Moss on hover, a muted description, and the figure in mono tabular at the right edge. Lists cap at 42rem.",
+      "html": "<ul class=\"ds-ledger\"><li class=\"ds-row\"><div><p class=\"ds-row__label\">Order #1042 · 12 Oct 2026</p><p class=\"ds-row__title\">Bar soap, three-pack</p><p class=\"ds-row__desc\">Shipped · arrives Thursday</p></div><span class=\"ds-row__figure\">$18.00</span></li><li class=\"ds-row\"><div><p class=\"ds-row__label\">Order #1038 · 2 Oct 2026</p><p class=\"ds-row__title\">Refill subscription</p><p class=\"ds-row__desc\">Delivered</p></div><span class=\"ds-row__figure\">$24.00</span></li></ul>",
+      "css": ".ds-ledger { list-style: none; margin: 0; padding: 0; width: 100%; max-width: 42rem; font-family: var(--font-body, 'Instrument Sans'), ui-sans-serif, system-ui, sans-serif; color: hsl(var(--foreground, 210 15% 12%)); } .ds-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 16px 0; border-bottom: 1px solid hsl(var(--border, 30 18% 86%)); } .ds-row__label, .ds-row__figure { margin: 0; font-family: var(--font-mono, 'IBM Plex Mono'), ui-monospace, SFMono-Regular, Menlo, monospace; font-variant-numeric: tabular-nums; } .ds-row__label { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: hsl(var(--muted-foreground, 215 10% 42%)); } .ds-row__title { margin: 4px 0 0; font-weight: 600; transition: color 150ms ease; } .ds-row:hover .ds-row__title { color: hsl(var(--primary, 100 30% 30%)); } .ds-row__desc { margin: 2px 0 0; font-size: 0.875rem; color: hsl(var(--muted-foreground, 215 10% 42%)); } .ds-row__figure { font-size: 0.875rem; font-weight: 500; white-space: nowrap; }"
+    },
+    {
+      "name": "Wall Label",
+      "kind": "custom",
+      "refersTo": "wall-label",
+      "description": "The label-mono utility: IBM Plex Mono 500 at 0.72rem, 0.16em tracking, uppercase, tabular numerals, Ink Muted. The placard beside every piece of metadata and the catalogue line under every plate; label-link adds the 24px (44px on touch) tap floor.",
+      "html": "<p class=\"ds-label\">Blueland &middot; B Corp &middot; 120 bottles/yr</p> <a class=\"ds-label ds-label--link\" href=\"#\">View all</a>",
+      "css": ".ds-label { margin: 0; font-family: var(--font-mono, 'IBM Plex Mono'), ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; line-height: 1.4; color: hsl(var(--muted-foreground, 215 10% 42%)); font-feature-settings: 'tnum' 1; } .ds-label--link { display: inline-flex; align-items: center; min-height: 1.5rem; min-width: 1.5rem; text-decoration: none; transition: color 150ms ease; } .ds-label--link:hover, .ds-label--link:focus-visible { color: hsl(var(--primary, 100 30% 30%)); } .ds-label--link:focus-visible { outline: 2px solid hsl(var(--primary, 100 30% 30%)); outline-offset: 2px; } @media (max-width: 767px), (hover: none) and (pointer: coarse) { .ds-label--link { min-height: 2.75rem; } }"
+    },
+    {
+      "name": "Product Plate",
+      "kind": "custom",
+      "refersTo": "plate",
+      "description": "A square 1:1 plate with a 1px hairline on tinted paper (the plate utility; Avatar shape=\"plate\"). Below it, outside the image: the name in Fraunces at Card Title, one mono catalogue line, the price in mono tabular. Hover: the name turns Moss and the plate border warms. No scale, no scrim, no rounding, no badge over the photograph.",
+      "html": "<a class=\"ds-plate-entry\" href=\"#\"><div class=\"ds-plate\"><span class=\"ds-plate__initial\">B</span></div><h3 class=\"ds-plate__name\">Bar soap, three-pack</h3><p class=\"ds-plate__line\">Blueland &middot; B Corp &middot; 3 bottles saved</p><p class=\"ds-plate__price\">$18.00</p></a>",
+      "css": ".ds-plate-entry { display: flex; flex-direction: column; gap: 8px; width: 200px; color: hsl(var(--foreground, 210 15% 12%)); text-decoration: none; font-family: var(--font-body, 'Instrument Sans'), ui-sans-serif, system-ui, sans-serif; } .ds-plate { position: relative; display: flex; align-items: center; justify-content: center; aspect-ratio: 1 / 1; border: 1px solid hsl(var(--border, 30 18% 86%)); border-radius: 0; background: hsl(var(--muted, 38 18% 92%)); overflow: hidden; transition: border-color 200ms ease; } .ds-plate__initial { font-family: var(--font-display, Fraunces), ui-serif, Georgia, serif; font-optical-sizing: auto; font-size: 4rem; font-weight: 650; color: hsl(var(--primary, 100 30% 30%)); } .ds-plate__name { margin: 0; font-family: var(--font-display, Fraunces), ui-serif, Georgia, serif; font-optical-sizing: auto; font-size: 1.25rem; font-weight: 620; line-height: 1.2; letter-spacing: -0.02em; transition: color 150ms ease; } .ds-plate__line, .ds-plate__price { margin: 0; font-family: var(--font-mono, 'IBM Plex Mono'), ui-monospace, SFMono-Regular, Menlo, monospace; font-variant-numeric: tabular-nums; } .ds-plate__line { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: hsl(var(--muted-foreground, 215 10% 42%)); } .ds-plate__price { font-size: 0.875rem; font-weight: 500; } .ds-plate-entry:hover .ds-plate__name { color: hsl(var(--primary, 100 30% 30%)); } .ds-plate-entry:hover .ds-plate { border-color: hsl(var(--primary, 100 30% 30%) / 0.45); } .ds-plate-entry:focus-visible { outline: 2px solid hsl(var(--primary, 100 30% 30%)); outline-offset: 2px; }"
+    },
+    {
+      "name": "Impact Ledger",
+      "kind": "custom",
+      "refersTo": "ledger-row",
+      "description": "The summed figures on paper: a hairline above and below, each figure in Fraunces at Title size with tabular numerals, its unit and metric as wall labels. Static — nothing counts up. Renders nothing when there is no data.",
+      "html": "<dl class=\"ds-impact\"><div><dt class=\"ds-impact__label\">Plastic avoided</dt><dd class=\"ds-impact__figure\">1,240</dd><dd class=\"ds-impact__unit\">bottles</dd></div><div><dt class=\"ds-impact__label\">Trees planted</dt><dd class=\"ds-impact__figure\">318</dd><dd class=\"ds-impact__unit\">via 1% for the Planet</dd></div></dl>",
+      "css": ".ds-impact { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin: 0; padding: 24px 0; border-top: 1px solid hsl(var(--border, 30 18% 86%)); border-bottom: 1px solid hsl(var(--border, 30 18% 86%)); font-family: var(--font-body, 'Instrument Sans'), ui-sans-serif, system-ui, sans-serif; color: hsl(var(--foreground, 210 15% 12%)); } .ds-impact__label, .ds-impact__unit { margin: 0; font-family: var(--font-mono, 'IBM Plex Mono'), ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: hsl(var(--muted-foreground, 215 10% 42%)); } .ds-impact__figure { margin: 6px 0 2px; font-family: var(--font-display, Fraunces), ui-serif, Georgia, serif; font-optical-sizing: auto; font-size: clamp(1.55rem, 2.4vw, 2.25rem); font-weight: 650; line-height: 1.18; letter-spacing: -0.026em; font-variant-numeric: tabular-nums; }"
+    },
+    {
+      "name": "Header",
+      "kind": "nav",
+      "refersTo": "wall-label",
+      "description": "The sticky header sheet: 72px, 90% paper with a 12px blur, a 40% hairline beneath and the one structural shadow. The horizontal lockup at the left, nav links in body sans with the ink underline, round hairline pills at the right.",
+      "html": "<header class=\"ds-header\"><a class=\"ds-brand\" href=\"#\" aria-label=\"Link Flame\"><svg class=\"ds-brand__mark\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"currentColor\" fill-rule=\"evenodd\" d=\"M0 0H24V24H0ZM16 2C14.3 6.8 20 10 20 15C20 18.8 16.4 22 12 22C7.6 22 4 18.8 4 15C4 8.8 11 5.2 16 2ZM10.4 20.5C10.4 15 12 10.5 14 7C14.1 10.5 13.5 15 13.5 20.5Z\"/></svg><span class=\"ds-wordmark\">Link <span class=\"ds-wordmark__flame\">Flame</span></span></a><nav class=\"ds-nav\"><a class=\"ds-nav__link\" href=\"#\">Shop</a><a class=\"ds-nav__link\" href=\"#\">Brands</a><a class=\"ds-nav__link\" href=\"#\">Impact</a></nav></header>",
+      "css": ".ds-header { position: sticky; top: 0; display: flex; align-items: center; gap: 40px; height: 72px; padding: 0 32px; border-bottom: 1px solid hsl(var(--border, 30 18% 86%) / 0.4); background: hsl(var(--background, 38 25% 97%) / 0.9); backdrop-filter: blur(12px); box-shadow: 0 8px 30px rgba(0,0,0,0.08); font-family: var(--font-body, 'Instrument Sans'), ui-sans-serif, system-ui, sans-serif; } .ds-brand { display: inline-flex; align-items: center; gap: 12px; color: hsl(var(--foreground, 210 15% 12%)); text-decoration: none; } .ds-brand__mark { width: 22px; height: 22px; flex-shrink: 0; color: hsl(var(--primary, 100 30% 30%)); } .ds-wordmark { font-family: var(--font-display, Fraunces), ui-serif, Georgia, serif; font-optical-sizing: auto; font-size: 31.43px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; } .ds-wordmark__flame { color: hsl(var(--primary, 100 30% 30%)); } .ds-nav { display: flex; gap: 24px; } .ds-nav__link { position: relative; font-size: 0.875rem; font-weight: 500; color: hsl(var(--foreground, 210 15% 12%)); text-decoration: none; transition: color 150ms ease; } .ds-nav__link::after { content: ''; position: absolute; left: 0; right: 0; top: calc(50% + 0.62em); height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-nav__link:hover { color: hsl(var(--primary, 100 30% 30%)); } .ds-nav__link:hover::after, .ds-nav__link:focus-visible::after { transform: scaleX(1); } .ds-nav__link:focus-visible { outline: 2px solid hsl(var(--primary, 100 30% 30%)); outline-offset: 2px; } @media (prefers-reduced-motion: reduce) { .ds-nav__link::after { transition: none; } }"
+    },
+    {
+      "name": "Brand Mark",
+      "kind": "custom",
+      "refersTo": "brand-mark",
+      "description": "The leaf-flame: a square Moss plate with a teardrop silhouette cut out of it in paper — a leaf and a flame at once — with a tapered midrib slit up its centre. One evenodd path so the leaf is a true hole. Beside it the wordmark in Fraunces 700, Ink, with Flame in Moss; the mark is as tall as the wordmark's capitals, 12px apart. No border, gradient, shadow or rotation. Minimum 16px for the mark, 96px for a lockup.",
+      "html": "<a class=\"ds-logo\" href=\"#\" aria-label=\"Link Flame\"><svg class=\"ds-logo__mark\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"currentColor\" fill-rule=\"evenodd\" d=\"M0 0H24V24H0ZM16 2C14.3 6.8 20 10 20 15C20 18.8 16.4 22 12 22C7.6 22 4 18.8 4 15C4 8.8 11 5.2 16 2ZM10.4 20.5C10.4 15 12 10.5 14 7C14.1 10.5 13.5 15 13.5 20.5Z\"/></svg><span class=\"ds-logo__wordmark\">Link <span class=\"ds-logo__flame\">Flame</span></span></a>",
+      "css": ".ds-logo { display: inline-flex; align-items: center; gap: 12px; color: hsl(var(--foreground, 210 15% 12%)); text-decoration: none; } .ds-logo__mark { width: 24px; height: 24px; flex-shrink: 0; color: hsl(var(--primary, 100 30% 30%)); } .ds-logo__wordmark { font-family: var(--font-display, Fraunces), ui-serif, Georgia, serif; font-optical-sizing: auto; font-size: 34.29px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; } .ds-logo__flame { color: hsl(var(--primary, 100 30% 30%)); }"
     }
   ],
   "narrative": {
-    "northStar": "The Screened Shelf",
-    "overview": "Link Flame looks like a small shop that stocks few things on purpose. The ground is warm paper, not white; the type pairs a bookish serif (Lora) for what the shop believes with a plain sans (Inter) for what it sells; and one forest green does the work of the brand. The accent, a honey amber, appears rarely and only where the shop wants a second decision made (the quiz). Everything else is tonal: linen-toned secondary surfaces, sand-coloured borders, and shadows tinted brown rather than black so that lifted elements still look like they sit on paper.\n\nThe system is confident but quiet. Sections own their own vertical rhythm (64 to 112px), cards keep a single soft border and a warm shadow that only deepens on hover, and the one loud moment on the home page is the full-bleed forest band that prints the catalogue's summed impact in serif numerals. The copy carries the attitude (\"Measured, not promised\"); the visuals stay out of its way.",
+    "northStar": "The Stock Ledger",
+    "overview": "Link Flame is a shopkeeper's notebook. Every product is an entry: a square photo plate like a print pasted onto the page, a name in serif, and one catalogue line in mono underneath — BLUELAND · B CORP · 120 BOTTLES/YR — brand, certification, impact figure. The numbers are the product. The site's claim is \"Measured, not promised\", so figures are set in mono, tabular, on hairline-ruled ledger rows, and never in a filled band.\n\nThe notebook is the same stationery as lscaturchio.xyz and InfiniStar, by design: warm off-white paper with a near-invisible grain, structure drawn with hairlines and space rather than boxes, a serif with personality for what the shop says, a plain sans for what the shopper reads, and a monospace label beside every piece of metadata. What tells the three notebooks apart is the pen. The personal site writes in forest green, InfiniStar in mulberry; Link Flame writes in Moss — a green that is dirt and leaf rather than mint and marketing, dark enough to be the only colour on the page and still read as the brand.\n\nWhat Link Flame keeps that the siblings do not have: the product plate as the recurring unit of the catalogue, the impact ledger of summed figures, and a storefront — cart, checkout, orders, subscriptions, loyalty — which the notebook language extends to as rows on paper.\n\nThe system deliberately is not three things. It is not the screened-shelf storefront it replaced: no honey-amber accent, no brown-tinted shadows, no gradient washes behind sections, no sweep-of-light button, no card that lifts on hover. It is not SaaS furniture: no three-column feature tiles, no pill badges as decoration, no count-up numerals. And it is not a theme engine: one kind of paper, read by day or by night.",
     "keyCharacteristics": [
-      "Warm paper ground (`paper`), never pure white in light mode",
-      "One brand hue (`forest`), spent on actions, links, icons, and the impact band",
-      "Honey amber is a second-decision colour, not a decoration",
-      "Lora for headings and big numbers; Inter for everything the shopper acts on",
-      "Brown-tinted shadows (`warm-*`), never grey",
-      "12px is the default corner; pills for badges and value chips",
-      "Light and dark are both first-class; every colour has a dark twin"
+      "One paper ground, warm off-white with a fixed 3.5% noise grain; dark mode is a night variant of the same page.",
+      "One ink, Moss, spent sparingly: links, hover, selection, the focus outline, the mark, the single primary button per view.",
+      "Hairline rules and tint shifts structure the page; there are no floating cards and no decorative shadows.",
+      "Three type voices with fixed jobs: Fraunces speaks, Instrument Sans reads, IBM Plex Mono catalogues.",
+      "Squareness marks the work (product plates); roundness marks the interface (controls, chips, pills).",
+      "Figures are mono and tabular on hairline rows — the ledger, not the banner.",
+      "Motion is the interface responding to the shopper, never the page introducing itself."
     ],
     "rules": [
-      { "name": "The One Hue Rule", "body": "Forest is the only colour that may fill a section. Honey may fill a button; nothing else may fill anything.", "section": "colors" },
-      { "name": "The Tinted Secondary Rule", "body": "Secondary text on a Forest surface is Paper at reduced opacity (90%, never lower than 85%); on a Paper surface it is Ink Muted. Never grey.", "section": "colors" },
-      { "name": "The Dark Twin Rule", "body": "Every light token has a dark-theme value in styles/globals.css. Hard-coded Tailwind palette colours (text-green-700, bg-blue-100) are legacy drift in the commitment strips and admin pages; new work uses the tokens.", "section": "colors" },
-      { "name": "The Serif Speaks First Rule", "body": "Every h1 and h2 is Lora. Sans headings are reserved for h3 and below.", "section": "typography" },
-      { "name": "The Tabular Numbers Rule", "body": "Any number that counts (impact totals, prices in a list) sets tabular-nums.", "section": "typography" },
-      { "name": "The Brown Shadow Rule", "body": "Shadows are tinted rgba(120, 85, 40, a). A neutral black shadow on this ground reads as a different product.", "section": "elevation" }
+      {
+        "name": "The One Pen Rule",
+        "body": "Moss is the only chromatic accent on any surface, and it marks action or emphasis, never area. If a screen has moss in more than a few places, it has too many. No gradient anywhere, on anything.",
+        "section": "colors"
+      },
+      {
+        "name": "The Sand Hairline Rule",
+        "body": "Dividers are 1px of Hairline, sand-toned, never neutral grey and never thicker. Depth of structure is expressed by more rules and more space, not by darker lines.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tinted Paper Rule",
+        "body": "A \"contained\" surface is the same paper at a different tint (Paper Card lighter, Paper Tinted darker), bordered by a hairline. It is never a white box on a grey page.",
+        "section": "colors"
+      },
+      {
+        "name": "The Wall Label Rule",
+        "body": "Every piece of metadata (a date, a count, a brand, a certification) is set as a Label: mono, small, uppercase, tracked, muted. Metadata never borrows the body or heading voice. Every section, row and figure introduces itself with one before its title — the kicker is the house device.",
+        "section": "typography"
+      },
+      {
+        "name": "The Serif Speaks Rule",
+        "body": "Fraunces appears only where the shop is speaking: h1–h6, the type-scale utilities, the wordmark, product names, the impact ledger's figures. Never in body copy, UI controls, prices or labels. font-display on a non-heading fails the build unless the element carries data-voice=\"display\"; font-serif is a transitional alias the ratchet is counting down.",
+        "section": "typography"
+      },
+      {
+        "name": "The Measured Figure Rule",
+        "body": "Any number that counts — a price, a total, an impact figure, a stock level — is set in mono with tabular-nums, on paper, on a hairline row. Figures are never set in a filled band, never count up on entry, and never borrow a status colour to look impressive.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Paper Rule",
+        "body": "No shadow on any content surface, at rest or on hover. A hovered surface changes tint and border colour; it does not rise. The brown shadow-warm-* vocabulary is gone from the theme.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Two Sheets Rule",
+        "body": "The only elevated objects are the sticky header and the primary button's 1px ledge. Nothing else may add a shadow without changing DESIGN.md first.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Scrim Rule",
+        "body": "A modal separates with a scrim, not a shadow. overlay-scrim — hsl(var(--scrim) / var(--scrim-alpha)), ink in both themes, 25% on paper and 55% at night — is the third sanctioned separation mechanism, and the only one available to an overlay, since the Two Sheets Rule has already spent both of its shadows.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Square Plate Rule",
+        "body": "A product's photograph is a square 1:1 plate with 0px corners and a 1px hairline, object-cover, no hover scale, no gradient scrim over the image — the print, pasted onto the ledger. Squareness marks the work; roundness marks the interface.",
+        "section": "shapes"
+      }
     ],
     "dos": [
-      "Do set every colour through the HSL tokens in styles/globals.css and the Tailwind aliases (bg-primary, text-muted-foreground), so the dark theme follows for free.",
-      "Do keep secondary text on Forest at 90% Paper or stronger; 70% and 80% both fall below 4.5:1 (3.7:1 and 4.3:1).",
-      "Do use Lora for h1, h2, and counted numerals; Inter elsewhere.",
-      "Do let data-driven sections return null when empty.",
-      "Do tint shadows brown (warm-*) and borders Sand.",
-      "Do keep hover motion to 200 to 300ms with a shadow or colour change; the count-up in the impact band is the page's one authored moment."
+      "Do introduce every section, row and figure with a wall label before its title.",
+      "Do divide with 1px sand hairlines and 64–96px of vertical space; let whitespace and rules do the structuring.",
+      "Do spend Moss on action and emphasis only: links, hover, selection, the mark, one primary button per view.",
+      "Do build text-led lists as hairline-divided rows and keep products as square plates in a gallery grid.",
+      "Do route every colour through the tokens; status is text-success, text-warning, text-info, text-destructive and their -muted washes.",
+      "Do set every price, quantity, total and impact figure in mono with tabular-nums, on paper.",
+      "Do design dark mode as the same notebook at night: cool hue-220 page, the ink lifted to 100 30% 70%, hairlines at 18% lightness.",
+      "Do give an empty section an honest empty state in the same voice: a wall label, one serif line, one primary action.",
+      "Do keep the one primary button per view; the second action is outline or link."
     ],
     "donts": [
-      "Don't fill a section with any colour other than Forest, or a button with any colour other than Forest, Honey, Linen, or Ember.",
-      "Don't pair Honey with white or Paper text; it is 2.7:1 in dark mode.",
-      "Don't add new Tailwind palette colours (green-700, blue-100, purple-600); the commitment strips and admin pages that use them are drift to migrate, not a pattern to extend.",
-      "Don't use gradient text; emphasis is weight, size, or Forest.",
-      "Don't put a coloured border-left thicker than 1px on a card or callout.",
-      "Don't use bounce or elastic easing; ease-out only."
+      "Don't add shadows to content surfaces at rest or on hover; the header sheet and the CTA ledge are the only elevated objects.",
+      "Don't reintroduce gradients, glow, glass cards or the brown shadow vocabulary; the screened shelf is gone.",
+      "Don't build SaaS furniture: three-column feature tiles, pill badges as decoration, count-up numerals.",
+      "Don't use monospace as a voice. It is the label beside the work and the figure on the row, never headings or body copy; the site is not a terminal.",
+      "Don't set Fraunces in body text, controls, prices or labels, and don't set body copy in anything but Instrument Sans.",
+      "Don't use neutral grey for rules or muted surfaces; every neutral is warm paper (hue 30–38) in light mode and cool night (hue 220) in dark.",
+      "Don't introduce a second accent colour; Moss Soft exists for secondary fills and the four signal colours are for status only. Honey is gone.",
+      "Don't round a product plate, scale it on hover or lay a badge over it; squareness marks the work.",
+      "Don't fill a section or a figure with colour; the impact ledger is on paper.",
+      "Don't define --spacing-xs..4xl tokens in @theme; in Tailwind v4 they shadow the max-w-* container scale and collapse layouts.",
+      "Don't animate content in, and don't ship a skeleton that a reader without JavaScript would keep."
     ]
   }
 }

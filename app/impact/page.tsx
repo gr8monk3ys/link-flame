@@ -51,7 +51,7 @@ export default async function ImpactPage() {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="border-b bg-secondary/40">
+      <section className="border-b border-border bg-muted">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
           <div className="max-w-2xl">
             <p className="text-sm font-medium uppercase tracking-widest text-primary">

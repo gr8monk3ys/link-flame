@@ -91,7 +91,7 @@ export function SustainabilityCommitment({
       <div className={cn("space-y-4", className)}>
         <div className="flex items-center gap-2">
           <LeafIcon className="size-5 text-green-700 dark:text-green-400" />
-          <h3 className="font-semibold text-foreground">Our Commitment</h3>
+          <h3 className="label-mono">Our Commitment</h3>
         </div>
         <ul className="space-y-2 text-sm text-muted-foreground">
           <li className="flex items-center gap-2">

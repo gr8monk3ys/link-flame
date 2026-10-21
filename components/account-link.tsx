@@ -5,24 +5,16 @@ import { useSession } from "next-auth/react";
 import { Icons } from "@/components/shared/icons";
 import { cn } from "@/lib/utils";
 
+// A round hairline pill in the header cluster, beside search and the cart.
 export function AccountLink({ className }: { className?: string }) {
   const { status } = useSession();
 
   const href = status === "authenticated" ? "/account" : "/auth/signin";
 
   return (
-    <Link
-      href={href}
-      className={cn(
-        "text-sm font-medium text-muted-foreground transition-colors hover:text-primary",
-        className
-      )}
-    >
-      <div className="flex items-center space-x-2">
-        <Icons.user className="size-5" />
-        <span className="sr-only">Account</span>
-      </div>
+    <Link href={href} className={cn("cta-secondary size-8 rounded-full sm:size-9", className)}>
+      <Icons.user className="size-4" aria-hidden="true" />
+      <span className="sr-only">Account</span>
     </Link>
   );
 }
-

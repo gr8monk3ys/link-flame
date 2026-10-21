@@ -48,7 +48,7 @@ export async function FeaturedBrands() {
   }
 
   return (
-    <section className="bg-linear-to-b from-background to-secondary/30 py-16 lg:py-20">
+    <section className="border-t border-border py-16 lg:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-12 text-center">

@@ -22,7 +22,9 @@ stayed; they are all wired into the shop.
 Stack: Next.js 16 (App Router, React 19), PostgreSQL on Neon via Prisma,
 NextAuth v5 (split Edge/Node config), Stripe checkout + webhooks, Tailwind v4
 (`styles/globals.css` holds the whole theme under `@theme inline`; there is no
-`tailwind.config.js`).
+`tailwind.config.js`). The design system is `DESIGN.md` ("The Stock Ledger":
+paper, Moss ink, Fraunces / Instrument Sans / IBM Plex Mono self-hosted from
+`@fontsource`), enforced by `npm run design:check`.
 Package manager is npm; CI, Vercel, and the Dockerfile all run `npm ci`.
 
 ## Run
