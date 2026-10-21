@@ -1,6 +1,6 @@
 {
   "name": "link-flame",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "packageManager": "npm@11.21.0",
   "engines": {
@@ -13,7 +13,6 @@
     "build:release": "npm run check:prod-env && npm run check:stripe-config && next build",
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
-    "design:check": "node scripts/check-design-system.mjs",
     "check:prod-env": "node scripts/check-production-env.mjs",
     "check:stripe-config": "node scripts/check-stripe-config.mjs",
     "check:csp-hashes": "node scripts/check-csp-hashes.mjs",
@@ -44,8 +43,6 @@
     "deepmerge-ts": "^8.0.2"
   },
   "dependencies": {
-    "@fontsource-variable/fraunces": "^5.3.0",
-    "@fontsource-variable/instrument-sans": "^5.3.0",
     "@fontsource/fraunces": "^5.3.0",
     "@fontsource/ibm-plex-mono": "^5.3.0",
     "@gr8monk3ys/next-kit": "https://github.com/gr8monk3ys/next-kit/archive/refs/tags/v0.1.2.tar.gz",
@@ -79,6 +76,7 @@
     "clsx": "^2.0.0",
     "cmdk": "^1.1.1",
     "date-fns": "^2.30.0",
+    "framer-motion": "^11.15.0",
     "gray-matter": "^4.0.3",
     "lucide-react": "^0.564.0",
     "marked": "^18.1.0",
