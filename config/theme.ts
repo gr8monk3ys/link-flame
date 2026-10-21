@@ -1,4 +1,4 @@
-import type { ThemeProviderProps } from "next-themes/dist/types"
+import type { ThemeProviderProps } from "next-themes"
 
 /**
  * The props the root layout mounts next-themes' ThemeProvider with.

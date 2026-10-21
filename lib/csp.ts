@@ -17,7 +17,7 @@
  * colour-scheme script and the announcement bar's dismissal script) are
  * allowlisted by SHA-256 hash so they run under the nonce policy too, without
  * the layout reading request headers (which would make every route dynamic).
- * `tests/unit/csp.test.tsx` renders both scripts and checks the hashes.
+ * `scripts/check-csp-hashes.mjs` checks the hashes against the build output.
  */
 
 /** Route prefixes that keep the per-request nonce policy. */
@@ -39,12 +39,21 @@ export function routeUsesNonce(pathname: string): boolean {
 
 /**
  * SHA-256 hashes of the two inline scripts the root layout renders on every
- * page. Regenerate with `npx vitest run tests/unit/csp.test.tsx` after
- * changing either script (the test prints the expected value on mismatch).
+ * page, as the production build serves them.
+ *
+ * next-themes (0.3+) renders its script as `(${fn.toString()})(args)`, so the
+ * served text is whatever the production server bundle's minifier printed,
+ * not the package source a unit test renders. Take the theme hash from the
+ * build: `npm run build && npm run check:csp-hashes` (CI's Build job runs the
+ * check and prints the served hashes on mismatch). tests/unit/csp.test.tsx
+ * pins the package-source hash as a tripwire for next-themes or prop changes.
  */
 export const INLINE_SCRIPT_HASHES = {
-  /** next-themes pre-paint script for the props used in app/layout.tsx. */
-  theme: 'sha256-X9GtzORyUShRgrb5vBVwF3p8WtKom3jBuMyocEhfL3Q=',
+  /**
+   * next-themes pre-paint script for the props in config/theme.ts, as built
+   * by Next 16.4 / Turbopack. A Next upgrade can change it.
+   */
+  theme: 'sha256-J9cZHZf5nVZbsm7Pqxc8RsURv1AIXkMgbhfrZvoOs/A=',
   /** components/announcement-bar.tsx PRE_PAINT_SCRIPT. */
   announcement: 'sha256-15G0KIjOAMbe0Q83Wvslttcp8G3DtxJeQLjAFEkdzgg=',
 } as const

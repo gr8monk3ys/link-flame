@@ -224,6 +224,12 @@ jobs:
           NEXTAUTH_SECRET: build-secret-for-ci-only
           NEXT_PUBLIC_APP_URL: http://localhost:3000
 
+      # The CSP allowlists the layout's inline scripts by hash; next-themes'
+      # script text comes from the minified server bundle, so check the hashes
+      # against what this build actually serves.
+      - name: Check inline-script CSP hashes
+        run: npm run check:csp-hashes
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
