@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.1](https://github.com/gr8monk3ys/link-flame/compare/v0.2.0...v0.2.1) (2026-10-23)
+
+
+### Bug Fixes
+
+* **build:** restore the design check and variable fonts lost in the 0.2.0 release ([#126](https://github.com/gr8monk3ys/link-flame/issues/126)) ([2b1ba28](https://github.com/gr8monk3ys/link-flame/commit/2b1ba2806d03ab3fcc23aba1e911a72583f001f5))
+* **deps:** override postcss-selector-parser to ^7.1.6 ([#123](https://github.com/gr8monk3ys/link-flame/issues/123)) ([f7f75fc](https://github.com/gr8monk3ys/link-flame/commit/f7f75fc285dc26683e14b5f1a0af27c18f6267cb))
+
 ## [0.2.0](https://github.com/gr8monk3ys/link-flame/compare/v0.1.0...v0.2.0) (2026-10-21)
 
 
