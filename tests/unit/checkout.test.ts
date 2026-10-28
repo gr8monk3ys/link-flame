@@ -78,8 +78,8 @@ describe('Checkout Schema Validation', () => {
 
     expect(result.success).toBe(false)
     if (!result.success) {
-      expect(result.error.errors[0].path).toContain('email')
-      expect(result.error.errors[0].message).toBe('Invalid email address')
+      expect(result.error.issues[0].path).toContain('email')
+      expect(result.error.issues[0].message).toBe('Invalid email address')
     }
   })
 
@@ -89,8 +89,8 @@ describe('Checkout Schema Validation', () => {
 
     expect(result.success).toBe(false)
     if (!result.success) {
-      expect(result.error.errors[0].path).toContain('firstName')
-      expect(result.error.errors[0].message).toBe('First name is required')
+      expect(result.error.issues[0].path).toContain('firstName')
+      expect(result.error.issues[0].message).toBe('First name is required')
     }
   })
 
@@ -100,7 +100,7 @@ describe('Checkout Schema Validation', () => {
 
     expect(result.success).toBe(false)
     if (!result.success) {
-      expect(result.error.errors[0].path).toContain('lastName')
+      expect(result.error.issues[0].path).toContain('lastName')
     }
   })
 
@@ -110,7 +110,7 @@ describe('Checkout Schema Validation', () => {
 
     expect(result.success).toBe(false)
     if (!result.success) {
-      expect(result.error.errors[0].path).toContain('address')
+      expect(result.error.issues[0].path).toContain('address')
     }
   })
 
@@ -120,7 +120,7 @@ describe('Checkout Schema Validation', () => {
 
     expect(result.success).toBe(false)
     if (!result.success) {
-      expect(result.error.errors[0].path).toContain('city')
+      expect(result.error.issues[0].path).toContain('city')
     }
   })
 
@@ -130,7 +130,7 @@ describe('Checkout Schema Validation', () => {
 
     expect(result.success).toBe(false)
     if (!result.success) {
-      expect(result.error.errors[0].path).toContain('state')
+      expect(result.error.issues[0].path).toContain('state')
     }
   })
 
@@ -153,8 +153,8 @@ describe('Checkout Schema Validation', () => {
 
       expect(result.success).toBe(false)
       if (!result.success) {
-        expect(result.error.errors[0].path).toContain('zipCode')
-        expect(result.error.errors[0].message).toBe('Invalid ZIP code format')
+        expect(result.error.issues[0].path).toContain('zipCode')
+        expect(result.error.issues[0].message).toBe('Invalid ZIP code format')
       }
     })
 
@@ -191,7 +191,7 @@ describe('Checkout Schema Validation', () => {
 
     expect(result.success).toBe(false)
     if (!result.success) {
-      expect(result.error.errors.length).toBeGreaterThan(1)
+      expect(result.error.issues.length).toBeGreaterThan(1)
     }
   })
 })

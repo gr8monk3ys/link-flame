@@ -101,7 +101,7 @@ const updateProductSchema = z.object({
   description: z.string().max(2000, 'Description is too long').nullable().optional(),
   price: z.number().positive('Price must be positive').max(1000000, 'Price cannot exceed $1,000,000').optional(),
   salePrice: z.number().positive('Sale price must be positive').max(1000000, 'Sale price cannot exceed $1,000,000').nullable().optional(),
-  image: z.string().url('Image must be a valid URL').optional(),
+  image: z.url('Image must be a valid URL').optional(),
   category: z.string().max(100, 'Category name is too long').optional(),
   inventory: z.number().int('Inventory must be a whole number').min(0, 'Inventory cannot be negative').optional(),
   isImperfect: z.boolean().optional(),
@@ -113,7 +113,7 @@ const updateProductSchema = z.object({
   }
   return true
 }, {
-  message: 'Sale price must be less than regular price',
+  error: 'Sale price must be less than regular price',
   path: ['salePrice'],
 })
 

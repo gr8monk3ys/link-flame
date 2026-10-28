@@ -40,7 +40,6 @@ const PurchaseGiftCardSchema = z.object({
     .min(GIFT_CARD_CONFIG.MIN_AMOUNT, `Minimum amount is $${GIFT_CARD_CONFIG.MIN_AMOUNT}`)
     .max(GIFT_CARD_CONFIG.MAX_AMOUNT, `Maximum amount is $${GIFT_CARD_CONFIG.MAX_AMOUNT}`),
   recipientEmail: z
-    .string()
     .email('Invalid email address')
     .max(254, 'Email address too long')
     .optional()
