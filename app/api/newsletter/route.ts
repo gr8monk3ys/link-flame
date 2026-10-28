@@ -17,7 +17,7 @@ export const dynamic = 'force-dynamic'
 
 // Validation schema for newsletter subscription
 const NewsletterSchema = z.object({
-  email: z.string().email("Invalid email address").toLowerCase(),
+  email: z.email("Invalid email address").toLowerCase(),
 })
 
 export async function POST(req: Request) {

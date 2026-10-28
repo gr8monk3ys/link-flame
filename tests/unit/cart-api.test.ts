@@ -28,7 +28,7 @@ describe('Cart API - AddToCart Schema', () => {
       })
       expect(result.success).toBe(false)
       if (!result.success) {
-        expect(result.error.errors[0].message).toBe('Product ID is required')
+        expect(result.error.issues[0].message).toBe('Product ID is required')
       }
     })
 
@@ -114,7 +114,7 @@ describe('Cart API - AddToCart Schema', () => {
       })
       expect(result.success).toBe(false)
       if (!result.success) {
-        expect(result.error.errors[0].message).toBe('Quantity cannot exceed 999')
+        expect(result.error.issues[0].message).toBe('Quantity cannot exceed 999')
       }
     })
 
@@ -125,7 +125,7 @@ describe('Cart API - AddToCart Schema', () => {
       })
       expect(result.success).toBe(false)
       if (!result.success) {
-        expect(result.error.errors[0].message).toBe('Quantity must be a positive integer')
+        expect(result.error.issues[0].message).toBe('Quantity must be a positive integer')
       }
     })
 
@@ -201,7 +201,7 @@ describe('Cart API - UpdateCart Schema', () => {
       })
       expect(result.success).toBe(false)
       if (!result.success) {
-        expect(result.error.errors[0].message).toBe('Quantity cannot exceed 999')
+        expect(result.error.issues[0].message).toBe('Quantity cannot exceed 999')
       }
     })
 
@@ -212,7 +212,7 @@ describe('Cart API - UpdateCart Schema', () => {
       })
       expect(result.success).toBe(false)
       if (!result.success) {
-        expect(result.error.errors[0].message).toBe('Quantity must be 0 or positive')
+        expect(result.error.issues[0].message).toBe('Quantity must be 0 or positive')
       }
     })
 
