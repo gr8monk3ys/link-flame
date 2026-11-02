@@ -29,7 +29,7 @@ const submitSchema = z.object({
     z.union([z.string(), z.array(z.string())])
   ).refine(
     (obj) => Object.keys(obj).length >= 1,
-    { message: 'At least one question must be answered' }
+    { error: 'At least one question must be answered' }
   ),
 });
 

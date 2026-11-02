@@ -48,7 +48,7 @@ const updateImperfectSchema = z
   })
   .refine(
     (data) => data.imperfectReason !== undefined || data.imperfectDiscount !== undefined,
-    { message: "At least one field (imperfectReason or imperfectDiscount) must be provided" }
+    { error: "At least one field (imperfectReason or imperfectDiscount) must be provided" }
   );
 
 /**

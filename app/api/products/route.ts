@@ -31,7 +31,7 @@ const filterSchema = z.object({
       max: z.number().positive("Maximum price must be positive").max(1000000, "Maximum price cannot exceed $1,000,000"),
     })
     .refine((data) => data.min < data.max, {
-      message: "Minimum price must be less than maximum price",
+      error: "Minimum price must be less than maximum price",
     })
     .optional(),
   sortBy: z.enum(['newest', 'price_asc', 'price_desc', 'rating']).optional(),
@@ -53,11 +53,11 @@ const createProductSchema = z.object({
   description: z.string().max(2000, "Description is too long").optional(),
   price: z.number().positive("Price must be positive").max(1000000, "Price cannot exceed $1,000,000"),
   salePrice: z.number().positive("Sale price must be positive").max(1000000, "Sale price cannot exceed $1,000,000").optional(),
-  image: z.string().url("Image must be a valid URL"),
+  image: z.url("Image must be a valid URL"),
   category: z.string().max(100, "Category name is too long").optional().default("Uncategorized"),
 })
 .refine((data) => !data.salePrice || data.salePrice < data.price, {
-  message: "Sale price must be less than regular price",
+  error: "Sale price must be less than regular price",
   path: ["salePrice"],
 })
 

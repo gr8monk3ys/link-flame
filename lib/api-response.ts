@@ -126,8 +126,8 @@ export function validationErrorResponse(
   error: ZodError,
   status: number = 400
 ): NextResponse<ApiResponse<never, ValidationErrorDetail[]>> {
-  const formattedErrors: ValidationErrorDetail[] = error.errors.map((err) => ({
-    field: err.path.join('.'),
+  const formattedErrors: ValidationErrorDetail[] = error.issues.map((err) => ({
+    field: err.path.map(String).join('.'),
     message: err.message,
     code: err.code,
   }))

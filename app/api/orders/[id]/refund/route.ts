@@ -30,7 +30,7 @@ const RefundBodySchema = z.object({
     quantity: z.number().int().positive(),
   })).refine(
     (items) => new Set(items.map((item) => item.orderItemId)).size === items.length,
-    { message: 'Duplicate orderItemId values are not allowed' }
+    { error: 'Duplicate orderItemId values are not allowed' }
   ).optional(),
   reason: z.string().max(500).optional(),
 }).optional()

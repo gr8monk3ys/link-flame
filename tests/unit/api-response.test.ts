@@ -130,7 +130,7 @@ describe('API Response Helpers', () => {
       const schema = z.object({
         name: z.string().min(3),
         age: z.number().min(18),
-        email: z.string().email(),
+        email: z.email(),
       });
 
       try {
@@ -421,7 +421,7 @@ describe('API Response Helpers', () => {
       const detail: ValidationErrorDetail = {
         field: 'email',
         message: 'Invalid email',
-        code: 'invalid_string',
+        code: 'invalid_format',
       }
       expect(detail.field).toBe('email')
     })

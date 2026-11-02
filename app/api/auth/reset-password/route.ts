@@ -91,7 +91,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     })
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const messages = error.errors.map((e) => e.message).join(', ')
+      const messages = error.issues.map((e) => e.message).join(', ')
       return NextResponse.json({ error: messages }, { status: 400 })
     }
     logger.error('Reset password error', error)

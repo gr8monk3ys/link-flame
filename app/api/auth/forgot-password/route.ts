@@ -10,7 +10,7 @@ import { validateCsrfToken } from '@/lib/csrf'
 export const dynamic = 'force-dynamic'
 
 const forgotPasswordSchema = z.object({
-  email: z.string().email('Invalid email address'),
+  email: z.email('Invalid email address'),
 })
 
 const TOKEN_EXPIRY_MS = 60 * 60 * 1000 // 1 hour
