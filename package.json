@@ -118,7 +118,7 @@
     "eslint-config-next": "16.3.8",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react-hooks": "7.0.1",
-    "happy-dom": "^20.14.6",
+    "happy-dom": "^21.0.4",
     "opentype.js": "^2.0.0",
     "png-to-ico": "^3.0.2",
     "postcss": "^8.5.29",
