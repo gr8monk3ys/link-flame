@@ -15,6 +15,9 @@ on:
 env:
   NODE_VERSION: '24'
 
+permissions:
+  contents: read
+
 jobs:
   # Deploy to staging by manual dispatch
   deploy-staging:
