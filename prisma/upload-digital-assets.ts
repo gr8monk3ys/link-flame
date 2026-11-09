@@ -41,10 +41,14 @@ async function main() {
       where: { title: product.title },
       select: { id: true, fulfillment: true },
     });
-    if (!row) {
+    if (!row && APPLY) {
       console.error(`missing product "${product.title}": run catalogue:apply first`);
       missing++;
       continue;
+    }
+    if (!row) {
+      // A dry run before catalogue:apply: still check the files.
+      console.log(`note: "${product.title}" is not in the database yet; catalogue:apply creates it`);
     }
 
     for (const [sortOrder, filename] of product.assetFiles.entries()) {
@@ -67,7 +71,7 @@ async function main() {
       }
       const sha256 = createHash('sha256').update(data).digest('hex');
       console.log(`${APPLY ? 'upload' : 'would upload'}  ${product.title} <- ${filename} (${Math.round(data.length / 1024)} KB, ${sha256.slice(0, 12)})`);
-      if (!APPLY) continue;
+      if (!APPLY || !row) continue;
 
       const fields = {
         contentType: 'application/pdf',

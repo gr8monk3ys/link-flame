@@ -51,25 +51,32 @@ The guide PDFs and manuscripts are paid products. They are **not** in this publi
 - [ ] **Domain.** The shop runs on `link-flame.vivancedata.com`. Set `NEXT_PUBLIC_APP_URL` and `NEXTAUTH_URL` to the domain you will sell on. The download links and Printful print-file URLs are built from it. `linkflame.com` is not owned.
 - [ ] Run `npm run preflight:production` against the production env and fix what it reports.
 
-### 2. Database (before merging this PR)
+### 2. Database, around the merge
 
-Vercel does not run migrations. Apply them by hand **before** the merge deploys the new code.
+Vercel does not run migrations. The order matters:
 
-1. In Neon, create a branch of production as a backup.
-2. Apply the migration. It only adds columns and tables and deletes nothing:
-   ```bash
-   DATABASE_URL=<prod> DIRECT_URL=<prod direct> npx prisma migrate deploy
-   ```
-3. Put the launch products in. Run a dry run first and read the plan:
-   ```bash
-   DATABASE_URL=<prod> npm run catalogue:apply
-   DATABASE_URL=<prod> npm run catalogue:apply -- --apply --remove-placeholders
-   ```
-   `--remove-placeholders` deletes the old demo products that no order references, then deletes bundles and brands left empty. A demo product that an order references is kept, set to zero stock and printed in the output.
-4. Upload the guide PDFs:
-   ```bash
-   DATABASE_URL=<prod> npm run catalogue:upload-assets -- --dir ../link-flame-products/dist --apply
-   ```
+1. **Before the merge:** back up production and apply the migration. The migration only adds columns and tables, so the code that is live now keeps working on it.
+2. **Merge PR #143** and wait until Vercel shows the deployment as Ready.
+3. **After the deploy:** put the launch products and the guide PDFs in. Do not do this before the deploy: the old code would sell a guide without delivering a download.
+
+The private repository `link-flame-products` has a script for each side, rehearsed on a local copy:
+
+```powershell
+# from link-flame-products; each asks for the production DIRECT_URL and keeps it in memory only
+powershell -ExecutionPolicy Bypass -File ops-backup-and-migrate.ps1   # pg_dump backup to backups\, then prisma migrate deploy
+powershell -ExecutionPolicy Bypass -File ops-load-catalogue.ps1       # prints the plan, asks you to type APPLY
+```
+
+By hand, the same steps are:
+
+```bash
+DATABASE_URL=<prod> DIRECT_URL=<prod direct> npx prisma migrate deploy
+DATABASE_URL=<prod> npm run catalogue:apply -- --remove-placeholders            # dry run: read the plan
+DATABASE_URL=<prod> npm run catalogue:apply -- --apply --remove-placeholders
+DATABASE_URL=<prod> npm run catalogue:upload-assets -- --dir ../link-flame-products/dist --apply
+```
+
+`--remove-placeholders` deletes the old demo products that no order references, then deletes bundles and brands left empty. A demo product that an order references is kept, set to zero stock and printed in the output.
 
 **Never run `prisma db seed` against production.** The seed deletes orders and every product.
 
@@ -97,4 +104,4 @@ Vercel does not run migrations. Apply them by hand **before** the merge deploys 
 ## Undo
 
 - Code: revert the PR on main. Vercel deploys the revert.
-- Data: the Neon backup branch from step 2.1. The migration only adds, so the old code also runs on the migrated database.
+- Data: the `pg_dump` file in `link-flame-products/backups/` (restore with `pg_restore --clean`). The migration only adds, so the old code also runs on the migrated database.
