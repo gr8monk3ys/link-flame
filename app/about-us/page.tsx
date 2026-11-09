@@ -8,32 +8,32 @@ import { buttonVariants } from "@/components/ui/button"
 export const metadata: Metadata = {
   title: "About Us",
   description:
-    "Link Flame is a small eco-commerce shop. Every product is screened for what it’s made of, who made it, and what it replaces.",
+    "Link Flame is a small shop that sells its own guides and printed goods for low-waste living.",
 }
 
 const values = [
   {
     title: "Measured impact",
     description:
-      "Every product carries a measured yearly impact versus the single-use item it replaces. We publish those numbers instead of slogans.",
+      "Where we state an impact number, we say how we got it. Where we do not have one yet, we say that instead of guessing.",
     icon: Scale,
   },
   {
-    title: "Screened, not scraped",
+    title: "Our own products only",
     description:
-      "Products earn a place on the shelf by passing screening on materials, certifications, and the practices of the company behind them.",
+      "We write the guides ourselves and design the printed items. We do not resell other brands, so we know what is in everything we sell.",
     icon: ShieldCheck,
   },
   {
-    title: "Waste is a design flaw",
+    title: "Made only when ordered",
     description:
-      "Plastic-free packaging, carbon-neutral shipping, a seconds shelf for imperfect stock, and a take-back program for hard-to-recycle empties.",
+      "Guides are digital. The tote and tee are printed to order, so we do not hold stock that may never sell.",
     icon: Recycle,
   },
   {
-    title: "One percent, always",
+    title: "Giving back, when we can",
     description:
-      "One percent of every sale goes to environmental nonprofits through 1% for the Planet — in good months and slow ones.",
+      "We want to join 1% for the Planet once the shop has revenue to give. We are not a member yet, and we will say so until we are.",
     icon: Leaf,
   },
 ]
@@ -42,22 +42,22 @@ const screeningSteps = [
   {
     title: "Materials",
     description:
-      "What is it made of, and what happens to it at end of life? Compostable, recyclable, or durable-for-a-decade beats disposable every time.",
+      "What is it made of, and what happens to it at end of life? Durable for years beats disposable. The tote and tee are organic cotton.",
   },
   {
     title: "Maker",
     description:
-      "Who makes it, under what conditions, with which certifications? B Corp, Leaping Bunny, USDA Organic, and Fair Trade all carry weight here.",
+      "We write the guides. The printed items are produced by Printful, a print-on-demand company, and we say so on the shipping page.",
   },
   {
     title: "Impact math",
     description:
-      "We assign the product its per-unit yearly impact — bottles displaced, items replaced, CO₂e avoided — and stand behind those numbers on the impact page.",
+      "If a product replaces a single-use item, we say which one and how we counted. The impact page shows what we have and what we do not.",
   },
   {
-    title: "Re-screening",
+    title: "Review",
     description:
-      "Formulas change and companies get acquired. Everything on the shelf gets re-screened, and products that stop qualifying come off it.",
+      "We reread our own guides and product pages, and fix what is wrong or out of date.",
   },
 ]
 
@@ -71,9 +71,9 @@ export default function AboutUsPage() {
         </h1>
         <p className="max-w-[700px] text-lg text-muted-foreground">
           Link Flame is a small shop for everyday swaps — the bottle, brush, and
-          wrap you use daily, minus the plastic. We stock few things on purpose:
-          every product here passed screening on what it&rsquo;s made of, who
-          made it, and what it measurably replaces.
+          wrap you use daily, minus the plastic. We sell few things on
+          purpose, and all of them are our own: three PDF guides, a bundle of
+          the three, an organic cotton tote and an organic cotton tee.
         </p>
       </div>
 
@@ -102,7 +102,7 @@ export default function AboutUsPage() {
       {/* Screening Process */}
       <div className="my-12">
         <h2 className="mb-6 font-serif text-2xl tracking-tight">
-          How a product earns its place
+          How we decide what to sell
         </h2>
         <Card>
           <CardContent className="pt-6">
@@ -131,8 +131,7 @@ export default function AboutUsPage() {
             <CardHeader>
               <CardTitle>Contact us</CardTitle>
               <CardDescription>
-                Questions about an order, a product, or our screening? We answer
-                within a couple of business days.
+                Questions about an order or a product? Send us a note.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -161,7 +160,7 @@ export default function AboutUsPage() {
       {/* Newsletter */}
       <NewsletterSignup
         title="Join Our Community"
-        description="Get sustainable living tips, exclusive eco-friendly product deals, and updates from our team."
+        description="Get low-waste living tips and updates when we publish something new."
         className="my-12"
       />
     </section>

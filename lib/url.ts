@@ -1,5 +1,5 @@
 const FALLBACK_DEV_URL = "http://localhost:3000";
-const FALLBACK_PROD_URL = "https://linkflame.com";
+const FALLBACK_PROD_URL = "https://link-flame.vivancedata.com";
 
 /**
  * Absolute base URL for canonical links, Open Graph images and JSON-LD.

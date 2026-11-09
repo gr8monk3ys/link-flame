@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { cache } from 'react';
 import { prisma } from '@/lib/prisma';
 import ProductDetails from '@/components/products/ProductDetails';
+import { getBaseUrl } from '@/lib/url';
 
 // Cache the product fetch to avoid duplicate queries
 const getProduct = cache(async (id: string) => {
@@ -57,17 +58,17 @@ export async function generateMetadata({
 
   return {
     title: `${product.title}`,
-    description: product.description || `Shop ${product.title} - eco-friendly products for sustainable living.`,
+    description: product.description || `Shop ${product.title} - from Link Flame.`,
     openGraph: {
       title: product.title,
-      description: product.description || `Shop ${product.title} - eco-friendly products for sustainable living.`,
+      description: product.description || `Shop ${product.title} - from Link Flame.`,
       images: product.image ? [{ url: product.image }] : [],
       type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
       title: product.title,
-      description: product.description || `Shop ${product.title} - eco-friendly products for sustainable living.`,
+      description: product.description || `Shop ${product.title} - from Link Flame.`,
       images: product.image ? [product.image] : [],
     },
   };
@@ -117,7 +118,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.title,
-    description: product.description || `Shop ${product.title} - eco-friendly products for sustainable living.`,
+    description: product.description || `Shop ${product.title} - from Link Flame.`,
     image: product.image || undefined,
     brand: {
       '@type': 'Brand',
@@ -125,7 +126,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     },
     offers: {
       '@type': 'Offer',
-      url: `${process.env.NEXTAUTH_URL || 'https://linkflame.com'}/products/${product.id}`,
+      url: `${getBaseUrl()}/products/${product.id}`,
       priceCurrency: 'USD',
       price: product.salePrice ? Number(product.salePrice) : Number(product.price),
       availability: product.inventory > 0

@@ -15,6 +15,8 @@ vi.mock('@/lib/logger', () => ({
 async function loadEmail() {
   vi.resetModules()
   process.env.RESEND_API_KEY = 're_test_key'
+  process.env.EMAIL_FROM = 'shop@example.test'
+  process.env.ADMIN_EMAIL = 'owner@example.test'
   return import('@/lib/email')
 }
 

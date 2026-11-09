@@ -12,7 +12,6 @@ import type { CartItem } from "@/types/cart";
 import CheckoutForm from "@/components/checkout/checkout-form";
 import ErrorBoundary from "@/components/layout/error-boundary";
 import { LoadingShimmer } from "@/components/ui/loading-shimmer";
-import { CarbonNeutralBanner, CarbonNeutralShippingLine } from "@/components/sustainability/CarbonNeutralBanner";
 import {
   DEFAULT_CHECKOUT_DISCOUNT_STATE,
   type CheckoutDiscountState,
@@ -67,11 +66,6 @@ export default function CheckoutPage() {
     <>
       <div className="container py-8">
         <h1 className="mb-4 text-3xl font-bold">Checkout</h1>
-        
-        {/* Carbon-neutral shipping banner */}
-        <div className="mb-8">
-          <CarbonNeutralBanner variant="compact" />
-        </div>
         
         {isLoading && !hasInitializedCart ? (
           <div className="space-y-4">
@@ -152,8 +146,6 @@ export default function CheckoutPage() {
                       Calculated at checkout
                     </span>
                   </div>
-                  {/* Carbon-neutral shipping line */}
-                  <CarbonNeutralShippingLine />
                   <div className="flex items-center justify-between border-t pt-4" data-testid="total">
                     <span className="text-lg font-medium">Total</span>
                     <span className="text-lg font-bold">{formatPrice(discountedSubtotal)}</span>

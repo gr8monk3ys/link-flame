@@ -13,7 +13,6 @@ import { ImperfectBadge, ImperfectSavingsBadge } from '@/components/imperfect/Im
 import { ImperfectReasonTooltip } from '@/components/imperfect/ImperfectReasonTooltip';
 import { EcoImpactCard } from '@/components/sustainability/EcoImpactCard';
 import { CertificationBadgesFull, type Certification } from '@/components/sustainability/CertificationBadges';
-import { CarbonNeutralBadge } from '@/components/sustainability/CarbonNeutralBanner';
 import { ValueBadgeList } from '@/components/filters/ValueBadge';
 import { formatPrice } from "@/lib/utils";
 
@@ -282,11 +281,6 @@ export default function ProductDetails({ product, averageRating }: ProductDetail
                 />
               </div>
             )}
-
-            {/* Carbon Neutral Shipping Badge */}
-            <div className="mt-4">
-              <CarbonNeutralBadge />
-            </div>
 
             {/* Variant Selector */}
             {product.hasVariants && product.variants.length > 0 && (

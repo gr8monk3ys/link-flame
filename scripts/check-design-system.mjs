@@ -115,13 +115,13 @@ const LEGACY = {
   "status-hue": {
     rule: "palette",
     re: paletteRe(STATUS_FAMILIES),
-    baseline: 1455,
+    baseline: 1227,
     fix: "text-success / text-warning / text-destructive and their -muted washes, or a mono wall label where the hue was encoding data",
   },
   palette: {
     rule: "palette",
     re: paletteRe(OTHER_FAMILIES),
-    baseline: 310,
+    baseline: 240,
     // The brief made `palette` a hard rule for these families; 300 sites is
     // too many to fix in the tokens PR, so they ratchet like the status hues.
     fix: "the paper / ink / hairline tokens (bg-card, text-muted-foreground, border-border)",
@@ -129,13 +129,13 @@ const LEGACY = {
   shadow: {
     rule: "flat-paper",
     re: /(?<![\w-])(?:[\w-]+:)*shadow-(?:2xs|xs|sm|md|lg|xl|2xl|\[[^\]]*\])(?![\w-])/g,
-    baseline: 111,
+    baseline: 93,
     fix: "a hairline and a tint shift; nothing lifts (The Flat Paper Rule)",
   },
   "shadow-warm": {
     rule: "flat-paper",
     re: /(?<![\w-])(?:[\w-]+:)*shadow-warm(?:-(?:sm|md|lg))?(?![\w-])/g,
-    baseline: 4,
+    baseline: 3,
     // The --shadow-warm-* theme tokens are gone, so these classes already
     // render no shadow; they are dead names waiting to be deleted.
     fix: "delete the class; the brown-shadow vocabulary is retired",
@@ -143,13 +143,13 @@ const LEGACY = {
   "backdrop-blur": {
     rule: "one-glass",
     re: /(?<![\w-])(?:[\w-]+:)*backdrop-blur(?:-[\w]+)?(?![\w-])/g,
-    baseline: 10,
+    baseline: 9,
     fix: "an opaque popover / card surface, or overlay-scrim for a modal",
   },
   "gradient-utility": {
     rule: "no-gradient",
     re: /(?<![\w-])(?:[\w-]+:)*(?:bg-linear-|bg-radial|bg-conic)[\w-]*/g,
-    baseline: 35,
+    baseline: 26,
     fix: "a flat token fill (bg-muted, bg-card) or no fill at all",
   },
   entrance: {
@@ -161,7 +161,7 @@ const LEGACY = {
   "font-serif": {
     rule: "serif-speaks",
     re: /(?<![\w-])(?:[\w-]+:)*font-serif(?![\w-])/g,
-    baseline: 41,
+    baseline: 38,
     // `--font-serif` is kept in @theme as an alias of the display face only
     // while these sites migrate; delete the alias with the last call site.
     fix: "font-display on a heading (the base layer already sets it on h1–h6), or drop the class",

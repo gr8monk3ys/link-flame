@@ -30,11 +30,24 @@ export function formatCurrency(amount: number): string {
 /**
  * Contact information
  */
+/**
+ * Support mailbox, read from NEXT_PUBLIC_SUPPORT_EMAIL. The store does not own
+ * a domain with a mailbox yet, so there is deliberately no hardcoded fallback:
+ * when it is unset, pages link to /contact instead (see SupportLink).
+ */
+export const SUPPORT_EMAIL: string | null =
+  process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim() || null
+
+/** `mailto:` link when a mailbox is configured, else the contact page. */
+export const SUPPORT_HREF: string = SUPPORT_EMAIL
+  ? `mailto:${SUPPORT_EMAIL}`
+  : '/contact'
+
 export const CONTACT = {
-  email: 'hello@linkflame.com',
-  supportEmail: 'support@linkflame.com',
-  businessEmail: 'business@linkflame.com',
-  pressEmail: 'press@linkflame.com',
+  supportEmail: SUPPORT_EMAIL,
+  // Same single mailbox: the store has no separate business or press addresses.
+  businessEmail: SUPPORT_EMAIL,
+  pressEmail: SUPPORT_EMAIL,
 } as const
 
 /**
@@ -54,7 +67,8 @@ export const LIMITS = {
   // Cart
   maxCartItems: 50,
   minCheckoutAmount: 0,
-  freeShippingThreshold: 35,
+  // Matches the Stripe Checkout shipping options and /shipping-policy.
+  freeShippingThreshold: 75,
 
   // Pagination
   defaultPageSize: 12,

@@ -9,7 +9,6 @@ import { Label } from "@/components/ui/label";
 import { useCart } from "@/lib/providers/CartProvider";
 import { LoadingShimmer } from "@/components/ui/loading-shimmer";
 import { toast } from "sonner";
-import { CarbonNeutralBanner } from "@/components/sustainability/CarbonNeutralBanner";
 import { ExpressCheckout } from "./ExpressCheckout";
 import { GiftOptions, GiftOptionsData } from "./GiftOptions";
 import {
@@ -48,10 +47,6 @@ export default function CheckoutForm({ onDiscountChange }: CheckoutFormProps) {
     email: "",
     firstName: "",
     lastName: "",
-    address: "",
-    city: "",
-    state: "",
-    zipCode: "",
   });
 
   // Disable checkout button if cart is empty
@@ -116,18 +111,6 @@ export default function CheckoutForm({ onDiscountChange }: CheckoutFormProps) {
     // Name validation
     if (!formData.firstName) errors.firstName = "First name is required";
     if (!formData.lastName) errors.lastName = "Last name is required";
-    
-    // Address validation
-    if (!formData.address) errors.address = "Address is required";
-    if (!formData.city) errors.city = "City is required";
-    if (!formData.state) errors.state = "State is required";
-    
-    // Zip code validation
-    if (!formData.zipCode) {
-      errors.zipCode = "ZIP code is required";
-    } else if (!/^\d{5}(-\d{4})?$/.test(formData.zipCode)) {
-      errors.zipCode = "ZIP code is invalid";
-    }
     
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -277,87 +260,11 @@ export default function CheckoutForm({ onDiscountChange }: CheckoutFormProps) {
         </div>
       </div>
       
-      <div className="space-y-2">
-        <Label htmlFor="address" id="address-label">Address</Label>
-        <Input name="address" autoComplete="street-address"
-          type="text"
-          id="address"
-          value={formData.address}
-          onChange={handleChange}
-          disabled={isLoading}
-          className={formErrors.address ? "border-red-500" : ""}
-          aria-invalid={!!formErrors.address}
-          aria-describedby={formErrors.address ? "address-error" : undefined}
-          required
-        />
-        {formErrors.address && (
-          <p className="text-xs text-red-500" id="address-error" role="alert">
-            {formErrors.address}
-          </p>
-        )}
-      </div>
-      
-      <div className="grid grid-cols-3 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="city" id="city-label">City</Label>
-          <Input name="city" autoComplete="address-level2"
-            type="text"
-            id="city"
-            value={formData.city}
-            onChange={handleChange}
-            disabled={isLoading}
-            className={formErrors.city ? "border-red-500" : ""}
-            aria-invalid={!!formErrors.city}
-            aria-describedby={formErrors.city ? "city-error" : undefined}
-            required
-          />
-          {formErrors.city && (
-            <p className="text-xs text-red-500" id="city-error" role="alert">
-              {formErrors.city}
-            </p>
-          )}
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="state" id="state-label">State</Label>
-          <Input name="state" autoComplete="address-level1"
-            type="text"
-            id="state"
-            value={formData.state}
-            onChange={handleChange}
-            disabled={isLoading}
-            className={formErrors.state ? "border-red-500" : ""}
-            aria-invalid={!!formErrors.state}
-            aria-describedby={formErrors.state ? "state-error" : undefined}
-            required
-          />
-          {formErrors.state && (
-            <p className="text-xs text-red-500" id="state-error" role="alert">
-              {formErrors.state}
-            </p>
-          )}
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="zipCode" id="zipCode-label">ZIP code</Label>
-          <Input name="zipCode" autoComplete="postal-code" spellCheck={false}
-            type="text"
-            id="zipCode"
-            value={formData.zipCode}
-            onChange={handleChange}
-            disabled={isLoading}
-            className={formErrors.zipCode ? "border-red-500" : ""}
-            aria-invalid={!!formErrors.zipCode}
-            aria-describedby={formErrors.zipCode ? "zipCode-error" : undefined}
-            required
-            pattern="^\d{5}(-\d{4})?$"
-            inputMode="numeric"
-          />
-          {formErrors.zipCode && (
-            <p className="text-xs text-red-500" id="zipCode-error" role="alert">
-              {formErrors.zipCode}
-            </p>
-          )}
-        </div>
-      </div>
+      <p className="text-sm text-muted-foreground">
+        You enter your shipping or billing address on the secure Stripe
+        payment page. Guides download right after payment; printed items are
+        made to order and usually ship within 2&ndash;5 business days.
+      </p>
 
       {/* Gift Options Section */}
       <div className="border-t pt-4">
@@ -374,11 +281,6 @@ export default function CheckoutForm({ onDiscountChange }: CheckoutFormProps) {
           disabled={isLoading}
           onDiscountChange={handleDiscountChange}
         />
-      </div>
-
-      {/* Carbon Neutral Shipping Notice */}
-      <div className="border-t pt-4">
-        <CarbonNeutralBanner variant="compact" showLearnMore={false} />
       </div>
 
       <div className="flex justify-between pt-4">

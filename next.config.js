@@ -92,6 +92,13 @@ const nextConfig = {
     root: __dirname,
   },
 
+  // The TerraCycle program page was removed: we have no such partnership.
+  async redirects() {
+    return [
+      { source: '/terracycle', destination: '/sustainability', permanent: true },
+    ]
+  },
+
   // Security Headers - Production Ready Configuration
   async headers() {
     // Content Security Policy

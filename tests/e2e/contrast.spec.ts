@@ -22,7 +22,6 @@ const PAGES = [
   '/impact',
   '/imperfect',
   '/sustainability',
-  '/terracycle',
   '/bundles',
 ]
 

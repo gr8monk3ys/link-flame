@@ -1,37 +1,24 @@
 import { PrismaClient } from '@prisma/client';
-import { brands } from './seed-data/brands';
 import { productValues, productValueAssignments } from './seed-data/product-values';
-import { certifications } from './seed-data/certifications';
-import { productSustainabilityData } from './seed-data/product-sustainability';
-import { products } from './seed-data/products';
+import { launchProducts, productData, variantData } from './seed-data/launch-catalogue';
 import { quizQuestions } from './seed-data/quiz-questions';
-import { impactMetrics, productImpactData } from './seed-data/impact-metrics';
+import { impactMetrics } from './seed-data/impact-metrics';
 
 const prisma = new PrismaClient();
 
+/**
+ * Development and CI seed. Destructive: it clears the catalogue, orders'
+ * line items and blog data before recreating them. Never run it against
+ * production; use `npm run catalogue:apply` there instead.
+ */
 async function main() {
-  // Clear existing brands
-  await prisma.brand.deleteMany();
-  console.log('Cleared existing brands');
-
-  // Seed brands. Ids are kept so products can be attached below — without a
-  // brandId every partner card renders "0 products" and links to an empty
-  // brand page.
-  const createdBrandIds: string[] = [];
-  for (const brand of brands) {
-    const created = await prisma.brand.create({
-      data: brand,
-    });
-    createdBrandIds.push(created.id);
-  }
-  console.log('Created partner brands');
-
   // Clear existing data (respect foreign key constraints)
   await prisma.quizResponse.deleteMany();
   await prisma.bundleSelection.deleteMany();
   await prisma.bundleProduct.deleteMany();
   await prisma.bundle.deleteMany();
   await prisma.cartItem.deleteMany();
+  await prisma.digitalDownload.deleteMany();
   await prisma.orderItem.deleteMany();
   await prisma.savedItem.deleteMany();
   await prisma.review.deleteMany();
@@ -40,17 +27,10 @@ async function main() {
   await prisma.productValue.deleteMany();
   await prisma.sustainabilityCertification.deleteMany();
   await prisma.productVariant.deleteMany();
+  await prisma.digitalAsset.deleteMany();
   await prisma.product.deleteMany();
-
-  // Create sustainability certifications
-  const createdCertifications: Record<string, string> = {};
-  for (const cert of certifications) {
-    const created = await prisma.sustainabilityCertification.create({
-      data: cert,
-    });
-    createdCertifications[cert.name] = created.id;
-  }
-  console.log('Created sustainability certifications');
+  // Link Flame sells only its own products: no partner brands.
+  await prisma.brand.deleteMany();
 
   // Create product values for "Shop by Values" filtering
   const createdValues: Record<string, string> = {};
@@ -62,55 +42,26 @@ async function main() {
   }
   console.log('Created product values for Shop by Values');
 
-  // Create products with sustainability fields
+  // The launch catalogue. Guide PDFs are not in this repo; without them a
+  // test purchase gets no download links (load them with
+  // `npm run catalogue:upload-assets`).
   const createdProducts: Record<string, string> = {};
-  for (const [productIndex, product] of products.entries()) {
-    const sustainabilityData = productSustainabilityData[product.title] || {
-      isPlasticFree: false,
-      isVegan: false,
-      isCrueltyFree: false,
-      isOrganicCertified: false,
-      carbonFootprintGrams: null,
-      certificationNames: [],
-    };
-
+  for (const product of launchProducts) {
     const created = await prisma.product.create({
       data: {
-        ...product,
-        // Round-robin rather than random so reseeding is reproducible.
-        brandId: createdBrandIds.length
-          ? createdBrandIds[productIndex % createdBrandIds.length]
-          : undefined,
-        inventory: Math.floor(Math.random() * 50) + 10, // Random inventory between 10-59
-        isPlasticFree: sustainabilityData.isPlasticFree,
-        isVegan: sustainabilityData.isVegan,
-        isCrueltyFree: sustainabilityData.isCrueltyFree,
-        isOrganicCertified: sustainabilityData.isOrganicCertified,
-        carbonFootprintGrams: sustainabilityData.carbonFootprintGrams,
+        ...productData(product),
+        ...(product.variants?.length
+          ? {
+              variants: {
+                create: product.variants.map((variant, index) => variantData(variant, index)),
+              },
+            }
+          : {}),
       },
     });
     createdProducts[product.title] = created.id;
   }
-  console.log('Created products with sustainability data');
-
-  // Link products to certifications
-  for (const [productTitle, sustainabilityData] of Object.entries(productSustainabilityData)) {
-    const productId = createdProducts[productTitle];
-    if (!productId) continue;
-
-    for (const certName of sustainabilityData.certificationNames) {
-      const certId = createdCertifications[certName];
-      if (!certId) continue;
-
-      await prisma.productCertification.create({
-        data: {
-          productId,
-          certificationId: certId,
-        },
-      });
-    }
-  }
-  console.log('Linked products to certifications');
+  console.log(`Created ${launchProducts.length} launch products`);
 
   // Assign product values for "Shop by Values" filtering
   for (const [productTitle, valueSlugs] of Object.entries(productValueAssignments)) {
@@ -145,13 +96,8 @@ async function main() {
     },
   });
 
-  const author2 = await prisma.author.create({
-    data: {
-      name: 'Emma Green',
-      image: '/images/authors/emma.jpg',
-      role: 'Sustainability Expert',
-    },
-  });
+  // One real byline; the blog has no outside contributors.
+  const author2 = author1;
 
   // Create blog categories
   const catUpdates = await prisma.category.create({
@@ -183,14 +129,13 @@ async function main() {
       tags: 'welcome,news',
       featured: true,
       readingTime: '3 min read',
-      content: `We're excited to launch our eco-friendly living platform! Here you'll find practical guides, product reviews, and tips for sustainable living.
+      content: `Link Flame publishes practical guides for wasting less at home, and sells a few things of its own to keep the lights on.
 
 # What We Offer
 
-- In-depth sustainability guides
-- Honest product reviews
-- Community-driven insights
-- Expert advice from environmental professionals
+- Practical guides to changing one habit at a time
+- Honest notes on what each swap costs and when to skip it
+- Printable worksheets for measuring your own household
 
 Stay tuned for more content coming soon!`,
     },
@@ -242,7 +187,7 @@ Remember: Every small change makes a difference!`,
 
 # Why Compost?
 
-- Reduces landfill waste by up to 30%
+- Keeps food scraps and yard waste out of the landfill
 - Creates nutrient-rich soil for your garden
 - Reduces methane emissions
 - Saves money on fertilizer
@@ -306,7 +251,7 @@ Buy products in bulk and use refillable containers.
 
 # The Impact
 
-By making these switches, the average person can eliminate hundreds of pieces of plastic waste per year!`,
+Make each switch when the old item runs out, not all at once: the greenest product is usually the one you already own.`,
     },
   });
 
@@ -332,102 +277,17 @@ By making these switches, the average person can eliminate hundreds of pieces of
   await prisma.productImpact.deleteMany();
   await prisma.impactMetric.deleteMany();
 
-  const createdMetricIds: Record<string, string> = {};
   for (const metric of impactMetrics) {
-    const created = await prisma.impactMetric.create({
+    await prisma.impactMetric.create({
       data: metric,
     });
-    createdMetricIds[metric.slug] = created.id;
   }
   console.log('Created impact metrics');
 
-  // Link products to their environmental impacts
-  for (const [productTitle, impacts] of Object.entries(productImpactData)) {
-    const productId = createdProducts[productTitle];
-    if (!productId) continue;
+  // No product carries a measured impact yet, so none is linked: the
+  // homepage impact band and per-order impact stay hidden until real
+  // measurements exist.
 
-    for (const [metricSlug, value] of Object.entries(impacts)) {
-      const metricId = createdMetricIds[metricSlug];
-      if (!metricId || value <= 0) continue;
-
-      await prisma.productImpact.create({
-        data: {
-          productId,
-          metricId,
-          valuePerUnit: value,
-        },
-      });
-    }
-  }
-  console.log('Linked products to environmental impacts');
-
-  // Bundles: the /bundles page is linked from the main nav, so it must not
-  // ship empty. Titles reference createdProducts keys - update both together.
-  const bundles = [
-    {
-      slug: 'zero-waste-kitchen-starter',
-      title: 'Zero-Waste Kitchen Starter',
-      description:
-        'The four swaps that clear the most plastic out of a kitchen: wraps instead of cling film, mesh bags instead of produce bags, bamboo cutlery for lunches out, and glass storage that outlives any takeaway tub.',
-      image: 'https://images.unsplash.com/photo-1686820740642-5a1fcd0300a9?w=1200&q=80',
-      category: 'Kitchen',
-      discountPercent: 15,
-      isCustomizable: false,
-      productTitles: [
-        'Beeswax Food Wraps',
-        'Reusable Produce Bags - Set of 5',
-        'Bamboo Cutlery Set',
-        'Glass Food Storage Set',
-      ],
-    },
-    {
-      slug: 'plastic-free-bathroom',
-      title: 'Plastic-Free Bathroom',
-      description:
-        'Everything on the sink, minus the plastic: bamboo toothbrushes for the family, a matching bathroom set, and loofah sponges that compost when they wear out.',
-      image: 'https://images.unsplash.com/photo-1589365252845-092198ba5334?w=1200&q=80',
-      category: 'Bathroom',
-      discountPercent: 12,
-      isCustomizable: false,
-      productTitles: [
-        'Bamboo Toothbrush Set',
-        'Bamboo Bathroom Set',
-        'Natural Loofah Sponge - 3 Pack',
-      ],
-    },
-    {
-      slug: 'build-your-own-starter-kit',
-      title: 'Build Your Own Starter Kit',
-      description:
-        'Pick any three to six swaps and save on the lot. Start with the disposables you throw away most often.',
-      image: 'https://images.unsplash.com/photo-1528740561666-dc2479dc08ab?w=1200&q=80',
-      category: 'Starter',
-      discountPercent: 10,
-      isCustomizable: true,
-      minItems: 3,
-      maxItems: 6,
-      productTitles: Object.keys(createdProducts),
-    },
-  ];
-
-  for (const bundle of bundles) {
-    const { productTitles, ...bundleData } = bundle;
-    const created = await prisma.bundle.create({ data: bundleData });
-    for (const [sortOrder, title] of productTitles.entries()) {
-      const productId = createdProducts[title];
-      if (!productId) continue;
-      await prisma.bundleProduct.create({
-        data: {
-          bundleId: created.id,
-          productId,
-          isRequired: !bundle.isCustomizable,
-          isDefault: !bundle.isCustomizable,
-          sortOrder,
-        },
-      });
-    }
-  }
-  console.log('Created product bundles');
 
   console.log('Database has been seeded successfully!');
 }

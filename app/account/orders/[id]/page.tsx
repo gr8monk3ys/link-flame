@@ -8,7 +8,7 @@ import { notFound } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
-import { Check, Package, Truck, Home, CheckCircle, XCircle, ExternalLink, Gift } from "lucide-react";
+import { Check, Package, Truck, Home, CheckCircle, XCircle, ExternalLink, Gift, Download } from "lucide-react";
 import { formatPrice, formatDate } from "@/lib/utils";
 
 interface ShippingStep {
@@ -44,6 +44,13 @@ interface OrderWithTracking {
   giftRecipientName: string | null;
   giftRecipientEmail: string | null;
   hidePrice: boolean;
+  shipsSomething: boolean;
+  downloads: Array<{
+    url: string;
+    productTitle: string;
+    filename: string;
+    downloadsLeft: number;
+  }>;
   items: Array<{
     id: string;
     title: string;
@@ -200,8 +207,36 @@ export default function OrderDetailPage() {
         </CardHeader>
       </Card>
 
+      {/* Digital downloads */}
+      {order.downloads && order.downloads.length > 0 && (
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle as="h2">Downloads</CardTitle>
+            <CardDescription>Each link works a limited number of times. Reply to your order email if you run out.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ul className="divide-y divide-border">
+              {order.downloads.map((download) => (
+                <li key={download.url} className="flex items-center justify-between gap-4 py-3">
+                  <div className="min-w-0">
+                    <p className="truncate font-medium">{download.productTitle}</p>
+                    <p className="font-mono text-xs text-muted-foreground">
+                      {download.filename} · {download.downloadsLeft} downloads left
+                    </p>
+                  </div>
+                  <a href={download.url} download className="cta-secondary inline-flex shrink-0 items-center gap-2">
+                    <Download className="size-4" aria-hidden="true" />
+                    PDF
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Shipping Progress Tracker */}
-      {!order.isCancelled && order.shippingProgress && order.shippingProgress.length > 0 && (
+      {!order.isCancelled && order.shipsSomething !== false && order.shippingProgress && order.shippingProgress.length > 0 && (
         <Card className="mb-6">
           <CardHeader>
             <CardTitle as="h2">Shipping Progress</CardTitle>

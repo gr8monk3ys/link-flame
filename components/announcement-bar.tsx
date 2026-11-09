@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { LIMITS } from "@/config/constants";
 
 const STORAGE_KEY = "linkflame_announcement_dismissed_v1";
 const DISMISSED_CLASS = "announcement-dismissed";
@@ -67,9 +68,9 @@ export function AnnouncementBar({ className }: { className?: string }) {
       >
         <div className="container flex items-center justify-between gap-3 py-2">
           <div className="label-mono flex flex-wrap items-center gap-x-3 gap-y-1">
-            <span>Carbon-neutral shipping</span>
+            <span>Guides download instantly</span>
             <span aria-hidden>·</span>
-            <span>Plastic-free packaging</span>
+            <span>Free US shipping over ${LIMITS.freeShippingThreshold}</span>
             <span aria-hidden>·</span>
             <Link
               href="/account/loyalty"
