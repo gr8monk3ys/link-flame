@@ -3,7 +3,7 @@
  * Renders a guide manuscript (Markdown) to a print-ready US Letter PDF in the
  * Link Flame house style, using the site's own fonts and headless Chromium.
  *
- *   node scripts/render-guide-pdf.mjs <manuscript.md> <out.pdf> [--edition "First edition, November 2026"]
+ *   node scripts/render-guide-pdf.mjs <manuscript.md> <out.pdf> [--edition "First edition, November 2026"] [--free]
  *
  * Manuscript conventions:
  *   # Title            first line; the italic paragraph after it is the subtitle
@@ -25,11 +25,17 @@ import { chromium } from "@playwright/test";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const [, , input, output, ...rest] = process.argv;
 if (!input || !output) {
-  console.error("usage: render-guide-pdf.mjs <manuscript.md> <out.pdf> [--edition text]");
+  console.error("usage: render-guide-pdf.mjs <manuscript.md> <out.pdf> [--edition text] [--free]");
   process.exit(2);
 }
 const editionIdx = rest.indexOf("--edition");
 const edition = editionIdx >= 0 ? rest[editionIdx + 1] : "First edition, November 2026";
+// --free: a guide that is given away. The colophon invites sharing instead of
+// licensing the file to a buyer.
+const free = rest.includes("--free");
+const licence = free
+  ? "This guide is free. Print it, copy it and pass it on, as long as you keep it whole and do not sell it."
+  : "This guide is licensed to the buyer for personal use. You may print as many copies of the worksheets as your household needs. Please do not resell or redistribute the file.";
 
 // Fonts are inlined: Chromium will not load file:// fonts into setContent pages.
 const font = (p) =>
@@ -120,7 +126,7 @@ code { font-family: Plex, monospace; font-size: 9pt; }
 ${chapters}
 <div class="colophon">
   <p><strong>${escape(title)}</strong>. ${escape(edition)}.</p>
-  <p>Copyright &copy; ${new Date().getFullYear()} Link Flame. This guide is licensed to the buyer for personal use. You may print as many copies of the worksheets as your household needs. Please do not resell or redistribute the file.</p>
+  <p>Copyright &copy; ${new Date().getFullYear()} Link Flame. ${licence}</p>
   <p>This guide offers general information about reducing household waste. Local recycling and composting rules vary; check with your municipality.</p>
 </div>
 </body></html>`;

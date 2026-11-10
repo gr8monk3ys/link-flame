@@ -29,6 +29,16 @@ export const siteConfig = {
           description: "Organic cotton tote and tee, printed to order",
         },
         {
+          title: "Free guide",
+          href: "/free-guide",
+          description: "The First Count: a one-day tally sheet, free PDF",
+        },
+        {
+          title: "Checked swaps",
+          href: "/swaps",
+          description: "Other brands' products, with what is proven and what is not",
+        },
+        {
           title: "Gift Cards",
           href: "/gift-cards",
           description: "Sustainable gifting made simple",

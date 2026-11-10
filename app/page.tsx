@@ -1,5 +1,6 @@
 import HeroSection from "@/components/home/HeroSection";
 import CTASection from "@/components/home/CTASection";
+import FreeGuideSection from "@/components/home/FreeGuideSection";
 import { ImpactBand } from "@/components/home/ImpactBand";
 import { FeaturedProducts } from "@/components/home/FeaturedProducts";
 import { QuizCTA } from "@/components/quiz/QuizCTA";
@@ -36,6 +37,9 @@ export default function IndexPage() {
       <Suspense fallback={<FeaturedProductsLoading />}>
         <FeaturedProducts />
       </Suspense>
+
+      {/* The free tally-sheet guide: the one thing a new visitor can take without paying */}
+      <FreeGuideSection />
 
       {/* Catalogue impact, summed from per-product measurements */}
       <Suspense fallback={null}>

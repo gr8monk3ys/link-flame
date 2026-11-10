@@ -15,6 +15,8 @@ import { logger } from '@/lib/logger';
 import { getBaseUrl } from '@/lib/url';
 import { SUPPORT_EMAIL } from '@/config/constants';
 import { formatPrice } from "@/lib/utils";
+import { buildUnsubscribeUrl } from '@/lib/newsletter-token';
+import { FREE_GUIDE } from '@/config/free-guide';
 
 // Initialize Resend client
 const resend = process.env.RESEND_API_KEY
@@ -24,6 +26,10 @@ const resend = process.env.RESEND_API_KEY
 // Default sender email (must be verified domain in Resend)
 // No fallback: the store does not own a sending domain yet. Unset means mail is skipped.
 const FROM_EMAIL = process.env.EMAIL_FROM || '';
+
+// Postal address for the footer of list email. US law (CAN-SPAM) asks for a
+// valid physical postal address in commercial email. Unset means no line.
+const POSTAL_ADDRESS = process.env.EMAIL_POSTAL_ADDRESS || '';
 
 /**
  * Escape a string for interpolation into email HTML.
@@ -105,20 +111,27 @@ export async function sendOrderConfirmation(
 /**
  * Send newsletter subscription confirmation
  *
+ * The email carries the free guide's download link and a working unsubscribe
+ * link for this subscription.
+ *
  * @param to - Subscriber email address
+ * @param subscriptionId - Newsletter row id, used to sign the unsubscribe link
  */
-export async function sendNewsletterConfirmation(to: string) {
+export async function sendNewsletterConfirmation(to: string, subscriptionId: string) {
   if (!resend || !FROM_EMAIL) {
     logger.warn('Resend not configured - skipping newsletter confirmation');
     return { success: false, error: 'Email service not configured' };
   }
 
+  const unsubscribeUrl = buildUnsubscribeUrl(subscriptionId);
+
   try {
     const { data, error } = await resend.emails.send({
       from: FROM_EMAIL,
       to,
-      subject: 'Welcome to Link Flame Newsletter! 🌱',
-      html: generateNewsletterConfirmationHTML(to),
+      subject: 'Welcome to Link Flame. Your free guide is inside.',
+      html: generateNewsletterConfirmationHTML(to, unsubscribeUrl),
+      headers: { 'List-Unsubscribe': `<${unsubscribeUrl}>` },
     });
 
     if (error) {
@@ -729,8 +742,16 @@ function generateOrderConfirmationHTML(orderDetails: OrderConfirmationDetails): 
 
 /**
  * Generate newsletter confirmation HTML
+ *
+ * Exported for the unit test. Says only what is true today: there is no fixed
+ * sending schedule and no standing discount, so it promises neither.
  */
-function generateNewsletterConfirmationHTML(email: string): string {
+export function generateNewsletterConfirmationHTML(email: string, unsubscribeUrl: string): string {
+  const guideUrl = `${getBaseUrl()}${FREE_GUIDE.href}`;
+  const postalAddress = POSTAL_ADDRESS
+    ? `<p style="margin: 8px 0 0 0; font-size: 12px; color: #9ca3af;">${escapeHtml(POSTAL_ADDRESS)}</p>`
+    : '';
+
   return `
     <!DOCTYPE html>
     <html>
@@ -739,51 +760,48 @@ function generateNewsletterConfirmationHTML(email: string): string {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
       </head>
       <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #374151; margin: 0; padding: 0; background-color: #f3f4f6;">
-        <div style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+        <div style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb;">
           <!-- Header -->
-          <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 40px 30px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 600;">🌱 Welcome to Link Flame!</h1>
+          <div style="background-color: #059669; padding: 32px 30px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 26px; font-weight: 600;">Welcome to Link Flame</h1>
           </div>
 
           <!-- Content -->
           <div style="padding: 40px 30px;">
-            <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px;">Thank you for subscribing!</h2>
+            <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 22px;">You are on the list.</h2>
 
             <p style="margin: 0 0 20px 0; font-size: 16px;">
-              You've successfully subscribed to our newsletter at <strong>${escapeHtml(email)}</strong>.
+              You subscribed with <strong>${escapeHtml(email)}</strong>.
             </p>
 
-            <p style="margin: 0 0 20px 0; font-size: 16px;">
-              You'll now receive updates about:
+            <p style="margin: 0 0 8px 0; font-size: 16px;">
+              <strong>Your free guide: ${escapeHtml(FREE_GUIDE.title)}</strong>
             </p>
-
-            <ul style="margin: 0 0 24px 0; padding-left: 24px;">
-              <li style="margin: 0 0 8px 0; font-size: 16px;">🌍 Eco-friendly product launches</li>
-              <li style="margin: 0 0 8px 0; font-size: 16px;">♻️ Sustainable living tips</li>
-              <li style="margin: 0 0 8px 0; font-size: 16px;">🎁 Exclusive offers and discounts</li>
-              <li style="margin: 0; font-size: 16px;">📰 Community stories and news</li>
-            </ul>
-
             <p style="margin: 0 0 20px 0; font-size: 16px;">
-              Together, we're making a difference for our planet!
+              ${escapeHtml(FREE_GUIDE.summary)} It is a printable PDF, ${FREE_GUIDE.pages} pages.
             </p>
 
             <div style="text-align: center; margin: 32px 0;">
-              <a href="${getBaseUrl()}" style="display: inline-block; background-color: #10b981; color: #ffffff; padding: 12px 32px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">
-                Explore Products
+              <a href="${guideUrl}" style="display: inline-block; background-color: #059669; color: #ffffff; padding: 12px 32px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">
+                Download ${escapeHtml(FREE_GUIDE.title)}
               </a>
             </div>
 
+            <p style="margin: 0 0 20px 0; font-size: 16px;">
+              What we send: a short note when a new guide or a checked swap is ready, and low-waste methods we have tried ourselves. There is no fixed schedule.
+            </p>
+
             <p style="margin: 24px 0 0 0; font-size: 14px; color: #6b7280; text-align: center;">
-              You can unsubscribe at any time by clicking the unsubscribe link in any email.
+              You can leave the list at any time: <a href="${escapeHtml(unsubscribeUrl)}" style="color: #059669;">unsubscribe</a>.
             </p>
           </div>
 
           <!-- Footer -->
           <div style="background-color: #f9fafb; padding: 24px 30px; text-align: center; border-top: 1px solid #e5e7eb;">
             <p style="margin: 0; font-size: 12px; color: #9ca3af;">
-              © 2026 Link Flame. All rights reserved.
+              © ${new Date().getFullYear()} Link Flame. All rights reserved.
             </p>
+            ${postalAddress}
           </div>
         </div>
       </body>

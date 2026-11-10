@@ -23,7 +23,8 @@ export default function FAQPage() {
           <AccordionTrigger>What is Link Flame?</AccordionTrigger>
           <AccordionContent>
             Link Flame is a small shop for low-waste living. We sell our own PDF guides and a couple of
-            printed items. We do not resell other brands.
+            printed items. We do not resell other brands. Our Checked swaps pages link to the shops of
+            other brands. We do not sell or ship those products.
           </AccordionContent>
         </AccordionItem>
 
