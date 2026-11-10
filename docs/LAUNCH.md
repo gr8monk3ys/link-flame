@@ -53,6 +53,8 @@ The guide PDFs and manuscripts are paid products. They are **not** in this publi
 
 ### 2. Database, around the merge
 
+**Done on November 9, 2026.** The migration is applied, PR #143 is merged and deployed, and production holds the six launch products and the guide PDFs. The backup from before the change is `link-flame-products/backups/linkflame-prod-20261109-201223.dump`. The steps stay here for the next schema change or catalogue update.
+
 Vercel does not run migrations. The order matters:
 
 1. **Before the merge:** back up production and apply the migration. The migration only adds columns and tables, so the code that is live now keeps working on it.
@@ -62,10 +64,12 @@ Vercel does not run migrations. The order matters:
 The private repository `link-flame-products` has a script for each side, rehearsed on a local copy:
 
 ```powershell
-# from link-flame-products; each asks for the production DIRECT_URL and keeps it in memory only
-powershell -ExecutionPolicy Bypass -File ops-backup-and-migrate.ps1   # pg_dump backup to backups\, then prisma migrate deploy
-powershell -ExecutionPolicy Bypass -File ops-load-catalogue.ps1       # prints the plan, asks you to type APPLY
+# from link-flame-products; each asks for the production database URL and keeps it in memory only
+powershell -ExecutionPolicy Bypass -File ops\1-backup-and-migrate.ps1   # pg_dump backup to backups\, then prisma migrate deploy
+powershell -ExecutionPolicy Bypass -File ops\2-load-catalogue.ps1       # prints the plan, asks you to type APPLY
 ```
+
+Both scripts run the npm commands in the main checkout of this repository (`link-flame`, on `main`). Fast-forward it and run `npm ci` there first. To replace a guide PDF, run `2-load-catalogue.ps1` again: the upload overwrites the file in place, and links already sent serve the new version.
 
 By hand, the same steps are:
 
