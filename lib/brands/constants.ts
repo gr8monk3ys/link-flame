@@ -1,3 +1,5 @@
+// Filter vocabulary for the /brands directory. These describe third-party brands
+// and are not claims about Link Flame, which sells only its own products.
 export const BRAND_CERTIFICATIONS = [
   {
     slug: "b-corp",

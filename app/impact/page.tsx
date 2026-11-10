@@ -17,28 +17,24 @@ export const metadata: Metadata = {
   },
 };
 
+// Goals, not facts: none of these is in place yet, and the copy must say so.
 const COMMITMENTS = [
   {
-    title: "1% for the Planet",
+    title: "Giving back",
     description:
-      "One percent of every sale is pledged to environmental nonprofits, independently verified through onepercentfortheplanet.org.",
+      "We want to join 1% for the Planet once the shop has revenue to give. We are not a member today.",
   },
   {
-    title: "Carbon-neutral shipping",
+    title: "Fewer physical goods",
     description:
-      "Shipping emissions on every order are offset at checkout. The offset line appears in your order summary, not in fine print.",
+      "Most of what we sell is a PDF guide, which ships nothing. Our two printed items are made to order, so we do not hold stock that may never sell.",
   },
   {
-    title: "Plastic-free packaging",
+    title: "Shipping emissions",
     description:
-      "Orders ship in recyclable and compostable materials. No poly mailers, no bubble wrap, no plastic tape.",
+      "We do not offset shipping emissions today. Offsetting is something we want to look into when we can do it properly.",
   },
-  {
-    title: "TerraCycle partnership",
-    description:
-      "Hard-to-recycle empties can be returned through our TerraCycle program instead of going to landfill.",
-  },
-];
+]
 
 export default async function ImpactPage() {
   const [catalog, community] = await Promise.all([
@@ -165,7 +161,7 @@ export default async function ImpactPage() {
                   Every product in the catalogue is assigned a per-unit yearly
                   impact for each metric it affects: how many plastic bottles a
                   reusable bottle displaces in a year of typical use, how many
-                  disposable items a beeswax wrap replaces, how many kilograms
+                  disposable items a reusable item replaces, how many kilograms
                   of CO&#8322;e the swap avoids.
                 </p>
                 <p>
@@ -185,7 +181,7 @@ export default async function ImpactPage() {
             </div>
             <div>
               <h2 className="font-serif text-2xl tracking-tight text-foreground sm:text-3xl">
-                Standing commitments
+                What we are working toward
               </h2>
               <ul className="mt-4 space-y-5">
                 {COMMITMENTS.map((item) => (
@@ -223,7 +219,7 @@ export default async function ImpactPage() {
               href="/sustainability"
               className="inline-flex items-center rounded-lg border border-primary-foreground/40 px-6 py-3 text-sm font-medium transition-colors hover:bg-primary-foreground/10"
             >
-              Our commitments
+              Our goals
             </Link>
           </div>
         </div>

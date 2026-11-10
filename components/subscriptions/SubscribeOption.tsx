@@ -175,10 +175,6 @@ export function SubscribeOption({
             </li>
             <li className="flex items-center">
               <Check className="mr-2 size-4" />
-              Free shipping on subscription orders
-            </li>
-            <li className="flex items-center">
-              <Check className="mr-2 size-4" />
               Skip, pause, or cancel anytime
             </li>
             <li className="flex items-center">

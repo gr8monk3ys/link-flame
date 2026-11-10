@@ -3,19 +3,12 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
 /**
- * Entry points backed by real ProductValue slugs. The products API filters on
- * `?values=<slug>` (OR logic), so each tile lands on a populated grid.
- *
- * These four are the only values with a non-zero productCount today
- * (/api/products/values: plastic-free 14, zero-waste 12, vegan 5,
- * cruelty-free 3). Women-owned, Black-owned, and Small Business all return 0,
- * so linking to them would drop shoppers on an empty grid.
+ * The two ways to buy from Link Flame. Both link to the catalogue, which is
+ * the source of truth for what is for sale.
  */
-const SHOP_BY_VALUE = [
-  { slug: "plastic-free", label: "Plastic-free", note: "No plastic in the product or the box" },
-  { slug: "zero-waste", label: "Zero-waste", note: "Refillable, compostable, or endlessly reusable" },
-  { slug: "vegan", label: "Vegan", note: "No animal-derived ingredients" },
-  { slug: "cruelty-free", label: "Cruelty-free", note: "Never tested on animals" },
+const WAYS_TO_SHOP = [
+  { href: "/products", label: "Digital guides", note: "PDF guides with instant download, from $7" },
+  { href: "/products", label: "Printed to order", note: "An organic cotton tote and tee, made after you order" },
 ];
 
 export default function HeroSection() {
@@ -24,7 +17,7 @@ export default function HeroSection() {
       <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-16">
         <div className="lg:col-span-5">
           <p className="text-sm font-medium uppercase tracking-[0.12em] text-primary">
-            1% for the Planet member
+            Guides and goods for low-waste living
           </p>
 
           <h1 className="mt-5 font-serif text-[clamp(2.75rem,6vw,4.5rem)] font-semibold leading-[1.05] tracking-tight">
@@ -33,8 +26,9 @@ export default function HeroSection() {
           </h1>
 
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-            Bar soap, refills, and swaps built to outlast the thing they replace.
-            Every product is screened for what it&rsquo;s made of and who made it.
+            Practical PDF guides for swapping out single-use things, plus an
+            organic cotton tote and tee printed to order. Everything here is
+            our own.
           </p>
 
           <div className="mt-9 flex flex-wrap gap-3">
@@ -42,7 +36,7 @@ export default function HeroSection() {
               <Link href="/products">Shop all products</Link>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <Link href="/quiz">Take the 2-minute quiz</Link>
+              <Link href="/sustainability">What we stand for</Link>
             </Button>
           </div>
         </div>
@@ -57,8 +51,8 @@ export default function HeroSection() {
                 container width below lg (the container has 1rem side
                 padding), ~55% of the 1400px-capped container above it. */}
             <Image
-              src="/images/soap-bars.jpg"
-              alt="Stacked bars of plastic-free soap"
+              src="/images/products/guide-swap-starter-set.png"
+              alt="The Swap Starter Set, a bundle of three PDF guides"
               fill
               sizes="(max-width: 1023px) calc(100vw - 2rem), (max-width: 1400px) 55vw, 770px"
               className="object-cover"
@@ -72,7 +66,7 @@ export default function HeroSection() {
       <div className="mt-14 lg:mt-20">
         <div className="flex items-baseline justify-between gap-4">
           <h2 className="font-serif text-2xl font-semibold tracking-tight sm:text-3xl">
-            Shop by what matters to you
+            Two ways to shop
           </h2>
           <Link
             href="/products"
@@ -82,11 +76,11 @@ export default function HeroSection() {
           </Link>
         </div>
 
-        <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {SHOP_BY_VALUE.map((value) => (
-            <li key={value.slug}>
+        <ul className="mt-6 grid gap-4 sm:grid-cols-2">
+          {WAYS_TO_SHOP.map((value) => (
+            <li key={value.label}>
               <Link
-                href={`/products?values=${value.slug}`}
+                href={value.href}
                 className="group flex h-full flex-col rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/45 hover:bg-accent"
               >
                 <span className="font-medium tracking-tight">{value.label}</span>

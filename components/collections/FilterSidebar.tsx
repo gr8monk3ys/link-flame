@@ -336,106 +336,6 @@ function DateRangeSection({
   );
 }
 
-function SubscribableSection({
-  filters,
-  onFilterChange,
-}: FilterSidebarProps) {
-  return (
-    <div className="rounded-xl border border-blue-200 bg-linear-to-br from-blue-50 to-indigo-50 p-4 dark:border-blue-900/50 dark:from-blue-950/40 dark:to-indigo-950/40">
-      <div className="mb-3 flex items-center gap-2">
-        <svg
-          className="size-5 text-blue-700 dark:text-blue-300"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2}
-          aria-hidden="true"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2" />
-          <circle cx="12" cy="12" r="9" />
-        </svg>
-        <h3 className="text-lg font-medium text-blue-900 dark:text-blue-100">Subscribe &amp; Save</h3>
-      </div>
-      <p className="mb-4 text-sm text-blue-800 dark:text-blue-200">
-        Set it and forget it. Save on recurring deliveries of your essentials.
-      </p>
-      <div className="flex items-center gap-3">
-        <input
-          id="subscribable-filter"
-          type="checkbox"
-          name="subscribable"
-          checked={filters.subscribable === true}
-          onChange={(e) =>
-            onFilterChange({
-              subscribable: e.target.checked ? true : null,
-            })
-          }
-          className="size-4 rounded border-blue-300 text-blue-700 focus-visible:ring-blue-500 dark:border-blue-800 dark:text-blue-300"
-        />
-        <label htmlFor="subscribable-filter" className="text-sm text-blue-800 dark:text-blue-200">
-          Show only Subscribe &amp; Save items
-        </label>
-      </div>
-    </div>
-  );
-}
-
-function ImperfectSection({
-  filters,
-  onFilterChange,
-}: FilterSidebarProps) {
-  return (
-    <div className="rounded-xl border border-amber-200 bg-linear-to-br from-amber-50 to-orange-50 p-4 dark:border-amber-900/50 dark:from-amber-950/40 dark:to-orange-950/40">
-      <div className="mb-3 flex items-center gap-2">
-        <svg
-          className="size-5 text-amber-600 dark:text-amber-400"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          aria-hidden="true"
-        >
-          <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z" />
-        </svg>
-        <h3 className="text-lg font-medium text-amber-900 dark:text-amber-100">Perfectly Imperfect</h3>
-      </div>
-      <p className="mb-4 text-sm text-amber-800 dark:text-amber-200">
-        Save up to 47% on items with minor cosmetic imperfections. Same quality, less waste.
-      </p>
-      <div className="mb-3 flex items-center gap-3">
-        <input
-          id="imperfect-filter"
-          type="checkbox"
-          name="imperfect"
-          checked={filters.imperfect === true}
-          onChange={(e) =>
-            onFilterChange({
-              imperfect: e.target.checked ? true : null,
-            })
-          }
-          className="size-4 rounded border-amber-300 text-amber-600 focus-visible:ring-amber-500 dark:border-amber-800 dark:text-amber-400"
-        />
-        <label htmlFor="imperfect-filter" className="text-sm text-amber-800 dark:text-amber-200">
-          Show only imperfect deals
-        </label>
-      </div>
-      <Link
-        href="/imperfect"
-        className="inline-flex items-center gap-1 text-sm font-medium text-amber-700 hover:text-amber-800 dark:text-amber-300"
-      >
-        View all imperfect items
-        <svg aria-hidden="true"
-          className="size-4"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-        </svg>
-      </Link>
-    </div>
-  );
-}
-
 export default function FilterSidebar({
   filters,
   onFilterChange,
@@ -492,8 +392,6 @@ export default function FilterSidebar({
       <RatingSection filters={filters} onFilterChange={onFilterChange} />
       <PriceRangeSection filters={filters} onFilterChange={onFilterChange} />
       <DateRangeSection filters={filters} onFilterChange={onFilterChange} />
-      <SubscribableSection filters={filters} onFilterChange={onFilterChange} />
-      <ImperfectSection filters={filters} onFilterChange={onFilterChange} />
     </div>
   );
 }

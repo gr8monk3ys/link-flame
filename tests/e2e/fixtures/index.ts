@@ -23,6 +23,7 @@ export {
   // Cart utilities
   waitForCartUpdate,
   addItemToCart,
+  pickSimpleProductId,
 
   // Extended test fixtures
   test,

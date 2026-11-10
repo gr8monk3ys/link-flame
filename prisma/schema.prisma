@@ -88,6 +88,17 @@ model Product {
   // Subscription eligibility
   isSubscribable Boolean @default(false)
 
+  // How the order is fulfilled: "stock" (we ship from inventory),
+  // "digital" (downloads in DigitalAsset), "printful" (print on demand).
+  // Only "stock" products track inventory.
+  fulfillment       String  @default("stock")
+  // Printful catalog variant id for products without variants.
+  printfulVariantId Int?
+  // Public URL path of the front print file sent to Printful.
+  printFile         String?
+
+  digitalAssets     DigitalAsset[]
+
   reviews           Review[]
   variants          ProductVariant[]
   cartItems         CartItem[]
@@ -113,6 +124,7 @@ model Product {
   @@index([isImperfect])
   @@index([isSubscribable])
   @@index([brandId])
+  @@index([fulfillment])
 }
 
 // Product variants for size, color, material options
@@ -130,6 +142,9 @@ model ProductVariant {
   inventory Int     @default(0)
   isDefault Boolean @default(false) // Mark one variant as default selection
   sortOrder Int     @default(0) // For controlling display order
+
+  // Printful catalog variant id (print-on-demand products only)
+  printfulVariantId Int?
 
   // Imperfect/Seconds sale fields for variant-level imperfections
   isImperfect       Boolean @default(false)
@@ -313,12 +328,22 @@ model Order {
   // Subscription origin
   subscriptionId String?
 
+  // Structured shipping address as Stripe collected it (JSON of
+  // Stripe.Address plus name), used to create print-on-demand orders.
+  shippingDetails Json?
+
+  // Print-on-demand fulfillment (Printful)
+  printfulOrderId String?
+  printfulStatus  String? // draft, pending, submitted, failed, skipped
+  printfulError   String?
+
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
   items              OrderItem[]
   carbonOffset       CarbonOffset?
   orderImpacts       OrderImpact[]
   subscriptionOrders SubscriptionOrder[]
+  digitalDownloads   DigitalDownload[]
 
   @@index([userId])
   @@index([stripeSessionId])
@@ -1019,4 +1044,44 @@ model PasswordResetToken {
 
   @@index([email])
   @@index([expiresAt])
+}
+
+// A downloadable file sold with a digital product. The bytes live in the
+// database so paid files never sit in /public or in this public repository.
+model DigitalAsset {
+  id          String   @id @default(cuid())
+  productId   String
+  filename    String
+  contentType String   @default("application/pdf")
+  data        Bytes
+  sizeBytes   Int
+  sha256      String
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  product   Product           @relation(fields: [productId], references: [id], onDelete: Cascade)
+  downloads DigitalDownload[]
+
+  @@unique([productId, filename])
+  @@index([productId])
+}
+
+// One download link per paid order and asset. The token is the secret in
+// the link; downloads are capped so a leaked link stops working.
+model DigitalDownload {
+  id               String    @id @default(cuid())
+  token            String    @unique
+  orderId          String
+  assetId          String
+  downloadCount    Int       @default(0)
+  maxDownloads     Int       @default(10)
+  lastDownloadedAt DateTime?
+  createdAt        DateTime  @default(now())
+
+  order Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  asset DigitalAsset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@unique([orderId, assetId])
+  @@index([orderId])
 }

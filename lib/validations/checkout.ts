@@ -12,10 +12,12 @@ export const CheckoutSchema = z.object({
   email: z.email('Invalid email address'),
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
-  address: z.string().min(1, 'Address is required'),
-  city: z.string().min(1, 'City is required'),
-  state: z.string().min(1, 'State is required'),
-  zipCode: z.string().regex(/^\d{5}(-\d{4})?$/, 'Invalid ZIP code format'),
+  // Stripe Checkout collects the shipping (or, for downloads, billing)
+  // address; these stay accepted for older clients but are no longer required.
+  address: z.string().max(200).optional(),
+  city: z.string().max(100).optional(),
+  state: z.string().max(100).optional(),
+  zipCode: z.string().regex(/^\d{5}(-\d{4})?$/, 'Invalid ZIP code format').optional().or(z.literal('')),
   ...GiftOptionsSchema.shape,
   // Optional discount fields
   loyaltyPointsToRedeem: z.number().int().positive().optional(),

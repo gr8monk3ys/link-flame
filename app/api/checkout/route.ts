@@ -18,6 +18,8 @@ import Stripe from "stripe";
 import { CheckoutSchema } from "@/lib/validations/checkout";
 import { holdPointsForCheckout, reversePointsHold } from "@/lib/loyalty";
 import { holdGiftCardBalance, reverseGiftCardHold } from "@/lib/gift-cards";
+import { requiresShipping, stripeTaxCode, tracksInventory } from "@/lib/fulfillment";
+import { LIMITS } from "@/config/constants";
 
 export const dynamic = 'force-dynamic'
 
@@ -97,7 +99,7 @@ export async function POST(request: Request) {
       const availableInventory = variant ? variant.inventory : product.inventory;
       const inventorySource = variant ? `${product.title} (${[variant.size, variant.color, variant.material].filter(Boolean).join(', ')})` : product.title;
 
-      if (availableInventory < item.quantity) {
+      if (tracksInventory(product.fulfillment) && availableInventory < item.quantity) {
         return errorResponse(
           `Insufficient inventory for ${inventorySource}. Only ${availableInventory} available.`,
           undefined,
@@ -129,6 +131,7 @@ export async function POST(request: Request) {
           product_data: {
             name: productName,
             description: product.subtitle || undefined,
+            tax_code: stripeTaxCode(product.fulfillment, product.category),
             images: productImage ? [productImage] : undefined,
             metadata: {
               productId: product.id,
@@ -278,7 +281,14 @@ export async function POST(request: Request) {
     };
 
     const customerName = `${checkoutData.firstName} ${checkoutData.lastName}`;
-    const shippingAddress = `${checkoutData.address}, ${checkoutData.city}, ${checkoutData.state} ${checkoutData.zipCode}`;
+    // Stripe collects the real address; this is only kept when an older
+    // client still sends the fields. The webhook overwrites it from Stripe.
+    const shippingAddress = checkoutData.address
+      ? [checkoutData.address, checkoutData.city, `${checkoutData.state ?? ""} ${checkoutData.zipCode ?? ""}`.trim()]
+          .filter(Boolean)
+          .join(", ")
+      : null;
+    const needsShipping = cartItems.some((item) => requiresShipping(item.product.fulfillment));
 
     logger.info('Creating Stripe checkout session', {
       userId: userIdToUse,
@@ -300,50 +310,46 @@ export async function POST(request: Request) {
             request_three_d_secure: 'automatic',
           },
         },
-        // Collect shipping address so Stripe Tax can calculate correct rates
-        shipping_address_collection: {
-          allowed_countries: ['US', 'CA'],
-        },
-        // Shipping options: free for orders over $75, flat rate otherwise
-        shipping_options: [
-          ...(serverTotal >= 75
-            ? [
+        // Physical items: Stripe collects the shipping address (used for tax
+        // and for the Printful order). Downloads only: no shipping step, and
+        // the billing address is required so Stripe Tax can locate the buyer.
+        ...(needsShipping
+          ? {
+              shipping_address_collection: {
+                allowed_countries: ['US'] as Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry[],
+              },
+              shipping_options: [
+                ...(serverTotal >= LIMITS.freeShippingThreshold
+                  ? [
+                      {
+                        shipping_rate_data: {
+                          type: 'fixed_amount' as const,
+                          fixed_amount: { amount: 0, currency: 'usd' },
+                          display_name: 'Free Shipping',
+                          tax_code: 'txcd_92010001',
+                          delivery_estimate: {
+                            minimum: { unit: 'business_day' as const, value: 5 },
+                            maximum: { unit: 'business_day' as const, value: 10 },
+                          },
+                        },
+                      },
+                    ]
+                  : []),
                 {
                   shipping_rate_data: {
                     type: 'fixed_amount' as const,
-                    fixed_amount: { amount: 0, currency: 'usd' },
-                    display_name: 'Free Shipping',
+                    fixed_amount: { amount: 599, currency: 'usd' },
+                    display_name: 'Standard Shipping',
+                    tax_code: 'txcd_92010001',
                     delivery_estimate: {
                       minimum: { unit: 'business_day' as const, value: 5 },
-                      maximum: { unit: 'business_day' as const, value: 7 },
+                      maximum: { unit: 'business_day' as const, value: 10 },
                     },
                   },
                 },
-              ]
-            : []),
-          {
-            shipping_rate_data: {
-              type: 'fixed_amount' as const,
-              fixed_amount: { amount: 599, currency: 'usd' },
-              display_name: 'Standard Shipping',
-              delivery_estimate: {
-                minimum: { unit: 'business_day' as const, value: 5 },
-                maximum: { unit: 'business_day' as const, value: 7 },
-              },
-            },
-          },
-          {
-            shipping_rate_data: {
-              type: 'fixed_amount' as const,
-              fixed_amount: { amount: 1499, currency: 'usd' },
-              display_name: 'Express Shipping',
-              delivery_estimate: {
-                minimum: { unit: 'business_day' as const, value: 2 },
-                maximum: { unit: 'business_day' as const, value: 3 },
-              },
-            },
-          },
-        ],
+              ],
+            }
+          : {}),
         // Automatic tax calculation via Stripe Tax
         // Requires enabling Stripe Tax in dashboard and setting product tax codes
         automatic_tax: { enabled: true },
@@ -351,7 +357,8 @@ export async function POST(request: Request) {
           userId: userIdToUse,
           customerEmail: checkoutData.email,
           customerName,
-          shippingAddress,
+          shippingAddress: shippingAddress ?? '',
+          needsShipping: String(needsShipping),
           isGift: giftOptions.isGift.toString(),
           giftMessage: giftOptions.giftMessage,
           giftRecipientName: giftOptions.giftRecipientName,
@@ -362,7 +369,7 @@ export async function POST(request: Request) {
           stripeCouponId: stripeCouponId || '',
         },
         customer_email: checkoutData.email,
-        billing_address_collection: 'auto',
+        billing_address_collection: needsShipping ? 'auto' : 'required',
         success_url: `${getBaseUrl()}/order-confirmation?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${getBaseUrl()}/checkout`,
         expires_at: Math.floor(Date.now() / 1000) + (30 * 60),

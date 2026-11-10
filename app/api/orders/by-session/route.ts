@@ -11,6 +11,8 @@ import {
 import { checkRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 import { getUserIdForCart } from "@/lib/session";
+import { getOrderDownloads } from "@/lib/digital-downloads";
+import { requiresShipping } from "@/lib/fulfillment";
 
 export const dynamic = 'force-dynamic'
 
@@ -67,6 +69,7 @@ export async function GET(req: Request) {
                 id: true,
                 image: true,
                 title: true,
+                fulfillment: true,
               },
             },
           },
@@ -77,6 +80,11 @@ export async function GET(req: Request) {
     if (!order) {
       return notFoundResponse("Order");
     }
+
+    const downloads = await getOrderDownloads(order.id);
+    const shipsSomething = order.items.some((item) =>
+      requiresShipping(item.product?.fulfillment)
+    );
 
     // Format order with gift info for display
     const formattedOrder = {
@@ -104,6 +112,16 @@ export async function GET(req: Request) {
         productImage: item.product?.image,
       })),
       itemCount: order.items.reduce((acc, item) => acc + item.quantity, 0),
+      shipsSomething,
+      // Download links carry their own secret token; they are only returned
+      // to the cart owner who completed this Checkout session.
+      downloads: downloads.map(({ url, productTitle, filename, sizeBytes, downloadsLeft }) => ({
+        url,
+        productTitle,
+        filename,
+        sizeBytes,
+        downloadsLeft,
+      })),
     };
 
     return successResponse(formattedOrder);

@@ -13,6 +13,7 @@
 import { Resend } from 'resend';
 import { logger } from '@/lib/logger';
 import { getBaseUrl } from '@/lib/url';
+import { SUPPORT_EMAIL } from '@/config/constants';
 import { formatPrice } from "@/lib/utils";
 
 // Initialize Resend client
@@ -21,7 +22,8 @@ const resend = process.env.RESEND_API_KEY
   : null;
 
 // Default sender email (must be verified domain in Resend)
-const FROM_EMAIL = process.env.EMAIL_FROM || 'noreply@linkflame.com';
+// No fallback: the store does not own a sending domain yet. Unset means mail is skipped.
+const FROM_EMAIL = process.env.EMAIL_FROM || '';
 
 /**
  * Escape a string for interpolation into email HTML.
@@ -42,6 +44,13 @@ export function escapeHtml(value: string): string {
 /**
  * Check if email service is configured
  */
+/** Footer line pointing at support: the mailbox if configured, else the contact page. */
+function supportLineHTML(): string {
+  return SUPPORT_EMAIL
+    ? `Contact us at ${escapeHtml(SUPPORT_EMAIL)}`
+    : `Contact us at <a href="${getBaseUrl()}/contact" style="color: #6b7280;">${escapeHtml(getBaseUrl())}/contact</a>`;
+}
+
 export function isEmailConfigured(): boolean {
   return resend !== null && !!process.env.RESEND_API_KEY;
 }
@@ -52,16 +61,22 @@ export function isEmailConfigured(): boolean {
  * @param to - Customer email address
  * @param orderDetails - Order information
  */
+export interface OrderConfirmationDetails {
+  orderId: string;
+  items: Array<{ title: string; quantity: number; price: number }>;
+  total: number;
+  customerName: string;
+  /** Download links for digital items (paid orders only). */
+  downloads?: Array<{ title: string; filename: string; url: string }>;
+  /** False for download-only orders: no "we'll email tracking" line. */
+  shipsSomething?: boolean;
+}
+
 export async function sendOrderConfirmation(
   to: string,
-  orderDetails: {
-    orderId: string;
-    items: Array<{ title: string; quantity: number; price: number }>;
-    total: number;
-    customerName: string;
-  }
+  orderDetails: OrderConfirmationDetails
 ) {
-  if (!resend) {
+  if (!resend || !FROM_EMAIL) {
     logger.warn('Resend not configured - skipping order confirmation email');
     return { success: false, error: 'Email service not configured' };
   }
@@ -93,7 +108,7 @@ export async function sendOrderConfirmation(
  * @param to - Subscriber email address
  */
 export async function sendNewsletterConfirmation(to: string) {
-  if (!resend) {
+  if (!resend || !FROM_EMAIL) {
     logger.warn('Resend not configured - skipping newsletter confirmation');
     return { success: false, error: 'Email service not configured' };
   }
@@ -130,12 +145,16 @@ export async function sendContactNotification(contactData: {
   subject: string;
   message: string;
 }) {
-  if (!resend) {
+  if (!resend || !FROM_EMAIL) {
     logger.warn('Resend not configured - skipping contact notification');
     return { success: false, error: 'Email service not configured' };
   }
 
-  const adminEmail = process.env.ADMIN_EMAIL || 'admin@linkflame.com';
+  const adminEmail = process.env.ADMIN_EMAIL;
+  if (!adminEmail) {
+    logger.warn('ADMIN_EMAIL not set - skipping contact notification');
+    return { success: false, error: 'Admin email not configured' };
+  }
 
   try {
     // Send notification to admin
@@ -178,7 +197,7 @@ export async function sendPasswordResetEmail(
   to: string,
   resetToken: string
 ): Promise<{ success: boolean; error?: unknown }> {
-  if (!resend) {
+  if (!resend || !FROM_EMAIL) {
     logger.warn('Resend not configured - skipping password reset email');
     return { success: false, error: 'Email service not configured' };
   }
@@ -222,7 +241,7 @@ export async function sendShippingNotificationEmail(
     estimatedDelivery?: string | null;
   }
 ): Promise<{ success: boolean; error?: unknown }> {
-  if (!resend) {
+  if (!resend || !FROM_EMAIL) {
     logger.warn('Resend not configured - skipping shipping notification email');
     return { success: false, error: 'Email service not configured' };
   }
@@ -367,7 +386,7 @@ function generateShippingNotificationHTML(orderDetails: {
           <!-- Footer -->
           <div style="background-color: #f9fafb; padding: 24px 30px; text-align: center; border-top: 1px solid #e5e7eb;">
             <p style="margin: 0 0 8px 0; font-size: 14px; color: #6b7280;">
-              Questions? Contact us at support@linkflame.com
+              Questions? ${supportLineHTML()}
             </p>
             <p style="margin: 0; font-size: 12px; color: #9ca3af;">
               &copy; 2026 Link Flame. All rights reserved.
@@ -391,7 +410,7 @@ export async function sendOutOfStockRefundEmail(
   orderId: string,
   customerName: string
 ): Promise<{ success: boolean; error?: unknown }> {
-  if (!resend) {
+  if (!resend || !FROM_EMAIL) {
     logger.warn('Resend not configured - skipping out-of-stock refund email');
     return { success: false, error: 'Email service not configured' };
   }
@@ -459,7 +478,7 @@ export async function sendSubscriptionPaymentFailedEmail(
   customerName: string,
   failedAttemptCount: number
 ): Promise<{ success: boolean; error?: unknown }> {
-  if (!resend) {
+  if (!resend || !FROM_EMAIL) {
     logger.warn('Resend not configured - skipping subscription payment failure email');
     return { success: false, error: 'Email service not configured' };
   }
@@ -593,17 +612,30 @@ function generatePasswordResetHTML(resetUrl: string): string {
 /**
  * Generate order confirmation HTML
  */
-function generateOrderConfirmationHTML(orderDetails: {
-  orderId: string;
-  items: Array<{ title: string; quantity: number; price: number }>;
-  total: number;
-  customerName: string;
-}): string {
+function generateOrderConfirmationHTML(orderDetails: OrderConfirmationDetails): string {
+  const downloads = orderDetails.downloads ?? [];
+  const downloadsHTML = downloads.length
+    ? `
+            <h3 style="color: #1f2937; margin: 0 0 12px 0; font-size: 18px; font-weight: 600;">Your downloads</h3>
+            <p style="margin: 0 0 12px 0; font-size: 14px; color: #6b7280;">Each link works 10 times. Save the files somewhere you will find them.</p>
+            <ul style="margin: 0 0 24px 0; padding: 0 0 0 20px; font-size: 16px;">
+              ${downloads
+                .map(
+                  (d) =>
+                    `<li style="margin: 0 0 8px 0;"><a href="${escapeHtml(d.url)}" style="color: #047857;">${escapeHtml(d.title)}</a> <span style="color: #6b7280; font-size: 13px;">(${escapeHtml(d.filename)})</span></li>`
+                )
+                .join('')}
+            </ul>`
+    : '';
+  const shippingLine =
+    orderDetails.shipsSomething === false
+      ? ''
+      : `<p style="margin: 0 0 20px 0; font-size: 16px;">Printed items are made to order. We'll email you tracking as soon as they ship.</p>`;
   const itemsHTML = orderDetails.items
     .map(
       (item) => `
     <tr>
-      <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">${item.title}</td>
+      <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">${escapeHtml(item.title)}</td>
       <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: center;">${item.quantity}</td>
       <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: right;">${formatPrice(item.price)}</td>
       <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: right;">${formatPrice(item.price * item.quantity)}</td>
@@ -667,9 +699,9 @@ function generateOrderConfirmationHTML(orderDetails: {
               </tfoot>
             </table>
 
-            <p style="margin: 0 0 20px 0; font-size: 16px;">
-              We'll send you another email once your order ships with tracking information.
-            </p>
+            ${downloadsHTML}
+
+            ${shippingLine}
 
             <p style="margin: 0 0 8px 0; font-size: 16px;">
               Thank you for supporting sustainable living! 🌍
@@ -683,7 +715,7 @@ function generateOrderConfirmationHTML(orderDetails: {
           <!-- Footer -->
           <div style="background-color: #f9fafb; padding: 24px 30px; text-align: center; border-top: 1px solid #e5e7eb;">
             <p style="margin: 0 0 8px 0; font-size: 14px; color: #6b7280;">
-              Questions? Contact us at support@linkflame.com
+              Questions? ${supportLineHTML()}
             </p>
             <p style="margin: 0; font-size: 12px; color: #9ca3af;">
               © 2026 Link Flame. All rights reserved.
@@ -867,7 +899,7 @@ function generateContactConfirmationHTML(contactData: {
           <!-- Footer -->
           <div style="background-color: #f9fafb; padding: 24px 30px; text-align: center; border-top: 1px solid #e5e7eb;">
             <p style="margin: 0 0 8px 0; font-size: 14px; color: #6b7280;">
-              Visit our website: <a href="${getBaseUrl()}" style="color: #10b981; text-decoration: none;">linkflame.com</a>
+              Visit our website: <a href="${getBaseUrl()}" style="color: #10b981; text-decoration: none;">${escapeHtml(getBaseUrl().replace(/^https?:\/\//, ''))}</a>
             </p>
             <p style="margin: 0; font-size: 12px; color: #9ca3af;">
               © 2026 Link Flame. All rights reserved.

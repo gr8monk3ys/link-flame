@@ -104,34 +104,11 @@ describe('Checkout Schema Validation', () => {
     }
   })
 
-  it('should reject empty address', () => {
-    const data = { ...validCheckoutData, address: '' }
-    const result = CheckoutSchema.safeParse(data)
+  it('accepts an order with no address: Stripe Checkout collects it', () => {
+    const { address: _address, city: _city, state: _state, zipCode: _zip, ...rest } = validCheckoutData
+    const result = CheckoutSchema.safeParse(rest)
 
-    expect(result.success).toBe(false)
-    if (!result.success) {
-      expect(result.error.issues[0].path).toContain('address')
-    }
-  })
-
-  it('should reject empty city', () => {
-    const data = { ...validCheckoutData, city: '' }
-    const result = CheckoutSchema.safeParse(data)
-
-    expect(result.success).toBe(false)
-    if (!result.success) {
-      expect(result.error.issues[0].path).toContain('city')
-    }
-  })
-
-  it('should reject empty state', () => {
-    const data = { ...validCheckoutData, state: '' }
-    const result = CheckoutSchema.safeParse(data)
-
-    expect(result.success).toBe(false)
-    if (!result.success) {
-      expect(result.error.issues[0].path).toContain('state')
-    }
+    expect(result.success).toBe(true)
   })
 
   describe('ZIP code validation', () => {

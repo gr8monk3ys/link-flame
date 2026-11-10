@@ -14,22 +14,21 @@ const LeafIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-// Earth/Globe icon
-const GlobeIcon = ({ className }: { className?: string }) => (
+// Document icon
+const DocumentIcon = ({ className }: { className?: string }) => (
   <svg aria-hidden="true" className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10" />
-    <path d="M2 12h20" />
-    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+    <path d="M14 2v6h6" />
+    <path d="M8 13h8M8 17h8" />
   </svg>
 );
 
-// Recycle icon
-const RecycleIcon = ({ className }: { className?: string }) => (
+// Package icon
+const PackageIcon = ({ className }: { className?: string }) => (
   <svg aria-hidden="true" className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5" />
-    <path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12" />
-    <path d="m14 16-3 3 3 3" />
-    <path d="M8.293 13.596 4.875 8.5l1.753-3" />
+    <path d="m7.5 4.27 9 5.15" />
+    <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+    <path d="m3.3 7 8.7 5 8.7-5M12 22V12" />
   </svg>
 );
 
@@ -40,45 +39,27 @@ const HeartIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-// Truck icon
-const TruckIcon = ({ className }: { className?: string }) => (
-  <svg aria-hidden="true" className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2" />
-    <path d="M15 18H9" />
-    <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14" />
-    <circle cx="17" cy="18" r="2" />
-    <circle cx="7" cy="18" r="2" />
-  </svg>
-);
-
+// What is true today. Goals (1% for the Planet, shipping offsets) live on /sustainability.
 const commitments = [
   {
-    icon: GlobeIcon,
-    title: "1% for the Planet",
-    description: "We donate 1% of annual sales to environmental nonprofits",
-    color: "text-blue-600 dark:text-blue-400",
-    bgColor: "bg-blue-100 dark:bg-blue-900/50",
+    icon: DocumentIcon,
+    title: "Digital first",
+    description: "Our guides are PDFs. Nothing is packed or shipped for them.",
   },
   {
-    icon: TruckIcon,
-    title: "Carbon-Neutral Shipping",
-    description: "All orders ship with fully offset carbon emissions",
-    color: "text-green-700 dark:text-green-400",
-    bgColor: "bg-green-100 dark:bg-green-900/50",
+    icon: PackageIcon,
+    title: "Printed to order",
+    description: "The tote and tee are made after you order, so no unsold stock.",
   },
   {
-    icon: RecycleIcon,
-    title: "Plastic-Free Packaging",
-    description: "We ship using only recyclable and compostable materials",
-    color: "text-teal-700 dark:text-teal-400",
-    bgColor: "bg-teal-100 dark:bg-teal-900/50",
+    icon: LeafIcon,
+    title: "Organic cotton",
+    description: "The tote and tee are organic cotton.",
   },
   {
     icon: HeartIcon,
-    title: "Ethical Sourcing",
-    description: "We partner only with suppliers who share our values",
-    color: "text-pink-600 dark:text-pink-400",
-    bgColor: "bg-pink-100 dark:bg-pink-900/50",
+    title: "Our own products",
+    description: "We write and design everything we sell. No resold brands.",
   },
 ];
 
@@ -90,39 +71,17 @@ export function SustainabilityCommitment({
     return (
       <div className={cn("space-y-4", className)}>
         <div className="flex items-center gap-2">
-          <LeafIcon className="size-5 text-green-700 dark:text-green-400" />
-          <h3 className="label-mono">Our Commitment</h3>
+          <LeafIcon className="size-5 text-primary" />
+          <h3 className="label-mono">What we do</h3>
         </div>
         <ul className="space-y-2 text-sm text-muted-foreground">
-          <li className="flex items-center gap-2">
-            <span className="size-1.5 rounded-full bg-green-500" />
-            1% for the Planet member
-          </li>
-          <li className="flex items-center gap-2">
-            <span className="size-1.5 rounded-full bg-green-500" />
-            Carbon-neutral shipping
-          </li>
-          <li className="flex items-center gap-2">
-            <span className="size-1.5 rounded-full bg-green-500" />
-            Plastic-free packaging
-          </li>
-          <li className="flex items-center gap-2">
-            <span className="size-1.5 rounded-full bg-green-500" />
-            Ethically sourced products
-          </li>
-          <li className="flex items-center gap-2">
-            <span className="size-1.5 rounded-full bg-green-500" />
-            <Link
-              href="/terracycle"
-              className="hover:text-green-700 dark:hover:text-green-400"
-            >
-              TerraCycle recycling partner
-            </Link>
-          </li>
+          <li>Digital guides, nothing shipped</li>
+          <li>Tote and tee printed to order</li>
+          <li>Organic cotton</li>
         </ul>
         <Link
           href="/sustainability"
-          className="inline-flex items-center gap-1 text-sm font-medium text-green-700 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300"
+          className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
         >
           Read the full commitment
           <svg aria-hidden="true" className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -135,13 +94,15 @@ export function SustainabilityCommitment({
 
   if (variant === "compact") {
     return (
-      <div className={cn(
-        "flex flex-wrap items-center justify-center gap-6 rounded-lg bg-green-50 p-4 dark:bg-green-900/20",
-        className
-      )}>
+      <div
+        className={cn(
+          "flex flex-wrap items-center justify-center gap-6 rounded-lg bg-muted p-4",
+          className
+        )}
+      >
         {commitments.slice(0, 3).map((commitment) => (
           <div key={commitment.title} className="flex items-center gap-2">
-            <commitment.icon className={cn("size-5", commitment.color)} />
+            <commitment.icon className="size-5 text-primary" />
             <span className="text-sm font-medium text-foreground">
               {commitment.title}
             </span>
@@ -149,7 +110,7 @@ export function SustainabilityCommitment({
         ))}
         <Link
           href="/sustainability"
-          className="text-sm font-medium text-green-700 hover:underline dark:text-green-400"
+          className="text-sm font-medium text-primary hover:underline"
         >
           Read our sustainability commitment
         </Link>
@@ -162,30 +123,20 @@ export function SustainabilityCommitment({
     <section className={cn("py-12", className)}>
       <div className="container mx-auto px-4">
         <div className="mb-10 text-center">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-sm font-medium text-green-800 dark:bg-green-900/50 dark:text-green-300">
-            <LeafIcon className="size-4" />
-            Our Commitment to the Planet
-          </div>
           <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Sustainability at Our Core
+            What we do today
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-            Every purchase you make supports our mission to protect and preserve the environment
-            for future generations.
+            Measured, not promised. This is what is true now. Our goals are on
+            the sustainability page.
           </p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {commitments.map((commitment) => (
-            <div
-              key={commitment.title}
-              className="group rounded-xl border bg-card p-6 shadow-xs transition-shadow hover:shadow-md"
-            >
-              <div className={cn(
-                "mb-4 inline-flex size-12 items-center justify-center rounded-lg",
-                commitment.bgColor
-              )}>
-                <commitment.icon className={cn("size-6", commitment.color)} />
+            <div key={commitment.title} className="rounded-xl border bg-card p-6">
+              <div className="mb-4 inline-flex size-12 items-center justify-center rounded-lg bg-muted">
+                <commitment.icon className="size-6 text-primary" />
               </div>
               <h3 className="mb-2 text-lg font-semibold text-foreground">
                 {commitment.title}
@@ -198,44 +149,11 @@ export function SustainabilityCommitment({
         </div>
 
         <div className="mt-10 text-center">
-          <Link
-            href="/sustainability"
-            className="inline-flex items-center gap-2 rounded-lg bg-green-700 px-6 py-3 text-sm font-medium text-white shadow-xs transition-colors hover:bg-green-800 dark:bg-green-700 dark:hover:bg-green-700"
-          >
-            Learn About Our Impact
-            <svg aria-hidden="true" className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
+          <Link href="/sustainability" className="cta-primary">
+            Learn more
           </Link>
         </div>
       </div>
     </section>
-  );
-}
-
-// Horizontal banner version
-export function SustainabilityBanner({ className }: { className?: string }) {
-  return (
-    <div className={cn(
-      "bg-linear-to-r from-green-700 to-emerald-700 text-white",
-      className
-    )}>
-      <div className="container mx-auto px-4 py-3">
-        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-sm">
-          <div className="flex items-center gap-2">
-            <LeafIcon className="size-4" />
-            <span>1% for the Planet</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <TruckIcon className="size-4" />
-            <span>Carbon-Neutral Shipping</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <RecycleIcon className="size-4" />
-            <span>Plastic-Free Packaging</span>
-          </div>
-        </div>
-      </div>
-    </div>
   );
 }

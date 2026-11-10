@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { CONTACT } from '@/config/constants'
+import { SUPPORT_EMAIL } from '@/config/constants'
+import { SupportLink } from '@/components/legal/SupportLink'
 
 export const metadata: Metadata = {
   title: 'Terms of Service',
@@ -15,13 +16,13 @@ export default function TermsPage() {
         Terms of Service
       </h1>
       <p className="mb-8 text-sm text-muted-foreground">
-        Last updated: February 2026
+        Last updated: November 8, 2026
       </p>
 
       <div className="prose prose-lg max-w-none dark:prose-invert">
         <p className="text-muted-foreground">
           Welcome to Link Flame. By accessing or using our website at
-          linkflame.com, creating an account, or making a purchase, you agree to
+          link-flame.vivancedata.com, creating an account, or making a purchase, you agree to
           be bound by these Terms of Service. Please read them carefully before
           using our platform. If you do not agree with these terms, please do
           not use our website.
@@ -132,8 +133,10 @@ export default function TermsPage() {
             Shipping Policy
           </Link>
           . By placing an order, you agree to the terms outlined in that policy.
-          Risk of loss and title for items pass to you upon delivery to the
-          carrier.
+          Digital guides are delivered by download link immediately after
+          payment. Printed items are made to order by our print partner,
+          Printful, and shipped to you; risk of loss passes to you on
+          delivery.
         </p>
 
         <h2>6. Returns and Refunds</h2>
@@ -143,7 +146,18 @@ export default function TermsPage() {
             Return &amp; Refund Policy
           </Link>
           . By making a purchase, you agree to the terms outlined in that
-          policy.
+          policy. In short: digital guides carry a 30-day money-back refund,
+          and printed items are made to order, so they are refundable or
+          reprinted for misprints, damage or defects but not for change of
+          mind.
+        </p>
+
+        <h2>6a. Digital Products</h2>
+        <p className="text-muted-foreground">
+          When you buy a digital guide you receive a personal, non-transferable
+          licence to download and use it for yourself. Each download link works
+          up to 10 times. You may not resell, share publicly or redistribute
+          the files.
         </p>
 
         <h2>7. User Content</h2>
@@ -231,12 +245,7 @@ export default function TermsPage() {
         <p className="text-muted-foreground">
           If you have a dispute with Link Flame, we encourage you to contact us
           first at{' '}
-          <a
-            href={`mailto:${CONTACT.supportEmail}`}
-            className="text-primary hover:underline"
-          >
-            {CONTACT.supportEmail}
-          </a>{' '}
+          <SupportLink className="text-primary hover:underline" />{' '}
           so we can attempt to resolve the issue informally.
         </p>
         <p className="text-muted-foreground">
@@ -282,19 +291,15 @@ export default function TermsPage() {
           us:
         </p>
         <ul className="text-muted-foreground">
-          <li>
-            <strong>Email:</strong>{' '}
-            <a
-              href={`mailto:${CONTACT.supportEmail}`}
-              className="text-primary hover:underline"
-            >
-              {CONTACT.supportEmail}
-            </a>
-          </li>
+          {SUPPORT_EMAIL && (
+            <li>
+              <strong>Email:</strong> <SupportLink className="text-primary hover:underline" />
+            </li>
+          )}
           <li>
             <strong>Contact form:</strong>{' '}
             <Link href="/contact" className="text-primary hover:underline">
-              linkflame.com/contact
+              Contact page
             </Link>
           </li>
         </ul>

@@ -7,7 +7,7 @@ const baseUrl = getBaseUrl()
 
 export const siteConfig = {
   name: "Link Flame",
-  description: "Your trusted source for eco-friendly living and sustainable product recommendations.",
+  description: "Practical guides for wasting less at home, and a few things we make ourselves.",
   url: baseUrl,
   mainNav: [
     {
@@ -16,27 +16,17 @@ export const siteConfig = {
         {
           title: "All Products",
           href: "/products",
-          description: "Browse our full catalog of eco-friendly essentials",
+          description: "Guides and printed goods, all made by Link Flame",
         },
         {
-          title: "Shop by Values",
-          href: "/collections",
-          description: "Filter by sustainability values like zero-waste and plastic-free",
+          title: "Guides",
+          href: "/collections?category=Guides",
+          description: "Printable PDF guides for wasting less at home",
         },
         {
-          title: "Subscribe & Save",
-          href: "/collections?subscribable=true",
-          description: "Recurring deliveries with built-in savings on essentials",
-        },
-        {
-          title: "Bundles (Build a Kit)",
-          href: "/bundles",
-          description: "Curated kits to make switching easier",
-        },
-        {
-          title: "Perfectly Imperfect",
-          href: "/imperfect",
-          description: "Save on items with minor cosmetic imperfections",
+          title: "Printed goods",
+          href: "/collections?category=Bags&category=Apparel",
+          description: "Organic cotton tote and tee, printed to order",
         },
         {
           title: "Gift Cards",
@@ -44,10 +34,6 @@ export const siteConfig = {
           description: "Sustainable gifting made simple",
         },
       ],
-    },
-    {
-      title: "Brands",
-      href: "/brands",
     },
     {
       title: "Company",

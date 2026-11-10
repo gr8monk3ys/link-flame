@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { CONTACT } from '@/config/constants'
+import { SUPPORT_EMAIL } from '@/config/constants'
+import { SupportLink } from '@/components/legal/SupportLink'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
@@ -15,7 +16,7 @@ export default function PrivacyPage() {
         Privacy Policy
       </h1>
       <p className="mb-8 text-sm text-muted-foreground">
-        Last updated: February 2026
+        Last updated: November 8, 2026
       </p>
 
       <div className="prose prose-lg max-w-none dark:prose-invert">
@@ -152,9 +153,11 @@ export default function PrivacyPage() {
             .
           </li>
           <li>
-            <strong>Shipping carriers</strong> (order delivery): we share your
-            name, shipping address, and phone number with carriers to deliver
-            your orders.
+            <strong>Printful</strong> (printing and fulfilment): makes and ships
+            our printed items. We share your name, shipping address, email and
+            phone number (if you gave one) with Printful and the carriers it
+            uses so your order can be delivered. Digital guides are not sent to
+            Printful.
           </li>
           <li>
             <strong>Resend</strong> (email communications): sends transactional
@@ -301,12 +304,7 @@ export default function PrivacyPage() {
         </ul>
         <p className="text-muted-foreground">
           To exercise any of these rights, please email us at{' '}
-          <a
-            href={`mailto:${CONTACT.supportEmail}`}
-            className="text-primary hover:underline"
-          >
-            {CONTACT.supportEmail}
-          </a>
+          <SupportLink className="text-primary hover:underline" />
           . We will respond to your request within 30 days.
         </p>
 
@@ -340,12 +338,7 @@ export default function PrivacyPage() {
         </ul>
         <p className="text-muted-foreground">
           To submit a CCPA request, please email{' '}
-          <a
-            href={`mailto:${CONTACT.supportEmail}`}
-            className="text-primary hover:underline"
-          >
-            {CONTACT.supportEmail}
-          </a>{' '}
+          <SupportLink className="text-primary hover:underline" />{' '}
           with the subject line &ldquo;CCPA Request.&rdquo; We may need to verify
           your identity before processing your request.
         </p>
@@ -358,12 +351,7 @@ export default function PrivacyPage() {
           under 13, we will take steps to delete that information promptly. If
           you believe a child has provided us with personal information, please
           contact us at{' '}
-          <a
-            href={`mailto:${CONTACT.supportEmail}`}
-            className="text-primary hover:underline"
-          >
-            {CONTACT.supportEmail}
-          </a>
+          <SupportLink className="text-primary hover:underline" />
           .
         </p>
 
@@ -383,19 +371,15 @@ export default function PrivacyPage() {
           Privacy Policy or our data practices, please contact us:
         </p>
         <ul className="text-muted-foreground">
-          <li>
-            <strong>Email:</strong>{' '}
-            <a
-              href={`mailto:${CONTACT.supportEmail}`}
-              className="text-primary hover:underline"
-            >
-              {CONTACT.supportEmail}
-            </a>
-          </li>
+          {SUPPORT_EMAIL && (
+            <li>
+              <strong>Email:</strong> <SupportLink className="text-primary hover:underline" />
+            </li>
+          )}
           <li>
             <strong>Contact form:</strong>{' '}
             <Link href="/contact" className="text-primary hover:underline">
-              linkflame.com/contact
+              Contact page
             </Link>
           </li>
         </ul>

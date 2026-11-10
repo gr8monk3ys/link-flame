@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { CONTACT } from '@/config/constants'
+import { SupportLink } from '@/components/legal/SupportLink'
 
 export const metadata: Metadata = {
   title: 'Return & Refund Policy',
   description:
-    'Learn about Link Flame return windows, refund processing, exchanges, and how to initiate a return for eco-friendly products.',
+    'How refunds work for Link Flame digital guides and made-to-order printed items, and how to report a problem.',
 }
 
 export default function ReturnPolicyPage() {
@@ -15,176 +15,87 @@ export default function ReturnPolicyPage() {
         Return &amp; Refund Policy
       </h1>
       <p className="mb-8 text-sm text-muted-foreground">
-        Last updated: February 2026
+        Last updated: November 8, 2026
       </p>
 
       <div className="prose prose-lg max-w-none dark:prose-invert">
         <p className="text-muted-foreground">
-          At Link Flame, we want you to be completely satisfied with your
-          purchase. If something is not right, we are here to help. Please
-          review our return and refund policy below.
+          Link Flame sells two kinds of things: PDF guides you download, and
+          printed items made to order. They are handled differently, so this
+          policy covers each in turn.
         </p>
 
-        <h2>30-Day Return Window</h2>
+        <h2>Digital Guides: 30-Day Money-Back</h2>
         <p className="text-muted-foreground">
-          You may return most items within <strong>30 days of the delivery date</strong> for
-          a full refund. To be eligible for a return, items must be:
+          If a guide is not useful to you, email us within{' '}
+          <strong>30 days of your purchase</strong> and we will refund it. You
+          do not need to give a reason, and there is nothing to send back.
+          This covers the individual guides and the Swap Starter Set bundle.
+        </p>
+
+        <h2>Printed Items: Made to Order</h2>
+        <p className="text-muted-foreground">
+          The tote bag and t-shirt are printed for you after you order, so we
+          cannot take them back for a change of mind or a wrong size. Please
+          check the size information on the product page before you order.
+        </p>
+        <p className="text-muted-foreground">
+          If your item arrives misprinted, damaged or defective, we will make
+          it right with a <strong>free reprint or a refund</strong>, your
+          choice. To qualify:
         </p>
         <ul className="text-muted-foreground">
-          <li>Unused and in the same condition as when you received them</li>
-          <li>In their original packaging with all tags and labels attached</li>
-          <li>Accompanied by proof of purchase (order number or receipt)</li>
-        </ul>
-
-        <h2>Non-Returnable Items</h2>
-        <p className="text-muted-foreground">
-          For health, safety, and hygiene reasons, the following items cannot be
-          returned once opened or used:
-        </p>
-        <ul className="text-muted-foreground">
-          <li>
-            <strong>Personal care products</strong> (skincare, haircare, oral
-            care) that have been opened or used
-          </li>
-          <li>
-            <strong>Food and beverage items</strong> (teas, snacks, supplements)
-          </li>
-          <li>
-            <strong>Gift cards</strong> and digital products
-          </li>
-          <li>
-            <strong>Final sale items</strong> marked as non-returnable at the
-            time of purchase
-          </li>
+          <li>Email us within <strong>30 days of delivery</strong></li>
+          <li>Include your order number and a clear photo of the problem</li>
+          <li>You do not need to return the item</li>
         </ul>
         <p className="text-muted-foreground">
-          If you receive a non-returnable item that is defective or damaged,
-          please contact us immediately and we will make it right.
+          If we sent the wrong item, the same remedy applies.
         </p>
 
-        <h2>How to Initiate a Return</h2>
-        <p className="text-muted-foreground">
-          To start a return, please follow these steps:
-        </p>
+        <h2>How to Ask for a Refund or Reprint</h2>
         <ol className="text-muted-foreground">
           <li>
-            Email our support team at{' '}
-            <a
-              href={`mailto:${CONTACT.supportEmail}`}
-              className="text-primary hover:underline"
-            >
-              {CONTACT.supportEmail}
-            </a>{' '}
-            with your <strong>order number</strong> and a brief description of
-            the reason for the return.
+            Email us at <SupportLink className="text-primary hover:underline" />{' '}
+            with your <strong>order number</strong> and what went wrong. For
+            printed items, attach a photo.
           </li>
           <li>
-            Our team will review your request and respond within 1&ndash;2
-            business days with return instructions, including the return
-            shipping address.
+            We reply within 1&ndash;2 business days. We may ask a follow-up
+            question.
           </li>
           <li>
-            Package the item securely in its original packaging and ship it to
-            the provided address.
-          </li>
-          <li>
-            Once we receive and inspect the returned item, we will process your
-            refund.
+            We start the refund or send the reprint. Reprints ship at no
+            charge.
           </li>
         </ol>
-
-        <h2>Return Shipping Costs</h2>
-        <p className="text-muted-foreground">
-          <strong>Standard returns:</strong> Return shipping costs are the
-          responsibility of the customer. We recommend using a trackable
-          shipping method to ensure your return arrives safely.
-        </p>
-        <p className="text-muted-foreground">
-          <strong>Defective or incorrect items:</strong> If you received a
-          defective, damaged, or incorrect item, Link Flame will cover the
-          return shipping cost. Please contact us and we will provide a prepaid
-          return label.
-        </p>
 
         <h2>Refund Processing</h2>
         <p className="text-muted-foreground">
-          Once we receive your returned item and verify it meets our return
-          conditions, your refund will be processed within{' '}
-          <strong>5&ndash;7 business days</strong>. Refunds are issued to the
-          original payment method used at checkout.
-        </p>
-        <p className="text-muted-foreground">
-          Please note that it may take an additional 3&ndash;5 business days for
-          the refund to appear on your bank or credit card statement, depending
-          on your financial institution.
+          Refunds go back to the original payment method. After we approve a
+          refund, it can take <strong>5&ndash;10 business days</strong> to
+          appear on your statement, depending on your bank or card issuer.
         </p>
 
-        <h2>Defective or Damaged Items</h2>
+        <h2>Lost Packages</h2>
         <p className="text-muted-foreground">
-          If you receive an item that is defective, damaged during shipping, or
-          materially different from what was described, please contact us within
-          7 days of delivery. We will provide:
+          If tracking shows your package was delivered but you did not receive
+          it, or it never arrives, email us. We will look into it with the
+          carrier and reprint or refund the order. See the{' '}
+          <Link href="/shipping-policy" className="text-primary hover:underline">
+            shipping policy
+          </Link>{' '}
+          for expected delivery times.
         </p>
-        <ul className="text-muted-foreground">
-          <li>A full refund, including any return shipping costs</li>
-          <li>Or a replacement item at no additional charge</li>
-        </ul>
-        <p className="text-muted-foreground">
-          We may ask you to provide photos of the defective or damaged item to
-          help us improve our quality control and packaging processes.
-        </p>
-
-        <h2>Exchanges</h2>
-        <p className="text-muted-foreground">
-          If you would like to exchange an item for a different size, color, or
-          variant, please contact our support team at{' '}
-          <a
-            href={`mailto:${CONTACT.supportEmail}`}
-            className="text-primary hover:underline"
-          >
-            {CONTACT.supportEmail}
-          </a>
-          . Exchanges are subject to product availability. If the desired item
-          is out of stock, we will process a refund for the returned item
-          instead.
-        </p>
-
-        <h2>Late or Missing Refunds</h2>
-        <p className="text-muted-foreground">
-          If you have not received your refund within the expected timeframe,
-          please:
-        </p>
-        <ol className="text-muted-foreground">
-          <li>Check your bank or credit card statement again.</li>
-          <li>Contact your credit card company or bank, as processing times can vary.</li>
-          <li>
-            If you have done both and still have not received your refund,
-            please contact us at{' '}
-            <a
-              href={`mailto:${CONTACT.supportEmail}`}
-              className="text-primary hover:underline"
-            >
-              {CONTACT.supportEmail}
-            </a>
-            .
-          </li>
-        </ol>
 
         <h2>Questions?</h2>
         <p className="text-muted-foreground">
-          If you have any questions about returns or refunds, please do not
-          hesitate to{' '}
+          If you have any questions about refunds, please{' '}
           <Link href="/contact" className="text-primary hover:underline">
             contact us
-          </Link>{' '}
-          or email{' '}
-          <a
-            href={`mailto:${CONTACT.supportEmail}`}
-            className="text-primary hover:underline"
-          >
-            {CONTACT.supportEmail}
-          </a>
-          . We are happy to help.
+          </Link>
+          {' '}or write to <SupportLink className="text-primary hover:underline" />. We are
+          happy to help.
         </p>
       </div>
     </div>

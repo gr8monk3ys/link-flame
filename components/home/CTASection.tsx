@@ -11,8 +11,8 @@ export default function CTASection() {
         <p className="label-mono mb-4">The quiz</p>
         <h2 className="mb-6 text-section-title">Not sure where to start?</h2>
         <p className="mb-8 text-lg text-muted-foreground">
-          Most people begin with one swap, not twenty. Answer four questions and
-          we&rsquo;ll point you at the three products worth changing first.
+          Most people begin with one swap, not twenty. Answer a few questions and
+          we&rsquo;ll suggest where to start.
         </p>
         <Button asChild size="lg">
           <Link href="/quiz">Take the 2-minute quiz</Link>

@@ -14,6 +14,8 @@
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
     "design:check": "node scripts/check-design-system.mjs",
+    "catalogue:apply": "ts-node -P prisma/tsconfig.json prisma/apply-launch-catalogue.ts",
+    "catalogue:upload-assets": "ts-node -P prisma/tsconfig.json prisma/upload-digital-assets.ts",
     "check:prod-env": "node scripts/check-production-env.mjs",
     "check:stripe-config": "node scripts/check-stripe-config.mjs",
     "check:csp-hashes": "node scripts/check-csp-hashes.mjs",
