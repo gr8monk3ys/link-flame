@@ -76,7 +76,7 @@ export async function POST(req: Request) {
     // email should not hold the request open (react-best-practices 3.10).
     if (isEmailConfigured()) {
       after(() =>
-        sendNewsletterConfirmation(email).catch((err) => {
+        sendNewsletterConfirmation(email, subscription.id).catch((err) => {
           logger.error('Failed to send newsletter confirmation email', err);
         })
       );

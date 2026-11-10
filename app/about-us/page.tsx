@@ -21,7 +21,7 @@ const values = [
   {
     title: "Our own products only",
     description:
-      "We write the guides ourselves and design the printed items. We do not resell other brands, so we know what is in everything we sell.",
+      "We write the guides ourselves and design the printed items. We do not resell other brands, so we know what is in everything we sell. Our Checked swaps pages only link to other shops.",
     icon: ShieldCheck,
   },
   {

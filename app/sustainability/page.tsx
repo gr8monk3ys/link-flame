@@ -31,7 +31,7 @@ const today = [
   {
     title: "Our own products only",
     description:
-      "We write the guides and design the printed goods. We do not resell other brands.",
+      "We write the guides and design the printed goods. We do not resell other brands. Our Checked swaps pages only link to other shops.",
   },
 ];
 

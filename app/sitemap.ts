@@ -2,6 +2,7 @@ import { MetadataRoute } from 'next'
 import { prisma } from '@/lib/prisma'
 import { logger } from '@/lib/logger'
 import { getBaseUrl } from '@/lib/url'
+import { SWAPS } from '@/config/swaps'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,6 +16,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 1,
+    },
+    {
+      url: `${baseUrl}/free-guide`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/swaps`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
     },
     {
       url: `${baseUrl}/products`,
@@ -185,5 +198,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     logger.error('Error generating product sitemap', productsResult.reason)
   }
 
-  return [...staticRoutes, ...blogRoutes, ...productRoutes]
+  // Checked swaps: one page per entry in config/swaps.ts
+  const swapRoutes: MetadataRoute.Sitemap = SWAPS.map((swap) => ({
+    url: `${baseUrl}/swaps/${swap.slug}`,
+    lastModified: new Date(swap.checkedOn),
+    changeFrequency: 'monthly' as const,
+    priority: 0.6,
+  }))
+
+  return [...staticRoutes, ...swapRoutes, ...blogRoutes, ...productRoutes]
 }
