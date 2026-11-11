@@ -39,7 +39,7 @@ const HeartIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-// What is true today. Goals (1% for the Planet, shipping offsets) live on /sustainability.
+// What is true today. Goals (1% for the Planet, certifications) live on /sustainability.
 const commitments = [
   {
     icon: DocumentIcon,
@@ -48,18 +48,18 @@ const commitments = [
   },
   {
     icon: PackageIcon,
-    title: "Printed to order",
-    description: "The tote and tee are made after you order, so no unsold stock.",
+    title: "No stock",
+    description: "We sell nothing physical, so nothing goes unsold.",
   },
   {
     icon: LeafIcon,
-    title: "Organic cotton",
-    description: "The tote and tee are organic cotton.",
+    title: "Checked swaps",
+    description: "Other brands' reusables, with what is proven and what is not.",
   },
   {
     icon: HeartIcon,
     title: "Our own products",
-    description: "We write and design everything we sell. No resold brands.",
+    description: "We write every guide we sell. No resold brands.",
   },
 ];
 
@@ -76,8 +76,8 @@ export function SustainabilityCommitment({
         </div>
         <ul className="space-y-2 text-sm text-muted-foreground">
           <li>Digital guides, nothing shipped</li>
-          <li>Tote and tee printed to order</li>
-          <li>Organic cotton</li>
+          <li>Checked swaps, sources dated</li>
+          <li>No resold brands</li>
         </ul>
         <Link
           href="/sustainability"

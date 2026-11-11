@@ -18,7 +18,7 @@ import Stripe from "stripe";
 import { CheckoutSchema } from "@/lib/validations/checkout";
 import { holdPointsForCheckout, reversePointsHold } from "@/lib/loyalty";
 import { holdGiftCardBalance, reverseGiftCardHold } from "@/lib/gift-cards";
-import { requiresShipping, stripeTaxCode, tracksInventory } from "@/lib/fulfillment";
+import { isForSale, requiresShipping, stripeTaxCode, tracksInventory } from "@/lib/fulfillment";
 import { LIMITS } from "@/config/constants";
 
 export const dynamic = 'force-dynamic'
@@ -93,6 +93,16 @@ export async function POST(request: Request) {
     for (const item of cartItems) {
       const product = item.product;
       const variant = item.variant;
+
+      // A cart can still hold an item added before it went off sale.
+      if (!isForSale(product.fulfillment)) {
+        return errorResponse(
+          `${product.title} is not for sale right now. Remove it from your cart to check out.`,
+          undefined,
+          undefined,
+          400
+        );
+      }
 
       // Best-effort pre-check only. Inventory is decremented atomically in webhook
       // finalization and can still fail there due to concurrent purchases.

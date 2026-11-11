@@ -16,17 +16,12 @@ export const siteConfig = {
         {
           title: "All Products",
           href: "/products",
-          description: "Guides and printed goods, all made by Link Flame",
+          description: "Our own PDF guides",
         },
         {
           title: "Guides",
           href: "/collections?category=Guides",
           description: "Printable PDF guides for wasting less at home",
-        },
-        {
-          title: "Printed goods",
-          href: "/collections?category=Bags&category=Apparel",
-          description: "Organic cotton tote and tee, printed to order",
         },
         {
           title: "Free guide",

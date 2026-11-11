@@ -17,6 +17,7 @@ import { getServerAuth, requireRole } from '@/lib/auth';
 import { validateCsrfToken } from '@/lib/csrf';
 import { invalidateProductCaches } from '@/lib/cache';
 import { z } from 'zod';
+import { isForSale } from '@/lib/fulfillment';
 
 export const dynamic = 'force-dynamic'
 
@@ -69,7 +70,7 @@ export async function GET(request: NextRequest) {
       })
     );
 
-    if (!product) {
+    if (!product || !isForSale(product.fulfillment)) {
       return notFoundResponse("Product");
     }
 

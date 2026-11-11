@@ -4,10 +4,11 @@ import { cache } from 'react';
 import { prisma } from '@/lib/prisma';
 import ProductDetails from '@/components/products/ProductDetails';
 import { getBaseUrl } from '@/lib/url';
+import { isForSale } from '@/lib/fulfillment';
 
 // Cache the product fetch to avoid duplicate queries
 const getProduct = cache(async (id: string) => {
-  return prisma.product.findUnique({
+  const product = await prisma.product.findUnique({
     where: { id },
     include: {
       reviews: {
@@ -38,6 +39,8 @@ const getProduct = cache(async (id: string) => {
       },
     },
   });
+  // Off-sale products (see PRINT_ON_DEMAND_OPEN) 404 like a missing one.
+  return product && isForSale(product.fulfillment) ? product : null;
 });
 
 // Generate metadata for SEO

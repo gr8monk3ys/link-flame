@@ -1,3 +1,6 @@
+import type { Prisma } from "@prisma/client";
+import { PRINT_ON_DEMAND_OPEN } from "@/config/constants";
+
 /**
  * How a product reaches the customer.
  *
@@ -16,6 +19,19 @@ export type Fulfillment = (typeof FULFILLMENT)[keyof typeof FULFILLMENT];
 export function normalizeFulfillment(value: string | null | undefined): Fulfillment {
   if (value === FULFILLMENT.DIGITAL || value === FULFILLMENT.PRINTFUL) return value;
   return FULFILLMENT.STOCK;
+}
+
+/**
+ * Whether a product with this fulfillment can be listed, carted and bought
+ * today. Printful items are off sale while PRINT_ON_DEMAND_OPEN is false.
+ */
+export function isForSale(fulfillment: string | null | undefined): boolean {
+  return PRINT_ON_DEMAND_OPEN || normalizeFulfillment(fulfillment) !== FULFILLMENT.PRINTFUL;
+}
+
+/** Prisma filter that keeps off-sale products out of listings and search. */
+export function forSaleWhere(): Prisma.ProductWhereInput {
+  return PRINT_ON_DEMAND_OPEN ? {} : { fulfillment: { not: FULFILLMENT.PRINTFUL } };
 }
 
 /** Only products we stock ourselves have a finite inventory. */

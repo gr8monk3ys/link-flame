@@ -93,6 +93,17 @@ export const LIMITS = {
 export const GIFT_CARD_SALES_OPEN = false
 
 /**
+ * Print-on-demand sales (the tote and the tee, fulfilled by Printful). Closed
+ * while the shop runs affiliate-first: guides are the only thing we sell, and
+ * the swap pages point to other brands. While closed, printful products are
+ * left out of every listing, their pages 404, and the cart and checkout refuse
+ * them. Orders already paid keep working (order pages, the Printful webhook).
+ * To reopen: connect Printful (PRINTFUL_API_KEY, webhook), set this to true,
+ * and put the copy back on the home, about, FAQ and policy pages.
+ */
+export const PRINT_ON_DEMAND_OPEN = false
+
+/**
  * Feature flags
  * Simple boolean flags to enable/disable features
  */
