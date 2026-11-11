@@ -303,7 +303,7 @@ export default function PrivacyPage() {
           </li>
         </ul>
         <p className="text-muted-foreground">
-          To exercise any of these rights, please email us at{' '}
+          To exercise any of these rights, please reach us through{' '}
           <SupportLink className="text-primary hover:underline" />
           . We will respond to your request within 30 days.
         </p>
@@ -337,7 +337,7 @@ export default function PrivacyPage() {
           </li>
         </ul>
         <p className="text-muted-foreground">
-          To submit a CCPA request, please email{' '}
+          To submit a CCPA request, please reach us through{' '}
           <SupportLink className="text-primary hover:underline" />{' '}
           with the subject line &ldquo;CCPA Request.&rdquo; We may need to verify
           your identity before processing your request.

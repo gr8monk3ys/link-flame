@@ -121,7 +121,7 @@ const LEGACY = {
   palette: {
     rule: "palette",
     re: paletteRe(OTHER_FAMILIES),
-    baseline: 240,
+    baseline: 236,
     // The brief made `palette` a hard rule for these families; 300 sites is
     // too many to fix in the tokens PR, so they ratchet like the status hues.
     fix: "the paper / ink / hairline tokens (bg-card, text-muted-foreground, border-border)",

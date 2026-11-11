@@ -80,4 +80,36 @@ describe('customer-name emails', () => {
     expect(html).not.toContain('<img src=x')
     expect(html).toContain('Hi &lt;a href=')
   })
+
+  it('shows shipping and tax so the items add up to the charged total', async () => {
+    const { sendOrderConfirmation } = await loadEmail()
+
+    await sendOrderConfirmation('buyer@example.com', {
+      orderId: 'order_2',
+      items: [
+        { title: 'Tote', quantity: 1, price: 32 },
+        { title: 'Tee', quantity: 1, price: 38 },
+      ],
+      total: 75.99,
+      customerName: 'Buyer',
+    })
+
+    const html: string = send.mock.calls[0][0].html
+    expect(html).toContain('Shipping and tax:')
+    expect(html).toContain('$5.99')
+    expect(html).toContain('$75.99')
+  })
+
+  it('adds no extra row when the items equal the total', async () => {
+    const { sendOrderConfirmation } = await loadEmail()
+
+    await sendOrderConfirmation('buyer@example.com', {
+      orderId: 'order_3',
+      items: [{ title: 'Workbook', quantity: 1, price: 7 }],
+      total: 7,
+      customerName: 'Buyer',
+    })
+
+    expect(send.mock.calls[0][0].html).not.toContain('Shipping and tax')
+  })
 })

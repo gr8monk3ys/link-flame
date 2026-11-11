@@ -85,6 +85,14 @@ export const LIMITS = {
 } as const
 
 /**
+ * Gift card sales. Closed until the shop can keep the gift card promises: the
+ * code is emailed to nobody today (there is no gift card email), and the old
+ * 1-year expiry needs the owner's policy call (federal and California gift card
+ * rules). Balance checks and redeeming existing cards keep working while closed.
+ */
+export const GIFT_CARD_SALES_OPEN = false
+
+/**
  * Feature flags
  * Simple boolean flags to enable/disable features
  */

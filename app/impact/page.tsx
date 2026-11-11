@@ -158,11 +158,10 @@ export default async function ImpactPage() {
               </h2>
               <div className="mt-4 space-y-4 text-muted-foreground">
                 <p>
-                  Every product in the catalogue is assigned a per-unit yearly
-                  impact for each metric it affects: how many plastic bottles a
-                  reusable bottle displaces in a year of typical use, how many
-                  disposable items a reusable item replaces, how many kilograms
-                  of CO&#8322;e the swap avoids.
+                  A product counts toward these totals only once it has a
+                  measured per-unit yearly figure for a metric, such as how many
+                  disposable items a reusable one replaces in a year of typical
+                  use. A product without a measured figure adds nothing.
                 </p>
                 <p>
                   When an order ships, the products&rsquo; per-unit values are
@@ -205,8 +204,8 @@ export default async function ImpactPage() {
             The numbers only move when you swap something
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-primary-foreground/80">
-            Every product page shows what the swap saves per year. Pick one
-            thing you replace often, and start there.
+            A product page shows a yearly figure only once we have measured
+            it. Pick one thing you replace often, and start there.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link

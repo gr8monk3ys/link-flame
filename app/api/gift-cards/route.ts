@@ -24,6 +24,7 @@ import {
 import { logger } from '@/lib/logger'
 import { getStripe } from '@/lib/stripe-server'
 import { getBaseUrl } from '@/lib/url'
+import { GIFT_CARD_SALES_OPEN } from '@/config/constants'
 import {
   cancelUnpaidGiftCard,
   createGiftCard,
@@ -70,6 +71,15 @@ const PurchaseGiftCardSchema = z.object({
  */
 export async function POST(request: Request) {
   try {
+    if (!GIFT_CARD_SALES_OPEN) {
+      return errorResponse(
+        'Gift cards are not on sale right now.',
+        'GIFT_CARD_SALES_CLOSED',
+        undefined,
+        410
+      )
+    }
+
     // CSRF protection
     const csrfValid = await validateCsrfToken(request)
     if (!csrfValid) {

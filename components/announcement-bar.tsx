@@ -76,7 +76,7 @@ export function AnnouncementBar({ className }: { className?: string }) {
               href="/account/loyalty"
               className="ink-underline label-link text-primary"
             >
-              Earn rewards on every order
+              Members earn rewards on every order
             </Link>
           </div>
 

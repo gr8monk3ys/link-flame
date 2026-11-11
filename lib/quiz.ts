@@ -59,6 +59,16 @@ const CATEGORY_MAP: Record<string, string[]> = {
   'all': [], // Empty means no category filter
 };
 
+// Words that tie a product to an area. Used to rank the whole catalogue when
+// no product sits in the area's categories (the shop sells guides and prints,
+// not kitchen or bathroom goods), so an answer never ends in zero results.
+const AREA_KEYWORDS: Record<string, string[]> = {
+  'kitchen': ['kitchen', 'food', 'meal', 'grocery', 'shopping', 'tote'],
+  'bathroom': ['bathroom', 'shower', 'toothbrush', 'toilet'],
+  'personal-care': ['personal care', 'toothbrush', 'soap', 'shampoo', 'skin'],
+  'cleaning': ['cleaning', 'clean', 'laundry', 'detergent', 'household'],
+};
+
 // Product keyword/tag mapping for values
 const VALUE_KEYWORDS: Record<string, string[]> = {
   'plastic-free': ['bamboo', 'glass', 'stainless steel', 'metal', 'reusable', 'zero waste'],
@@ -121,19 +131,32 @@ export async function getProductRecommendations(
     ? { category: { in: categories }, inventory: { gt: 0 } }
     : { inventory: { gt: 0 } };
 
-  const products = await prisma.product.findMany({
+  const productSelect = {
+    id: true,
+    title: true,
+    description: true,
+    price: true,
+    salePrice: true,
+    image: true,
+    category: true,
+    inventory: true,
+  } as const;
+
+  let products = await prisma.product.findMany({
     where: whereClause,
-    select: {
-      id: true,
-      title: true,
-      description: true,
-      price: true,
-      salePrice: true,
-      image: true,
-      category: true,
-      inventory: true,
-    },
+    select: productSelect,
   });
+
+  // Nothing in the mapped categories: recommend from the whole in-stock
+  // catalogue instead of nothing, ranked by the area's keywords below.
+  let areaKeywords: string[] = [];
+  if (products.length === 0 && categories.length > 0) {
+    products = await prisma.product.findMany({
+      where: { inventory: { gt: 0 } },
+      select: productSelect,
+    });
+    areaKeywords = (area && AREA_KEYWORDS[area]) || [];
+  }
 
   // Score each product based on user preferences
   const scoredProducts: ScoredProduct[] = products.map((product) => {
@@ -141,6 +164,12 @@ export async function getProductRecommendations(
     const titleLower = product.title.toLowerCase();
     const descLower = (product.description || '').toLowerCase();
     const fullText = `${titleLower} ${descLower}`;
+
+    for (const keyword of areaKeywords) {
+      if (fullText.includes(keyword)) {
+        score += 10;
+      }
+    }
 
     // Score based on values (plastic-free, vegan, organic, budget-friendly)
     for (const value of valuesList) {
