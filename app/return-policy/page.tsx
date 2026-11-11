@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { SupportLink } from '@/components/legal/SupportLink'
+import { SUPPORT_EMAIL } from '@/config/constants'
 
 export const metadata: Metadata = {
   title: 'Return & Refund Policy',
@@ -56,7 +57,7 @@ export default function ReturnPolicyPage() {
         <h2>How to Ask for a Refund or Reprint</h2>
         <ol className="text-muted-foreground">
           <li>
-            Email us at <SupportLink className="text-primary hover:underline" />{' '}
+            Reach us through <SupportLink className="text-primary hover:underline" />{' '}
             with your <strong>order number</strong> and what went wrong. For
             printed items, attach a photo.
           </li>
@@ -94,8 +95,12 @@ export default function ReturnPolicyPage() {
           <Link href="/contact" className="text-primary hover:underline">
             contact us
           </Link>
-          {' '}or write to <SupportLink className="text-primary hover:underline" />. We are
-          happy to help.
+          {SUPPORT_EMAIL ? (
+            <>
+              {' '}or write to <SupportLink className="text-primary hover:underline" />
+            </>
+          ) : null}
+          . We are happy to help.
         </p>
       </div>
     </div>

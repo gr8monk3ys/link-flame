@@ -644,6 +644,21 @@ function generateOrderConfirmationHTML(orderDetails: OrderConfirmationDetails): 
     orderDetails.shipsSomething === false
       ? ''
       : `<p style="margin: 0 0 20px 0; font-size: 16px;">Printed items are made to order. We'll email you tracking as soon as they ship.</p>`;
+  // The total is what Stripe charged, so it can include shipping and tax (and
+  // any discount). Show the difference so the items add up to the total.
+  const itemsSubtotal = orderDetails.items.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+  const adjustment = Math.round((orderDetails.total - itemsSubtotal) * 100) / 100;
+  const adjustmentHTML =
+    Math.abs(adjustment) >= 0.01
+      ? `
+                <tr>
+                  <td colspan="3" style="padding: 12px 12px 0 12px; text-align: right; font-size: 14px; color: #6b7280;">${adjustment > 0 ? 'Shipping and tax' : 'Discounts, shipping and tax'}:</td>
+                  <td style="padding: 12px 12px 0 12px; text-align: right; font-size: 14px; color: #6b7280;">${adjustment < 0 ? '-' : ''}${formatPrice(Math.abs(adjustment))}</td>
+                </tr>`
+      : '';
   const itemsHTML = orderDetails.items
     .map(
       (item) => `
@@ -704,7 +719,7 @@ function generateOrderConfirmationHTML(orderDetails: OrderConfirmationDetails): 
               <tbody>
                 ${itemsHTML}
               </tbody>
-              <tfoot>
+              <tfoot>${adjustmentHTML}
                 <tr>
                   <td colspan="3" style="padding: 16px 12px 12px 12px; text-align: right; font-weight: 600; font-size: 16px; color: #1f2937;">Total:</td>
                   <td style="padding: 16px 12px 12px 12px; text-align: right; font-weight: 700; font-size: 18px; color: #10b981;">${formatPrice(orderDetails.total)}</td>
@@ -898,7 +913,7 @@ function generateContactConfirmationHTML(contactData: {
             </p>
 
             <p style="margin: 0 0 20px 0; font-size: 16px;">
-              Thank you for contacting Link Flame! We've received your message about "<strong>${escapeHtml(contactData.subject)}</strong>" and our team will get back to you within 24-48 hours.
+              Thank you for contacting Link Flame! We've received your message about "<strong>${escapeHtml(contactData.subject)}</strong>" and we will reply within 1-2 business days.
             </p>
 
             <div style="background-color: #f9fafb; border-left: 4px solid #10b981; padding: 16px; margin: 0 0 24px 0; border-radius: 4px;">

@@ -10,7 +10,7 @@ const MESSAGES = {
   not_found: "This download link is not valid.",
   not_paid: "This order is not paid, or it was refunded.",
   exhausted:
-    "This link has reached its download limit. Reply to your order email and we will send a new one.",
+    "This link has reached its download limit. Contact us through the contact page with your order number and we will send a new one.",
 } as const;
 
 /**

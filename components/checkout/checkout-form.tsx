@@ -9,7 +9,6 @@ import { Label } from "@/components/ui/label";
 import { useCart } from "@/lib/providers/CartProvider";
 import { LoadingShimmer } from "@/components/ui/loading-shimmer";
 import { toast } from "sonner";
-import { ExpressCheckout } from "./ExpressCheckout";
 import { GiftOptions, GiftOptionsData } from "./GiftOptions";
 import {
   DiscountSection,
@@ -188,9 +187,6 @@ export default function CheckoutForm({ onDiscountChange }: CheckoutFormProps) {
 
   return (
     <div className="space-y-6">
-      {/* Express Checkout Section (Apple Pay / Google Pay) */}
-      <ExpressCheckout disabled={isLoading} />
-
       {/* Standard Checkout Form */}
       <form onSubmit={handleSubmit} className="space-y-4" aria-label="Checkout form">
         {error && (

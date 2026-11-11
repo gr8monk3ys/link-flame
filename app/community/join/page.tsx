@@ -24,14 +24,14 @@ export default function JoinCommunityPage() {
       <div className="grid gap-6 md:grid-cols-3">
         <Card>
           <CardHeader>
-            <CardTitle as="h2">Weekly Eco Tips</CardTitle>
+            <CardTitle as="h2">Eco Tips</CardTitle>
             <CardDescription>Practical, low-effort wins you can actually keep.</CardDescription>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle as="h2">Early Drops</CardTitle>
-            <CardDescription>Be first in line for limited bundles and imperfect deals.</CardDescription>
+            <CardTitle as="h2">New Products</CardTitle>
+            <CardDescription>Hear first when a new guide or print goes on sale.</CardDescription>
           </CardHeader>
         </Card>
         <Card>

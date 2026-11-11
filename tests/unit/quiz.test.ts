@@ -87,6 +87,23 @@ describe('Product Quiz', () => {
         );
       });
 
+      it('falls back to the whole catalogue when the area has no products', async () => {
+        vi.mocked(prisma.product.findMany)
+          .mockResolvedValueOnce([])
+          .mockResolvedValueOnce([
+            product({ id: 'guide', title: 'Waste Audit Workbook' }),
+            product({ id: 'tote', title: 'Organic Cotton Tote', description: 'For the grocery run' }),
+          ]);
+
+        const result = await getProductRecommendations({ q1: 'kitchen' } as QuizResponses);
+
+        expect(prisma.product.findMany).toHaveBeenLastCalledWith(
+          expect.objectContaining({ where: { inventory: { gt: 0 } } })
+        );
+        expect(result.recommendedProductIds).toHaveLength(2);
+        expect(result.recommendedProductIds[0]).toBe('tote');
+      });
+
       it('applies no category filter when the area is "all"', async () => {
         vi.mocked(prisma.product.findMany).mockResolvedValue([]);
 

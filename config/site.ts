@@ -38,11 +38,6 @@ export const siteConfig = {
           href: "/swaps",
           description: "Other brands' products, with what is proven and what is not",
         },
-        {
-          title: "Gift Cards",
-          href: "/gift-cards",
-          description: "Sustainable gifting made simple",
-        },
       ],
     },
     {
