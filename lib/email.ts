@@ -913,7 +913,7 @@ function generateContactConfirmationHTML(contactData: {
             </p>
 
             <p style="margin: 0 0 20px 0; font-size: 16px;">
-              Thank you for contacting Link Flame! We've received your message about "<strong>${escapeHtml(contactData.subject)}</strong>" and our team will get back to you within 24-48 hours.
+              Thank you for contacting Link Flame! We've received your message about "<strong>${escapeHtml(contactData.subject)}</strong>" and we will reply within 1-2 business days.
             </p>
 
             <div style="background-color: #f9fafb; border-left: 4px solid #10b981; padding: 16px; margin: 0 0 24px 0; border-radius: 4px;">
