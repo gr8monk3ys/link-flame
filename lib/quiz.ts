@@ -7,6 +7,7 @@
 
 import { prisma } from '@/lib/prisma';
 import { nanoid } from 'nanoid';
+import { forSaleWhere } from "@/lib/fulfillment";
 
 // Hoisted so it is not rebuilt for every scored product (react-best-practices 7.10).
 const MULTI_PACK_PATTERN = /\d+[- ]?(pack|pcs|pieces)/;
@@ -128,8 +129,8 @@ export async function getProductRecommendations(
 
   // Get all products (filtered by category if specified)
   const whereClause = categories.length > 0
-    ? { category: { in: categories }, inventory: { gt: 0 } }
-    : { inventory: { gt: 0 } };
+    ? { ...forSaleWhere(), category: { in: categories }, inventory: { gt: 0 } }
+    : { ...forSaleWhere(), inventory: { gt: 0 } };
 
   const productSelect = {
     id: true,
@@ -152,7 +153,7 @@ export async function getProductRecommendations(
   let areaKeywords: string[] = [];
   if (products.length === 0 && categories.length > 0) {
     products = await prisma.product.findMany({
-      where: { inventory: { gt: 0 } },
+      where: { ...forSaleWhere(), inventory: { gt: 0 } },
       select: productSelect,
     });
     areaKeywords = (area && AREA_KEYWORDS[area]) || [];
@@ -303,6 +304,7 @@ export async function getQuizResponseByVisibleId(visibleId: string) {
   // Fetch the recommended products
   const products = await prisma.product.findMany({
     where: {
+      ...forSaleWhere(),
       id: { in: recommendedProductIds },
     },
     select: {

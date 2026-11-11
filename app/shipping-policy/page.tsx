@@ -37,6 +37,8 @@ export default function ShippingPolicyPage() {
 
         <h2>Printed Items</h2>
         <p className="text-muted-foreground">
+          <strong>Printed items are not for sale right now.</strong> This
+          section applies to orders placed earlier and if they come back.
           Our tote bag and t-shirt are printed to order by our print partner,
           Printful. Nothing is sitting in a warehouse waiting for you, which
           is why there is a production step before shipping.

@@ -36,7 +36,8 @@ export default function ReturnPolicyPage() {
 
         <h2>Printed Items: Made to Order</h2>
         <p className="text-muted-foreground">
-          The tote bag and t-shirt are printed for you after you order, so we
+          Printed items are not for sale right now; this section applies to
+          orders placed earlier. The tote bag and t-shirt are printed for you after you order, so we
           cannot take them back for a change of mind or a wrong size. Please
           check the size information on the product page before you order.
         </p>

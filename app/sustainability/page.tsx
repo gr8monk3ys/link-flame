@@ -19,19 +19,14 @@ const today = [
       "Our three guides and the Swap Starter Set bundle are PDFs. Nothing is packed, shipped or stored for them.",
   },
   {
-    title: "Printed items are made to order",
+    title: "No stock",
     description:
-      "The tote and tee are printed by Printful after you order. We do not hold stock that may never sell.",
-  },
-  {
-    title: "Organic cotton",
-    description:
-      "The tote and the tee are made of organic cotton. We do not hold an organic certification of our own.",
+      "We sell nothing physical, so nothing sits in a warehouse or goes unsold.",
   },
   {
     title: "Our own products only",
     description:
-      "We write the guides and design the printed goods. We do not resell other brands. Our Checked swaps pages only link to other shops.",
+      "We write the guides. We do not resell other brands. Our Checked swaps pages link to other shops, and any paid link is marked next to it.",
   },
 ];
 
@@ -40,16 +35,6 @@ const goals = [
     title: "Give 1% of sales",
     description:
       "We want to join 1% for the Planet once the shop has revenue to give. We are not a member, and we have not given anything yet.",
-  },
-  {
-    title: "Offset or cut shipping emissions",
-    description:
-      "Shipping is not carbon-neutral today. We want to look at offsets or lower-impact shipping when we can do it properly.",
-  },
-  {
-    title: "Plastic-free shipping",
-    description:
-      "We do not control how Printful packs printed items, so we cannot promise plastic-free packaging. We want to find out what is possible and report back.",
   },
   {
     title: "Certifications",

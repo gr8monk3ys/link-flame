@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { handleApiError } from '@/lib/api-response';
 import { getOrSetCached, CacheKeys, CacheTTL } from '@/lib/cache';
 import { logger } from '@/lib/logger';
+import { forSaleWhere } from "@/lib/fulfillment";
 
 export const dynamic = 'force-dynamic'
 
@@ -17,6 +18,7 @@ export async function GET() {
       async () => {
         const grouped = await prisma.product.groupBy({
           by: ['category'],
+          where: forSaleWhere(),
           _count: { _all: true },
         });
 

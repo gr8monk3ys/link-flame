@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { logger } from '@/lib/logger'
 import { getBaseUrl } from '@/lib/url'
 import { SWAPS } from '@/config/swaps'
+import { forSaleWhere } from "@/lib/fulfillment";
 
 export const dynamic = 'force-dynamic'
 
@@ -153,6 +154,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       },
     }),
     prisma.product.findMany({
+      where: forSaleWhere(),
       select: {
         id: true,
         updatedAt: true,

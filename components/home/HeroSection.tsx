@@ -3,12 +3,12 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
 /**
- * The two ways to buy from Link Flame. Both link to the catalogue, which is
- * the source of truth for what is for sale.
+ * The two ways in: our own guides (the catalogue is the source of truth for
+ * what is for sale) and the checked swap pages about other brands' products.
  */
 const WAYS_TO_SHOP = [
   { href: "/products", label: "Digital guides", note: "PDF guides with instant download, from $7" },
-  { href: "/products", label: "Printed to order", note: "An organic cotton tote and tee, made after you order" },
+  { href: "/swaps", label: "Checked swaps", note: "Other brands' reusables, with what is proven and what is not" },
 ];
 
 export default function HeroSection() {
@@ -17,7 +17,7 @@ export default function HeroSection() {
       <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-16">
         <div className="lg:col-span-5">
           <p className="text-sm font-medium uppercase tracking-[0.12em] text-primary">
-            Guides and goods for low-waste living
+            Guides and checked swaps for low-waste living
           </p>
 
           <h1 className="mt-5 font-serif text-[clamp(2.75rem,6vw,4.5rem)] font-semibold leading-[1.05] tracking-tight">
@@ -26,9 +26,9 @@ export default function HeroSection() {
           </h1>
 
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-            Practical PDF guides for swapping out single-use things, plus an
-            organic cotton tote and tee printed to order. Everything here is
-            our own.
+            Practical PDF guides for swapping out single-use things, plus
+            checked swap pages that say what is proven about other brands&rsquo;
+            reusables. The guides are our own.
           </p>
 
           <div className="mt-9 flex flex-wrap gap-3">

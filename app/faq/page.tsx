@@ -32,8 +32,8 @@ export default function FAQPage() {
           <AccordionTrigger>What do you sell?</AccordionTrigger>
           <AccordionContent>
             Three PDF guides (The Waste Audit Workbook, The One-Swap Kitchen and The Plastic-Free Bathroom
-            Field Guide), a bundle of all three called The Swap Starter Set, and two printed items: an organic
-            cotton tote and an organic cotton tee.
+            Field Guide) and a bundle of all three called The Swap Starter Set. Our free checked swap pages
+            are about other brands&rsquo; products; we do not sell those products ourselves.
           </AccordionContent>
         </AccordionItem>
 
@@ -42,14 +42,6 @@ export default function FAQPage() {
           <AccordionContent>
             You get your download links on the order confirmation page and by email as soon as payment goes
             through. Each link works for up to 10 downloads, so save the files after you download them.
-          </AccordionContent>
-        </AccordionItem>
-
-        <AccordionItem value="item-4">
-          <AccordionTrigger>How are the tote and tee made?</AccordionTrigger>
-          <AccordionContent>
-            They are printed to order by our print partner, Printful, so nothing is made until you order. Items
-            usually ship within 2&ndash;5 business days.
           </AccordionContent>
         </AccordionItem>
 

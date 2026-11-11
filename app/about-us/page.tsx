@@ -25,9 +25,9 @@ const values = [
     icon: ShieldCheck,
   },
   {
-    title: "Made only when ordered",
+    title: "Nothing in a warehouse",
     description:
-      "Guides are digital. The tote and tee are printed to order, so we do not hold stock that may never sell.",
+      "We sell digital guides only, so we hold no stock that may never sell.",
     icon: Recycle,
   },
   {
@@ -42,12 +42,12 @@ const screeningSteps = [
   {
     title: "Materials",
     description:
-      "What is it made of, and what happens to it at end of life? Durable for years beats disposable. The tote and tee are organic cotton.",
+      "What is it made of, and what happens to it at end of life? Durable for years beats disposable.",
   },
   {
     title: "Maker",
     description:
-      "We write the guides. The printed items are produced by Printful, a print-on-demand company, and we say so on the shipping page.",
+      "We write the guides. For other brands' products, each checked swap page names the maker and what is proven.",
   },
   {
     title: "Impact math",
@@ -72,8 +72,9 @@ export default function AboutUsPage() {
         <p className="max-w-[700px] text-lg text-muted-foreground">
           Link Flame is a small shop for everyday swaps — the bottle, brush, and
           wrap you use daily, minus the plastic. We sell few things on
-          purpose, and all of them are our own: three PDF guides, a bundle of
-          the three, an organic cotton tote and an organic cotton tee.
+          purpose, and all of them are our own: three PDF guides and a bundle
+          of the three. For the swaps themselves, our checked swap pages point
+          to other brands&rsquo; products and say what is proven and what is not.
         </p>
       </div>
 

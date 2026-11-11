@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   // which would brand the homepage twice
   title: { absolute: 'Link Flame | Sustainable Shopping' },
   description:
-    'Practical guides for wasting less at home, plus an organic cotton tote and tee printed to order.',
+    'Practical guides for wasting less at home, plus checked swaps: reusable products with what is proven and what is not.',
 };
 
 export default function IndexPage() {
