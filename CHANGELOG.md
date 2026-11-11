@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.3.0](https://github.com/gr8monk3ys/link-flame/compare/v0.2.1...v0.3.0) (2026-11-11)
+
+
+### Features
+
+* **shop:** launch catalogue of own guides and Printful goods ([#143](https://github.com/gr8monk3ys/link-flame/issues/143)) ([ba6acd5](https://github.com/gr8monk3ys/link-flame/commit/ba6acd51ac5e638c5b59afe3de6de4743fd34ac1))
+* **shop:** take the tote and tee off sale, go affiliate-first ([#150](https://github.com/gr8monk3ys/link-flame/issues/150)) ([dd3bc83](https://github.com/gr8monk3ys/link-flame/commit/dd3bc837f9de8e3aed4223fcf158c278b0b8c322))
+* **swaps:** free first-count guide and checked swaps ([#148](https://github.com/gr8monk3ys/link-flame/issues/148)) ([1372a88](https://github.com/gr8monk3ys/link-flame/commit/1372a88b1022067bf000243226279a9237a744d3))
+
+
+### Bug Fixes
+
+* **shop:** keep the promises the live shop makes ([#149](https://github.com/gr8monk3ys/link-flame/issues/149)) ([b4a59b9](https://github.com/gr8monk3ys/link-flame/commit/b4a59b994761e9303e46106d06e335bcb89d5ee2))
+
 ## [0.2.1](https://github.com/gr8monk3ys/link-flame/compare/v0.2.0...v0.2.1) (2026-11-10)
 
 
