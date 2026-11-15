@@ -36,6 +36,7 @@
     "test:e2e:report": "playwright show-report",
     "analyze": "ANALYZE=true next build",
     "brand:generate": "node scripts/generate-brand.mjs",
+    "verify": "node scripts/verify.mjs",
     "lighthouse:ci": "node scripts/check-lighthouse-score.mjs http://127.0.0.1:3000 / /products /blogs /guides-and-tips /about-us"
   },
   "overrides": {
