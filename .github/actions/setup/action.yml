@@ -1,0 +1,46 @@
+name: Setup
+description: Node.js with the npm cache, a Prisma engine cache, and an `npm ci` that survives a transient download failure.
+
+inputs:
+  node-version:
+    description: Node.js version
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v7
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: 'npm'
+
+    # `postinstall` runs `prisma generate`, which downloads the query and
+    # schema engines (plus their .sha256) from binaries.prisma.sh. Caching
+    # Prisma's engine directory keyed on the lockfile takes that host off the
+    # critical path for every run after the first.
+    - name: Cache Prisma engines
+      uses: actions/cache@v6
+      with:
+        path: ~/.cache/prisma
+        key: prisma-engines-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+    # A single failed request to registry.npmjs.org or binaries.prisma.sh used
+    # to fail the whole job (main, 2026-11-11: "request to
+    # https://binaries.prisma.sh/.../schema-engine.gz.sha256 failed" during
+    # postinstall). Retry the whole install; a real lockfile or postinstall
+    # error fails all three attempts the same way and still fails the job.
+    - name: Install dependencies
+      shell: bash
+      run: |
+        for attempt in 1 2 3; do
+          if npm ci; then
+            exit 0
+          fi
+          if [ "$attempt" -lt 3 ]; then
+            echo "::warning::npm ci failed (attempt $attempt of 3), retrying in $((attempt * 15))s"
+            sleep $((attempt * 15))
+          fi
+        done
+        echo "::error::npm ci failed 3 times"
+        exit 1
