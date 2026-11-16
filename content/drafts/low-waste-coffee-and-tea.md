@@ -11,9 +11,7 @@ featured: false
 coverImage: /images/blogs/default-hero.jpg
 ---
 
-# A low-waste coffee and tea routine at home
-
-Most people make coffee or tea at least once a day, often more. That makes the morning drink one of the most repeated habits in the kitchen, and every repetition can leave something behind: a paper filter, a tea bag, a single-use pod, a takeaway cup. None of these is large on its own, but together they add up to a steady stream of waste that nobody really notices.
+A daily coffee or tea is one of the most repeated habits in a kitchen, and every cup can leave something behind: a paper filter, a tea bag, a single-use pod, a takeaway cup. None of these is large on its own, but together they add up to a steady stream of waste that nobody really notices.
 
 A low-waste routine doesn't mean giving up the drink you like. It mostly means changing what the coffee or tea passes through on its way to your cup, and what happens to everything afterwards.
 
@@ -22,7 +20,7 @@ A low-waste routine doesn't mean giving up the drink you like. It mostly means c
 If you brew pour-over or drip coffee, the paper filter is the one thing you throw away every single time. A washable filter removes it from the routine.
 
 ### A reusable cloth filter
-A cloth filter is washed and used again instead of thrown away. We looked at [CoffeeSock's V60-style cotton filters](/swaps/coffeesock-v60-filters), which are made for Hario V60 brewers; our page sets out what the brand claims and what we could and could not confirm. The brand's care advice is to rinse with hot water and no soap, let the filter dry fully, and boil it now and then. Cloth filters slowly darken with use.
+A cloth filter is washed and used again instead of thrown away. We looked at [CoffeeSock's V60-style cotton filters](/swaps/coffeesock-v60-filters), which are made for Hario V60 brewers; our page sets out what the brand claims and what we could and could not confirm. The brand's care advice is to rinse with hot water and no soap, let the filter dry fully, and boil it now and then.
 
 ### Pods
 Pod machines are convenient, but each pod is a single-use package around one cup of coffee. If you already own one, a refillable pod that you fill with your own ground coffee keeps the machine in use without the disposable capsules. If you're choosing a brewer from scratch, a pour-over cone or a French press works with nothing more than coffee and water.
@@ -42,7 +40,7 @@ Keep it in an airtight jar in a cupboard. Buying loose tea from a shop that lets
 
 ## Away from home
 
-A lot of coffee is drunk away from the kitchen, from a takeaway cup and lid bought on the way to work.
+Some of the waste never reaches the kitchen bin: the takeaway cup and lid bought on the way to work.
 
 ### Your own cup
 A cup of your own replaces the paper cup and lid you'd otherwise be handed. We looked at the [KeepCup Original Clear](/swaps/keepcup-original-clear), a plastic cup with a lid that is sold as a replacement for single-use coffee cups; its page lists what we could confirm, including the limits of the brand's own life cycle study. If you'd rather fill something at home, check that it is insulated before you pour in a hot drink: not every reusable bottle is.
@@ -62,4 +60,4 @@ By the end of the first week, the only thing left by the kettle after the mornin
 
 ---
 
-**Editorial note for reviewer (remove before publish):** The front matter follows `scripts/import-blog-posts.mjs`. To publish, set `publishedAt` to the real date, remove this note, copy the file into an import folder, and run `node scripts/import-blog-posts.mjs <folder>` (a dry run), then again with `--apply`. The importer ignores the `draft` key. The shop sells no other brands' products, so the post doesn't describe any as ours. It links only to two checked swaps in `config/swaps.ts`, `coffeesock-v60-filters` and `keepcup-original-clear`, and says only what those entries say. The Klean Kanteen 18oz swap was left out on purpose, because its entry says the bottle is not insulated. The `/blogs/ultimate-guide-to-composting` link points at a post from `prisma/seed.ts`; check that it is live in production before publishing, and drop the link if it isn't. The post doesn't link to the unpublished `zero-waste-kitchen-swaps` draft, which also mentions a coffee filter. Claims the post could not source were cut in review: plastic in tea bags, how metal filters change the cup, cafés filling or discounting your own cup, the nitrogen content of grounds, grounds on garden beds, glass and coffee smells, and how tea keeps its flavour. Headings are in sentence case, per `docs/writing-style.md` in lscaturchio.xyz. The cover image is the generic placeholder. The post contains no statistics.
+**Editorial note for reviewer (remove before publish):** The front matter follows `scripts/import-blog-posts.mjs`. To publish, set `publishedAt` to the real date, remove this note, copy the file into an import folder, and run `node scripts/import-blog-posts.mjs <folder>` (a dry run), then again with `--apply`. The importer ignores the `draft` key. The shop sells no other brands' products, so the post doesn't describe any as ours. It links only to two checked swaps in `config/swaps.ts`, `coffeesock-v60-filters` and `keepcup-original-clear`, and says only what those entries say. The Klean Kanteen 18oz swap was left out on purpose, because its entry says the bottle is not insulated. The `/blogs/ultimate-guide-to-composting` link points at a post from `prisma/seed.ts`; check that it is live in production before publishing, and drop the link if it isn't. The post doesn't link to the unpublished `zero-waste-kitchen-swaps` draft, which also mentions a coffee filter. Claims the post could not source were cut in review: plastic in tea bags, how metal filters change the cup, cafés filling or discounting your own cup, the nitrogen content of grounds, grounds on garden beds, glass and coffee smells, how tea keeps its flavour, how cloth filters age, and how often people drink coffee or tea. The body has no H1, because the blog page renders the title as its own heading. Headings are in sentence case, per `docs/writing-style.md` in lscaturchio.xyz. The cover image is the generic placeholder. The post contains no statistics.
