@@ -13,6 +13,7 @@ import {
 } from "@/lib/api-response";
 import { logger } from "@/lib/logger";
 import { AddToCartSchema, UpdateCartSchema } from "@/lib/validations/cart";
+import { isForSale } from "@/lib/fulfillment";
 
 export const dynamic = 'force-dynamic'
 
@@ -224,10 +225,11 @@ export async function POST(req: Request) {
         inventory: true,
         hasVariants: true,
         variants: true,
+        fulfillment: true,
       },
     });
 
-    if (!product) {
+    if (!product || !isForSale(product.fulfillment)) {
       return errorResponse("Product not found", undefined, undefined, 404);
     }
 

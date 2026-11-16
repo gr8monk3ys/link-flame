@@ -18,7 +18,7 @@ export default function BlogLayout({
         <aside className="w-full space-y-6 lg:w-[300px]">
           <NewsletterSignup
             title="Get Eco Tips"
-            description="Join our community and receive weekly sustainable living tips and exclusive deals."
+            description="We write when a new guide or a checked swap is ready. There is no fixed schedule."
           />
           
           {/* Tag Cloud */}

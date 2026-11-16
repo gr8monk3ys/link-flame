@@ -17,6 +17,7 @@ import { getServerAuth, requireRole } from '@/lib/auth';
 import { validateCsrfToken } from '@/lib/csrf';
 import { invalidateProductCaches } from '@/lib/cache';
 import { z } from 'zod';
+import { isForSale } from '@/lib/fulfillment';
 
 export const dynamic = 'force-dynamic'
 
@@ -69,7 +70,7 @@ export async function GET(request: NextRequest) {
       })
     );
 
-    if (!product) {
+    if (!product || !isForSale(product.fulfillment)) {
       return notFoundResponse("Product");
     }
 
@@ -101,7 +102,7 @@ const updateProductSchema = z.object({
   description: z.string().max(2000, 'Description is too long').nullable().optional(),
   price: z.number().positive('Price must be positive').max(1000000, 'Price cannot exceed $1,000,000').optional(),
   salePrice: z.number().positive('Sale price must be positive').max(1000000, 'Sale price cannot exceed $1,000,000').nullable().optional(),
-  image: z.string().url('Image must be a valid URL').optional(),
+  image: z.url('Image must be a valid URL').optional(),
   category: z.string().max(100, 'Category name is too long').optional(),
   inventory: z.number().int('Inventory must be a whole number').min(0, 'Inventory cannot be negative').optional(),
   isImperfect: z.boolean().optional(),
@@ -113,7 +114,7 @@ const updateProductSchema = z.object({
   }
   return true
 }, {
-  message: 'Sale price must be less than regular price',
+  error: 'Sale price must be less than regular price',
   path: ['salePrice'],
 })
 

@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { formatPrice } from '@/lib/utils'
+import { forSaleWhere } from "@/lib/fulfillment";
 
 interface SearchResultsProps {
   query: string
@@ -15,6 +16,7 @@ export async function SearchResults({ query }: SearchResultsProps) {
     // Search products
     prisma.product.findMany({
       where: {
+        ...forSaleWhere(),
         OR: [
           { title: { contains: searchTerm } },
           { description: { contains: searchTerm } },
@@ -37,6 +39,7 @@ export async function SearchResults({ query }: SearchResultsProps) {
     prisma.product.groupBy({
       by: ['category'],
       where: {
+        ...forSaleWhere(),
         category: { contains: searchTerm },
       },
       _count: {

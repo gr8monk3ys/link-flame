@@ -19,7 +19,10 @@ vi.mock('@/lib/rate-limit', () => ({
 }))
 
 vi.mock('@/lib/prisma', () => ({
-  prisma: { order: { findUnique: mocks.findUnique } },
+  prisma: {
+    order: { findUnique: mocks.findUnique },
+    digitalDownload: { findMany: vi.fn().mockResolvedValue([]) },
+  },
 }))
 
 vi.mock('@/lib/csrf', () => ({ validateCsrfToken: vi.fn() }))

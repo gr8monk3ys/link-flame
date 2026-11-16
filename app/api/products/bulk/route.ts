@@ -9,6 +9,7 @@ import {
 } from "@/lib/api-response"
 import { logger } from "@/lib/logger"
 import { checkRateLimit, getIdentifier } from "@/lib/rate-limit"
+import { forSaleWhere } from "@/lib/fulfillment";
 
 export const dynamic = 'force-dynamic'
 
@@ -90,6 +91,7 @@ export async function POST(request: NextRequest) {
     // Fetch products in a single query
     const products = await prisma.product.findMany({
       where: {
+        ...forSaleWhere(),
         id: { in: ids },
       },
       include,

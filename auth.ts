@@ -6,7 +6,7 @@ import { z } from 'zod';
 import authConfig from './auth.config';
 
 const credentialsSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   password: z.string().min(8),
 });
 

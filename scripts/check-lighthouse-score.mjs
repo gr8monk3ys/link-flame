@@ -72,13 +72,14 @@ const CLS_MAX = 0.05;
 const MAX_ATTEMPTS = Number.parseInt(process.env.LIGHTHOUSE_ATTEMPTS ?? "4", 10);
 
 // Document byte budget for the home route (compressed transfer size of the
-// HTML alone). `experimental.inlineCss` inlines the global stylesheet into the
-// document, which the Lighthouse work of 2026-09 relied on for first paint,
-// and it made the document several times larger. Lighthouse's score does not
-// notice the document slowly growing, so this cap does. Set ~25% above the
-// measured value; the measured number is printed on every run.
-// Measured 2026-09-16 against the production build: 96,591 bytes. Cap = +25%.
-const HOME_DOCUMENT_MAX_BYTES = 121_000;
+// HTML alone). Lighthouse's score does not notice the document slowly
+// growing, so this cap does. The global stylesheet used to be inlined
+// (`experimental.inlineCss`), which put 170 KB of CSS into every document
+// twice (a <style> block plus the RSC payload) and made it 96 KB gzipped; it
+// is a cached <link> again. Set ~25% above the measured value; the measured
+// number is printed on every run.
+// Measured 2026-11-15 against the production build: 15,882 bytes. Cap = +25%.
+const HOME_DOCUMENT_MAX_BYTES = 20_000;
 
 const artifactDir = join(process.cwd(), "artifacts", "lighthouse");
 const [baseUrl, ...routes] = process.argv.slice(2);

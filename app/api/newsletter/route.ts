@@ -17,7 +17,7 @@ export const dynamic = 'force-dynamic'
 
 // Validation schema for newsletter subscription
 const NewsletterSchema = z.object({
-  email: z.string().email("Invalid email address").toLowerCase(),
+  email: z.email("Invalid email address").toLowerCase(),
 })
 
 export async function POST(req: Request) {
@@ -76,7 +76,7 @@ export async function POST(req: Request) {
     // email should not hold the request open (react-best-practices 3.10).
     if (isEmailConfigured()) {
       after(() =>
-        sendNewsletterConfirmation(email).catch((err) => {
+        sendNewsletterConfirmation(email, subscription.id).catch((err) => {
           logger.error('Failed to send newsletter confirmation email', err);
         })
       );

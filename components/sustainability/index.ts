@@ -9,19 +9,12 @@ export {
 } from "./CertificationBadges";
 
 export {
-  CarbonNeutralBanner,
-  CarbonNeutralShippingLine,
-  CarbonNeutralBadge,
-} from "./CarbonNeutralBanner";
-
-export {
   EcoImpactCard,
   EcoImpactBadges,
 } from "./EcoImpactCard";
 
 export {
   SustainabilityCommitment,
-  SustainabilityBanner,
 } from "./SustainabilityCommitment";
 
 export {

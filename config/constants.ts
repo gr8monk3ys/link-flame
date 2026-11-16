@@ -30,11 +30,24 @@ export function formatCurrency(amount: number): string {
 /**
  * Contact information
  */
+/**
+ * Support mailbox, read from NEXT_PUBLIC_SUPPORT_EMAIL. The store does not own
+ * a domain with a mailbox yet, so there is deliberately no hardcoded fallback:
+ * when it is unset, pages link to /contact instead (see SupportLink).
+ */
+export const SUPPORT_EMAIL: string | null =
+  process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim() || null
+
+/** `mailto:` link when a mailbox is configured, else the contact page. */
+export const SUPPORT_HREF: string = SUPPORT_EMAIL
+  ? `mailto:${SUPPORT_EMAIL}`
+  : '/contact'
+
 export const CONTACT = {
-  email: 'hello@linkflame.com',
-  supportEmail: 'support@linkflame.com',
-  businessEmail: 'business@linkflame.com',
-  pressEmail: 'press@linkflame.com',
+  supportEmail: SUPPORT_EMAIL,
+  // Same single mailbox: the store has no separate business or press addresses.
+  businessEmail: SUPPORT_EMAIL,
+  pressEmail: SUPPORT_EMAIL,
 } as const
 
 /**
@@ -54,7 +67,8 @@ export const LIMITS = {
   // Cart
   maxCartItems: 50,
   minCheckoutAmount: 0,
-  freeShippingThreshold: 35,
+  // Matches the Stripe Checkout shipping options and /shipping-policy.
+  freeShippingThreshold: 75,
 
   // Pagination
   defaultPageSize: 12,
@@ -69,6 +83,25 @@ export const LIMITS = {
   rateLimitWindow: 60 * 1000, // 1 minute in milliseconds
   maxRequestsPerWindow: 100,
 } as const
+
+/**
+ * Gift card sales. Closed until the shop can keep the gift card promises: the
+ * code is emailed to nobody today (there is no gift card email), and the old
+ * 1-year expiry needs the owner's policy call (federal and California gift card
+ * rules). Balance checks and redeeming existing cards keep working while closed.
+ */
+export const GIFT_CARD_SALES_OPEN = false
+
+/**
+ * Print-on-demand sales (the tote and the tee, fulfilled by Printful). Closed
+ * while the shop runs affiliate-first: guides are the only thing we sell, and
+ * the swap pages point to other brands. While closed, printful products are
+ * left out of every listing, their pages 404, and the cart and checkout refuse
+ * them. Orders already paid keep working (order pages, the Printful webhook).
+ * To reopen: connect Printful (PRINTFUL_API_KEY, webhook), set this to true,
+ * and put the copy back on the home, about, FAQ and policy pages.
+ */
+export const PRINT_ON_DEMAND_OPEN = false
 
 /**
  * Feature flags

@@ -7,7 +7,7 @@ const baseUrl = getBaseUrl()
 
 export const siteConfig = {
   name: "Link Flame",
-  description: "Your trusted source for eco-friendly living and sustainable product recommendations.",
+  description: "Practical guides for wasting less at home, and a few things we make ourselves.",
   url: baseUrl,
   mainNav: [
     {
@@ -16,38 +16,24 @@ export const siteConfig = {
         {
           title: "All Products",
           href: "/products",
-          description: "Browse our full catalog of eco-friendly essentials",
+          description: "Our own PDF guides",
         },
         {
-          title: "Shop by Values",
-          href: "/collections",
-          description: "Filter by sustainability values like zero-waste and plastic-free",
+          title: "Guides",
+          href: "/collections?category=Guides",
+          description: "Printable PDF guides for wasting less at home",
         },
         {
-          title: "Subscribe & Save",
-          href: "/collections?subscribable=true",
-          description: "Recurring deliveries with built-in savings on essentials",
+          title: "Free guide",
+          href: "/free-guide",
+          description: "The First Count: a one-day tally sheet, free PDF",
         },
         {
-          title: "Bundles (Build a Kit)",
-          href: "/bundles",
-          description: "Curated kits to make switching easier",
-        },
-        {
-          title: "Perfectly Imperfect",
-          href: "/imperfect",
-          description: "Save on items with minor cosmetic imperfections",
-        },
-        {
-          title: "Gift Cards",
-          href: "/gift-cards",
-          description: "Sustainable gifting made simple",
+          title: "Checked swaps",
+          href: "/swaps",
+          description: "Other brands' products, with what is proven and what is not",
         },
       ],
-    },
-    {
-      title: "Brands",
-      href: "/brands",
     },
     {
       title: "Company",

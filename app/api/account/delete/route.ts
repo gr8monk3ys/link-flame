@@ -19,7 +19,7 @@ export const dynamic = 'force-dynamic'
 const deleteAccountSchema = z.object({
   password: z.string().min(1, "Password is required to confirm account deletion"),
   confirmation: z.literal("DELETE MY ACCOUNT", {
-    errorMap: () => ({ message: 'Please type "DELETE MY ACCOUNT" to confirm' }),
+    error: 'Please type "DELETE MY ACCOUNT" to confirm',
   }),
 });
 

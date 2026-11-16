@@ -19,7 +19,7 @@ const envSchema = z.object({
 
   // NextAuth (optional at build time, required at runtime)
   NEXTAUTH_SECRET: z.string().min(32, 'NEXTAUTH_SECRET must be at least 32 characters').optional(),
-  NEXTAUTH_URL: z.string().url('NEXTAUTH_URL must be a valid URL').optional(),
+  NEXTAUTH_URL: z.url('NEXTAUTH_URL must be a valid URL').optional(),
 
   // Stripe (Required for payment processing, optional in build-time)
   STRIPE_SECRET_KEY: z.string().startsWith('sk_', 'STRIPE_SECRET_KEY must start with sk_').optional(),
@@ -27,7 +27,7 @@ const envSchema = z.object({
   STRIPE_SUBSCRIPTION_WEBHOOK_SECRET: z.string().startsWith('whsec_', 'STRIPE_SUBSCRIPTION_WEBHOOK_SECRET must start with whsec_').optional(),
 
   // Public Environment Variables
-  NEXT_PUBLIC_APP_URL: z.string().url('NEXT_PUBLIC_APP_URL must be a valid URL').optional(),
+  NEXT_PUBLIC_APP_URL: z.url('NEXT_PUBLIC_APP_URL must be a valid URL').optional(),
   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z
     .string()
     .startsWith('pk_', 'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY must start with pk_')
@@ -37,14 +37,14 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
 
   // Optional: Upstash Redis (for rate limiting & caching)
-  UPSTASH_REDIS_REST_URL: z.string().url().optional(),
+  UPSTASH_REDIS_REST_URL: z.url().optional(),
   UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
 
   // Optional: Resend (for email notifications)
   RESEND_API_KEY: z.string().startsWith('re_', 'RESEND_API_KEY must start with re_').optional(),
 
   // Optional: Sentry (for error tracking)
-  SENTRY_DSN: z.string().url().optional(),
+  SENTRY_DSN: z.url().optional(),
 });
 
 // Parse and validate environment variables
@@ -70,8 +70,8 @@ function validateEnv() {
   } catch (error) {
     if (error instanceof z.ZodError) {
       console.error('❌ Invalid environment variables:');
-      error.errors.forEach((err) => {
-        console.error(`  - ${err.path.join('.')}: ${err.message}`);
+      error.issues.forEach((err) => {
+        console.error(`  - ${err.path.map(String).join('.')}: ${err.message}`);
       });
       // Never throw during build — runtime will catch missing vars when actually needed
       console.warn('⚠️  Continuing with invalid environment variables');

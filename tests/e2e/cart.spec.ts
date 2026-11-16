@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { addItemToCart, createTestUser, loginUser, waitForCartUpdate } from './fixtures'
+import { addItemToCart, createTestUser, loginUser, pickSimpleProductId, waitForCartUpdate } from './fixtures'
 
 /**
  * Shopping Cart E2E Tests
@@ -283,11 +283,9 @@ test.describe('Cart API', () => {
 
   test('should add item via cart API', async ({ page }) => {
     // Get a product ID first (mock or from products endpoint)
-    const productsResponse = await page.request.get('/api/products?pageSize=1')
-    const productsBody = await productsResponse.json()
+    const productId = await pickSimpleProductId(page)
 
-    if (productsBody?.data?.length > 0) {
-      const productId = productsBody.data[0].id
+    if (productId) {
 
       // Get CSRF token
       const csrfResponse = await page.request.get('/api/csrf')

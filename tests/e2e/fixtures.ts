@@ -23,6 +23,7 @@ export {
   createAndLoginUser,
   waitForCartUpdate,
   addItemToCart,
+  pickSimpleProductId,
   getMissingStripeCheckoutEnvVars,
   isStripeCheckoutE2EConfigured,
   test,

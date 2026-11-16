@@ -24,6 +24,7 @@ import {
 import { logger } from '@/lib/logger'
 import { getStripe } from '@/lib/stripe-server'
 import { getBaseUrl } from '@/lib/url'
+import { GIFT_CARD_SALES_OPEN } from '@/config/constants'
 import {
   cancelUnpaidGiftCard,
   createGiftCard,
@@ -40,7 +41,6 @@ const PurchaseGiftCardSchema = z.object({
     .min(GIFT_CARD_CONFIG.MIN_AMOUNT, `Minimum amount is $${GIFT_CARD_CONFIG.MIN_AMOUNT}`)
     .max(GIFT_CARD_CONFIG.MAX_AMOUNT, `Maximum amount is $${GIFT_CARD_CONFIG.MAX_AMOUNT}`),
   recipientEmail: z
-    .string()
     .email('Invalid email address')
     .max(254, 'Email address too long')
     .optional()
@@ -71,6 +71,15 @@ const PurchaseGiftCardSchema = z.object({
  */
 export async function POST(request: Request) {
   try {
+    if (!GIFT_CARD_SALES_OPEN) {
+      return errorResponse(
+        'Gift cards are not on sale right now.',
+        'GIFT_CARD_SALES_CLOSED',
+        undefined,
+        410
+      )
+    }
+
     // CSRF protection
     const csrfValid = await validateCsrfToken(request)
     if (!csrfValid) {
