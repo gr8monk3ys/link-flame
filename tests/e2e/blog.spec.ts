@@ -112,6 +112,23 @@ test.describe('Blog', () => {
     })
   })
 
+  test.describe('Post status codes', () => {
+    test('a known post answers 200 and an unknown slug answers 404', async ({ request }) => {
+      const list = await request.get('/api/blog/posts')
+      expect(list.ok()).toBeTruthy()
+      const slug = (await list.json()).data?.[0]?.slug
+      expect(slug).toBeTruthy()
+
+      const known = await request.get(`/blogs/${slug}`)
+      expect(known.status()).toBe(200)
+      expect(await known.text()).toContain('<article')
+
+      const unknown = await request.get('/blogs/this-post-does-not-exist-404')
+      expect(unknown.status()).toBe(404)
+      expect(await unknown.text()).toContain('Blog Post Not Found')
+    })
+  })
+
   test.describe('Individual Blog Post', () => {
     test('individual post renders correctly', async ({ page }) => {
       await page.goto('/blogs', { waitUntil: 'domcontentloaded' })
