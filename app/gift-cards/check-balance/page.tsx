@@ -92,8 +92,8 @@ export default function CheckBalancePage() {
             </div>
             <h3 className="mb-2 font-medium">Where is my code?</h3>
             <p className="text-sm text-muted-foreground">
-              Your gift card code was sent to the email address provided during purchase.
-              Check your inbox and spam folder.
+              Your code is shown on the page you land on after paying. If you no
+              longer have it, contact us with your order details.
             </p>
           </div>
           <div className="rounded-lg border bg-card p-5">
@@ -134,10 +134,10 @@ export default function CheckBalancePage() {
                 />
               </svg>
             </div>
-            <h3 className="mb-2 font-medium">Card expiring soon?</h3>
+            <h3 className="mb-2 font-medium">Expiration date</h3>
             <p className="text-sm text-muted-foreground">
-              Gift cards are valid for 1 year. Use your balance before the expiration
-              date to avoid losing value.
+              The balance checker shows your card&apos;s expiration date, if it has one.
+              Contact us if a date looks wrong.
             </p>
           </div>
           <div className="rounded-lg border bg-card p-5">

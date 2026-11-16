@@ -13,6 +13,8 @@ import {
 import { checkRateLimit, getIdentifier } from "@/lib/rate-limit";
 import { validateCsrfToken } from "@/lib/csrf";
 import { sendShippingNotificationEmail } from "@/lib/email";
+import { getOrderDownloads } from "@/lib/digital-downloads";
+import { requiresShipping } from "@/lib/fulfillment";
 import { logger } from "@/lib/logger";
 import { after } from 'next/server';
 
@@ -118,9 +120,18 @@ export async function GET(
     const toNumberOrNull = (value: { toString(): string } | null) =>
       value === null ? null : Number(value);
 
+    const downloads = await getOrderDownloads(order.id);
+
     // Format order with additional tracking info
     const formattedOrder = {
       ...order,
+      shipsSomething: order.items.some((item) => requiresShipping(item.product?.fulfillment)),
+      downloads: downloads.map(({ url, productTitle, filename, downloadsLeft }) => ({
+        url,
+        productTitle,
+        filename,
+        downloadsLeft,
+      })),
       amount: Number(order.amount),
       refundAmount: toNumberOrNull(order.refundAmount),
       loyaltyDiscountAmount: toNumberOrNull(order.loyaltyDiscountAmount),

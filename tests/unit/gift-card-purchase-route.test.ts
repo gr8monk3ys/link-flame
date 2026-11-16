@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mocks = vi.hoisted(() => ({
+  salesOpen: { value: true },
   validateCsrfToken: vi.fn(),
   getServerAuth: vi.fn(),
   getIdentifier: vi.fn(),
@@ -19,6 +20,12 @@ const mocks = vi.hoisted(() => ({
   },
 }))
 
+vi.mock('@/config/constants', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/config/constants')>()),
+  get GIFT_CARD_SALES_OPEN() {
+    return mocks.salesOpen.value
+  },
+}))
 vi.mock('@/lib/csrf', () => ({ validateCsrfToken: mocks.validateCsrfToken }))
 vi.mock('@/lib/auth', () => ({ getServerAuth: mocks.getServerAuth }))
 vi.mock('@/lib/rate-limit', () => ({
@@ -53,6 +60,7 @@ function purchaseRequest(body: unknown) {
 describe('POST /api/gift-cards', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mocks.salesOpen.value = true
     mocks.validateCsrfToken.mockResolvedValue(true)
     mocks.getServerAuth.mockResolvedValue({ userId: 'user-1' })
     mocks.getIdentifier.mockReturnValue('user:user-1')
@@ -85,6 +93,18 @@ describe('POST /api/gift-cards', () => {
     expect(session.line_items[0].price_data.unit_amount).toBe(5000)
     expect(session.metadata).toEqual({ type: 'gift_card', giftCardId: 'gc-1', userId: 'user-1' })
     expect(session.success_url).toBe('https://shop.test/gift-cards?gift_card_session={CHECKOUT_SESSION_ID}')
+  })
+
+  it('refuses to sell while gift card sales are closed', async () => {
+    mocks.salesOpen.value = false
+
+    const response = await POST(purchaseRequest({ amount: 50 }))
+    const payload = await response.json()
+
+    expect(response.status).toBe(410)
+    expect(payload.error.code).toBe('GIFT_CARD_SALES_CLOSED')
+    expect(mocks.prisma.giftCard.create).not.toHaveBeenCalled()
+    expect(mocks.sessionsCreate).not.toHaveBeenCalled()
   })
 
   it('charges whole cents and stores the charged amount', async () => {

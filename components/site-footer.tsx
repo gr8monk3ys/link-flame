@@ -12,6 +12,8 @@ interface SiteFooterProps {
 
 const QUICK_LINKS = [
   { href: "/about-us", label: "About Us" },
+  { href: "/free-guide", label: "Free guide" },
+  { href: "/swaps", label: "Checked swaps" },
   { href: "/blogs", label: "Blog" },
   { href: "/guides-and-tips", label: "Guides & Tips" },
   { href: "/community/join", label: "Join Community" },
@@ -63,7 +65,7 @@ export function SiteFooter({ className }: SiteFooterProps) {
             <NewsletterSignup
               className="max-w-sm"
               title="Stay Connected"
-              description="Join our community for eco-friendly tips and exclusive deals."
+              description="We write when a new guide or a checked swap is ready. There is no fixed schedule."
             />
 
             <div className="flex gap-4">

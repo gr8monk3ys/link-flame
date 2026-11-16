@@ -19,6 +19,7 @@ import { checkRateLimit, getIdentifier } from "@/lib/rate-limit"
 import { validateCsrfToken } from "@/lib/csrf"
 import { calculatePaginationMeta } from "@/lib/api/pagination"
 import { withPrismaRetry } from "@/lib/prisma-retry"
+import { forSaleWhere } from "@/lib/fulfillment";
 
 export const dynamic = 'force-dynamic'
 
@@ -98,7 +99,7 @@ export async function GET(request: NextRequest) {
     const valueSlugs = valuesParam ? valuesParam.split(',').map(s => s.trim()).filter(Boolean) : [];
 
     // Build where clause with proper Prisma types
-    const where: Prisma.ProductWhereInput = {};
+    const where: Prisma.ProductWhereInput = { ...forSaleWhere() };
 
     if (search) {
       where.OR = [

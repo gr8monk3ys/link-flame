@@ -70,12 +70,13 @@ export const LOYALTY_CONFIG = {
     FLOURISH: { min: 3000, max: Infinity, multiplier: 1.5, name: "Flourish" },
   },
 
-  // Tier benefits
+  // Tier benefits. Only perks the code delivers: the points multiplier
+  // (calculatePurchasePoints) and the redemption rate. No shipping perks.
   tierBenefits: {
-    SEEDLING: ["Earn 1 point per $1 spent", "Member-exclusive offers"],
-    SPROUT: ["Earn 1.1x points on purchases", "Early access to sales", "Free shipping on orders $50+"],
-    BLOOM: ["Earn 1.25x points on purchases", "Free shipping on all orders", "Birthday bonus points"],
-    FLOURISH: ["Earn 1.5x points on purchases", "Free express shipping", "Exclusive products", "VIP support"],
+    SEEDLING: ["Earn 1 point per $1 spent", "Redeem 100 points for $1 off"],
+    SPROUT: ["Earn 1.1x points on purchases", "Redeem 100 points for $1 off"],
+    BLOOM: ["Earn 1.25x points on purchases", "Redeem 100 points for $1 off"],
+    FLOURISH: ["Earn 1.5x points on purchases", "Redeem 100 points for $1 off"],
   },
 } as const;
 
