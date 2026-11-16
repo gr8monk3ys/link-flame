@@ -4,7 +4,7 @@ slug: low-waste-gift-wrapping
 title: "Gift wrapping can be reused instead of thrown away"
 description: "Fabric wraps, saved paper and boxes, string instead of plastic ribbon, and checking your local recycling rules all cut the waste from wrapping gifts."
 coverImage: /images/blogs/default-hero.jpg
-authorId: author2  # Emma Green, Sustainability Expert (per prisma/seed.ts) — swap for real author record on import
+authorId: author1  # Team Link Flame, Editorial Team (per prisma/seed.ts) — swap for real author record on import
 categoryId: catZeroWaste  # "Zero Waste" category (per prisma/seed.ts)
 tags: zero-waste,gifts,holidays,sustainable-living
 featured: false
