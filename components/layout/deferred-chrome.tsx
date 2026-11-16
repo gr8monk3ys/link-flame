@@ -2,17 +2,18 @@
 
 import { Suspense, useEffect, useState } from "react"
 import dynamic from "next/dynamic"
+import { Toaster } from "sonner"
 
-// None of these is needed to paint or to hydrate the page: the toast host only
-// shows messages that follow a click, the welcome banner needs `?welcome=true`,
-// and the service worker is registered for later visits. Importing them
-// statically put their code (sonner, the banner's icons and button) in the
-// chunks every route evaluates before hydration. They are separate chunks
-// instead, fetched once the browser is idle or on the first interaction,
-// whichever comes first.
-const Toaster = dynamic(() => import("sonner").then((m) => ({ default: m.Toaster })), {
-  ssr: false,
-})
+// Neither of these is needed to paint or to hydrate the page: the welcome
+// banner needs `?welcome=true`, and the service worker is registered for later
+// visits. Importing them statically put their code (the banner's icons and
+// button) in the chunks every route evaluates before hydration. They are
+// separate chunks instead, fetched once the browser is idle or on the first
+// interaction, whichever comes first.
+//
+// The toast host stays eager: sonner's Toaster only shows toasts fired after it
+// subscribes, so deferring it drops toasts raised on load (the Stripe gift-card
+// return, the guest-cart merge).
 const WelcomeBonusNotification = dynamic(
   () =>
     import("@/components/shared/welcome-bonus-notification").then((m) => ({
@@ -63,14 +64,17 @@ export function DeferredChrome() {
     return cleanup
   }, [])
 
-  if (!ready) return null
   return (
     <>
-      <ServiceWorkerRegistration />
-      <Suspense fallback={null}>
-        <WelcomeBonusNotification />
-      </Suspense>
       <Toaster position="top-right" />
+      {ready && (
+        <>
+          <ServiceWorkerRegistration />
+          <Suspense fallback={null}>
+            <WelcomeBonusNotification />
+          </Suspense>
+        </>
+      )}
     </>
   )
 }
