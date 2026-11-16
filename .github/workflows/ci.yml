@@ -21,11 +21,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
+      - name: Setup Node.js + dependencies
+        uses: ./.github/actions/setup
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
 
       - name: Validate environment variables
         run: |
@@ -36,9 +35,6 @@ jobs:
             exit 1
           fi
           echo "Environment validation passed"
-
-      - name: Install dependencies
-        run: npm ci
 
       - name: Check for security vulnerabilities
         run: npm audit --audit-level=high || true
@@ -52,27 +48,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
+      - name: Setup Node.js + dependencies
+        uses: ./.github/actions/setup
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run ESLint
-        run: npm run lint
-
-      # DESIGN.md's mechanically checkable rules plus the legacy ratchet
-      # (scripts/check-design-system.mjs). Fails on a new raw palette hue,
-      # shadow, gradient, blur or entrance animation, and on a ratchet count
-      # that moved without its baseline.
-      - name: Check design system
-        run: npm run design:check
-
-      - name: Run TypeScript type check
-        run: npx tsc --noEmit
+      # eslint, design-system check (DESIGN.md rules + legacy ratchet), tsc.
+      - name: Verify (lint)
+        run: npm run verify -- lint
 
   # Unit tests
   unit-tests:
@@ -97,19 +80,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
+      - name: Setup Node.js + dependencies
+        uses: ./.github/actions/setup
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run unit tests
-        run: npm run test:unit
+      - name: Verify (unit)
+        run: npm run verify -- unit
         env:
-          CI: true
           DATABASE_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
           DIRECT_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
 
@@ -143,35 +121,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
+      - name: Setup Node.js + dependencies
+        uses: ./.github/actions/setup
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      - name: Generate Prisma Client
-        run: npx prisma generate
-
-      - name: Setup test database
-        run: npx prisma db push
-        env:
-          DATABASE_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
-          DIRECT_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
-
-      - name: Seed test database
-        run: npx prisma db seed
-        env:
-          DATABASE_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
-          DIRECT_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
-
-      - name: Run E2E tests
-        run: npm run test:e2e
+      # prisma db push + seed, then Playwright against a production build.
+      - name: Verify (e2e)
+        run: npm run verify -- e2e
         env:
           DATABASE_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
           DIRECT_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
@@ -206,32 +166,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
+      - name: Setup Node.js + dependencies
+        uses: ./.github/actions/setup
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Generate Prisma Client
-        run: npx prisma generate
-
-      - name: Build application
-        run: npm run build
+      # next build, then the inline-script CSP hashes against what that build
+      # serves (next-themes' script text comes from the minified server bundle).
+      - name: Verify (build)
+        run: npm run verify -- build
         env:
           DATABASE_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
           DIRECT_URL: postgresql://linkflame:linkflame@localhost:5432/linkflame_test?schema=public
           NEXTAUTH_URL: http://localhost:3000
           NEXTAUTH_SECRET: build-secret-for-ci-only
           NEXT_PUBLIC_APP_URL: http://localhost:3000
-
-      # The CSP allowlists the layout's inline scripts by hash; next-themes'
-      # script text comes from the minified server bundle, so check the hashes
-      # against what this build actually serves.
-      - name: Check inline-script CSP hashes
-        run: npm run check:csp-hashes
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -275,42 +224,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
+      - name: Setup Node.js + dependencies
+        uses: ./.github/actions/setup
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Generate Prisma Client
-        run: npx prisma generate
-
-      - name: Setup test database
-        run: npx prisma db push
-
-      - name: Seed test database
-        run: npx prisma db seed
-
-      - name: Build application
-        run: npm run build
-
-      - name: Start application
-        run: |
-          npm run start -- -p 3000 > /tmp/link-flame.log 2>&1 &
-          echo $! > /tmp/link-flame.pid
-          for _ in $(seq 1 30); do
-            if curl -fsS http://127.0.0.1:3000/ > /dev/null; then
-              exit 0
-            fi
-            sleep 2
-          done
-          cat /tmp/link-flame.log
-          exit 1
-
-      - name: Enforce Lighthouse scores
-        run: npm run lighthouse:ci
+      # prisma db push + seed, next build, next start on :3000, score floors.
+      # The server is started and stopped (log printed on failure) by verify.
+      - name: Verify (lighthouse)
+        run: npm run verify -- lighthouse
 
       - name: Upload Lighthouse artifacts
         if: always()
@@ -319,14 +241,6 @@ jobs:
           name: lighthouse-artifacts
           path: artifacts/lighthouse
           retention-days: 7
-
-      - name: Stop application
-        if: always()
-        run: |
-          if [ -f /tmp/link-flame.pid ]; then
-            kill "$(cat /tmp/link-flame.pid)" || true
-          fi
-          cat /tmp/link-flame.log || true
 
   # Database migration check (dry run)
   migration-check:
@@ -338,14 +252,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
+      - name: Setup Node.js + dependencies
+        uses: ./.github/actions/setup
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
 
       - name: Check for pending migrations
         run: |
