@@ -15,7 +15,7 @@ interface NewsletterSignupProps {
 
 export function NewsletterSignup({
   title = "Get Eco friendly Tips",
-  description = "Subscribe to our newsletter for weekly sustainable living tips, exclusive deals, and eco-friendly product recommendations.",
+  description = "We write when a new guide or a checked swap is ready. There is no fixed schedule, and every email has an unsubscribe link.",
   className = "",
 }: NewsletterSignupProps) {
   const [email, setEmail] = useState("")

@@ -2,20 +2,43 @@ import { Metadata } from 'next'
 import { GiftCardPurchase } from '@/components/gift-cards/GiftCardPurchase'
 import { GiftCardBalance } from '@/components/gift-cards/GiftCardBalance'
 import Link from 'next/link'
+import { GIFT_CARD_SALES_OPEN } from '@/config/constants'
 
 export const metadata: Metadata = {
   title: 'Gift Cards',
-  description:
-    'Give the gift of sustainable living with Link Flame gift cards. Perfect for any occasion, our gift cards let your loved ones choose their own eco-friendly products.',
+  description: 'Check a Link Flame gift card balance and use it at checkout.',
   openGraph: {
     title: 'Gift Cards',
-    description:
-      'Give the gift of sustainable living with Link Flame gift cards. Perfect for any occasion.',
+    description: 'Check a Link Flame gift card balance and use it at checkout.',
     type: 'website',
   },
 }
 
+function GiftCardSalesClosed() {
+  return (
+    <div className="container mx-auto max-w-2xl px-4 py-8">
+      <h1 className="text-page-title">Gift Cards</h1>
+      <p className="mt-3 text-muted-foreground">
+        Gift cards are not on sale right now. If you already have one, you can
+        check its balance here and use it at checkout.
+      </p>
+      <div className="mt-8">
+        <GiftCardBalance />
+      </div>
+      <p className="mt-6 text-sm text-muted-foreground">
+        Questions about a card you bought?{' '}
+        <Link href="/contact" className="text-primary hover:underline">
+          Contact us
+        </Link>{' '}
+        with your order details.
+      </p>
+    </div>
+  )
+}
+
 export default function GiftCardsPage() {
+  if (!GIFT_CARD_SALES_OPEN) return <GiftCardSalesClosed />
+
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Hero Section */}

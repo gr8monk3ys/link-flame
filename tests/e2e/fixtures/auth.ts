@@ -386,16 +386,28 @@ export async function waitForCartUpdate(page: Page) {
   })
 }
 
+type ProductSummary = { id: string; hasVariants?: boolean; fulfillment?: string }
+
+/**
+ * A product that can go in the cart without choosing a size. Prefers a printed
+ * item so checkout still asks for a shipping address.
+ */
+export async function pickSimpleProductId(page: Page): Promise<string | undefined> {
+  const { json: productsBody } = await requestJsonWithRetry(
+    page,
+    '/api/products?page=1&pageSize=50'
+  )
+  const products = (productsBody?.data ?? []) as ProductSummary[]
+  const simple = products.filter((p) => !p.hasVariants)
+  return (simple.find((p) => p.fulfillment === 'printful') ?? simple[0])?.id
+}
+
 /**
  * Add an item to cart from the collections page
  * @param page - Playwright page instance
  */
 export async function addItemToCart(page: Page) {
-  const { json: productsBody } = await requestJsonWithRetry(
-    page,
-    '/api/products?page=1&pageSize=1'
-  )
-  const productId = productsBody?.data?.[0]?.id as string | undefined
+  const productId = await pickSimpleProductId(page)
   if (!productId) {
     throw new Error('No products available for cart setup')
   }

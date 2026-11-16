@@ -13,7 +13,10 @@ npx vitest run                    # unit (~600 tests, happy-dom)
 npm run test:integration          # needs a real DATABASE_URL
 npx playwright test               # E2E against `next build && next start`; PLAYWRIGHT_DEV_SERVER=true for dev server
 npm run build
+npm run verify                    # exactly what CI gates on; `npm run verify -- lint unit build e2e lighthouse` picks groups
 ```
+
+`scripts/verify.mjs` is the single gate: every CI job runs `npm run verify -- <group>` after `.github/actions/setup` (Node, npm + Prisma engine caches, `npm ci` with three attempts). `e2e` and `lighthouse` push and seed the schema into `DATABASE_URL`/`DIRECT_URL`, so point those at a throwaway Postgres (e.g. `docker run --rm -p 55432:5432 -e POSTGRES_USER=linkflame -e POSTGRES_PASSWORD=linkflame -e POSTGRES_DB=linkflame_test postgres:16-alpine`), never at Neon.
 
 Toolchain is Node 24 / npm 11 (`.nvmrc`, `engines`, `packageManager`, `NODE_VERSION` in every workflow, `node:24-alpine` in the Dockerfile). `npm ci` under an older npm prints usage help and installs nothing; run the pinned version (`npx -y npm@11 ci` works without a global change).
 

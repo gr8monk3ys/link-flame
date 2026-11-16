@@ -70,14 +70,13 @@ const requiredVars = [
   ['NEXTAUTH_SECRET', (v) => typeof v === 'string' && v.length >= 32, 'must be at least 32 characters'],
   ['NEXTAUTH_URL', isValidUrl, 'must be a valid URL'],
   ['NEXT_PUBLIC_APP_URL', isValidUrl, 'must be a valid URL'],
+  ['NEXT_PUBLIC_SUPPORT_EMAIL', (v) => typeof v === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), 'must be a real email address customers can write to'],
   ['STRIPE_SECRET_KEY', (v) => startsWith(v, 'sk_'), 'must start with sk_'],
   ['NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY', (v) => startsWith(v, 'pk_'), 'must start with pk_'],
+  ['PRINTFUL_API_KEY', (v) => Boolean(v), 'is required to send tote and tee orders to Printful'],
+  ['PRINTFUL_WEBHOOK_SECRET', (v) => typeof v === 'string' && v.length >= 24, 'must be at least 24 characters (shipping updates from Printful)'],
   ['UPSTASH_REDIS_REST_URL', isValidUrl, 'must be a valid URL'],
   ['UPSTASH_REDIS_REST_TOKEN', (v) => Boolean(v), 'is required'],
-  ['STRIPE_STARTER_MONTHLY_PRICE_ID', (v) => startsWith(v, 'price_'), 'must start with price_'],
-  ['STRIPE_STARTER_YEARLY_PRICE_ID', (v) => startsWith(v, 'price_'), 'must start with price_'],
-  ['STRIPE_PRO_MONTHLY_PRICE_ID', (v) => startsWith(v, 'price_'), 'must start with price_'],
-  ['STRIPE_PRO_YEARLY_PRICE_ID', (v) => startsWith(v, 'price_'), 'must start with price_'],
 ]
 
 for (const [name, validator, errorMessage] of requiredVars) {

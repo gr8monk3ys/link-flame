@@ -15,6 +15,9 @@ import {
   handleGiftCardCheckoutEvent,
   reverseGiftCardHold,
 } from "@/lib/gift-cards";
+import { requiresShipping, tracksInventory } from "@/lib/fulfillment";
+import { createDownloadsForOrder, getOrderDownloads } from "@/lib/digital-downloads";
+import { submitPrintfulOrder } from "@/lib/printful";
 
 export const dynamic = 'force-dynamic'
 
@@ -48,7 +51,15 @@ async function decrementInventoryFromOrderItems(
   tx: Prisma.TransactionClient,
   orderItems: OrderWithItems["items"]
 ) {
+  // Downloads and print-on-demand items have no stock to decrement.
+  const products = await tx.product.findMany({
+    where: { id: { in: orderItems.map((item) => item.productId) } },
+    select: { id: true, fulfillment: true },
+  });
+  const fulfillmentById = new Map(products.map((p) => [p.id, p.fulfillment]));
+
   for (const item of orderItems) {
+    if (!tracksInventory(fulfillmentById.get(item.productId))) continue;
     if (item.variantId) {
       const result = await tx.productVariant.updateMany({
         where: {
@@ -124,6 +135,33 @@ async function reconcileUserCartWithOrderItems(
   }
 }
 
+type SessionShipping = {
+  name: string | null;
+  address: Stripe.Address | null;
+};
+
+/**
+ * The shipping address Stripe collected. Newer API versions put it under
+ * collected_information; 2025-02-24.acacia still has shipping_details.
+ */
+function getSessionShippingDetails(session: Stripe.Checkout.Session): SessionShipping | null {
+  const details =
+    session.collected_information?.shipping_details ??
+    (session as Stripe.Checkout.Session & { shipping_details?: SessionShipping | null })
+      .shipping_details ??
+    null;
+  if (!details?.address) return null;
+  return { name: details.name ?? null, address: details.address };
+}
+
+function formatAddress(shipping: SessionShipping): string {
+  const a = shipping.address;
+  if (!a) return "";
+  return [a.line1, a.line2, a.city, [a.state, a.postal_code].filter(Boolean).join(" "), a.country]
+    .filter(Boolean)
+    .join(", ");
+}
+
 /**
  * Finalize a pending snapshot order after successful Stripe payment.
  */
@@ -131,22 +169,43 @@ async function finalizePendingOrderFromCheckout(
   session: Stripe.Checkout.Session,
   pendingOrder: OrderWithItems
 ) {
+  const shipping = getSessionShippingDetails(session);
+
   return prisma.$transaction(async (tx) => {
     await decrementInventoryFromOrderItems(tx, pendingOrder.items);
     await reconcileUserCartWithOrderItems(tx, pendingOrder.userId, pendingOrder.items);
 
-    return tx.order.update({
+    const products = await tx.product.findMany({
+      where: { id: { in: pendingOrder.items.map((item) => item.productId) } },
+      select: { fulfillment: true },
+    });
+    const shipsSomething = products.some((p) => requiresShipping(p.fulfillment));
+
+    const order = await tx.order.update({
       where: { id: pendingOrder.id },
       data: {
         amount: (session.amount_total || 0) / 100,
         status: "paid",
         customerEmail: session.customer_details?.email || pendingOrder.customerEmail,
         customerName: session.customer_details?.name || pendingOrder.customerName,
+        ...(shipping
+          ? {
+              shippingDetails: shipping as unknown as Prisma.InputJsonValue,
+              shippingAddress: formatAddress(shipping) || pendingOrder.shippingAddress,
+            }
+          : {}),
+        // A download-only order is complete the moment it is paid.
+        ...(shipsSomething
+          ? {}
+          : { shippingStatus: "delivered", deliveredAt: new Date() }),
       },
       include: {
         items: true,
       },
     });
+
+    await createDownloadsForOrder(order.id, tx);
+    return order;
   });
 }
 
@@ -325,6 +384,14 @@ async function sendOrderConfirmationEmail(orderId: string, customerEmail: string
         })),
         total: Number(orderWithItems.amount),
         customerName: orderWithItems.customerName || 'Customer',
+        downloads: (await getOrderDownloads(orderWithItems.id)).map((d) => ({
+          title: d.productTitle,
+          filename: d.filename,
+          url: d.url,
+        })),
+        shipsSomething: orderWithItems.items.some((item) =>
+          requiresShipping(item.product?.fulfillment)
+        ),
       }
     );
 
@@ -452,6 +519,10 @@ export async function POST(req: Request) {
 
       // Finalize discount holds created during checkout.
       await finalizeCheckoutDiscountHolds(order, session);
+
+      // Send print-on-demand lines to Printful. Never fails the webhook:
+      // a failure is stored on the order for an admin retry.
+      await submitPrintfulOrder(order.id);
 
       // Send order confirmation email
       await sendOrderConfirmationEmail(order.id, order.customerEmail || '');

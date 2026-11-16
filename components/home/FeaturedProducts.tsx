@@ -6,11 +6,13 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { formatPrice } from "@/lib/utils"
+import { forSaleWhere } from "@/lib/fulfillment";
 
 async function getFeaturedProducts() {
   try {
     const products = await prisma.product.findMany({
       where: {
+        ...forSaleWhere(),
         inventory: { gt: 0 },
       },
       orderBy: [

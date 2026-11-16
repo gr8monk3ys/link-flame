@@ -152,42 +152,26 @@ export default function ContactPage() {
         </CardContent>
       </Card>
 
-      {/* Additional Contact Information */}
-      <div className="grid max-w-[980px] gap-6 md:grid-cols-2">
-        <Card>
+      {/* Direct email, when the store has a support mailbox configured */}
+      {CONTACT.supportEmail && (
+        <Card className="max-w-[980px]">
           <CardHeader>
-            <CardTitle as="h2">Business Inquiries</CardTitle>
+            <CardTitle as="h2">Email</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
-              For business partnerships, sponsorships, or collaboration opportunities,
-              please email us at: <br />
+              Orders, downloads, partnerships or press: write to{" "}
               <a
-                href={`mailto:${CONTACT.businessEmail}`}
+                href={`mailto:${CONTACT.supportEmail}`}
                 className="text-primary hover:underline"
               >
-                {CONTACT.businessEmail}
+                {CONTACT.supportEmail}
               </a>
+              .
             </p>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle as="h2">Press & Media</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">
-              For press inquiries or media requests, please contact: <br />
-              <a
-                href={`mailto:${CONTACT.pressEmail}`}
-                className="text-primary hover:underline"
-              >
-                {CONTACT.pressEmail}
-              </a>
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+      )}
     </section>
   )
 }

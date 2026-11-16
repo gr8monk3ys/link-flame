@@ -9,6 +9,7 @@ import {
 } from '@/lib/api-response'
 import { checkRateLimit, getIdentifier } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
+import { forSaleWhere } from "@/lib/fulfillment";
 
 export const dynamic = 'force-dynamic'
 
@@ -137,6 +138,7 @@ export async function GET(request: NextRequest) {
 async function searchProducts(query: string): Promise<ProductSuggestion[]> {
   const products = await prisma.product.findMany({
     where: {
+      ...forSaleWhere(),
       OR: [
         { title: { contains: query } },
         { description: { contains: query } },
@@ -178,6 +180,7 @@ async function searchCategories(query: string): Promise<CategorySuggestion[]> {
   const categories = await prisma.product.groupBy({
     by: ['category'],
     where: {
+      ...forSaleWhere(),
       category: { contains: query },
     },
     _count: {
