@@ -8,7 +8,7 @@ import { spawnSync } from "node:child_process";
 //
 // Runs with --preset=desktop on purpose: mobile devtools throttling is too noisy
 // on shared GitHub runners to gate on. Production mobile numbers are measured
-// separately (PageSpeed Insights against https://link-flame.vivancedata.com)
+// separately (PageSpeed Insights against https://link-flame.lscaturchio.xyz)
 // and are not what this check enforces.
 //
 // Per-category floors rather than a blanket 100. Each floor is pinned at the
