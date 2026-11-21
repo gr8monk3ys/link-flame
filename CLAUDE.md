@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Link Flame: an eco-friendly e-commerce storefront + blog. Next.js 16 (App Router, React 19), PostgreSQL via Neon + Prisma, NextAuth v5, Stripe, Tailwind v4 (CSS-first: no `tailwind.config.js`). Live at https://link-flame-rouge.vercel.app (also https://link-flame.vivancedata.com). Public repo: everything committed is public. Package manager is npm (`package-lock.json`); CI, Vercel, and the Dockerfile all use `npm ci`.
+Link Flame: an eco-friendly e-commerce storefront + blog. Next.js 16 (App Router, React 19), PostgreSQL via Neon + Prisma, NextAuth v5, Stripe, Tailwind v4 (CSS-first: no `tailwind.config.js`). Live at https://link-flame-rouge.vercel.app (also https://link-flame.lscaturchio.xyz). Public repo: everything committed is public. Package manager is npm (`package-lock.json`); CI, Vercel, and the Dockerfile all use `npm ci`.
 
 ## Run / test
 
@@ -68,4 +68,4 @@ The five canonical roles, label string equal to role name. See `docs/agents/tria
 
 ### Domain docs
 
-See `docs/agents/domain.md`. (`CONTEXT.md` and `docs/adr/` are referenced there but do not exist yet.)
+Single-context: `GLOSSARY.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.

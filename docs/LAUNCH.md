@@ -48,7 +48,7 @@ The guide PDFs and manuscripts are paid products. They are **not** in this publi
   ```
 - [ ] **Email (Resend).** Verify a sending domain in Resend. Set `RESEND_API_KEY`, `EMAIL_FROM` (on that domain) and `ADMIN_EMAIL`. If `EMAIL_FROM` is empty, no mail is sent. Download links still show on the confirmation page and the account page.
 - [ ] **Support address.** Set `NEXT_PUBLIC_SUPPORT_EMAIL` to a mailbox you read. Policies and emails show it. The production preflight requires it.
-- [ ] **Domain.** The shop runs on `link-flame.vivancedata.com`. Set `NEXT_PUBLIC_APP_URL` and `NEXTAUTH_URL` to the domain you will sell on. The download links and Printful print-file URLs are built from it. `linkflame.com` is not owned.
+- [ ] **Domain.** The shop runs on `link-flame.lscaturchio.xyz`. Set `NEXT_PUBLIC_APP_URL` and `NEXTAUTH_URL` to the domain you will sell on. The download links and Printful print-file URLs are built from it. `linkflame.com` is not owned.
 - [ ] Run `npm run preflight:production` against the production env and fix what it reports.
 
 ### 2. Database, around the merge
