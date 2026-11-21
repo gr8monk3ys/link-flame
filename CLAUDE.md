@@ -68,4 +68,4 @@ The five canonical roles, label string equal to role name. See `docs/agents/tria
 
 ### Domain docs
 
-See `docs/agents/domain.md`. (`CONTEXT.md` and `docs/adr/` are referenced there but do not exist yet.)
+Single-context: `GLOSSARY.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
