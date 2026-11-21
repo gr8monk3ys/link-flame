@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Link Flame: an eco-friendly e-commerce storefront + blog. Next.js 16 (App Router, React 19), PostgreSQL via Neon + Prisma, NextAuth v5, Stripe, Tailwind v4 (CSS-first: no `tailwind.config.js`). Live at https://link-flame-rouge.vercel.app (also https://link-flame.vivancedata.com). Public repo: everything committed is public. Package manager is npm (`package-lock.json`); CI, Vercel, and the Dockerfile all use `npm ci`.
+Link Flame: an eco-friendly e-commerce storefront + blog. Next.js 16 (App Router, React 19), PostgreSQL via Neon + Prisma, NextAuth v5, Stripe, Tailwind v4 (CSS-first: no `tailwind.config.js`). Live at https://link-flame-rouge.vercel.app (also https://link-flame.lscaturchio.xyz). Public repo: everything committed is public. Package manager is npm (`package-lock.json`); CI, Vercel, and the Dockerfile all use `npm ci`.
 
 ## Run / test
 
