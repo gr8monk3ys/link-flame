@@ -3,6 +3,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import process from 'node:process'
+import { getProductionReadinessIssues } from '../lib/production-readiness.ts'
 
 function parseEnvFile(filePath) {
   if (!fs.existsSync(filePath)) {
@@ -84,6 +85,12 @@ for (const [name, validator, errorMessage] of requiredVars) {
   if (!validator(value)) {
     addIssue(errors, name, errorMessage)
   }
+}
+
+// The rules /api/health enforces on a live production deploy, shared so the
+// pre-deploy gate and the runtime check cannot drift apart.
+for (const issue of getProductionReadinessIssues({ ...env, VERCEL_ENV: 'production' })) {
+  errors.push(`- ${issue}`)
 }
 
 // Each webhook route needs its OWN signing secret. Accepting the shared
