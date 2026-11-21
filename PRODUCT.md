@@ -89,7 +89,7 @@ figure the shopper can add up.
   single-use-items-replaced, carbon-offset, trees-planted, water-saved,
   waste-diverted), "Perfectly Imperfect" (cosmetic seconds), "Subscribe &
   Save", "Build a Kit" (bundles).
-- Undecided: whether the live domain is `link-flame.vivancedata.com`
+- Undecided: whether the live domain is `link-flame.lscaturchio.xyz`
   (current deploy), `link-flame-rouge.vercel.app` (README), or
   `linkflame.com` (`lib/url.ts` production fallback, contact emails). The
   owner should confirm the canonical domain.
