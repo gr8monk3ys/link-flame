@@ -22,7 +22,7 @@ export default function TermsPage() {
       <div className="prose prose-lg max-w-none dark:prose-invert">
         <p className="text-muted-foreground">
           Welcome to Link Flame. By accessing or using our website at
-          link-flame.vivancedata.com, creating an account, or making a purchase, you agree to
+          link-flame.lscaturchio.xyz, creating an account, or making a purchase, you agree to
           be bound by these Terms of Service. Please read them carefully before
           using our platform. If you do not agree with these terms, please do
           not use our website.
