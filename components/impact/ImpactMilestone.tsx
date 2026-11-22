@@ -160,9 +160,10 @@ export function useMilestoneNotifications() {
 
   const showNextMilestone = useCallback(() => {
     setPendingMilestones((prev) => {
-      if (prev.length > 0) {
-        setCurrentMilestone(prev[0]);
-        return prev.slice(1);
+      const [next, ...rest] = prev;
+      if (next !== undefined) {
+        setCurrentMilestone(next);
+        return rest;
       } else {
         setCurrentMilestone(null);
         return prev;

@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { fromPartial } from '@total-typescript/shoehorn';
 import { getIdentifier, checkRateLimit, checkStrictRateLimit } from '@/lib/rate-limit';
 
 describe('Rate Limiting Utilities', () => {
@@ -120,16 +121,16 @@ describe('Rate Limiting Utilities', () => {
     });
 
     it('should derive anonymous identifier from session cookies when IP is unavailable', () => {
-      const request = {
-        headers: {
+      const request = fromPartial<Request>({
+        headers: fromPartial<Headers>({
           get: (name: string) => {
             if (name.toLowerCase() === 'cookie') {
               return 'guest_session_id=guest-abc123';
             }
             return null;
           },
-        },
-      } as unknown as Request;
+        }),
+      });
 
       const identifier = getIdentifier(request, null);
 

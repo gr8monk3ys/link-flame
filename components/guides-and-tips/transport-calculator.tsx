@@ -21,7 +21,7 @@ interface TransportMode {
   }[]
 }
 
-const transportModes: TransportMode[] = [
+const transportModes: [TransportMode, ...TransportMode[]] = [
   {
     name: "Gasoline Car",
     co2PerKm: 192,

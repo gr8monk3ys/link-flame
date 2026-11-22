@@ -75,7 +75,7 @@ function getStockStatus(inventory: number): { label: string; color: string; isAv
 export default function ProductDetails({ product, averageRating }: ProductDetailsProps) {
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(() => {
     if (product.hasVariants && product.variants.length > 0) {
-      return product.variants.find(v => v.isDefault) || product.variants[0];
+      return product.variants.find(v => v.isDefault) || product.variants[0] || null;
     }
     return null;
   });
