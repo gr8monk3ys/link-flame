@@ -29,6 +29,7 @@
       }
     ],
     "strictNullChecks": true,
+    "noUncheckedIndexedAccess": true,
     "target": "ES2017"
   },
   "include": [

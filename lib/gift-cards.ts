@@ -65,8 +65,8 @@ export function generateGiftCardCode(): string {
   const bytes = randomBytes(GIFT_CARD_CONFIG.CODE_LENGTH)
   let code = ''
 
-  for (let i = 0; i < GIFT_CARD_CONFIG.CODE_LENGTH; i++) {
-    const index = bytes[i] % GIFT_CARD_CONFIG.CODE_CHARSET.length
+  for (const byte of bytes) {
+    const index = byte % GIFT_CARD_CONFIG.CODE_CHARSET.length
     code += GIFT_CARD_CONFIG.CODE_CHARSET[index]
   }
 

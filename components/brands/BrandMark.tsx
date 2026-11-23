@@ -21,9 +21,11 @@ const PALETTES = [
 
 function initialsOf(name: string): string {
   const words = name.trim().split(/\s+/).filter(Boolean)
-  if (words.length === 0) return '?'
-  if (words.length === 1) return words[0].charAt(0).toUpperCase()
-  return (words[0].charAt(0) + words[words.length - 1].charAt(0)).toUpperCase()
+  const first = words[0]
+  const last = words[words.length - 1]
+  if (first === undefined || last === undefined) return '?'
+  if (words.length === 1) return first.charAt(0).toUpperCase()
+  return (first.charAt(0) + last.charAt(0)).toUpperCase()
 }
 
 function paletteFor(name: string): (typeof PALETTES)[number] {
@@ -31,7 +33,7 @@ function paletteFor(name: string): (typeof PALETTES)[number] {
   for (let i = 0; i < name.length; i++) {
     hash = (hash * 31 + name.charCodeAt(i)) % 997
   }
-  return PALETTES[hash % PALETTES.length]
+  return PALETTES[hash % PALETTES.length] ?? PALETTES[0]
 }
 
 export interface BrandMarkProps {
