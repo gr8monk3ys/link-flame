@@ -63,6 +63,7 @@ function ImageGallery({
   onIndexChange: (index: number) => void
 }) {
   const hasMultipleImages = images.length > 1
+  const selectedImage = images[selectedIndex]
 
   const handlePrevious = useCallback(() => {
     onIndexChange(selectedIndex === 0 ? images.length - 1 : selectedIndex - 1)
@@ -76,14 +77,16 @@ function ImageGallery({
     <div className="relative flex flex-col gap-3">
       {/* Main Image */}
       <div className="relative aspect-square overflow-hidden rounded-lg bg-muted">
-        <Image
-          src={images[selectedIndex]}
-          alt={productTitle}
-          fill
-          className="object-cover object-center"
-          sizes="(max-width: 768px) 100vw, 400px"
-          priority
-        />
+        {selectedImage && (
+          <Image
+            src={selectedImage}
+            alt={productTitle}
+            fill
+            className="object-cover object-center"
+            sizes="(max-width: 768px) 100vw, 400px"
+            priority
+          />
+        )}
         {/* Navigation Arrows */}
         {hasMultipleImages && (
           <>
@@ -252,7 +255,7 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
       setQuantity(1)
       setSelectedImageIndex(0)
       if (product.hasVariants && product.variants.length > 0) {
-        const defaultVariant = product.variants.find((v) => v.isDefault) || product.variants[0]
+        const defaultVariant = product.variants.find((v) => v.isDefault) || product.variants[0] || null
         setSelectedVariant(defaultVariant)
       } else {
         setSelectedVariant(null)

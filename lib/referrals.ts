@@ -401,7 +401,7 @@ export async function getUserReferrals(
   return {
     referrals: referrals.map(r => ({
       id: r.id,
-      refereeName: r.referee.name || r.referee.email.split('@')[0],
+      refereeName: r.referee.name || (r.referee.email.split('@')[0] ?? r.referee.email),
       status: r.status,
       rewardPoints: r.rewardPoints,
       discountApplied: r.discountApplied ? Number(r.discountApplied) : null,

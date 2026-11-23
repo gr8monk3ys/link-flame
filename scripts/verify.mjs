@@ -7,7 +7,7 @@
 //   npm run verify -- lint unit    # just those groups
 //
 // Groups (one per CI job):
-//   lint        Lint & Type Check   eslint, design-system check, tsc
+//   lint        Lint & Type Check   eslint, design-system check, depcruise, tsc
 //   unit        Unit Tests          vitest
 //   build       Build               next build, inline-script CSP hashes
 //   e2e         E2E Tests           prisma db push + seed, Playwright
@@ -70,6 +70,7 @@ const groups = {
   lint() {
     run('ESLint', npm, ['run', 'lint'])
     run('Design system check', npm, ['run', 'design:check'])
+    run('Module boundaries', npm, ['run', 'depcruise'])
     run('TypeScript type check', npx, ['tsc', '--noEmit'])
   },
 

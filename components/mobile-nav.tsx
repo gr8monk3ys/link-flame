@@ -54,6 +54,7 @@ export function MobileNav({ className, items, onClose }: MobileNavProps) {
       if (focusable.length === 0) return;
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
+      if (!first || !last) return;
       const active = document.activeElement;
       if (e.shiftKey && (active === first || !panelRef.current.contains(active))) {
         e.preventDefault();

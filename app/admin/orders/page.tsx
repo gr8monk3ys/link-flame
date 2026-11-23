@@ -94,7 +94,7 @@ export default function AdminOrdersPage() {
     setTrackingInputs((prev) => ({
       ...prev,
       [orderId]: {
-        ...prev[orderId],
+        ...(prev[orderId] ?? { trackingNumber: '', shippingCarrier: '' }),
         [field]: value,
       },
     }));

@@ -54,10 +54,11 @@ export const cartReducer = (cart: CartType, action: CartAction): CartType => {
         withAddedItem.push(incomingItem)
       }
 
-      if (typeof indexInCart === 'number' && indexInCart > -1) {
+      const existing = typeof indexInCart === 'number' ? withAddedItem[indexInCart] : undefined
+      if (typeof indexInCart === 'number' && existing) {
         withAddedItem[indexInCart] = {
-          ...withAddedItem[indexInCart],
-          quantity: withAddedItem[indexInCart].quantity + incomingItem.quantity,
+          ...existing,
+          quantity: existing.quantity + incomingItem.quantity,
         }
       }
 
@@ -79,8 +80,12 @@ export const cartReducer = (cart: CartType, action: CartAction): CartType => {
       }
 
       const updatedItems = [...cart.items]
+      const existing = updatedItems[indexInCart]
+      if (!existing) {
+        return cart
+      }
       updatedItems[indexInCart] = {
-        ...updatedItems[indexInCart],
+        ...existing,
         quantity,
       }
 

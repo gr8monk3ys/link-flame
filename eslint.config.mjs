@@ -23,7 +23,7 @@ const config = [
   },
   prettier,
   {
-    ignores: ['playwright-report/**', 'test-results/**', 'coverage/**'],
+    ignores: ['.dependency-cruiser.cjs', 'playwright-report/**', 'test-results/**', 'coverage/**'],
   },
 ]
 

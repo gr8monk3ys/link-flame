@@ -109,11 +109,10 @@ export function generateCsrfToken(): { token: string; signedToken: string; expir
 export function verifyCsrfToken(token: string, providedToken: string): boolean {
   try {
     const parts = token.split(':');
-    if (parts.length !== 3) {
+    const [tokenValue, expiresAtStr, signature] = parts;
+    if (parts.length !== 3 || tokenValue === undefined || expiresAtStr === undefined || signature === undefined) {
       return false;
     }
-
-    const [tokenValue, expiresAtStr, signature] = parts;
     const expiresAt = parseInt(expiresAtStr, 10);
 
     // Check expiry
@@ -163,10 +162,11 @@ export async function getCsrfToken(): Promise<string> {
   if (existingToken) {
     try {
       const parts = existingToken.value.split(':');
-      if (parts.length === 3) {
-        const expiresAt = parseInt(parts[1], 10);
+      const [tokenValue, expiresAtStr] = parts;
+      if (parts.length === 3 && tokenValue !== undefined && expiresAtStr !== undefined) {
+        const expiresAt = parseInt(expiresAtStr, 10);
         if (Date.now() < expiresAt) {
-          return parts[0]; // Return just the token value
+          return tokenValue; // Return just the token value
         }
       }
     } catch (error) {
