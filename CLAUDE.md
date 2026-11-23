@@ -29,7 +29,7 @@ Commits follow Conventional Commits (`feat:`, `fix:`, `perf:`, `build:`, `chore:
 ## Working conventions
 
 - Work in a git worktree under `.worktrees/<branch-slug>` (ignored via `.git/info/exclude`), never in the main checkout except to fast-forward `main`. One PR per worktree; remove it after the merge.
-- Husky hooks are not installed here; run `npm run lint` and `npx tsc --noEmit` yourself before pushing.
+- `npm ci` installs a `simple-git-hooks` pre-commit (staged `eslint` via `lint-staged`, then `tsc --noEmit`); the full gate is `npm run verify`.
 - Every PR must be green on the required checks before merging; squash-merge with `gh pr merge <N> --squash --delete-branch`.
 
 ## Where things live
@@ -40,6 +40,10 @@ Commits follow Conventional Commits (`feat:`, `fix:`, `perf:`, `build:`, `chore:
 - API routes in `app/api/*`; each exports `dynamic = 'force-dynamic'` or the Vercel build tries to prerender it without a DB.
 - `prisma/schema.prisma` (Postgres, money is `@db.Decimal(10,2)`), `prisma/seed.ts`, migrations in `prisma/migrations/`. `prisma/migrations_legacy_sqlite/` is history only.
 - Styling: `DESIGN.md` is the design system ("The Stock Ledger": paper and night neutrals shared with lscaturchio.xyz and InfiniStar, Moss ink, Fraunces / Instrument Sans / IBM Plex Mono self-hosted through `lib/fonts.ts` with `next/font/local`, flat paper, square product plates, mono figures on hairline rows). Read it before touching a className. Tailwind v4: `styles/globals.css` is the whole theme — `@import "tailwindcss"`, the HSL tokens on `:root`/`.dark`, `@theme inline` mapping them onto utility names (`--color-*`, `--radius-*` clamped at 18px, `--font-display/-body/-mono`), the base layer (focus outline, selection, grain, reduced motion) and the notebook utilities (`label-mono`, `ink-underline`, `cta-primary`, `cta-secondary`, `input-field`, `plate`, `overlay-scrim`, `text-page-title` …); there is no `tailwind.config.js`. `@theme inline` is required so `hsl(var(--x))` resolves per element and `.dark` works; never define `--spacing-*` tokens there (they shadow `max-w-*`). `npm run design:check` (`scripts/check-design-system.mjs`, in CI after lint) fails the build on a raw palette hue, a shadow, a gradient, a blur, `font-display` off a heading or an entrance animation; the names the previous system left behind are counted in its `LEGACY` ratchet, whose counts may only fall — lower a baseline in the same PR that removes the sites, and delete the entry at zero. `tests/unit/design-tokens.test.ts` measures every token pair for 4.5:1 in both themes, `tests/unit/fonts.test.ts` rejects `next/font/google`, `tests/unit/tailwind-v4-renames.test.ts` rejects v3-only spellings. `cn()` in `lib/utils.ts` (`tailwind-merge` 3).
+
+- Module boundaries: `.dependency-cruiser.cjs` treats each `lib/<dir>/` as a deep module: import only its root files, never files in its subfolders, and no import cycles. `npm run depcruise` runs in `verify -- lint`.
+- `reset.d.ts` loads `@total-typescript/ts-reset` rules (everything in `recommended` except `fetch` and `json-parse`). `tsconfig` has `noUncheckedIndexedAccess`: narrow indexed reads instead of asserting.
+- Domain terms are in `GLOSSARY.md`, decisions in `docs/adr/`.
 
 ## Gotchas
 

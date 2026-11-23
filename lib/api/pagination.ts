@@ -202,11 +202,11 @@ export function getCursorPaginationInfo<T extends Record<string, unknown>>(
   items: T[],
   cursorField: keyof T
 ): { nextCursor: string | null; hasMore: boolean } {
-  if (items.length === 0) {
+  const lastItem = items[items.length - 1]
+  if (lastItem === undefined) {
     return { nextCursor: null, hasMore: false }
   }
 
-  const lastItem = items[items.length - 1]
   const cursorValue = lastItem[cursorField]
 
   return {

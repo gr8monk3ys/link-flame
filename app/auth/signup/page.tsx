@@ -54,7 +54,7 @@ export default function SignUpPage() {
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        const details = data?.error?.details;
+        const details: { message?: string }[] | undefined = data?.error?.details;
         const detailMessage =
           Array.isArray(details) && details.length > 0 ? details[0]?.message : undefined;
         const errorMessage =

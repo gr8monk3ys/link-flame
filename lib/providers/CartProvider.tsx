@@ -88,11 +88,11 @@ function useCartProviderValue(): CartContext {
       if (response.ok) {
         const result = await response.json()
         // Handle both wrapped response { success, data } and direct array response
-        const items = result.data || result
+        const items: CartItem[] | object = result.data || result
         dispatchCart({
           type: 'SET_CART',
           payload: {
-            items: Array.isArray(items) ? items : [],
+            items: items instanceof Array ? items : [],
           },
         })
       } else {

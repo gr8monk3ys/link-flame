@@ -2,7 +2,9 @@ import { useState, useEffect, useCallback } from 'react';
 import type { Product } from '@/types/product';
 
 // Fetcher function
-const fetcher = async (url: string): Promise<unknown> => {
+type ProductsResponse = Product[] | { data?: Product[]; products?: Product[] };
+
+const fetcher = async (url: string): Promise<ProductsResponse> => {
   const res = await fetch(url);
 
   if (!res.ok) {
@@ -32,7 +34,7 @@ export function useProducts(options: UseProductsOptions = {}) {
   const queryString = queryParams.toString();
   const url = `/api/products${queryString ? `?${queryString}` : ''}`;
 
-  const [data, setData] = useState<unknown>(undefined);
+  const [data, setData] = useState<ProductsResponse | undefined>(undefined);
   const [error, setError] = useState<Error | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -53,13 +55,7 @@ export function useProducts(options: UseProductsOptions = {}) {
     mutate();
   }, [mutate]);
 
-  const products = Array.isArray(data)
-    ? data
-    : Array.isArray((data as { data?: Product[] })?.data)
-      ? (data as { data?: Product[] }).data!
-      : Array.isArray((data as { products?: Product[] })?.products)
-        ? (data as { products?: Product[] }).products!
-        : [];
+  const products = Array.isArray(data) ? data : (data?.data ?? data?.products ?? []);
 
   return {
     products,

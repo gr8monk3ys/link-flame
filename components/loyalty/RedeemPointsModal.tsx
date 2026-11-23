@@ -249,7 +249,7 @@ export function RedeemPointsModal({
               <Slider
                 thumbLabel="Points to redeem"
                 value={[pointsToRedeem]}
-                onValueChange={([value]) => setPointsToRedeem(value)}
+                onValueChange={([value]) => setPointsToRedeem(value ?? 0)}
                 min={0}
                 max={maxPoints}
                 step={preview.minimumRedemption}
@@ -525,7 +525,7 @@ export function InlineRedeemWidget({
           <Slider
             thumbLabel="Points to redeem"
             value={[pointsToRedeem]}
-            onValueChange={([value]) => setPointsToRedeem(value)}
+            onValueChange={([value]) => setPointsToRedeem(value ?? 0)}
             min={0}
             max={maxPoints}
             step={preview.minimumRedemption}

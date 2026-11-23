@@ -21,7 +21,7 @@ interface WasteItem {
   }
 }
 
-const commonItems: WasteItem[] = [
+const commonItems: [WasteItem, ...WasteItem[]] = [
   {
     name: "Plastic Water Bottles",
     disposablePerYear: 365,

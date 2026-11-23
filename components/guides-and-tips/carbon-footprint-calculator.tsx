@@ -154,7 +154,7 @@ export function CarbonFootprintCalculator() {
                   ...prev,
                   homeEnergy: {
                     ...prev.homeEnergy,
-                    renewable: value[0]
+                    renewable: value[0] ?? prev.homeEnergy.renewable
                   }
                 }))
               }
