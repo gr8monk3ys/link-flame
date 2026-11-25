@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Fast gate that Claude Code runs before a session can finish: CI's `lint` and
+# `unit` groups of scripts/verify.mjs. No Postgres, browser, build or deploy needed.
+# The full check before a PR is still `npm run verify` (needs a throwaway Postgres).
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+npx -y npm@11 ci   # the pinned npm; an older npm's `npm ci` installs nothing
+npm run verify -- lint unit

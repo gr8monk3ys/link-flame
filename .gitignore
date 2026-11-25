@@ -57,5 +57,6 @@ yarn-error.log*
 # Lighthouse reports from scripts/check-lighthouse-score.mjs
 artifacts/
 
-# Claude Code session artifacts
-.claude/
+# Claude Code session artifacts (the shared settings.json is committed)
+.claude/*
+!.claude/settings.json

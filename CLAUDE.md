@@ -2,6 +2,27 @@
 
 Link Flame: an eco-friendly e-commerce storefront + blog. Next.js 16 (App Router, React 19), PostgreSQL via Neon + Prisma, NextAuth v5, Stripe, Tailwind v4 (CSS-first: no `tailwind.config.js`). Live at https://link-flame-rouge.vercel.app (also https://link-flame.lscaturchio.xyz). Public repo: everything committed is public. Package manager is npm (`package-lock.json`); CI, Vercel, and the Dockerfile all use `npm ci`.
 
+## How we work
+
+`.claude/settings.json` loads four plugins from the `lorenzos-claude-code`
+marketplace (gr8monk3ys/skills), in every clone and every cloud session. Use
+them every time, not only when one happens to trigger:
+
+- **Matt Pocock's skills** (`mattpocock-skills`) for the engineering process:
+  `grilling` before building something new, `tdd` for any behaviour change,
+  `diagnosing-bugs` for bugs, `code-review` before calling work done and `pr`
+  for the PR body. Prefer them over overlapping skills from other plugins.
+- **Impeccable** for any UI, layout, styling or on-screen copy: run
+  `/impeccable critique` or `/impeccable audit` on it before you're done.
+- **Ponytail** is always on: the simplest code that works, no unrequested
+  abstractions or dependencies. Run `ponytail-review` on the diff before
+  opening a PR and cut what the task didn't need.
+- **Tests:** `./scripts/verify` is the fast gate (`npm ci` with npm 11, then
+  `npm run verify -- lint unit`: ESLint, design check, depcruise, `tsc`,
+  Vitest; no Postgres). A hook runs it before a session can finish and won't
+  let it end while it fails. Still run `npm run verify` before a PR, as
+  "Run / test" says. Never skip, weaken or delete a test to get it green.
+
 ## Run / test
 
 ```bash
